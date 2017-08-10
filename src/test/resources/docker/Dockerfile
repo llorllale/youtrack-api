@@ -1,9 +1,8 @@
 FROM java:8-jre 
 
-RUN mkdir -p /opt/youtrack/data /opt/youtrack/backup /opt/youtrack/bin
+RUN mkdir -p /opt/youtrack/data /opt/youtrack/bin
 
 COPY youtrack/data /opt/youtrack/data
-COPY youtrack/backup /opt/youtrack/backup
 
 WORKDIR /opt/youtrack
 
