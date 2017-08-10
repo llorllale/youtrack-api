@@ -1,9 +1,5 @@
 FROM java:8-jre 
 
-MAINTAINER tech@uniplug.ru 
-
-#ENV YOUTRACK_VERSION 2017.2.34480 
-
 RUN mkdir -p /opt/youtrack/data /opt/youtrack/backup /opt/youtrack/bin
 
 COPY youtrack/data /opt/youtrack/data
@@ -18,7 +14,5 @@ RUN wget https://download.jetbrains.com/charisma/youtrack-${youtrack.version}.ja
 ADD supervisor/youtrack.conf /etc/supervisor/conf.d/youtrack.conf
 
 EXPOSE 80/tcp 
-
-VOLUME ["/opt/youtrack/data/", "/opt/youtrack/backup/"]
 
 CMD ["/usr/bin/supervisord","-n","-c","/etc/supervisor/supervisord.conf"]
