@@ -15,4 +15,6 @@ jdk:
   - openjdk8
   - openjdk7
 
-script: mvn clean install -P release-profile
+script: 
+  - mvn clean install -P release-profile
+  - mvn clean install -P integration-tests

@@ -54,26 +54,115 @@
     <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
   </properties>
 
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <build>
+        <testResources>
+          <testResource>
+            <directory>${basedir}/src/test/resources</directory>
+            <filtering>true</filtering>
+            <includes>
+              <include>integration-tests-config.properties</include>
+              <include>**/Dockerfile</include>
+            </includes>
+          </testResource>
+        </testResources>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.20</version>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>0.21.0</version>
+            <executions>
+              <execution>
+                <id>youtrack-build</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>build</goal>
+                </goals>
+                <configuration>
+                  <images>
+                    <image>
+                      <alias>youtrack-api-integration-test</alias>
+                      <name>${youtrack.test.docker.name}</name>
+                      <build>
+                        <dockerFileDir>${basedir}/src/test/resources/docker</dockerFileDir>
+                      </build>
+                    </image>
+                  </images>
+                </configuration>
+              </execution>
+              <execution>
+                <id>youtrack-start</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+                <configuration>
+                  <showLogs>true</showLogs>
+                  <images>
+                    <image>
+                      <alias>youtrack-api-integration-test</alias>
+                      <name>${youtrack.test.docker.name}</name>
+                      <run>
+                        <ports>
+                          <port>18080:80</port>
+                        </ports>
+                        <wait>
+                          <http>
+                            <url>${youtrack.test.baseUrl}</url>
+                            <method>GET</method>
+                            <status>302</status>
+                          </http>
+                          <time>120000</time>
+                        </wait>
+                      </run>
+                    </image>
+                  </images>
+                </configuration>
+              </execution>
+              <execution>
+                <id>youtrack-stop</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop</goal>
+                </goals>
+                <configuration>
+                  <alias>youtrack-api-integration-test</alias>
+                  <name>${youtrack.test.docker.name}</name>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
-    <testResources>
-      <testResource>
-        <directory>${basedir}/src/test/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>integration-tests-config.properties</include>
-          <include>**/Dockerfile</include>
-        </includes>
-      </testResource>
-    </testResources>
     <plugins>
-<!--      <plugin>
+      <plugin>
         <groupId>com.qulice</groupId>
         <artifactId>qulice-maven-plugin</artifactId>
         <version>0.17.1</version>
         <configuration>
           <license>file:${basedir}/LICENSE</license>
           <excludes>
-            <exclude>${basedir}/src/test/resources</exclude>
+            <exclude>checkstyle:org.llorllale.youtrack.api.jaxb</exclude>
+            <exclude>checkstyle:/src/test/resources/.*</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -83,7 +172,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>-->
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jaxb2-maven-plugin</artifactId>
@@ -107,84 +196,6 @@
             <source>src/main/resources/schema</source>
           </sources>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.20</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <version>0.21.0</version>
-        <executions>
-          <execution>
-            <id>youtrack-build</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>build</goal>
-            </goals>
-            <configuration>
-              <images>
-                <image>
-                  <alias>youtrack-api-integration-test</alias>
-                  <name>${youtrack.test.docker.name}</name>
-                  <build>
-                    <dockerFileDir>${basedir}/src/test/resources/docker</dockerFileDir>
-                  </build>
-                </image>
-              </images>
-            </configuration>
-          </execution>
-          <execution>
-            <id>youtrack-start</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>start</goal>
-            </goals>
-            <configuration>
-              <showLogs>true</showLogs>
-              <images>
-                <image>
-                  <alias>youtrack-api-integration-test</alias>
-                  <name>${youtrack.test.docker.name}</name>
-                  <run>
-                    <ports>
-                      <port>18080:80</port>
-                    </ports>
-                    <wait>
-                      <http>
-                        <url>${youtrack.test.baseUrl}</url>
-                        <method>GET</method>
-                        <status>302</status>
-                      </http>
-                      <time>120000</time>
-                    </wait>
-                  </run>
-                </image>
-              </images>
-            </configuration>
-          </execution>
-          <execution>
-            <id>youtrack-stop</id>
-            <phase>post-integration-test</phase>
-            <goals>
-              <goal>stop</goal>
-            </goals>
-            <configuration>
-              <alias>youtrack-api-integration-test</alias>
-              <name>${youtrack.test.docker.name}</name>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
