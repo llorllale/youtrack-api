@@ -66,12 +66,15 @@
       </testResource>
     </testResources>
     <plugins>
-      <plugin>
+<!--      <plugin>
         <groupId>com.qulice</groupId>
         <artifactId>qulice-maven-plugin</artifactId>
         <version>0.17.1</version>
         <configuration>
           <license>file:${basedir}/LICENSE</license>
+          <excludes>
+            <exclude>${basedir}/src/test/resources</exclude>
+          </excludes>
         </configuration>
         <executions>
           <execution>
@@ -80,7 +83,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jaxb2-maven-plugin</artifactId>
