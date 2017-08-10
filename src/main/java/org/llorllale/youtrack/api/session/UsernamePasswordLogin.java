@@ -110,6 +110,11 @@ public class UsernamePasswordLogin implements Login {
 
       final HttpPost post = new HttpPost(uri.build());
       final HttpResponse response = httpClient.execute(post);
+
+      if(response.getStatusLine().getStatusCode() != 200){
+        throw new AuthenticationException("Invalid credentials.");
+      }
+
       final List<Header> tokens = 
           Arrays.stream(response.getHeaders("Set-Cookie"))
               .collect(toList());
