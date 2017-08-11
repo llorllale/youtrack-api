@@ -13,23 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.llorllale.youtrack.api.response;
-
 /**
- * Signals that a response received from YouTrack is of a type that is 
- * currently not supported by this library.
- * @author George Aristy
+ * 
  * @since 1.0.0
  */
-public class UnsupportedResponseException extends RuntimeException {
-  private static final long serialVersionUID = -4501820211696912590L;
-
-  /**
-   * 
-   * @param message 
-   * @since 1.0.0
-   */
-  public UnsupportedResponseException(String message) {
-    super(message);
-  }
-}
+package org.llorllale.youtrack.api.issues;

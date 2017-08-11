@@ -9,6 +9,79 @@
 
   <packaging>jar</packaging>
 
+  <name>youtrack-api</name>
+  <description>Object-Oriented Java API for YouTrack.</description>
+  <url>https://github.com/llorllale/youtrack-api</url>
+  <inceptionYear>2017</inceptionYear>
+
+  <organization>
+    <name>George Aristy</name>
+    <url>https://llorllale.github.io/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <distribution>repo</distribution>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>1</id>
+      <name>George Aristy</name>
+      <url>https://llorllale.github.io/</url>
+      <email>george.aristy@gmail.com</email>
+      <roles>
+        <role>Architect</role>
+        <role>Developer</role>
+      </roles>
+      <timezone>-4</timezone>
+    </developer>
+  </developers>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/llorllale/youtrack-api/issues</url>
+  </issueManagement>
+
+  <scm>
+    <connection>scm:git:git@github.com:llorllale/youtrack-api.git</connection>
+    <developerConnection>scm:git:git@github.com:llorllale/youtrack-api.git</developerConnection>
+    <url>https://github.com/llorllale/youtrack-api</url>
+  </scm>
+
+  <ciManagement>
+    <system>Travis CI</system>
+    <url>https://travis-ci.org/llorllale/youtrack-api</url>
+  </ciManagement>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <netbeans.hint.license>apache20</netbeans.hint.license>
+    <netbeans.hint.projectversion>${project.version}</netbeans.hint.projectversion>
+    <youtrack.version>2017.2.34480</youtrack.version>
+    <youtrack.test.docker.name>${project.artifactId}-test-${project.version}</youtrack.test.docker.name>
+    <youtrack.test.user>root</youtrack.test.user>
+    <youtrack.test.pwd>youtrack</youtrack.test.pwd>
+    <youtrack.test.baseUrl>http://localhost:18080</youtrack.test.baseUrl>
+    <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -40,19 +113,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <netbeans.hint.license>apache20</netbeans.hint.license>
-    <youtrack.version>2017.2.34480</youtrack.version>
-    <youtrack.test.docker.name>${project.artifactId}-test-${project.version}</youtrack.test.docker.name>
-    <youtrack.test.user>root</youtrack.test.user>
-    <youtrack.test.pwd>youtrack</youtrack.test.pwd>
-    <youtrack.test.baseUrl>http://localhost:18080</youtrack.test.baseUrl>
-    <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
-  </properties>
 
   <profiles>
     <profile>
@@ -154,6 +214,14 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.10.4</version>
+        <configuration>
+          <show>package</show>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>com.qulice</groupId>
         <artifactId>qulice-maven-plugin</artifactId>
