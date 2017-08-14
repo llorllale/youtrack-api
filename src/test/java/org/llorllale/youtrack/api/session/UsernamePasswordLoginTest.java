@@ -57,7 +57,7 @@ public class UsernamePasswordLoginTest {
    * Authentication error if remote API response is different from 200
    * @throws Exception 
    */
-//  @Test(expected = AuthenticationException.class)
+  @Test(expected = AuthenticationException.class)
   public void authenticationError() throws Exception {
     final HttpClient mockHttp = mock(HttpClient.class);
     when(mockHttp.execute(any(HttpUriRequest.class)))
