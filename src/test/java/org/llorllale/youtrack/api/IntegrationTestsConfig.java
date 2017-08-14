@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ import java.net.URL;
 import java.util.Properties;
 
 /**
- *
+ * Loads configurations required for integration tests.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
@@ -30,8 +31,8 @@ public class IntegrationTestsConfig {
   private static final String CONFIG_FILE = "/integration-tests-config.properties";
   private static final Properties CONFIG = new Properties();
 
-  private synchronized static void loadConfig() {
-    if(CONFIG.isEmpty()){
+  private static synchronized void loadConfig() {
+    if (CONFIG.isEmpty()) {
       try (InputStream input = IntegrationTestsConfig.class.getResourceAsStream(CONFIG_FILE)) {
         CONFIG.load(input);
       } catch (IOException e) {
@@ -40,17 +41,31 @@ public class IntegrationTestsConfig {
     }
   }
 
-  public String youtrackUser(){
+  /**
+   * The username for the dockerzied YouTrack service.
+   * @return The username for the dockerzied YouTrack service.
+   */
+  public String youtrackUser() {
     loadConfig();
     return CONFIG.getProperty("youtrack.test.user");
   }
 
-  public char[] youtrackPwd(){
+  /**
+   * The password credentials for the dockerized YouTrack service.
+   * @return The password credentials for the dockerized YouTrack service.
+   * @since 0.1.0
+   */
+  public char[] youtrackPwd() {
     loadConfig();
     return CONFIG.getProperty("youtrack.test.pwd").toCharArray();
   }
 
-  public URL youtrackURL(){
+  /**
+   * The endpoint URL of the dockerized YouTrack service.
+   * @return The endpoint URL of the dockerized YouTrack service.
+   * @since 0.1.0
+   */
+  public URL youtrackUrl() {
     loadConfig();
 
     try {

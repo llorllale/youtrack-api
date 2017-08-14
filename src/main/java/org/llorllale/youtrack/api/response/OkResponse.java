@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * <p>
  * Returns the payload when the HTTP status code is {@code 200}.
- * </p>
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */

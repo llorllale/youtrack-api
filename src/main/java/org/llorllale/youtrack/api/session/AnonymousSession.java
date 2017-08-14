@@ -25,7 +25,9 @@ import java.util.List;
 /**
  * <p>
  * A {@link Session} created from an {@link AnonymousLogin}.
+ * </p>
  * 
+ * <p>
  * No {@link #cookies() cookies} are stored by an anonymous session because none
  * are needed.
  * </p>
@@ -40,7 +42,6 @@ public class AnonymousSession implements Session {
    * Primary constructor.
    * @param youtrackUrl The remote API url.
    * @since 0.1.0
-   * @see IsOkResponse
    */
   public AnonymousSession(URL youtrackUrl) {
     this.youtrackUrl = youtrackUrl;

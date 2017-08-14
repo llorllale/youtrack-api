@@ -19,7 +19,9 @@ package org.llorllale.youtrack.api.response;
 /**
  * <p>
  * Signals an error with parsing the payload received from YouTrack.
+ * </p>
  * 
+ * <p>
  * This is a runtime exception due to the assumption that this kind of error
  * should not be expected.
  * </p>

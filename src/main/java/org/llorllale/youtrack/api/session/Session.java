@@ -25,7 +25,9 @@ import java.util.List;
  * <p>
  * A {@code Session} object encapsulates all the state required for conducting
  * further transactions with the remote YouTrack API.
+ * </p>
  * 
+ * <p>
  * Instances of {@code Session} are obtained by {@link Login#login() login} in
  * to YouTrack.
  * </p>

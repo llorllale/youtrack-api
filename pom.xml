@@ -216,14 +216,6 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.4</version>
-        <configuration>
-          <show>package</show>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>2.17</version>
         <executions>
@@ -240,6 +232,7 @@
               <failsOnError>true</failsOnError>
               <linkXRef>false</linkXRef>
               <violationSeverity>info</violationSeverity>
+              <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
             </configuration>
           </execution>
         </executions>
@@ -255,6 +248,9 @@
             <goals>
               <goal>xjc</goal>
             </goals>
+            <configuration>
+              <createJavaDocAnnotations>false</createJavaDocAnnotations>
+            </configuration>
           </execution>
         </executions>
         <configuration>

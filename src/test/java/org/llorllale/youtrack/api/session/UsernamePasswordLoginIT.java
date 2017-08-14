@@ -39,12 +39,12 @@ public class UsernamePasswordLoginIT {
   @Test
   public void successfulLogin() throws Exception {
     final Session session = new UsernamePasswordLogin(
-            config.youtrackURL(), 
+            config.youtrackUrl(), 
             config.youtrackUser(), 
             config.youtrackPwd()
     ).login();
     
-    assertThat(session.baseUrl(), is(config.youtrackURL()));
+    assertThat(session.baseUrl(), is(config.youtrackUrl()));
     assertThat(session.cookies().size(), is(2));
   }
 }

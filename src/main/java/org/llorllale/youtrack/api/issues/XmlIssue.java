@@ -31,7 +31,7 @@ public class XmlIssue implements Issue {
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
 
   /**
-   * 
+   * Ctor.
    * @param jaxbIssue the JAXB issue to be adapted
    * @since 0.1.0
    */

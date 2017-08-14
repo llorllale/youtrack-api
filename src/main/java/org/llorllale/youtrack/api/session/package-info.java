@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 /**
- * <p>
- * Collection of APIs necessary to obtain access to YouTrack's resources.
+ * <p>Collection of APIs necessary to obtain access to YouTrack's resources.</p>
  *
- * Use the {@link org.llorllale.youtrack.api.session.Login} interface to obtain
+ * <p>Use the {@link org.llorllale.youtrack.api.session.Login} interface to obtain
  * a {@link org.llorllale.youtrack.api.session.Session} that you can then use
- * with the other CRUD APIs.
- * </p>
+ * with the other CRUD APIs.</p>
  * @since 0.1.0
+ * @see org.llorllale.youtrack.api.session.UsernamePasswordLogin
+ * @see org.llorllale.youtrack.api.session.AnonymousLogin
  */
 package org.llorllale.youtrack.api.session;

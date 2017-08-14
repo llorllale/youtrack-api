@@ -33,9 +33,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p>
- * A login for the simple username/password use case.
+ * <p>A login for the simple username/password use case.</p>
  * 
+ * <p>
  * Implementation note: the {@link #login() login()} method can only be called 
  * <strong>ONCE</strong> on an instance of {@code UsernamePassordLogin}
  * because the username and password fields are set to {@code null} internally in 

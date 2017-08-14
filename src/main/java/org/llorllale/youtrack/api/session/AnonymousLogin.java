@@ -24,8 +24,11 @@ import java.net.URL;
  * A {@link Login} for anonymous sessions if your YouTrack supports it (ie. the
  * "guest" user is not banned).
  * </p>
+ * 
+ * <p>
  * Calling {@link #login() login()} on an {@code AnonymousLogin} is 
  * guaranteed to always succeed.
+ * </p>
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */

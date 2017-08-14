@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,33 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.issues;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Optional;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Session;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Optional;
 
 /**
- *
- * @author George Aristy george.aristy AT gmail DOT com
+ * Unit tests for {@link XmlIssues}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class XmlIssuesTest {
   @Test
-  public void withIDThatExists() throws Exception {
+  public void withIdThatExists() throws Exception {
     final Session mockSession = mock(Session.class);
     when(mockSession.cookies()).thenReturn(Collections.emptyList());
     when(mockSession.baseUrl()).thenReturn(new URL("http://some.url/"));
@@ -63,7 +67,7 @@ public class XmlIssuesTest {
   }
 
   @Test
-  public void withIDThatDoesNotExist() throws Exception {
+  public void withIdThatDoesNotExist() throws Exception {
     final Session mockSession = mock(Session.class);
     when(mockSession.cookies()).thenReturn(Collections.emptyList());
     when(mockSession.baseUrl()).thenReturn(new URL("http://some.url/"));
@@ -86,7 +90,9 @@ public class XmlIssuesTest {
     assertFalse(issue.isPresent());
   }
 
-  private static final String NOT_FOUND_RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><error>Issue not found.</error>";
+  private static final String NOT_FOUND_RESPONSE = 
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+      "<error>Issue not found.</error>";
 
   private static final String WITH_ID_RESPONSE =
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +

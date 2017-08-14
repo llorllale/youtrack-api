@@ -25,8 +25,10 @@ import java.util.Optional;
 
 /**
  * <p>
- * {@link HttpResponse} -> {@link Response} adapter class.
+ * {@link HttpResponse} -&gt; {@link Response} adapter class.
+ * </p>
  * 
+ * <p>
  * Client code should only have to rely on this implementation of 
  * {@link Response}.
  * </p>
@@ -37,7 +39,7 @@ public class HttpResponseAsResponse implements Response {
   private final Response delegate;
 
   /**
-   * Adapts the given {@cocde httpResponse} into a {@link Response}.
+   * Adapts the given {@code httpResponse} into a {@link Response}.
    * @param httpResponse the {@link HttpResponse} to be adapted
    * @since 0.1.0
    */

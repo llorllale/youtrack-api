@@ -21,8 +21,10 @@ import java.io.IOException;
 /**
  * <p>
  * Performs the {@link #login() login}.
+ * </p>
  * 
- * YouTrack supports different login strategies (username/password, token, 
+ * <p>
+ * YouTrack supports different authentication strategies (username/password, token, 
  * etc.), hence it's up to implementations to know what to do with 
  * {@link #login() login()}.
  * </p>

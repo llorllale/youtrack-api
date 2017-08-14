@@ -23,10 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>
  * A {@link Session} obtained from a {@link Login} that requires user 
  * authentication (ie. not {@link AnonymousLogin}).
- * </p>
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */

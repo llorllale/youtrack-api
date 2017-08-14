@@ -17,16 +17,22 @@
 /**
  * <p>
  * The APIs in this package are intended for internal use by this library.
+ * </p>
  * 
+ * <p>
  * The principal interface is
  * {@link org.llorllale.youtrack.api.response.Response} that defines the set of
  * methods used by other library components to obtain access to the response
  * payloads from the remote YouTrack API.
+ * </p>
  *
+ * <p>
  * The job of each {@code Response} implementation is to properly and
  * transparently handle each type of HTTP response received from the server
  * according to the status code.
+ * </p>
  *
+ * <p>
  * Client code is relieved from knowing the existence of all implementations by
  * use of the {@link org.llorllale.youtrack.api.response.HttpResponseAsResponse}
  * that internally employs the Chain of Responsibility pattern with all other

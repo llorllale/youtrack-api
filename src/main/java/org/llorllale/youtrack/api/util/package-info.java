@@ -16,7 +16,9 @@
 /**
  * <p>
  * The APIs in this package are reserved for internal use by this library.
+ * </p>
  *
+ * <p>
  * This is a collection of utility classes.
  * </p>
  * @since 0.1.0

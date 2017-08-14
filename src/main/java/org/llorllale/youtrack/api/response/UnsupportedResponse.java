@@ -27,7 +27,9 @@ import java.util.Optional;
  * <p>
  * "Catch-all" {@link Response} that throws {@link UnsupportedResponseException}
  * if an unexpected response is returned from YouTrack.
+ * </p>
  * 
+ * <p>
  * This exception should ideally never be raised if all responses have been 
  * accounted for!
  * </p>
