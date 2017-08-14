@@ -1,5 +1,5 @@
-/*
- * Copyright 2017 George Aristy.
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.util;
+
+import org.apache.http.HttpEntity;
+import org.llorllale.youtrack.api.response.ParseException;
 
 import java.io.IOException;
 import java.util.function.Function;
 import javax.xml.bind.JAXBException;
-import org.apache.http.HttpEntity;
-import org.llorllale.youtrack.api.response.ParseException;
 
 /**
  * Utility class to read the text content received from YouTrack in this 
  * {@link HttpEntity} and convert it to its JAXB representation.
- * @author George Aristy
- * @param <T>
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @param <T> the JAXB root element type class
+ * @since 0.1.0
  */
 public class HttpEntityAsJaxb<T> implements Function<HttpEntity, T> {
   private final Class<T> rootType;
 
   /**
-   * 
-   * @param rootType 
-   * @since 1.0.0
+   * Ctor.
+   * @param rootType the type for the XML's root element
+   * @since 0.1.0
    */
   public HttpEntityAsJaxb(Class<T> rootType) {
     this.rootType = rootType;
@@ -42,14 +44,16 @@ public class HttpEntityAsJaxb<T> implements Function<HttpEntity, T> {
 
   @Override
   public T apply(HttpEntity entity) {
-    try{
+    try {
       return new XmlStringAsJaxb<>(
           rootType,
-          new InputStreamAsString(entity.getContent()).asString()
-      ).asJaxb();
-    }catch(JAXBException | IOException e){
+          new InputStreamAsString(entity.getContent()).string()
+      ).jaxb();
+    } catch (JAXBException | IOException e) {
       throw new ParseException(
-          String.format("Unable to parse entity for type %s", rootType.getName()), 
+          String.format("Unable to parse entity for type %s", 
+              rootType.getName()
+          ), 
           e
       );
     }

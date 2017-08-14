@@ -13,26 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.llorllale.youtrack.api.session;
-
-import org.llorllale.youtrack.api.YouTrackException;
-
 /**
- * Signals an error with the credentials that were provided.
- * @author George Aristy (george.aristy@gmail.com)
+ * Collection of APIs to read and manipulate 
+ * {@link org.llorllale.youtrack.api.issues.Issue issues}.
  * @since 0.1.0
- * @see UsernamePasswordLogin
  */
-public class AuthenticationException extends YouTrackException {
-  private static final long serialVersionUID = -6585053905710875326L;
-  
-  /**
-   * Ctor.
-   * @param message the exception message
-   * @since 0.1.0
-   */
-  public AuthenticationException(String message) {
-    super(message);
-  }
-}
+package org.llorllale.youtrack.api.issues;

@@ -1,5 +1,5 @@
-/*
- * Copyright 2017 George Aristy george.aristy AT gmail DOT com.
+/**
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,11 @@ import static org.junit.Assert.*;
  */
 public class AnonymousSessionTest {
   /**
-   * Test of baseURL method, of class AnonymousSession.
+   * Test of baseUrl method, of class AnonymousSession.
    */
   @Test
   public void baseURL() throws Exception {
-    assertThat(
-            new AnonymousSession(new URL("http://some.url")).baseURL(),
+    assertThat(new AnonymousSession(new URL("http://some.url")).baseUrl(),
             is(new URL("http://some.url"))
     );
   }

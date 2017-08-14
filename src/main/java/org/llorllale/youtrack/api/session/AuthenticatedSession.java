@@ -1,5 +1,5 @@
 /* 
- * Copyright 2017 George Aristy.
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.session;
+
+import org.apache.http.Header;
 
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import org.apache.http.Header;
 
 /**
- * <p>
  * A {@link Session} obtained from a {@link Login} that requires user 
  * authentication (ie. not {@link AnonymousLogin}).
- * </p>
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class AuthenticatedSession implements Session {
-  private final URL youtrackURL;
+  private final URL youtrackUrl;
   private final List<Header> cookies;
 
   /**
    * Base constructor.
-   * @param youtrackURL the remote API url
+   * @param youtrackUrl the remote API url
    * @param tokens the session's state
-   * @since 1.0.0
+   * @since 0.1.0
    */
-  public AuthenticatedSession(URL youtrackURL, List<Header> tokens) {
-    this.youtrackURL = youtrackURL;
+  public AuthenticatedSession(URL youtrackUrl, List<Header> tokens) {
+    this.youtrackUrl = youtrackUrl;
     this.cookies = Collections.unmodifiableList(tokens);
   }
 
   @Override
-  public URL baseURL() {
-    return youtrackURL;
+  public URL baseUrl() {
+    return youtrackUrl;
   }
 
   @Override

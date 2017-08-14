@@ -1,5 +1,5 @@
 /* 
- * Copyright 2017 George Aristy.
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.response;
 
-import java.io.IOException;
-import java.util.Optional;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
+import java.io.IOException;
+import java.util.Optional;
+
 /**
  * <p>
- * {@link HttpResponse} -> {@link Response} adapter class.
- * 
- * Client code should only have to rely on this implementation of {@link Response}.
+ * {@link HttpResponse} -&gt; {@link Response} adapter class.
  * </p>
- * @author George Aristy
- * @since 1.0.0
+ * 
+ * <p>
+ * Client code should only have to rely on this implementation of 
+ * {@link Response}.
+ * </p>
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class HttpResponseAsResponse implements Response {
   private final Response delegate;
 
   /**
-   *
-   * @param httpResponse
-   * @since 1.0.0
+   * Adapts the given {@code httpResponse} into a {@link Response}.
+   * @param httpResponse the {@link HttpResponse} to be adapted
+   * @since 0.1.0
    */
   public HttpResponseAsResponse(HttpResponse httpResponse) {
     this.delegate = 

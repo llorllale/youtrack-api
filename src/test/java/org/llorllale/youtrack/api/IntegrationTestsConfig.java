@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 George Aristy george.aristy AT gmail DOT com.
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
@@ -22,46 +23,55 @@ import java.net.URL;
 import java.util.Properties;
 
 /**
- *
- * @author George Aristy george.aristy AT gmail DOT com
+ * Loads configurations required for integration tests.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class IntegrationTestsConfig {
   private static final String CONFIG_FILE = "/integration-tests-config.properties";
   private static final Properties CONFIG = new Properties();
 
-  public synchronized String youtrackUser(){
-    if(CONFIG.isEmpty()){
-      loadConfig();
+  private static synchronized void loadConfig() {
+    if (CONFIG.isEmpty()) {
+      try (InputStream input = IntegrationTestsConfig.class.getResourceAsStream(CONFIG_FILE)) {
+        CONFIG.load(input);
+      } catch (IOException e) {
+        throw new RuntimeException("Missing integration-tests configuration!", e);
+      }
     }
+  }
 
+  /**
+   * The username for the dockerzied YouTrack service.
+   * @return The username for the dockerzied YouTrack service.
+   */
+  public String youtrackUser() {
+    loadConfig();
     return CONFIG.getProperty("youtrack.test.user");
   }
 
-  public char[] youtrackPwd(){
-    if(CONFIG.isEmpty()){
-      loadConfig();
-    }
-
+  /**
+   * The password credentials for the dockerized YouTrack service.
+   * @return The password credentials for the dockerized YouTrack service.
+   * @since 0.1.0
+   */
+  public char[] youtrackPwd() {
+    loadConfig();
     return CONFIG.getProperty("youtrack.test.pwd").toCharArray();
   }
 
-  public URL youtrackURL(){
-    if(CONFIG.isEmpty()){
-      loadConfig();
-    }
+  /**
+   * The endpoint URL of the dockerized YouTrack service.
+   * @return The endpoint URL of the dockerized YouTrack service.
+   * @since 0.1.0
+   */
+  public URL youtrackUrl() {
+    loadConfig();
 
-    try{
+    try {
       return new URL(CONFIG.getProperty("youtrack.test.url"));
-    }catch(MalformedURLException e){
+    } catch (MalformedURLException e) {
       throw new RuntimeException("Malformed URL: " + CONFIG.getProperty("youtrack.test.url"));
-    }
-  }
-
-  private void loadConfig() {
-    try(InputStream input = IntegrationTestsConfig.class.getResourceAsStream(CONFIG_FILE)){
-      CONFIG.load(input);
-    }catch(IOException e){
-      throw new RuntimeException("Missing integration-tests configuration!", e);
     }
   }
 }

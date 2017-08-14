@@ -1,5 +1,5 @@
 /* 
- * Copyright 2017 George Aristy.
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.util;
 
 import java.io.BufferedReader;
@@ -23,17 +24,17 @@ import java.io.InputStreamReader;
 /**
  * Utility class to read all text content from an {@link InputStream} and
  * return it in string form.
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class InputStreamAsString implements AutoCloseable {
   private static final String NEW_LINE = System.getProperty("line.separator");
   private final InputStream inputStream;
 
   /**
-   * 
-   * @param inputStream 
-   * @since 1.0.0
+   * Ctor.
+   * @param inputStream the inputstream from which to read the text contents
+   * @since 0.1.0
    */
   public InputStreamAsString(InputStream inputStream) {
     this.inputStream = inputStream;
@@ -41,14 +42,15 @@ public class InputStreamAsString implements AutoCloseable {
 
 
   /**
-   * 
-   * @return
-   * @since 1.0.0
+   * Returns the contents of the underlying {@link InputStream} in string form.
+   * @return the contents of the underlying {@link InputStream}
+   * @throws IOException thrown by the underlying {@link InputStream}
+   * @since 0.1.0
    */
-  public String asString() throws IOException {
+  public String string() throws IOException {
     return new BufferedReader(new InputStreamReader(inputStream))
         .lines()
-        .reduce((a,b) -> a.concat(b).concat(NEW_LINE))
+        .reduce((l1,l2) -> l1.concat(l2).concat(NEW_LINE))
         .get()
         .trim();
   }
