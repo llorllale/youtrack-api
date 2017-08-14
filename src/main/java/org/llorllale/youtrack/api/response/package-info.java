@@ -1,5 +1,5 @@
-/*
- * Copyright 2017 George Aristy.
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
  * <p>
  * The APIs in this package are intended for internal use by this library.
  * </p>
+ * 
  * <p>
- * The principal interface is 
- * {@link org.llorllale.youtrack.api.response.Response} that defines the set of 
+ * The principal interface is
+ * {@link org.llorllale.youtrack.api.response.Response} that defines the set of
  * methods used by other library components to obtain access to the response
  * payloads from the remote YouTrack API.
- * 
- * The job of each {@code Response} implementation is to properly and 
+ * </p>
+ *
+ * <p>
+ * The job of each {@code Response} implementation is to properly and
  * transparently handle each type of HTTP response received from the server
  * according to the status code.
- * 
+ * </p>
+ *
+ * <p>
  * Client code is relieved from knowing the existence of all implementations by
  * use of the {@link org.llorllale.youtrack.api.response.HttpResponseAsResponse}
  * that internally employs the Chain of Responsibility pattern with all other
  * implementations.
  * </p>
- * @since 1.0.0
+ * @since 0.1.0
  */
 package org.llorllale.youtrack.api.response;

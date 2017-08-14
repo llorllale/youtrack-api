@@ -1,5 +1,5 @@
-/*
- * Copyright 2017 George Aristy george.aristy AT gmail DOT com.
+/**
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,12 @@ public class UsernamePasswordLoginIT {
   @Test
   public void successfulLogin() throws Exception {
     final Session session = new UsernamePasswordLogin(
-            config.youtrackURL(), 
+            config.youtrackUrl(), 
             config.youtrackUser(), 
             config.youtrackPwd()
     ).login();
     
-    assertThat(session.baseURL(), is(config.youtrackURL()));
+    assertThat(session.baseUrl(), is(config.youtrackUrl()));
     assertThat(session.cookies().size(), is(2));
   }
 }

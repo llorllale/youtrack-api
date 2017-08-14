@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 George Aristy george.aristy AT gmail DOT com.
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,36 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.issues;
 
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Optional;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Session;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Optional;
 
 /**
- *
- * @author George Aristy george.aristy AT gmail DOT com
+ * Unit tests for {@link XmlIssues}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class XmlIssuesTest {
   @Test
-  public void withIDThatExists() throws Exception {
+  public void withIdThatExists() throws Exception {
     final Session mockSession = mock(Session.class);
     when(mockSession.cookies()).thenReturn(Collections.emptyList());
-    when(mockSession.baseURL()).thenReturn(new URL("http://some.url/"));
+    when(mockSession.baseUrl()).thenReturn(new URL("http://some.url/"));
     final BasicHttpEntity entity = new BasicHttpEntity();
     entity.setContentType("application/xml;charset=UTF-8");
     entity.setContentLength(WITH_ID_RESPONSE.getBytes().length);
@@ -57,16 +61,16 @@ public class XmlIssuesTest {
     final HttpClient mockHttpClient = mock(HttpClient.class);
     when(mockHttpClient.execute(any(HttpUriRequest.class)))
             .thenReturn(httpResponse);
-    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withID("TP-2");
+    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withId("TP-2");
 
     assertTrue(issue.isPresent());
   }
 
   @Test
-  public void withIDThatDoesNotExist() throws Exception {
+  public void withIdThatDoesNotExist() throws Exception {
     final Session mockSession = mock(Session.class);
     when(mockSession.cookies()).thenReturn(Collections.emptyList());
-    when(mockSession.baseURL()).thenReturn(new URL("http://some.url/"));
+    when(mockSession.baseUrl()).thenReturn(new URL("http://some.url/"));
     final BasicHttpEntity entity = new BasicHttpEntity();
     entity.setContentType("application/xml;charset=UTF-8");
     entity.setContentLength(NOT_FOUND_RESPONSE.getBytes().length);
@@ -81,12 +85,14 @@ public class XmlIssuesTest {
     final HttpClient mockHttpClient = mock(HttpClient.class);
     when(mockHttpClient.execute(any(HttpUriRequest.class)))
             .thenReturn(httpResponse);
-    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withID("TP-2");
+    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withId("TP-2");
 
     assertFalse(issue.isPresent());
   }
 
-  private static final String NOT_FOUND_RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><error>Issue not found.</error>";
+  private static final String NOT_FOUND_RESPONSE = 
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+      "<error>Issue not found.</error>";
 
   private static final String WITH_ID_RESPONSE =
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +

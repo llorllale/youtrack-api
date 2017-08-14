@@ -1,5 +1,5 @@
-/*
- * Copyright 2017 George Aristy.
+/**
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,11 @@ import org.llorllale.youtrack.api.jaxb.Issue;
  */
 public class XmlStringAsJaxbTest {
   /**
-   * Test of asJaxb method, of class XmlStringAsJaxb.
+   * Test of jaxb method, of class XmlStringAsJaxb.
    */
   @Test
   public void testAsJaxb() throws Exception {
-    final Issue issue = new XmlStringAsJaxb<>(Issue.class, ISSUE).asJaxb();
+    final Issue issue = new XmlStringAsJaxb<>(Issue.class, ISSUE).jaxb();
   }
   
   private static final String ISSUE =
