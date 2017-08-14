@@ -13,7 +13,6 @@ dist: trusty
 
 jdk:
   - openjdk8
-  - openjdk7
 
 script: 
   - mvn clean install -P release-profile
