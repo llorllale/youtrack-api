@@ -26,12 +26,11 @@ import static org.junit.Assert.*;
  */
 public class AnonymousSessionTest {
   /**
-   * Test of baseURL method, of class AnonymousSession.
+   * Test of baseUrl method, of class AnonymousSession.
    */
   @Test
   public void baseURL() throws Exception {
-    assertThat(
-            new AnonymousSession(new URL("http://some.url")).baseURL(),
+    assertThat(new AnonymousSession(new URL("http://some.url")).baseUrl(),
             is(new URL("http://some.url"))
     );
   }

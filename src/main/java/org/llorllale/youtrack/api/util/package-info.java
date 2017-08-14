@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 /**
  * <p>
  * The APIs in this package are reserved for internal use by this library.
- * 
+ *
  * This is a collection of utility classes.
  * </p>
- * @since 1.0.0
+ * @since 0.1.0
  */
 package org.llorllale.youtrack.api.util;

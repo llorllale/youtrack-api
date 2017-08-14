@@ -23,45 +23,40 @@ import java.util.Properties;
 
 /**
  *
- * @author George Aristy george.aristy AT gmail DOT com
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class IntegrationTestsConfig {
   private static final String CONFIG_FILE = "/integration-tests-config.properties";
   private static final Properties CONFIG = new Properties();
 
-  public synchronized String youtrackUser(){
+  private synchronized static void loadConfig() {
     if(CONFIG.isEmpty()){
-      loadConfig();
+      try (InputStream input = IntegrationTestsConfig.class.getResourceAsStream(CONFIG_FILE)) {
+        CONFIG.load(input);
+      } catch (IOException e) {
+        throw new RuntimeException("Missing integration-tests configuration!", e);
+      }
     }
+  }
 
+  public String youtrackUser(){
+    loadConfig();
     return CONFIG.getProperty("youtrack.test.user");
   }
 
   public char[] youtrackPwd(){
-    if(CONFIG.isEmpty()){
-      loadConfig();
-    }
-
+    loadConfig();
     return CONFIG.getProperty("youtrack.test.pwd").toCharArray();
   }
 
   public URL youtrackURL(){
-    if(CONFIG.isEmpty()){
-      loadConfig();
-    }
+    loadConfig();
 
-    try{
+    try {
       return new URL(CONFIG.getProperty("youtrack.test.url"));
-    }catch(MalformedURLException e){
+    } catch (MalformedURLException e) {
       throw new RuntimeException("Malformed URL: " + CONFIG.getProperty("youtrack.test.url"));
-    }
-  }
-
-  private void loadConfig() {
-    try(InputStream input = IntegrationTestsConfig.class.getResourceAsStream(CONFIG_FILE)){
-      CONFIG.load(input);
-    }catch(IOException e){
-      throw new RuntimeException("Missing integration-tests configuration!", e);
     }
   }
 }

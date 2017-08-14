@@ -44,7 +44,7 @@ public class UsernamePasswordLoginIT {
             config.youtrackPwd()
     ).login();
     
-    assertThat(session.baseURL(), is(config.youtrackURL()));
+    assertThat(session.baseUrl(), is(config.youtrackURL()));
     assertThat(session.cookies().size(), is(2));
   }
 }

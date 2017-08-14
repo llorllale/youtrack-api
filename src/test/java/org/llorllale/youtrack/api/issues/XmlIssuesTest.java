@@ -42,7 +42,7 @@ public class XmlIssuesTest {
   public void withIDThatExists() throws Exception {
     final Session mockSession = mock(Session.class);
     when(mockSession.cookies()).thenReturn(Collections.emptyList());
-    when(mockSession.baseURL()).thenReturn(new URL("http://some.url/"));
+    when(mockSession.baseUrl()).thenReturn(new URL("http://some.url/"));
     final BasicHttpEntity entity = new BasicHttpEntity();
     entity.setContentType("application/xml;charset=UTF-8");
     entity.setContentLength(WITH_ID_RESPONSE.getBytes().length);
@@ -57,7 +57,7 @@ public class XmlIssuesTest {
     final HttpClient mockHttpClient = mock(HttpClient.class);
     when(mockHttpClient.execute(any(HttpUriRequest.class)))
             .thenReturn(httpResponse);
-    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withID("TP-2");
+    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withId("TP-2");
 
     assertTrue(issue.isPresent());
   }
@@ -66,7 +66,7 @@ public class XmlIssuesTest {
   public void withIDThatDoesNotExist() throws Exception {
     final Session mockSession = mock(Session.class);
     when(mockSession.cookies()).thenReturn(Collections.emptyList());
-    when(mockSession.baseURL()).thenReturn(new URL("http://some.url/"));
+    when(mockSession.baseUrl()).thenReturn(new URL("http://some.url/"));
     final BasicHttpEntity entity = new BasicHttpEntity();
     entity.setContentType("application/xml;charset=UTF-8");
     entity.setContentLength(NOT_FOUND_RESPONSE.getBytes().length);
@@ -81,7 +81,7 @@ public class XmlIssuesTest {
     final HttpClient mockHttpClient = mock(HttpClient.class);
     when(mockHttpClient.execute(any(HttpUriRequest.class)))
             .thenReturn(httpResponse);
-    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withID("TP-2");
+    final Optional<Issue> issue = new XmlIssues(mockSession, mockHttpClient).withId("TP-2");
 
     assertFalse(issue.isPresent());
   }

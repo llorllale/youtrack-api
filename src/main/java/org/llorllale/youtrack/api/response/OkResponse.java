@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.response;
 
-import java.io.IOException;
-import java.util.Optional;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
+import java.io.IOException;
+import java.util.Optional;
+
 /**
- * Handles the case when HTTP status code is {@code 200}.
- * @author George Aristy
- * @since 1.0.0
+ * <p>
+ * Returns the payload when the HTTP status code is {@code 200}.
+ * </p>
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class OkResponse implements Response {
   private final Response delegate;
 
   /**
-   * 
-   * @param delegate 
-   * @since 1.0.0
+   * Constructor.
+   * @param delegate the next link in the chain
+   * @since 0.1.0
    */
   public OkResponse(Response delegate) {
     this.delegate = delegate;
@@ -40,11 +44,10 @@ public class OkResponse implements Response {
 
   @Override
   public Optional<HttpEntity> payload() 
-          throws UnauthorizedException, IOException 
-  {
-    if(delegate.rawResponse().getStatusLine().getStatusCode() == 200){
+          throws UnauthorizedException, IOException {
+    if (delegate.rawResponse().getStatusLine().getStatusCode() == 200) {
       return Optional.ofNullable(delegate.rawResponse().getEntity());
-    }else{
+    } else {
       return delegate.payload();
     }
   }

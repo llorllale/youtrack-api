@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.issues;
 
-import java.time.Instant;
-import java.util.Optional;
 import org.llorllale.youtrack.api.jaxb.Field;
 import org.llorllale.youtrack.api.jaxb.Value;
 
+import java.time.Instant;
+import java.util.Optional;
+
 /**
  * JAXB implementation of {@link Issue}.
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class XmlIssue implements Issue {
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
 
   /**
    * 
-   * @param jaxbIssue 
-   * @since 1.0.0
+   * @param jaxbIssue the JAXB issue to be adapted
+   * @since 0.1.0
    */
   public XmlIssue(org.llorllale.youtrack.api.jaxb.Issue jaxbIssue) {
     this.jaxbIssue = jaxbIssue;

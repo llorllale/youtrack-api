@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.util;
 
 import java.io.StringReader;
@@ -24,19 +25,19 @@ import javax.xml.transform.stream.StreamSource;
 /**
  * Utility class to unmarshal an XML document in string form to its JAXB 
  * representation.
- * @author George Aristy
- * @param <T>
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @param <T> the type class of the XML root element
+ * @since 0.1.0
  */
 public class XmlStringAsJaxb<T> {
   private final Class<T> rootType;
   private final String xml;
 
   /**
-   * 
-   * @param rootType
-   * @param xml 
-   * @since 1.0.0
+   * Ctor.
+   * @param rootType the type class of the XML root element
+   * @param xml the XML document
+   * @since 0.1.0
    */
   public XmlStringAsJaxb(Class<T> rootType, String xml) {
     this.rootType = rootType;
@@ -44,12 +45,13 @@ public class XmlStringAsJaxb<T> {
   }
 
   /**
-   * 
-   * @return
-   * @throws JAXBException 
-   * @since 1.0.0
+   * Unmarshals the given XML document into an instance of the given JAXB class 
+   * {@code T}.
+   * @return an instance of the given JAXB class {@code T}.
+   * @throws JAXBException if there's an error while unmarshalling the XML
+   * @since 0.1.0
    */
-  public T asJaxb() throws JAXBException {
+  public T jaxb() throws JAXBException {
     final JAXBContext ctx = JAXBContext.newInstance(rootType);
     final Unmarshaller um = ctx.createUnmarshaller();
     return um.unmarshal(new StreamSource(new StringReader(xml)), rootType)

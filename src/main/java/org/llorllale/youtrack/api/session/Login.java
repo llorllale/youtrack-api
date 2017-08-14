@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.session;
 
 import java.io.IOException;
@@ -20,22 +21,25 @@ import java.io.IOException;
 /**
  * <p>
  * Performs the {@link #login() login}.
+ * 
+ * YouTrack supports different login strategies (username/password, token, 
+ * etc.), hence it's up to implementations to know what to do with 
+ * {@link #login() login()}.
  * </p>
- * YouTrack supports different login strategies (username/password, token, etc.),
- * hence it's up to implementations to know what to do with {@link #login() login()}.
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  * @see UsernamePasswordLogin
  * @see AnonymousLogin
  */
 public interface Login {
   /**
-   * Performs the login function and returns a {@link Session} with sufficient state
-   * to allow further transactions with YouTrack.
+   * Performs the login function and returns a {@link Session} with sufficient
+   * state to allow further transactions with YouTrack.
    * @return a session object with state usable for further transactions.
-   * @throws AuthenticationException if the login process fails due to invalid credentials
+   * @throws AuthenticationException if the login process fails due to invalid
+   *     credentials
    * @throws IOException if the YouTrack endpoint is unreachable
-   * @since 1.0.0
+   * @since 0.1.0
    */
   public Session login() throws AuthenticationException, IOException;
 }

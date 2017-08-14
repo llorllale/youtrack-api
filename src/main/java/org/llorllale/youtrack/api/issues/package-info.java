@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 /**
- * 
- * @since 1.0.0
+ * Collection of APIs to read and manipulate 
+ * {@link org.llorllale.youtrack.api.issues.Issue issues}.
+ * @since 0.1.0
  */
 package org.llorllale.youtrack.api.issues;

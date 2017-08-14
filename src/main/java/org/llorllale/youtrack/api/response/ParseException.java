@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.response;
 
 /**
@@ -22,26 +23,26 @@ package org.llorllale.youtrack.api.response;
  * This is a runtime exception due to the assumption that this kind of error
  * should not be expected.
  * </p>
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class ParseException extends RuntimeException {
   private static final long serialVersionUID = -8989519985743709400L;
 
   /**
-   * 
-   * @param message 
-   * @since 1.0.0
+   * Ctor.
+   * @param message exception message
+   * @since 0.1.0
    */
   public ParseException(String message) {
     super(message);
   }
 
   /**
-   * 
-   * @param message
-   * @param cause 
-   * @since 1.0.0
+   * Ctor.
+   * @param message exception message
+   * @param cause cause of exception
+   * @since 0.1.0
    */
   public ParseException(String message, Throwable cause) {
     super(message, cause);

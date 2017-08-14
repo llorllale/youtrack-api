@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 /**
  * <p>
  * Collection of APIs necessary to obtain access to YouTrack's resources.
- * 
+ *
  * Use the {@link org.llorllale.youtrack.api.session.Login} interface to obtain
  * a {@link org.llorllale.youtrack.api.session.Session} that you can then use
  * with the other CRUD APIs.
  * </p>
- * @since 1.0.0
+ * @since 0.1.0
  */
 package org.llorllale.youtrack.api.session;

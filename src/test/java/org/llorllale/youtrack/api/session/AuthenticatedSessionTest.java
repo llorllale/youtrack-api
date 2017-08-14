@@ -32,12 +32,11 @@ import static org.junit.Assert.*;
  */
 public class AuthenticatedSessionTest {
   /**
-   * Test of baseURL method, of class AuthenticatedSession.
+   * Test of baseUrl method, of class AuthenticatedSession.
    */
   @Test
   public void baseURL() throws Exception {
-    assertThat(
-          new AuthenticatedSession(new URL("http://some.url"), Collections.emptyList()).baseURL(),
+    assertThat(new AuthenticatedSession(new URL("http://some.url"), Collections.emptyList()).baseUrl(),
           is(new URL("http://some.url"))
     );
   }

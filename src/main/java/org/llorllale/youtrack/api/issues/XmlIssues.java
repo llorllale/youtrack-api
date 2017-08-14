@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.issues;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Optional;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
@@ -28,10 +26,14 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Optional;
+
 /**
  * Parses the XML payloads of the YouTrack interface.
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class XmlIssues implements Issues {
   private static final String ISSUE_RESOURCE = "issue/";
@@ -41,10 +43,10 @@ public class XmlIssues implements Issues {
 
 
   /**
-   * 
-   * @param session
-   * @param httpClient 
-   * @since 1.0.0
+   * Primary constructor.
+   * @param session the login session
+   * @param httpClient the {@link HttpClient} to use
+   * @since 0.1.0
    */
   public XmlIssues(Session session, HttpClient httpClient) {
     this.session = session;
@@ -52,26 +54,26 @@ public class XmlIssues implements Issues {
   }
 
   /**
-   * 
-   * @param session 
-   * @since 1.0.0
+   * Assumes the {@link HttpClients#createDefault() default} httpclient.
+   * @param session the login session
+   * @since 0.1.0
+   * @see #XmlIssues(org.llorllale.youtrack.api.session.Session, org.apache.http.client.HttpClient) 
    */
   public XmlIssues(Session session) {
     this(session, HttpClients.createDefault());
   }
   
   @Override
-  public Optional<Issue> withID(String issueID) 
-      throws UnauthorizedException, IOException 
-  {
+  public Optional<Issue> withId(String issueId) 
+      throws UnauthorizedException, IOException {
     final URIBuilder ub;
 
-    try{
+    try {
       ub = new URIBuilder(
-          session.baseURL()
+          session.baseUrl()
               .toString()
               .concat(ISSUE_RESOURCE)
-              .concat(issueID)
+              .concat(issueId)
       );
       final HttpGet get = new HttpGet(ub.build());
       get.addHeader("Accept", "application/xml");
@@ -81,7 +83,7 @@ public class XmlIssues implements Issues {
       return response.payload()
           .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class))
           .map(XmlIssue::new);
-    }catch(URISyntaxException e){
+    } catch (URISyntaxException e) {
       throw new RuntimeException("ISSUE_RESOURCE has an unexpected syntax issue.", e);
     }
   }

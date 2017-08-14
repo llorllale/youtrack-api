@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.session;
 
 import java.io.IOException;
@@ -25,23 +26,23 @@ import java.net.URL;
  * </p>
  * Calling {@link #login() login()} on an {@code AnonymousLogin} is 
  * guaranteed to always succeed.
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class AnonymousLogin implements Login {
-  private final URL youtrackURL;
+  private final URL youtrackUrl;
 
   /**
-   * 
-   * @param youtrackURL 
-   * @since 1.0.0
+   * Ctor.
+   * @param youtrackUrl the YouTrack API's url.
+   * @since 0.1.0
    */
-  public AnonymousLogin(URL youtrackURL) {
-    this.youtrackURL = youtrackURL;
+  public AnonymousLogin(URL youtrackUrl) {
+    this.youtrackUrl = youtrackUrl;
   }
   
   @Override
   public Session login() throws AuthenticationException, IOException {
-    return new AnonymousSession(youtrackURL);
+    return new AnonymousSession(youtrackUrl);
   }
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.session;
 
 import org.llorllale.youtrack.api.YouTrackException;
@@ -20,16 +21,16 @@ import org.llorllale.youtrack.api.YouTrackException;
 /**
  * Signals that the attempted action is forbidden for the current user 
  * {@link Session session}.
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class UnauthorizedException extends YouTrackException {
   private static final long serialVersionUID = -2245180199390157205L;
   
   /**
-   * 
-   * @param message 
-   * @since 1.0.0
+   * Ctor.
+   * @param message the exception message
+   * @since 0.1.0
    */
   public UnauthorizedException(String message) {
     super(message);

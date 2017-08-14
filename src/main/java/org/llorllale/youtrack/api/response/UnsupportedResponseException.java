@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.response;
 
 /**
  * Signals that a response received from YouTrack is of a type that is 
  * currently not supported by this library.
- * @author George Aristy
- * @since 1.0.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
+ * @see UnsupportedResponse
  */
 public class UnsupportedResponseException extends RuntimeException {
   private static final long serialVersionUID = -4501820211696912590L;
 
   /**
-   * 
-   * @param message 
-   * @since 1.0.0
+   * Ctor.
+   * @param message the exception message
+   * @since 0.1.0
    */
   public UnsupportedResponseException(String message) {
     super(message);
