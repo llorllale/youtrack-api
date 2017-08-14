@@ -15,5 +15,5 @@ jdk:
   - openjdk8
 
 script: 
-  - mvn clean install -P release-profile
-  - mvn clean install -P integration-tests
+  - mvn -P release-profile clean install
+  - mvn -P integration-tests verify
