@@ -17,8 +17,10 @@
 package org.llorllale.youtrack.api.session;
 
 import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,12 +37,20 @@ public class AuthenticatedSession implements Session {
   /**
    * Base constructor.
    * @param youtrackUrl the remote API url
-   * @param tokens the session's state
+   * @param headers the session's state
    * @since 0.1.0
    */
-  public AuthenticatedSession(URL youtrackUrl, List<Header> tokens) {
+  public AuthenticatedSession(URL youtrackUrl, List<Header> headers) {
     this.youtrackUrl = youtrackUrl;
-    this.cookies = Collections.unmodifiableList(tokens);
+    this.cookies = new ArrayList<>();
+    headers.stream()
+        .filter(h -> "Set-Cookie".equals(h.getName()))
+        .map(h -> new BasicHeader("Cookie", h.getValue()))
+        .map(h -> new BasicHeader("Cookie", h.getValue().split(";")[0]))
+        .reduce((h1, h2) -> new BasicHeader("Cookie", h1.getValue()
+            .concat(";")
+            .concat(h2.getValue()))
+        ).ifPresent(this.cookies::add);
   }
 
   @Override
@@ -50,6 +60,6 @@ public class AuthenticatedSession implements Session {
 
   @Override
   public List<Header> cookies() {
-    return cookies;
+    return Collections.unmodifiableList(cookies);
   }
 }

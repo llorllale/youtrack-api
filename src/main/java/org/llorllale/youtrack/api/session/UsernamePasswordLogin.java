@@ -102,24 +102,21 @@ public class UsernamePasswordLogin implements Login {
       );
     }
 
-    final NonCheckedUriBuilder uri = 
+    final NonCheckedUriBuilder ub = 
             new NonCheckedUriBuilder(youtrackUrl.toString() + LOGIN_RESOURCE);
-    uri.setParameter("login", username)
+    ub.setParameter("login", username)
         .setParameter("password", new String(password));
 
     this.username = null;
     this.password = null;
 
-    final HttpPost post = new HttpPost(uri.build());
+    final HttpPost post = new HttpPost(ub.build());
     final HttpResponse response = httpClient.execute(post);
 
     if (response.getStatusLine().getStatusCode() != 200) {
       throw new AuthenticationException("Invalid credentials.");
     }
 
-    final List<Header> tokens = 
-        Arrays.stream(response.getHeaders("Set-Cookie"))
-            .collect(toList());
-    return new AuthenticatedSession(youtrackUrl, tokens);
+    return new AuthenticatedSession(youtrackUrl, Arrays.asList(response.getAllHeaders()));
   }
 }

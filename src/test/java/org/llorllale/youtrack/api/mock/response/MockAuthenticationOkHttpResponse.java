@@ -137,7 +137,7 @@ public class MockAuthenticationOkHttpResponse implements HttpResponse {
 
   @Override
   public Header[] getAllHeaders() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return headers.toArray(new Header[]{});
   }
 
   @Override
