@@ -119,10 +119,7 @@ public class UsernamePasswordLogin implements Login {
         throw new AuthenticationException("Invalid credentials.");
       }
 
-      final List<Header> tokens = 
-          Arrays.stream(response.getHeaders("Set-Cookie"))
-              .collect(toList());
-      return new AuthenticatedSession(youtrackUrl, tokens);
+      return new AuthenticatedSession(youtrackUrl, Arrays.asList(response.getAllHeaders()));
     } catch (URISyntaxException e) {
       throw new RuntimeException("LOGIN_RESOURCE has an unexpected error in syntax.", e);
     }

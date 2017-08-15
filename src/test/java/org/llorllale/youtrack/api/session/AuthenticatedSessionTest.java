@@ -21,14 +21,16 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
- * @author George Aristy george.aristy AT gmail DOT com
+ * Unit tests for {@link AuthenticatedSession}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class AuthenticatedSessionTest {
   /**
@@ -37,23 +39,48 @@ public class AuthenticatedSessionTest {
   @Test
   public void baseURL() throws Exception {
     assertThat(new AuthenticatedSession(new URL("http://some.url"), Collections.emptyList()).baseUrl(),
-          is(new URL("http://some.url"))
+        is(new URL("http://some.url"))
     );
   }
 
   /**
-   * Test of cookies method, of class AuthenticatedSession.
+   * Fix for issue 13: Incorrect handling of session cookies
+   * @since 0.1.0
    */
   @Test
-  public void cookies() throws Exception {
-    final List<Header> cookies = Arrays.asList(
-            new BasicHeader("h1", "12345"),
-            new BasicHeader("h2", "432665"),
-            new BasicHeader("h3", "2134982")
+  public void correctHandlingOfCookieNames() throws Exception {
+    assertTrue(
+        new AuthenticatedSession(
+            new URL("http://some.url"), 
+            Arrays.asList(
+                new BasicHeader("Set-Cookie", "Set-Cookie: YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"),
+                new BasicHeader("Set-Cookie", "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT")
+            )
+        ).cookies()
+        .stream()
+        .allMatch(h -> "Cookie".equals(h.getName()))
     );
-    assertThat(
-          new AuthenticatedSession(new URL("http://some.url"), cookies).cookies(),
-          containsInAnyOrder(cookies.toArray(new Header[]{}))
+  }
+
+  /**
+   * Fix for issue 13: Incorrect handling of session cookies
+   * @since 0.1.0
+   */
+  @Test
+  public void correctHandlingOfCookieValues() throws Exception {
+    assertTrue(
+        new AuthenticatedSession(
+            new URL("http://some.url"), 
+            Arrays.asList(
+                new BasicHeader("Set-Cookie", "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"),
+                new BasicHeader("Set-Cookie", "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT")
+            )
+        ).cookies()
+        .stream()
+        .allMatch(h -> 
+            "Cookie".equals(h.getName()) &&
+            "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290".equals(h.getValue())
+        )
     );
   }
 }
