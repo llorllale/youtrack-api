@@ -36,8 +36,12 @@ public class AuthenticatedSessionTest {
    */
   @Test
   public void baseURL() throws Exception {
-    assertThat(new AuthenticatedSession(new URL("http://some.url"), Collections.emptyList()).baseUrl(),
-          is(new URL("http://some.url"))
+    assertThat(
+        new AuthenticatedSession(
+            new URL("http://some.url"), 
+            Collections.emptyList()
+        ).baseUrl(),
+        is(new URL("http://some.url"))
     );
   }
 
@@ -52,8 +56,8 @@ public class AuthenticatedSessionTest {
             new BasicHeader("h3", "2134982")
     );
     assertThat(
-          new AuthenticatedSession(new URL("http://some.url"), cookies).cookies(),
-          containsInAnyOrder(cookies.toArray(new Header[]{}))
+        new AuthenticatedSession(new URL("http://some.url"), cookies).cookies(),
+        containsInAnyOrder(cookies.toArray(new Header[]{}))
     );
   }
 }

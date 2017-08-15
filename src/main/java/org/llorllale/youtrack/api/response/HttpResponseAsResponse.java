@@ -49,7 +49,11 @@ public class HttpResponseAsResponse implements Response {
             new FoundResponse(
                 new NotFoundResponse(
                     new UnauthorizedResponse(
-                        new UnsupportedResponse(httpResponse)
+                        new ForbiddenResponse(
+                            new CreatedResponse(
+                                new UnsupportedResponse(httpResponse)
+                            )
+                        )
                     )
                 )
             )

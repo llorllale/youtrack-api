@@ -15,69 +15,65 @@
  */
 package org.llorllale.youtrack.api.issues;
 
+import java.io.IOException;
 import java.net.URL;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.message.BasicHttpResponse;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockAuthenticatedSession;
-import org.llorllale.youtrack.api.mock.MockCreatedHttpResponse;
+import org.llorllale.youtrack.api.mock.response.MockForbiddenHttpResponse;
 import org.llorllale.youtrack.api.mock.MockHttpClient;
+import org.llorllale.youtrack.api.mock.response.MockIssueCreatedHttpResponse;
+import org.llorllale.youtrack.api.mock.MockThrowingHttpClient;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- *
+ * Unit tests for {@link CreateIssue}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
 public class CreateIssueTest {
-  @Test
-  public void summary() throws Exception {
-    assertThat(
-        new CreateIssue(
-            new MockAuthenticatedSession(new URL("http://some.url")), 
-            "",
-            new MockHttpClient(
-                new MockCreatedHttpResponse()
-            )
-        ).withSummary("Test Summary")
-        .create()
-        .summary(),
-      is("Test Summary")
-    );
+  /**
+   * {@link CreateIssue} must propagate any IOException thrown by the HttpClient.
+   * @throws Exception 
+   * @since 0.1.0
+   */
+  @Test(expected = IOException.class)
+  public void propagationOfIoException() throws Exception {
+    new CreateIssue(
+        new MockAuthenticatedSession(new URL("http://some.url")), 
+        new MockThrowingHttpClient()
+    ).create();
   }
 
-  @Test
-  public void description() throws Exception {
-    assertThat(
-        new CreateIssue(
-            new MockAuthenticatedSession(new URL("http://some.url")), 
-            "",
-            new MockHttpClient(
-                new MockCreatedHttpResponse()
-            )
-        ).withDescription("Test Description")
-            .create()
-            .summary(),
-      is("Test Description")
-    );
+  /**
+   * {@link CreateIssue} must throw {@link UnauthorizedException} if a {@code 403} response is 
+   * received from YouTrack.
+   * @throws Exception 
+   * @since 0.1.0
+   */
+  @Test(expected = UnauthorizedException.class)
+  public void unauthorizedException() throws Exception {
+    new CreateIssue(
+        new MockAuthenticatedSession(new URL("http://some.url")),
+        new MockHttpClient(new MockForbiddenHttpResponse())
+    ).create();
   }
 
+  /**
+   * {@link CreateIssue} must return an {@link Issue#id() ID} of valid length.
+   * @throws Exception 
+   * @since 0.1.0
+   */
   @Test
-  public void create() throws Exception {
+  public void issueIdLength() throws Exception {
     assertThat(
         new CreateIssue(
             new MockAuthenticatedSession(new URL("http://some.url")), 
-            "",
-            new MockHttpClient(
-                new MockCreatedHttpResponse()
-            )
-        ).withSummary("Test Summary")
-            .withDescription("Test Description")
-            .create()
-            .summary(),
-      is("Test Description")
+            new MockHttpClient(new MockIssueCreatedHttpResponse())
+        ).create().length(),
+        is(greaterThan(0))
     );
   }
-  
 }

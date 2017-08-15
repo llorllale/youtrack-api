@@ -16,8 +16,8 @@
 
 package org.llorllale.youtrack.api.issues;
 
-import org.llorllale.youtrack.api.jaxb.Field;
-import org.llorllale.youtrack.api.jaxb.Value;
+import org.llorllale.youtrack.api.issues.jaxb.Field;
+import org.llorllale.youtrack.api.issues.jaxb.Value;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -27,15 +27,15 @@ import java.util.Optional;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class XmlIssue implements Issue {
-  private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
+class XmlIssue implements Issue {
+  private final org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue;
 
   /**
    * Ctor.
    * @param jaxbIssue the JAXB issue to be adapted
    * @since 0.1.0
    */
-  public XmlIssue(org.llorllale.youtrack.api.jaxb.Issue jaxbIssue) {
+  public XmlIssue(org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue) {
     this.jaxbIssue = jaxbIssue;
   }
 

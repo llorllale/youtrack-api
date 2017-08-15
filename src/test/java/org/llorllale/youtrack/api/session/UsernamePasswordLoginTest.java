@@ -16,17 +16,13 @@
 package org.llorllale.youtrack.api.session;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.net.URL;
-import org.apache.http.ProtocolVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.message.BasicStatusLine;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.llorllale.youtrack.api.mock.MockHttpClient;
+import org.llorllale.youtrack.api.mock.MockThrowingHttpClient;
+import org.llorllale.youtrack.api.mock.response.MockForbiddenHttpResponse;
+import org.llorllale.youtrack.api.mock.response.MockAuthenticationOkHttpResponse;
 
 /**
  *
@@ -39,18 +35,13 @@ public class UsernamePasswordLoginTest {
    */
   @Test
   public void successfulLogin() throws Exception {
-    final HttpClient mockHttp = mock(HttpClient.class);
-    when(mockHttp.execute(any(HttpUriRequest.class)))
-            .thenReturn(new BasicHttpResponse(
-                    new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "OK")
-            ));
-
-    new UsernamePasswordLogin(
+    assertNotNull(new UsernamePasswordLogin(
             new URL("http://some.url"), 
             "test", 
             "123".toCharArray(), 
-            mockHttp
-    ).login();
+            new MockHttpClient(new MockAuthenticationOkHttpResponse())
+        ).login()
+    );
   }
 
   /**
@@ -59,17 +50,11 @@ public class UsernamePasswordLoginTest {
    */
   @Test(expected = AuthenticationException.class)
   public void authenticationError() throws Exception {
-    final HttpClient mockHttp = mock(HttpClient.class);
-    when(mockHttp.execute(any(HttpUriRequest.class)))
-            .thenReturn(new BasicHttpResponse(
-                    new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 403, "Forbidden")
-            ));
-
     new UsernamePasswordLogin(
             new URL("http://some.url"), 
             "test", 
             "123".toCharArray(), 
-            mockHttp
+            new MockHttpClient(new MockForbiddenHttpResponse())
     ).login();
   }
 
@@ -79,15 +64,11 @@ public class UsernamePasswordLoginTest {
    */
   @Test(expected = IOException.class)
   public void networkError() throws Exception {
-    final HttpClient mockHttp = mock(HttpClient.class);
-    when(mockHttp.execute(any(HttpUriRequest.class)))
-            .thenThrow(new SocketException());
-
     new UsernamePasswordLogin(
             new URL("http://some.url"), 
             "test", 
             "123".toCharArray(), 
-            mockHttp
+            new MockThrowingHttpClient()
     ).login();
   }
 
@@ -97,17 +78,11 @@ public class UsernamePasswordLoginTest {
    */
   @Test(expected = IllegalStateException.class)
   public void errorWhenLoginCalledMoreThanOnce() throws Exception {
-    final HttpClient mockHttp = mock(HttpClient.class);
-    when(mockHttp.execute(any(HttpUriRequest.class)))
-            .thenReturn(new BasicHttpResponse(
-                    new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "OK")
-            ));
-
     final Login login = new UsernamePasswordLogin(
             new URL("http://some.url"), 
             "test", 
             "123".toCharArray(), 
-            mockHttp
+            new MockHttpClient(new MockAuthenticationOkHttpResponse())
     );
 
     login.login();

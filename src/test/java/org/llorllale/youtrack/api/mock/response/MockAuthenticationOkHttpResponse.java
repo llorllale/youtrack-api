@@ -14,44 +14,52 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.mock;
+package org.llorllale.youtrack.api.mock.response;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import static java.util.stream.Collectors.toList;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
-import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
 /**
- *
+ * Mock {@link HttpResponse} simulating a response with code 200.
+ * 
+ * Suitable for unit tests only.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class MockCreatedHttpResponse implements HttpResponse {
-  private final HttpResponse original;
+public class MockAuthenticationOkHttpResponse implements HttpResponse {
+  private final StatusLine statusLine;
+  private final List<Header> headers;
 
   /**
-   * 
+   * Ctor.
    * @since 0.1.0
    */
-  public MockCreatedHttpResponse() {
-    this.original = new BasicHttpResponse(
-        new BasicStatusLine(
-            new ProtocolVersion("HTTP", 1, 1), 
-            201, 
-            "Created" 
-        )
+  public MockAuthenticationOkHttpResponse() {
+    this.statusLine = new BasicStatusLine(
+        new ProtocolVersion("HTTP", 1, 1), 
+        200, 
+        "OK"
+    );
+    this.headers = Arrays.asList(
+        new BasicHeader("Set-Cookie", "12345"),
+        new BasicHeader("Set-Cookie", "0892405u08")
     );
   }
 
   @Override
   public StatusLine getStatusLine() {
-    return original.getStatusLine();
+    return statusLine;
   }
 
   @Override
@@ -81,7 +89,7 @@ public class MockCreatedHttpResponse implements HttpResponse {
 
   @Override
   public HttpEntity getEntity() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return null;
   }
 
   @Override
@@ -101,7 +109,7 @@ public class MockCreatedHttpResponse implements HttpResponse {
 
   @Override
   public ProtocolVersion getProtocolVersion() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return statusLine.getProtocolVersion();
   }
 
   @Override
@@ -111,7 +119,10 @@ public class MockCreatedHttpResponse implements HttpResponse {
 
   @Override
   public Header[] getHeaders(String name) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return headers.stream()
+        .filter(h -> h.getName().equals(name))
+        .collect(toList())
+        .toArray(new Header[]{});
   }
 
   @Override
@@ -183,5 +194,4 @@ public class MockCreatedHttpResponse implements HttpResponse {
   public void setParams(HttpParams params) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
-
 }
