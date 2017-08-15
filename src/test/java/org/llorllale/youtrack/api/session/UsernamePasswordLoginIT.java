@@ -16,6 +16,8 @@
 package org.llorllale.youtrack.api.session;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,6 +47,6 @@ public class UsernamePasswordLoginIT {
     ).login();
     
     assertThat(session.baseUrl(), is(config.youtrackUrl()));
-    assertThat(session.cookies().size(), is(2));
+    assertThat(session.cookies(), is(not(empty())));
   }
 }
