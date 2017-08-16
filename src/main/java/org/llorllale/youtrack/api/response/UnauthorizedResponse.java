@@ -44,7 +44,10 @@ public class UnauthorizedResponse implements Response {
   public Optional<HttpEntity> payload() 
       throws UnauthorizedException, IOException {
     if (delegate.rawResponse().getStatusLine().getStatusCode() == 401) {
-      throw new UnauthorizedException("User unauthorized to access resource.");
+      throw new UnauthorizedException(
+          "User unauthorized to access resource.", 
+          delegate.rawResponse()
+      );
     } else {
       return delegate.payload();
     }

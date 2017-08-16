@@ -1,5 +1,5 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,45 +24,35 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * <p>
- * "Catch-all" {@link Response} that throws {@link UnsupportedResponseException}
- * if an unexpected response is returned from YouTrack.
- * </p>
- * 
- * <p>
- * This exception should ideally never be raised if all responses have been 
- * accounted for!
- * </p>
+ * Throws an {@link UnauthorizedException} if status error code {@code 403} is received from 
+ * YouTrack.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
- * @see UnsupportedOperationException
  */
-public class UnsupportedResponse implements Response {
-  private final HttpResponse httpResponse;
+public class ForbiddenResponse implements Response {
+  private final Response delegate;
 
   /**
    * Ctor.
-   * @param httpResponse the {@link HttpResponse} to be adapted
+   * @param delegate the next link in the chain
    * @since 0.1.0
+   * @see HttpResponseAsResponse
    */
-  public UnsupportedResponse(HttpResponse httpResponse) {
-    this.httpResponse = httpResponse;
+  public ForbiddenResponse(Response delegate) {
+    this.delegate = delegate;
   }
 
   @Override
-  public Optional<HttpEntity> payload() 
-          throws UnauthorizedException, IOException {
-    throw new UnsupportedResponseException(
-        String.format(
-            "Unsupported http status code '%s'", 
-            httpResponse.getStatusLine().getStatusCode()
-        ),
-        httpResponse
-    );
+  public Optional<HttpEntity> payload() throws UnauthorizedException, IOException {
+    if (delegate.rawResponse().getStatusLine().getStatusCode() == 403) {
+      throw new UnauthorizedException("403: Forbidden", delegate.rawResponse());
+    } else {
+      return delegate.payload();
+    }
   }
 
   @Override
   public HttpResponse rawResponse() {
-    return httpResponse;
+    return delegate.rawResponse();
   }
 }

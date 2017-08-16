@@ -16,11 +16,12 @@
 package org.llorllale.youtrack.api.util;
 
 import org.junit.Test;
-import org.llorllale.youtrack.api.jaxb.Issue;
+import org.llorllale.youtrack.api.issues.jaxb.Issue;
 
 /**
  *
  * @author George Aristy
+ * @since 0.1.0
  */
 public class XmlStringAsJaxbTest {
   /**

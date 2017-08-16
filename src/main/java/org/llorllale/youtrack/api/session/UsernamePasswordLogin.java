@@ -23,11 +23,10 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -103,25 +102,21 @@ public class UsernamePasswordLogin implements Login {
       );
     }
 
-    try {
-      final URIBuilder uri = 
-              new URIBuilder(youtrackUrl.toString() + LOGIN_RESOURCE);
-      uri.setParameter("login", username)
-          .setParameter("password", new String(password));
+    final NonCheckedUriBuilder ub = 
+            new NonCheckedUriBuilder(youtrackUrl.toString() + LOGIN_RESOURCE);
+    ub.setParameter("login", username)
+        .setParameter("password", new String(password));
 
-      this.username = null;
-      this.password = null;
+    this.username = null;
+    this.password = null;
 
-      final HttpPost post = new HttpPost(uri.build());
-      final HttpResponse response = httpClient.execute(post);
+    final HttpPost post = new HttpPost(ub.build());
+    final HttpResponse response = httpClient.execute(post);
 
-      if (response.getStatusLine().getStatusCode() != 200) {
-        throw new AuthenticationException("Invalid credentials.");
-      }
-
-      return new AuthenticatedSession(youtrackUrl, Arrays.asList(response.getAllHeaders()));
-    } catch (URISyntaxException e) {
-      throw new RuntimeException("LOGIN_RESOURCE has an unexpected error in syntax.", e);
+    if (response.getStatusLine().getStatusCode() != 200) {
+      throw new AuthenticationException("Invalid credentials.");
     }
+
+    return new AuthenticatedSession(youtrackUrl, Arrays.asList(response.getAllHeaders()));
   }
 }

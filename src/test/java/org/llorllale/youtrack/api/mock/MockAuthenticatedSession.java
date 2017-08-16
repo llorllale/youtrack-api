@@ -1,5 +1,5 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,47 +14,40 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.session;
-
-import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
+package org.llorllale.youtrack.api.mock;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.http.Header;
+import org.apache.http.message.BasicHeader;
+import org.llorllale.youtrack.api.session.Session;
 
 /**
- * A {@link Session} obtained from a {@link Login} that requires user 
- * authentication (ie. not {@link AnonymousLogin}).
+ * A mock {@link Session} suitable for unit tests.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class AuthenticatedSession implements Session {
-  private final URL youtrackUrl;
+public class MockAuthenticatedSession implements Session {
+  private final URL baseUrl;
   private final List<Header> cookies;
 
   /**
-   * Base constructor.
-   * @param youtrackUrl the remote API url
-   * @param headers the session's state
+   * 
+   * @param baseUrl
    * @since 0.1.0
    */
-  public AuthenticatedSession(URL youtrackUrl, List<Header> headers) {
-    this.youtrackUrl = youtrackUrl;
+  public MockAuthenticatedSession(URL baseUrl) {
+    this.baseUrl = baseUrl;
     this.cookies = new ArrayList<>();
-    headers.stream()
-        .filter(h -> "Set-Cookie".equals(h.getName()))
-        .map(h -> new BasicHeader("Cookie", h.getValue().split(";")[0]))
-        .reduce((h1, h2) -> new BasicHeader("Cookie", h1.getValue()
-            .concat("; ")
-            .concat(h2.getValue()))
-        ).ifPresent(this.cookies::add);
+    this.cookies.add(new BasicHeader("Set-Cookie", "12345"));
+    this.cookies.add(new BasicHeader("Set-Cookie", "98273"));
   }
 
   @Override
   public URL baseUrl() {
-    return youtrackUrl;
+    return baseUrl;
   }
 
   @Override
