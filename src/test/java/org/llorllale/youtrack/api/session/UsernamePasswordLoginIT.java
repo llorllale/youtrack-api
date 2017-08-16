@@ -24,8 +24,9 @@ import org.junit.Test;
 import org.llorllale.youtrack.api.IntegrationTestsConfig;
 
 /**
- *
- * @author George Aristy george.aristy AT gmail DOT com
+ * Integration tests for {@link UsernamePasswordLogin}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class UsernamePasswordLoginIT {
   private static IntegrationTestsConfig config;
@@ -37,6 +38,7 @@ public class UsernamePasswordLoginIT {
   
   /**
    * Test of login method, of class UsernamePasswordLogin.
+   * @since 0.1.0
    */
   @Test
   public void successfulLogin() throws Exception {

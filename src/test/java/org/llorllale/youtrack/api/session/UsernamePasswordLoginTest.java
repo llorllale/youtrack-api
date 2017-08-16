@@ -25,13 +25,15 @@ import org.llorllale.youtrack.api.mock.response.MockForbiddenHttpResponse;
 import org.llorllale.youtrack.api.mock.response.MockAuthenticationOkHttpResponse;
 
 /**
- *
- * @author George Aristy george.aristy AT gmail DOT com
+ * Unit tests for {@link UsernamePasswordLogin}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.1.0
  */
 public class UsernamePasswordLoginTest {
   /**
    * Login should be successful if remote API response is 200
    * @throws Exception
+   * @since 0.1.0
    */
   @Test
   public void successfulLogin() throws Exception {
@@ -47,6 +49,7 @@ public class UsernamePasswordLoginTest {
   /**
    * Authentication error if remote API response is different from 200
    * @throws Exception 
+   * @since 0.1.0
    */
   @Test(expected = AuthenticationException.class)
   public void authenticationError() throws Exception {
@@ -61,6 +64,7 @@ public class UsernamePasswordLoginTest {
   /**
    * IOException error if there is an error establishing connection
    * @throws Exception 
+   * @since 0.1.0
    */
   @Test(expected = IOException.class)
   public void networkError() throws Exception {
@@ -75,6 +79,7 @@ public class UsernamePasswordLoginTest {
   /**
    * IllegalStateException if login() called more than once.
    * @throws Exception 
+   * @since 0.1.0
    */
   @Test(expected = IllegalStateException.class)
   public void errorWhenLoginCalledMoreThanOnce() throws Exception {

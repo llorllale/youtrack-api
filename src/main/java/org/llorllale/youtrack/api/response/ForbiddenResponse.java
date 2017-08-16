@@ -45,7 +45,7 @@ public class ForbiddenResponse implements Response {
   @Override
   public Optional<HttpEntity> payload() throws UnauthorizedException, IOException {
     if (delegate.rawResponse().getStatusLine().getStatusCode() == 403) {
-      throw new UnauthorizedException("Unauthorized.");
+      throw new UnauthorizedException("403: Forbidden", delegate.rawResponse());
     } else {
       return delegate.payload();
     }

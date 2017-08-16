@@ -35,7 +35,7 @@ import java.util.Optional;
  * @since 0.1.0
  */
 public class IssueWithId {
-  private static final String ISSUE_RESOURCE = "issue/";
+  private static final String ISSUE_RESOURCE = "/issue/";
 
   private final String issueId;
   private final Session session;

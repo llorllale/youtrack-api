@@ -45,10 +45,9 @@ public class AuthenticatedSession implements Session {
     this.cookies = new ArrayList<>();
     headers.stream()
         .filter(h -> "Set-Cookie".equals(h.getName()))
-        .map(h -> new BasicHeader("Cookie", h.getValue()))
         .map(h -> new BasicHeader("Cookie", h.getValue().split(";")[0]))
         .reduce((h1, h2) -> new BasicHeader("Cookie", h1.getValue()
-            .concat(";")
+            .concat("; ")
             .concat(h2.getValue()))
         ).ifPresent(this.cookies::add);
   }

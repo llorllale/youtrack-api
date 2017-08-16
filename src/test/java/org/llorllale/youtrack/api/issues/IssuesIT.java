@@ -41,17 +41,23 @@ public class IssuesIT {
     ).login();
   } 
 
+  /**
+   * Creates an issue for existing project with ID "TP" and then queries YouTrack for the same 
+   * issue.
+   * @throws Exception 
+   * @since 0.1.0
+   */
   @Test
   public void createIssueAndRetrieveIt() throws Exception {
     final String issueId = new CreateIssue(session)
-        .forProjectId("TPA")
+        .forProjectId("TP")
         .withSummary("Some Test Issue")
         .withDescription("Test description")
         .create();
 
     final Issue issue = new IssueWithId(issueId, session).query().get();
 
-    assertThat(issue.projectShortName(), is("TPA"));
+    assertThat(issue.projectShortName(), is("TP"));
     assertThat(issue.summary(), is("Some Test Issue"));
     assertThat(issue.description(), is("Test description"));
   }

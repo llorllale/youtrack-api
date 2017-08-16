@@ -74,12 +74,6 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <netbeans.hint.license>apache20</netbeans.hint.license>
     <netbeans.hint.projectversion>${project.version}</netbeans.hint.projectversion>
-    <youtrack.version>2017.2.34480</youtrack.version>
-    <youtrack.test.docker.name>${project.artifactId}-test-${project.version}</youtrack.test.docker.name>
-    <youtrack.test.user>root</youtrack.test.user>
-    <youtrack.test.pwd>youtrack</youtrack.test.pwd>
-    <youtrack.test.baseUrl>http://localhost:18080</youtrack.test.baseUrl>
-    <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
   </properties>
 
   <dependencies>
@@ -111,6 +105,14 @@
   <profiles>
     <profile>
       <id>integration-tests</id>
+      <properties>
+        <youtrack.version>2017.2.34480</youtrack.version>
+        <youtrack.test.docker.name>${project.artifactId}-test-${project.version}</youtrack.test.docker.name>
+        <youtrack.test.user>root</youtrack.test.user>
+        <youtrack.test.pwd>youtrack</youtrack.test.pwd>
+        <youtrack.test.baseUrl>http://localhost:18080</youtrack.test.baseUrl>
+        <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
+      </properties>
       <build>
         <testResources>
           <testResource>
@@ -123,6 +125,14 @@
           </testResource>
         </testResources>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.20</version>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
@@ -166,7 +176,7 @@
                   <goal>start</goal>
                 </goals>
                 <configuration>
-                  <showLogs>true</showLogs>
+                  <!--<showLogs>true</showLogs>-->
                   <images>
                     <image>
                       <alias>youtrack-api-integration-test</alias>

@@ -52,10 +52,13 @@ public class UnsupportedResponse implements Response {
   @Override
   public Optional<HttpEntity> payload() 
           throws UnauthorizedException, IOException {
-    throw new UnsupportedResponseException(String.format(
+    throw new UnsupportedResponseException(
+        String.format(
             "Unsupported http status code '%s'", 
             httpResponse.getStatusLine().getStatusCode()
-    ));
+        ),
+        httpResponse
+    );
   }
 
   @Override

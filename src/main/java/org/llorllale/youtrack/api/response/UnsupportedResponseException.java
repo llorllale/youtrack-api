@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api.response;
 
+import org.apache.http.HttpResponse;
+
 /**
  * Signals that a response received from YouTrack is of a type that is 
  * currently not supported by this library.
@@ -25,13 +27,26 @@ package org.llorllale.youtrack.api.response;
  */
 public class UnsupportedResponseException extends RuntimeException {
   private static final long serialVersionUID = -4501820211696912590L;
+  
+  private final HttpResponse httpResponse;
 
   /**
    * Ctor.
    * @param message the exception message
+   * @param httpResponse the unsupported {@link HttpResponse} that was received
    * @since 0.1.0
    */
-  public UnsupportedResponseException(String message) {
+  public UnsupportedResponseException(String message, HttpResponse httpResponse) {
     super(message);
+    this.httpResponse = httpResponse;
+  }
+
+  /**
+   * The unsupported {@link HttpResponse} that was received.
+   * @return the unsupported {@link HttpResponse} that was received
+   * @since 0.1.0
+   */
+  public HttpResponse httpResponse() {
+    return httpResponse;
   }
 }

@@ -36,7 +36,7 @@ import java.util.Optional;
  * @since 0.1.0
  */
 public class CreateIssue {
-  private static final String RESOURCE = "/rest/issue";
+  private static final String RESOURCE = "/issue";
 
   private final Session session;
   private final HttpClient httpClient;
@@ -114,16 +114,16 @@ public class CreateIssue {
         session.baseUrl()
             .toString()
             .concat(RESOURCE)
-    ).addParameter("project", projectId)
-        .addParameter("summary", summary)
-        .addParameter("description", description.orElse(""))
+    ).setParameter("project", projectId)
+        .setParameter("summary", summary)
+        .setParameter("description", description.orElse(""))
         .build();
     final HttpPut put = new HttpPut(uri);
     session.cookies()
         .stream()
         .forEach(put::addHeader);
     final Response response = new HttpResponseAsResponse(httpClient.execute(put));
-    response.payload(); //triggers validation logic
+    response.payload(); //TODO how to better trigger validation logic?
     final Header location = response.rawResponse().getFirstHeader("Location");
     return location
         .getValue()
