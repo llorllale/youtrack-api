@@ -57,7 +57,7 @@ public class IssuesIT {
 
     final Issue issue = new IssueWithId(issueId, session).query().get();
 
-    assertThat(issue.projectShortName(), is("TP"));
+    assertThat(issue.projectId(), is("TP"));
     assertThat(issue.summary(), is("Some Test Issue"));
     assertThat(issue.description(), is("Test description"));
   }
