@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,12 @@
 
 package org.llorllale.youtrack.api.projects;
 
+import static java.util.stream.Collectors.toSet;
+
+import org.llorllale.youtrack.api.issues.jaxb.Sub;
+
 import java.util.Optional;
 import java.util.Set;
-import static java.util.stream.Collectors.toSet;
-import org.llorllale.youtrack.api.issues.jaxb.Sub;
 
 /**
  * Adapter {@link org.llorllale.youtrack.api.issues.jaxb.Project} -> {@link Project}.

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +16,8 @@
 
 package org.llorllale.youtrack.api.projects;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Set;
-import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Collectors.toList;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -29,6 +27,10 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 
 /**
  * Queries the remote YouTrack API for all available {@link Project projects}.
@@ -55,7 +57,8 @@ public class AllProjects {
    * Assumes the {@link HttpClients#createDefault() default http client} to use.
    * @param session the user's {@link Session session}
    * @since 0.2.0
-   * @see #AllProjects(org.llorllale.youtrack.api.session.Session, org.apache.http.client.HttpClient) 
+   * @see #AllProjects(org.llorllale.youtrack.api.session.Session, 
+   *     org.apache.http.client.HttpClient) 
    */
   public AllProjects(Session session) {
     this(session, HttpClients.createDefault());
@@ -70,7 +73,7 @@ public class AllProjects {
    *     access the resource
    * @since 0.2.0
    */
-  public Set<Project> query() throws IOException, UnauthorizedException {
+  public List<Project> query() throws IOException, UnauthorizedException {
     final URI uri = new NonCheckedUriBuilder(
         session.baseUrl()
             .toString()
@@ -85,6 +88,6 @@ public class AllProjects {
         .get()
         .stream()
         .map(XmlProject::new)
-        .collect(toSet());
+        .collect(toList());
   }
 }
