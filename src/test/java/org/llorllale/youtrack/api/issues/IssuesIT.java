@@ -15,7 +15,9 @@
  */
 package org.llorllale.youtrack.api.issues;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,23 +44,40 @@ public class IssuesIT {
   } 
 
   /**
-   * Creates an issue for existing project with ID "TP" and then queries YouTrack for the same 
-   * issue.
+   * Creates some issues for existing project with ID "TP" and then queries YouTrack for the same 
+   * issues.
    * @throws Exception 
    * @since 0.1.0
    */
   @Test
-  public void createIssueAndRetrieveIt() throws Exception {
-    final String issueId = new CreateIssue(session)
+  public void createIssuesAndRetrieveThem() throws Exception {
+    final String issueId1 = new CreateIssue(session)
         .forProjectId("TP")
         .withSummary("Some Test Issue")
         .withDescription("Test description")
         .create();
 
-    final Issue issue = new IssueWithId(issueId, session).query().get();
+    final Issue issue = new IssueWithId(issueId1, session).query().get();
 
+    assertThat(issue.id(), is(issueId1));
     assertThat(issue.projectId(), is("TP"));
     assertThat(issue.summary(), is("Some Test Issue"));
     assertThat(issue.description(), is("Test description"));
+
+    final String issueId2 = new CreateIssue(session)
+        .forProjectId("TP")
+        .withDescription("Test Issue 2")
+        .withDescription("Test description 2")
+        .create();
+
+    //TODO: currently, the test YouTrack image is being shipped with an issue created under project
+    //"TP" - this should be changed so that there are no issues for this project
+    assertThat(
+        new IssuesForProject("TP", session).query()
+            .stream()
+            .map(Issue::id)
+            .collect(toList()),
+        containsInAnyOrder(issueId1, issueId2)
+    );
   }
 }

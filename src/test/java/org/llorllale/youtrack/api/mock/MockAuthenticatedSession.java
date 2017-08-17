@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.mock;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +44,16 @@ public class MockAuthenticatedSession implements Session {
     this.cookies = new ArrayList<>();
     this.cookies.add(new BasicHeader("Set-Cookie", "12345"));
     this.cookies.add(new BasicHeader("Set-Cookie", "98273"));
+  }
+
+  /**
+   * Sets {@link http://some.url} as the {@link #baseUrl url}.
+   * @throws MalformedURLException should not expect this....
+   * @since 0.2.0
+   * @see #MockAuthenticatedSession(java.net.URL) 
+   */
+  public MockAuthenticatedSession() throws MalformedURLException {
+    this(new URL("http://some.url"));
   }
 
   @Override
