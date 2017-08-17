@@ -66,7 +66,7 @@ public class IssuesIT {
 
     final String issueId2 = new CreateIssue(session)
         .forProjectId("TP")
-        .withDescription("Test Issue 2")
+        .withSummary("Test Issue 2")
         .withDescription("Test description 2")
         .create();
 
