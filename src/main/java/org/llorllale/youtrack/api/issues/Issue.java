@@ -86,11 +86,9 @@ public interface Issue {
    */
   public String description();
   /**
-   * The 'short name' of the project that the issue was created in.
-   * This property is used internally for other queries to the remote YouTrack
-   * API.
-   * @return The 'short name' of the project that the issue was created in.
+   * The ID of the project that the issue was created in.
+   * @return the ID of the project that the issue was created in
    * @since 0.1.0
    */
-  public String projectShortName();
+  public String projectId();
 }

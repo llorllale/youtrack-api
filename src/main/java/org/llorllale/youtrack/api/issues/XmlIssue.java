@@ -145,7 +145,7 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public String projectShortName() {
+  public String projectId() {
     return jaxbIssue.getField()
             .stream()
             .filter(f -> "projectShortName".equals(f.getName()))

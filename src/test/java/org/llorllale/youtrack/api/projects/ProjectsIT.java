@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.llorllale.youtrack.api.issues;
+
+package org.llorllale.youtrack.api.projects;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,11 +27,11 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UsernamePasswordLogin;
 
 /**
- * Integration tests for different kinds of workflows with {@link Issue issues}.
+ * Integration tests for workflows related to {@link Project projects}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.1.0
+ * @since 0.2.0
  */
-public class IssuesIT {
+public class ProjectsIT {
   private static Session session;
   
   @BeforeClass
@@ -39,26 +42,18 @@ public class IssuesIT {
         config.youtrackUser(), 
         config.youtrackPwd()
     ).login();
-  } 
+  }
 
   /**
-   * Creates an issue for existing project with ID "TP" and then queries YouTrack for the same 
-   * issue.
+   * There is a pre-configured project in the test docker image of YouTrack with ID "TP".
    * @throws Exception 
-   * @since 0.1.0
+   * @since 0.2.0
    */
   @Test
-  public void createIssueAndRetrieveIt() throws Exception {
-    final String issueId = new CreateIssue(session)
-        .forProjectId("TP")
-        .withSummary("Some Test Issue")
-        .withDescription("Test description")
-        .create();
-
-    final Issue issue = new IssueWithId(issueId, session).query().get();
-
-    assertThat(issue.projectId(), is("TP"));
-    assertThat(issue.summary(), is("Some Test Issue"));
-    assertThat(issue.description(), is("Test description"));
+  public void getAllProjects() throws Exception {
+    assertThat(
+        new AllProjects(session).query(),
+        is(not(empty()))
+    );
   }
 }
