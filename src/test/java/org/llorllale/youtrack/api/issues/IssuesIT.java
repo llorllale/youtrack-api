@@ -16,8 +16,8 @@
 package org.llorllale.youtrack.api.issues;
 
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -77,7 +77,7 @@ public class IssuesIT {
             .stream()
             .map(Issue::id)
             .collect(toList()),
-        containsInAnyOrder(issueId1, issueId2)
+        hasItems(issueId1, issueId2)
     );
   }
 }
