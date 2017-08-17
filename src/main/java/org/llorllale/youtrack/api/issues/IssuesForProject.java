@@ -80,7 +80,12 @@ public class IssuesForProject {
    * @since 0.2.0
    */
   public List<Issue> query() throws IOException, UnauthorizedException {
-    final URI uri = new NonCheckedUriBuilder(RESOURCE.concat(projectId)).build();
+    final URI uri = new NonCheckedUriBuilder(
+        session.baseUrl()
+            .toString()
+            .concat(RESOURCE)
+            .concat(projectId)
+    ).build();
     final HttpGet get = new HttpGet(uri);
     session.cookies().stream().forEach(get::addHeader);
     final Response response = new HttpResponseAsResponse(httpClient.execute(get));
