@@ -16,6 +16,7 @@
 package org.llorllale.youtrack.api.issues;
 
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -107,6 +108,35 @@ public class IssuesIT {
             .map(c -> c.text())
             .collect(toList()),
         hasItems("A test comment!!!", "Another test comment!!!")
+    );
+  }
+
+  /**
+   * 
+   * @throws Exception 
+   * @since 0.2.0
+   */
+  @Test
+  public void createsIssueAndCommentThenUpdatesComment() throws Exception {
+    final String issueId = new CreateIssue(session).forProjectId("TP")
+        .withSummary("Testing updating comment text")
+        .withDescription("Some test description")
+        .create();
+
+    new CreateComment(session).forIssueId(issueId)
+        .withText("A comment to test updating comments!!!")
+        .create();
+
+    final Comment initial = new CommentsForIssue(issueId, session).query().get(0);
+
+    new UpdateComment(initial, "Modified comment to test updating comments!!!", session).update();
+
+    assertThat(
+        new CommentsForIssue(issueId, session).query()
+            .stream()
+            .map(c -> c.text())
+            .collect(toList()),
+        hasItem("Modified comment to test updating coments!!!")
     );
   }
 }

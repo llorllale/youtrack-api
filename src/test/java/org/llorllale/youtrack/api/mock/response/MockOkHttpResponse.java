@@ -36,6 +36,11 @@ public class MockOkHttpResponse implements HttpResponse {
   private final StatusLine statusLine;
   private final HttpEntity payload;
 
+  /**
+   * 
+   * @param payload 
+   * @since 0.2.0
+   */
   public MockOkHttpResponse(HttpEntity payload) {
     this.statusLine = new BasicStatusLine(
         new ProtocolVersion("HTTP", 1, 1), 
@@ -43,6 +48,14 @@ public class MockOkHttpResponse implements HttpResponse {
         "OK"
     );
     this.payload = payload;
+  }
+
+  /**
+   * The {@link #getEntity() entity} is set to {@code null}.
+   * @since 0.2.0
+   */
+  public MockOkHttpResponse() {
+    this(null);
   }
 
   @Override
