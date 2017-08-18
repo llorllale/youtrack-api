@@ -29,7 +29,7 @@ limitations under the License.
   <xsd:element name="project">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="assigneesFullname">
+        <xsd:element name="assigneesFullName">
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element ref="sub" maxOccurs="unbounded"/>
