@@ -96,5 +96,17 @@ public class IssuesIT {
     new CreateComment(session).forIssueId(issueId)
         .withText("A test comment!!!")
         .create();
+
+    new CreateComment(session).forIssueId(issueId)
+        .withText("Another test comment!!!")
+        .create();
+
+    assertThat(
+        new CommentsForIssue(issueId, session).query()
+            .stream()
+            .map(c -> c.text())
+            .collect(toList()),
+        hasItems("A test comment!!!", "Another test comment!!!")
+    );
   }
 }

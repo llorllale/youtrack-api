@@ -29,7 +29,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 /**
- *
+ * A mock {@link HttpClient} that always throws {@link IOException} in order to simulate network
+ * issues when communicating with YouTrack. Suitable for unit tests.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
