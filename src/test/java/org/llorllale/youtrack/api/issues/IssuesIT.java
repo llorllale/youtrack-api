@@ -80,4 +80,21 @@ public class IssuesIT {
         hasItems(issueId1, issueId2)
     );
   }
+
+  /**
+   * Creates an Issue and adds some comments on it.
+   * @throws Exception 
+   * @since 0.2.0
+   */
+  @Test
+  public void createIssueAndComment() throws Exception {
+    final String issueId = new CreateIssue(session).forProjectId("TP")
+        .withSummary("A test issue summary")
+        .withDescription("Some test description")
+        .create();
+
+    new CreateComment(session).forIssueId(issueId)
+        .withText("A test comment!!!")
+        .create();
+  }
 }
