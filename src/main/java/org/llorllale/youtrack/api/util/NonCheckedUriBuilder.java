@@ -22,7 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * <p>Silences all {@link URISyntaxException}s.</p>
+ * <p>Hides all {@link URISyntaxException}s.</p>
  * 
  * <p>This class uses the {@link URIBuilder} internally but does not expose the aforementioned 
  * exception. A {@link RuntimeException} is thrown if the internal {@link URIBuilder} throws 
@@ -48,18 +48,6 @@ public class NonCheckedUriBuilder {
     } catch (URISyntaxException e) {
       throw new RuntimeException("This should not have happened: syntax issue with URL", e);
     }
-  }
-
-  /**
-   * Calls the internal {@link URIBuilder#addParameter(String, String)} with the values provided.
-   * @param name the name of the parameter
-   * @param value the value of the parameter
-   * @return this object
-   * @since 0.1.0
-   */
-  public NonCheckedUriBuilder addParameter(String name, String value) {
-    this.builder.addParameter(name, value);
-    return this;
   }
 
   /**

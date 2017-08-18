@@ -72,7 +72,10 @@ public class CreateIssueTest {
         new CreateIssue(
             new MockAuthenticatedSession(new URL("http://some.url")), 
             new MockHttpClient(new MockIssueCreatedHttpResponse())
-        ).create().length(),
+        ).forProjectId("TestID")
+            .withSummary("Some Summary")
+            .withDescription("Some Description")
+            .create().length(),
         is(greaterThan(0))
     );
   }

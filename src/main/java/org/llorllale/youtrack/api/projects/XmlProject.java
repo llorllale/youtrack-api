@@ -57,7 +57,7 @@ class XmlProject implements Project {
 
   @Override
   public Set<String> nameOfAssignees() {
-    return jaxbProject.getAssigneesFullname()
+    return jaxbProject.getAssigneesFullName()
         .getSub()
         .stream()
         .map(Sub::getValue)
