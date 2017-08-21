@@ -56,4 +56,17 @@ public class ProjectsIT {
         is(not(empty()))
     );
   }
+
+  /**
+   * Test that {@link ProjectWithId} can retrieve the test project.
+   * @throws Exception 
+   * @since 0.2.0
+   */
+  @Test
+  public void getProjectById() throws Exception {
+    assertThat(
+        new ProjectWithId("TP", session).query().get().name(),
+        is("Test Project")
+    );
+  }
 }

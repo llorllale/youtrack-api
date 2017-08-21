@@ -54,6 +54,11 @@ limitations under the License.
       <xsd:attribute name="name" type="xsd:string"/>
       <xsd:attribute name="shortName" type="xsd:string"/>
       <xsd:attribute name="description" type="xsd:string"/>
+      <xsd:attribute name="assigneesUrl" type="xsd:anyURI"/>
+      <xsd:attribute name="subsystemsUrl" type="xsd:anyURI"/>
+      <xsd:attribute name="buildsUrl" type="xsd:anyURI"/>
+      <xsd:attribute name="versionsUrl" type="xsd:anyURI"/>
+      <xsd:attribute name="startingNumber" type="xsd:anyURI"/>
     </xsd:complexType>
   </xsd:element>
 
