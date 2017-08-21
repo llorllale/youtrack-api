@@ -136,7 +136,7 @@ public class IssuesIT {
             .stream()
             .map(c -> c.text())
             .collect(toList()),
-        hasItem("Modified comment to test updating coments!!!")
+        hasItem("Modified comment to test updating comments!!!")
     );
   }
 }
