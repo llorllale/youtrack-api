@@ -29,13 +29,21 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 /**
- *
+ * <p>Mock implementation of {@link HttpClient} suitable for unit tests.</p>
+ * 
+ * <p>The {@link HttpResponse} is configurable via its 
+ * {@link #MockHttpClient(org.apache.http.HttpResponse) constructor}.</p>
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
 public class MockHttpClient implements HttpClient {
   private final HttpResponse response;
 
+  /**
+   * Configures the mock {@link HttpResponse} to be used as part of the unit test.
+   * @param response the mock {@link HttpResponse} to be used as part of the unit test
+   * @since 0.1.0
+   */
   public MockHttpClient(HttpResponse response) {
     this.response = response;
   }
