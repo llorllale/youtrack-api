@@ -89,7 +89,7 @@ public class UpdateComment {
     put.setEntity(
         new StringEntity(
             String.format("{\"text\": \"%s\"}", newText), 
-            ContentType.APPLICATION_FORM_URLENCODED
+            ContentType.APPLICATION_JSON
         )
     );
     new HttpResponseAsResponse(httpClient.execute(put)).payload();
