@@ -28,7 +28,8 @@ import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
 /**
- *
+ * Mock implementation of {@link HttpResponse} that simulates a {@code Created 201} http response.
+ * Suitable for unit tests.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
@@ -36,10 +37,11 @@ public class MockCreatedHttpResponse implements HttpResponse {
   private final HttpResponse original;
 
   /**
-   * 
-   * @since 0.1.0
+   * Primary constructor.
+   * @param headers the {@link Header headers}
+   * @since 0.3.0
    */
-  public MockCreatedHttpResponse() {
+  public MockCreatedHttpResponse(Header... headers) {
     this.original = new BasicHttpResponse(
         new BasicStatusLine(
             new ProtocolVersion("HTTP", 1, 1), 
@@ -47,6 +49,15 @@ public class MockCreatedHttpResponse implements HttpResponse {
             "Created" 
         )
     );
+    this.original.setHeaders(headers);
+  }
+
+  /**
+   * No {@link #getAllHeaders() headers} are set.
+   * @since 0.1.0
+   */
+  public MockCreatedHttpResponse() {
+    this(new Header[]{});
   }
 
   @Override
