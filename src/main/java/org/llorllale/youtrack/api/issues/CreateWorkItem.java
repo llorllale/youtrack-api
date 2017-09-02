@@ -36,7 +36,9 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 /**
- * Creates a new time-tracking entry for a given {@link Issue}.
+ * <p>Creates a new time-tracking entry for a given {@link Issue}.</p>
+ * 
+ * <p>Note: timetracking needs to be enabled on the project in YouTrack.</p>
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
@@ -163,7 +165,8 @@ public class CreateWorkItem {
                 )
             ).replace("%DURATION%", String.valueOf(durationInMins))
                 .replace("%DESCRIPTION%", description.orElse(""))
-                .replace("%TYPE%", type.orElse(""))
+                .replace("%TYPE%", type.orElse("")),
+            ContentType.APPLICATION_XML
         )
     );
     final Response response = new HttpResponseAsResponse(httpClient.execute(post));

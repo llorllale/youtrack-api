@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api.issues;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
@@ -49,7 +50,11 @@ public class XmlWorkItemTest {
   public void testDate() {
     assertThat(
         new XmlWorkItem(jaxbWorkItem).date(),
-        is(LocalDate.from(Instant.ofEpochMilli(jaxbWorkItem.getDate())))
+        is(
+            Instant.ofEpochMilli(jaxbWorkItem.getDate())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        )
     );
   }
 
@@ -72,7 +77,7 @@ public class XmlWorkItemTest {
   @Test
   public void testDescription() {
     assertThat(
-        new XmlWorkItem(jaxbWorkItem).description(),
+        new XmlWorkItem(jaxbWorkItem).description().get(),
         is(jaxbWorkItem.getDescription())
     );
   }

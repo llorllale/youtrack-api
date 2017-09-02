@@ -17,9 +17,7 @@
 package org.llorllale.youtrack.api.session;
 
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -29,7 +27,6 @@ import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p>A login for the simple username/password use case.</p>

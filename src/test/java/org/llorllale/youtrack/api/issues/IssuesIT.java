@@ -159,7 +159,7 @@ public class IssuesIT {
         .workedOn(LocalDate.now())
         .forDuration(Duration.ofHours(1))
         .withDescription("Test description")
-        .withType("Test type")
+        .withType("Development")
         .create();
   }
 }

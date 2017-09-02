@@ -17,7 +17,9 @@
 package org.llorllale.youtrack.api.issues;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Optional;
 
 /**
@@ -42,21 +44,23 @@ class XmlWorkItem implements WorkItem {
 
   @Override
   public LocalDate date() {
-    throw new UnsupportedOperationException("Not supported yet."); 
+    return Instant.ofEpochMilli(jaxbWorkItem.getDate())
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate();
   }
 
   @Override
   public Duration duration() {
-    throw new UnsupportedOperationException("Not supported yet."); 
+    return Duration.ofMinutes(jaxbWorkItem.getDuration());
   }
 
   @Override
   public Optional<String> description() {
-    throw new UnsupportedOperationException("Not supported yet."); 
+    return Optional.ofNullable(jaxbWorkItem.getDescription());
   }
 
   @Override
   public String authorLoginName() {
-    throw new UnsupportedOperationException("Not supported yet."); 
+    return jaxbWorkItem.getAuthor().getLogin();
   }
 }
