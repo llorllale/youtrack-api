@@ -15,6 +15,8 @@
  */
 package org.llorllale.youtrack.api.issues;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
@@ -112,7 +114,7 @@ public class IssuesIT {
   }
 
   /**
-   * 
+   * Creates an {@link Issue}, adds a comment, then proceeds to update the comment.
    * @throws Exception 
    * @since 0.2.0
    */
@@ -138,5 +140,26 @@ public class IssuesIT {
             .collect(toList()),
         hasItem("Modified comment to test updating comments!!!")
     );
+  }
+
+  /**
+   * Creates an {@link Issue} and then proceeds to add a {@link WorkItem} on it.
+   * @throws Exception 
+   * @since 0.3.0
+   */
+  @Test
+  public void createIssueAndAddWorkItem() throws Exception {
+    final String issueId = new CreateIssue(session).forProjectId("TP")
+        .withSummary("Testing timetracking")
+        .withDescription("Some test description")
+        .create();
+
+    new CreateWorkItem(session)
+        .onIssue(issueId)
+        .workedOn(LocalDate.now())
+        .forDuration(Duration.ofHours(1))
+        .withDescription("Test description")
+        .withType("Development")
+        .create();
   }
 }

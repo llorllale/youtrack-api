@@ -5,7 +5,7 @@
 
   <groupId>org.llorllale</groupId>
   <artifactId>youtrack-api</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 
   <packaging>jar</packaging>
 
@@ -29,7 +29,7 @@
 
   <developers>
     <developer>
-      <id>1</id>
+      <id>llorllale</id>
       <name>George Aristy</name>
       <url>https://llorllale.github.io/</url>
       <email>george.aristy@gmail.com</email>
