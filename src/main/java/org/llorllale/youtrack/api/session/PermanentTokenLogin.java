@@ -20,7 +20,6 @@ import org.apache.http.message.BasicHeader;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 
 /**
  * A {@link Login} that makes use of YouTrack's <em>permanent tokens</em> feature to authorize 
@@ -47,11 +46,9 @@ public class PermanentTokenLogin implements Login {
   public Session login() throws AuthenticationException, IOException {
     return new BasicSession(
         youtrackUrl, 
-        Arrays.asList(
-            new BasicHeader(
-                "Authorization", 
-                "Bearer ".concat(token)
-            )
+        new BasicHeader(
+            "Authorization", 
+            "Bearer ".concat(token)
         )
     );
   }

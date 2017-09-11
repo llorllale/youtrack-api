@@ -20,6 +20,7 @@ import org.apache.http.Header;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +42,16 @@ public class BasicSession implements Session {
   public BasicSession(URL youtrackUrl, List<Header> headers) {
     this.youtrackUrl = youtrackUrl;
     this.cookies = new ArrayList<>(headers);
+  }
+
+  /**
+   * Same as {@code BasicSession(youtrackUrl, Arrays.asList(headers))}.
+   * @param youtrackUrl the remote API url
+   * @param headers the session's state
+   * @since 0.3.0
+   */
+  public BasicSession(URL youtrackUrl, Header... headers) {
+    this(youtrackUrl, Arrays.asList(headers));
   }
 
   @Override
