@@ -34,11 +34,12 @@ import org.llorllale.youtrack.api.session.UsernamePasswordLogin;
  * @since 0.1.0
  */
 public class IssuesIT {
+  private static IntegrationTestsConfig config;
   private static Session session;
   
   @BeforeClass
   public static void setUpClass() throws Exception {
-    final IntegrationTestsConfig config = new IntegrationTestsConfig();
+    config = new IntegrationTestsConfig();
     session = new UsernamePasswordLogin(
         config.youtrackUrl(), 
         config.youtrackUser(), 
@@ -47,7 +48,7 @@ public class IssuesIT {
   } 
 
   /**
-   * Creates some issues for existing project with ID "TP" and then queries YouTrack for the same 
+   * Creates some issues for existing project with ID config.youtrackTestProjectId() and then queries YouTrack for the same 
    * issues.
    * @throws Exception 
    * @since 0.1.0
@@ -55,7 +56,7 @@ public class IssuesIT {
   @Test
   public void createIssuesAndRetrieveThem() throws Exception {
     final String issueId1 = new CreateIssue(session)
-        .forProjectId("TP")
+        .forProjectId(config.youtrackTestProjectId())
         .withSummary("Some Test Issue")
         .withDescription("Test description")
         .create();
@@ -63,20 +64,20 @@ public class IssuesIT {
     final Issue issue = new IssueWithId(issueId1, session).query().get();
 
     assertThat(issue.id(), is(issueId1));
-    assertThat(issue.projectId(), is("TP"));
+    assertThat(issue.projectId(), is(config.youtrackTestProjectId()));
     assertThat(issue.summary(), is("Some Test Issue"));
     assertThat(issue.description(), is("Test description"));
 
     final String issueId2 = new CreateIssue(session)
-        .forProjectId("TP")
+        .forProjectId(config.youtrackTestProjectId())
         .withSummary("Test Issue 2")
         .withDescription("Test description 2")
         .create();
 
     //TODO: currently, the test YouTrack image is being shipped with an issue created under project
-    //"TP" - this should be changed so that there are no issues for this project
+    //config.youtrackTestProjectId() - this should be changed so that there are no issues for this project
     assertThat(
-        new IssuesForProject("TP", session).query()
+        new IssuesForProject(config.youtrackTestProjectId(), session).query()
             .stream()
             .map(Issue::id)
             .collect(toList()),
@@ -91,7 +92,8 @@ public class IssuesIT {
    */
   @Test
   public void createIssueAndComment() throws Exception {
-    final String issueId = new CreateIssue(session).forProjectId("TP")
+    final String issueId = new CreateIssue(session)
+        .forProjectId(config.youtrackTestProjectId())
         .withSummary("A test issue summary")
         .withDescription("Some test description")
         .create();
@@ -120,7 +122,8 @@ public class IssuesIT {
    */
   @Test
   public void createsIssueAndCommentThenUpdatesComment() throws Exception {
-    final String issueId = new CreateIssue(session).forProjectId("TP")
+    final String issueId = new CreateIssue(session)
+        .forProjectId(config.youtrackTestProjectId())
         .withSummary("Testing updating comment text")
         .withDescription("Some test description")
         .create();
@@ -149,7 +152,8 @@ public class IssuesIT {
    */
   @Test
   public void createIssueAndAddWorkItem() throws Exception {
-    final String issueId = new CreateIssue(session).forProjectId("TP")
+    final String issueId = new CreateIssue(session)
+        .forProjectId(config.youtrackTestProjectId())
         .withSummary("Testing timetracking")
         .withDescription("Some test description")
         .create();

@@ -1,5 +1,5 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/**
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,47 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.llorllale.youtrack.api.session;
 
-import org.apache.http.Header;
-
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import org.apache.http.message.BasicHeader;
+import static org.hamcrest.CoreMatchers.is;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * <p>
- * A {@link Session} created from an {@link AnonymousLogin}.
- * </p>
- * 
- * <p>
- * No {@link #cookies() cookies} are stored by an anonymous session because none
- * are needed.
- * </p>
+ * Unit tests for {@link BasicSession}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
- * @see AnonymousLogin
  */
-public class AnonymousSession implements Session {
-  private final URL youtrackUrl;
-
+public class BasicSessionTest {
   /**
-   * Primary constructor.
-   * @param youtrackUrl The remote API url.
+   * Test of baseUrl method, of class AuthenticatedSession.
    * @since 0.1.0
    */
-  public AnonymousSession(URL youtrackUrl) {
-    this.youtrackUrl = youtrackUrl;
-  }
- 
-  @Override
-  public URL baseUrl() {
-    return youtrackUrl;
-  }
-
-  @Override
-  public List<Header> cookies() {
-    return Collections.emptyList();
+  @Test
+  public void baseURL() throws Exception {
+    assertThat(new BasicSession(
+            new URL("http://some.url"), 
+            Collections.emptyList()
+        ).baseUrl(),
+        is(new URL("http://some.url"))
+    );
   }
 }

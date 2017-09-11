@@ -17,20 +17,19 @@
 package org.llorllale.youtrack.api.session;
 
 import org.apache.http.Header;
-import org.apache.http.message.BasicHeader;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * A {@link Session} obtained from a {@link Login} that requires user 
- * authentication (ie. not {@link AnonymousLogin}).
+ * Basic implementation of {@link Session}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class AuthenticatedSession implements Session {
+public class BasicSession implements Session {
   private final URL youtrackUrl;
   private final List<Header> cookies;
 
@@ -40,16 +39,19 @@ public class AuthenticatedSession implements Session {
    * @param headers the session's state
    * @since 0.1.0
    */
-  public AuthenticatedSession(URL youtrackUrl, List<Header> headers) {
+  public BasicSession(URL youtrackUrl, List<Header> headers) {
     this.youtrackUrl = youtrackUrl;
-    this.cookies = new ArrayList<>();
-    headers.stream()
-        .filter(h -> "Set-Cookie".equals(h.getName()))
-        .map(h -> new BasicHeader("Cookie", h.getValue().split(";")[0]))
-        .reduce((h1, h2) -> new BasicHeader("Cookie", h1.getValue()
-            .concat("; ")
-            .concat(h2.getValue()))
-        ).ifPresent(this.cookies::add);
+    this.cookies = new ArrayList<>(headers);
+  }
+
+  /**
+   * Same as {@code BasicSession(youtrackUrl, Arrays.asList(headers))}.
+   * @param youtrackUrl the remote API url
+   * @param headers the session's state
+   * @since 0.3.0
+   */
+  public BasicSession(URL youtrackUrl, Header... headers) {
+    this(youtrackUrl, Arrays.asList(headers));
   }
 
   @Override

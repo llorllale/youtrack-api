@@ -17,12 +17,16 @@ package org.llorllale.youtrack.api.session;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import org.apache.http.message.BasicHeader;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockHttpClient;
 import org.llorllale.youtrack.api.mock.MockThrowingHttpClient;
 import org.llorllale.youtrack.api.mock.response.MockForbiddenHttpResponse;
 import org.llorllale.youtrack.api.mock.response.MockAuthenticationOkHttpResponse;
+import org.llorllale.youtrack.api.mock.response.MockOkHttpResponse;
 
 /**
  * Unit tests for {@link UsernamePasswordLogin}.
@@ -92,5 +96,71 @@ public class UsernamePasswordLoginTest {
 
     login.login();
     login.login();  //exception thrown here
+  }
+
+  /**
+   * Fix for issue 13: Incorrect handling of session cookies
+   * @since 0.1.0
+   */
+  @Test
+  public void correctHandlingOfCookieNames() throws Exception {
+    assertTrue(
+        new UsernamePasswordLogin(
+            new URL("http://some.url"), 
+            "test", 
+            "test123".toCharArray(),
+            new MockHttpClient(
+                new MockOkHttpResponse(
+                    Arrays.asList(
+                        new BasicHeader(
+                            "Set-Cookie", 
+                            "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"
+                        ),
+                        new BasicHeader(
+                            "Set-Cookie", 
+                            "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT"
+                        )                       
+                    )
+                )
+            )
+        ).login()
+            .cookies()
+            .stream()
+            .allMatch(h -> "Cookie".equals(h.getName()))
+    );
+  }
+
+  /**
+   * Fix for issue 13: Incorrect handling of session cookies
+   * @since 0.1.0
+   */
+  @Test
+  public void correctHandlingOfCookieValues() throws Exception {
+    assertTrue(
+        new UsernamePasswordLogin(
+            new URL("http://some.url"), 
+            "test", 
+            "test123".toCharArray(),
+            new MockHttpClient(
+                new MockOkHttpResponse(
+                    Arrays.asList(
+                        new BasicHeader(
+                            "Set-Cookie", 
+                            "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"
+                        ),
+                        new BasicHeader(
+                            "Set-Cookie", 
+                            "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT"
+                        )                       
+                    )
+                )
+            )
+        ).login()
+            .cookies()
+            .stream()
+            .allMatch(
+                h -> "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61; jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290".equals(h.getValue())
+            )
+    );
   }
 }

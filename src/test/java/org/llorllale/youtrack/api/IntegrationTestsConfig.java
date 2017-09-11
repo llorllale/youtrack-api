@@ -74,4 +74,24 @@ public class IntegrationTestsConfig {
       throw new RuntimeException("Malformed URL: " + CONFIG.getProperty("youtrack.test.url"));
     }
   }
+
+  /**
+   * The permanent token for the {@link #youtrackUser() user}.
+   * @return 
+   * @since 0.3.0
+   */
+  public String youtrackUserToken() {
+    loadConfig();
+    return CONFIG.getProperty("youtrack.test.user.token");
+  }
+
+  /**
+   * The ID of the pre-created YouTrack project.
+   * @return 
+   * @since 0.3.0
+   */
+  public String youtrackTestProjectId() {
+    loadConfig();
+    return CONFIG.getProperty("youtrack.test.project.id");
+  }
 }

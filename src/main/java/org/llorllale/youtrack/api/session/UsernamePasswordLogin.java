@@ -18,10 +18,12 @@ package org.llorllale.youtrack.api.session;
 
 import static java.util.Objects.isNull;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
@@ -110,10 +112,23 @@ public class UsernamePasswordLogin implements Login {
     final HttpPost post = new HttpPost(ub.build());
     final HttpResponse response = httpClient.execute(post);
 
-    if (response.getStatusLine().getStatusCode() != 200) {
+    if (response.getStatusLine().getStatusCode() != 200) {    //TODO there is more branching here
       throw new AuthenticationException("Invalid credentials.");
     }
 
-    return new AuthenticatedSession(youtrackUrl, Arrays.asList(response.getAllHeaders()));
+    final Header cookie = Arrays.asList(response.getAllHeaders())
+        .stream()
+        .filter(h -> "Set-Cookie".equals(h.getName()))
+        .map(h -> new BasicHeader("Cookie", h.getValue().split(";")[0]))
+        .reduce(
+            (h1, h2) -> new BasicHeader(
+                "Cookie", 
+                h1.getValue()
+                    .concat("; ")
+                    .concat(h2.getValue())
+            )
+        ).get();    //expected
+
+    return new BasicSession(youtrackUrl, Arrays.asList(cookie));
   }
 }
