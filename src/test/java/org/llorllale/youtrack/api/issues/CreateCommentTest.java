@@ -70,7 +70,7 @@ public class CreateCommentTest {
   public void successfulCreationOfComment() throws Exception {
     new CreateComment(
         new MockAuthenticatedSession(), 
-        new MockHttpClient(new MockOkHttpResponse(null))
+        new MockHttpClient(new MockOkHttpResponse())
     ).forIssueId("123")
         .withText("asfa lkj")
         .create();

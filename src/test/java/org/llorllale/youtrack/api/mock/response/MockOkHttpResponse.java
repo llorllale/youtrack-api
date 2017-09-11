@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api.mock.response;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
@@ -35,27 +37,53 @@ import org.apache.http.params.HttpParams;
 public class MockOkHttpResponse implements HttpResponse {
   private final StatusLine statusLine;
   private final HttpEntity payload;
+  private final List<Header> headers;
 
   /**
-   * 
-   * @param payload 
-   * @since 0.2.0
+   * Primary ctor.
+   * @param payload the mock {@link HttpEntity} to set (may be null)
+   * @param headers the non-null list of mock {@link Header headers} to set
+   * @since 0.3.0
    */
-  public MockOkHttpResponse(HttpEntity payload) {
+  public MockOkHttpResponse(HttpEntity payload, List<Header> headers) {
     this.statusLine = new BasicStatusLine(
-        new ProtocolVersion("HTTP", 1, 1), 
-        200, 
-        "OK"
-    );
+            new ProtocolVersion("HTTP", 1, 1), 
+            200, 
+            "OK"
+        );
     this.payload = payload;
+    this.headers = new ArrayList<>(headers);
   }
 
   /**
    * The {@link #getEntity() entity} is set to {@code null}.
+   * @param headers 
+   * @since 0.3.0
+   */
+  public MockOkHttpResponse(List<Header> headers) {
+    this(null, headers);
+  }
+
+  /**
+   * Sets no headers for this response.
+   * @param payload the mock{@link HttpEntity} payload
    * @since 0.2.0
+   * @see #MockOkHttpResponse(org.apache.http.HttpEntity, java.util.List) 
+   */
+  public MockOkHttpResponse(HttpEntity payload) {
+    this(
+        payload,
+        new ArrayList<>()
+    );
+  }
+
+  /**
+   * The {@link #getEntity() entity} is set to {@code null} and no headers are set.
+   * @since 0.2.0
+   * @see #MockOkHttpResponse(org.apache.http.HttpEntity) 
    */
   public MockOkHttpResponse() {
-    this(null);
+    this((HttpEntity) null);
   }
 
   @Override
@@ -135,7 +163,7 @@ public class MockOkHttpResponse implements HttpResponse {
 
   @Override
   public Header[] getAllHeaders() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return this.headers.toArray(new Header[]{});
   }
 
   @Override
