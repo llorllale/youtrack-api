@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.projects;
+package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.toSet;
-
-import org.llorllale.youtrack.api.issues.jaxb.Sub;
+import org.llorllale.youtrack.api.session.Session;
 
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Adapter {@link org.llorllale.youtrack.api.issues.jaxb.Project} -> {@link Project}.
@@ -29,6 +26,7 @@ import java.util.Set;
  * @since 0.2.0
  */
 class XmlProject implements Project {
+  private final Session session;
   private final org.llorllale.youtrack.api.issues.jaxb.Project jaxbProject;
 
   /**
@@ -36,7 +34,8 @@ class XmlProject implements Project {
    * @param jaxbProject the JAXB instance to be adapted into {@link Project}
    * @since 0.2.0
    */
-  XmlProject(org.llorllale.youtrack.api.issues.jaxb.Project jaxbProject) {
+  XmlProject(Session session, org.llorllale.youtrack.api.issues.jaxb.Project jaxbProject) {
+    this.session = session;
     this.jaxbProject = jaxbProject;
   }
 
@@ -56,11 +55,7 @@ class XmlProject implements Project {
   }
 
   @Override
-  public Set<String> nameOfAssignees() {
-    return jaxbProject.getAssigneesFullName()
-        .getSub()
-        .stream()
-        .map(Sub::getValue)
-        .collect(toSet());
+  public Issues issues() {
+    return new DefaultIssues(this, session);
   }
 }

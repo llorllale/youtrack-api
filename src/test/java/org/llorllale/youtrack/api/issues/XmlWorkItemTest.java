@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.issues;
 
+import org.llorllale.youtrack.api.XmlWorkItem;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;

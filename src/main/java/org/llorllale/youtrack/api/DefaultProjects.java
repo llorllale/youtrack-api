@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.issues;
+package org.llorllale.youtrack.api;
+
+import static java.util.stream.Collectors.toList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -27,65 +29,57 @@ import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.net.URI;
+import java.util.List;
 
 /**
- * Queries the remote YouTrack API for an {@link Issue}.
+ * Default implementation of {@link Projects}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.1.0
+ * @since 0.4.0
  */
-public class IssueWithId {
-  private static final String ISSUE_RESOURCE = "/issue/";
-
-  private final String issueId;
+class DefaultProjects implements Projects {
+  private static final String RESOURCE = "/project/all";
   private final Session session;
   private final HttpClient httpClient;
 
   /**
-   * Primary constructor.
-   * @param issueId the issue's ID
-   * @param session the login session
+   * Primary ctor.
+   * @param session the user's {@link Session}
    * @param httpClient the {@link HttpClient} to use
-   * @since 0.1.0
+   * @since 0.4.0
    */
-  public IssueWithId(String issueId, Session session, HttpClient httpClient) {
-    this.issueId = issueId;
+  DefaultProjects(Session session, HttpClient httpClient) {
     this.session = session;
     this.httpClient = httpClient;
   }
 
   /**
-   * Assumes the {@link HttpClients#createDefault() default} httpclient.
-   * @param issueId the issue's ID
-   * @param session the login session
-   * @since 0.1.0
-   * @see #IssueWithId(String, Session, HttpClient) 
+   * Uses the {@link HttpClients#createDefault() default} http client.
+   * @param session the user's {@link Session}
+   * @since 0.4.0
+   * @see #DefaultProjects(org.llorllale.youtrack.api.session.Session, 
+   *     org.apache.http.client.HttpClient) 
    */
-  public IssueWithId(String issueId, Session session) {
-    this(issueId, session, HttpClients.createDefault());
+  DefaultProjects(Session session) {
+    this(session, HttpClients.createDefault());
   }
 
-  /**
-   * Queries the remote YouTrack API and retrieves the {@link Issue}.
-   * @return the YouTrack {@link Issue}
-   * @throws IOException if the YouTrack API is unreachable
-   * @throws UnauthorizedException if the user's {@link Session} is not allowed to access the 
-   *     resource
-   * @since 0.1.0
-   */
-  public Optional<Issue> query() throws IOException, UnauthorizedException {
-    final NonCheckedUriBuilder ub = new NonCheckedUriBuilder(
+  @Override
+  public List<Project> all() throws IOException, UnauthorizedException {
+    final URI uri = new NonCheckedUriBuilder(
         session.baseUrl()
             .toString()
-            .concat(ISSUE_RESOURCE)
-            .concat(issueId)
-    );
-    final HttpGet get = new HttpGet(ub.build());
-    get.addHeader("Accept", "application/xml");
+            .concat(RESOURCE)
+    ).build();
+    final HttpGet get = new HttpGet(uri);
     session.cookies().forEach(get::addHeader);
     final Response response = new HttpResponseAsResponse(httpClient.execute(get));
     return response.payload()
-        .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Issue.class))
-        .map(XmlIssue::new);
+        .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Projects.class))
+        .map(p -> p.getProject())
+        .get()
+        .stream()
+        .map(p -> new XmlProject(session, p))
+        .collect(toList());
   }
 }

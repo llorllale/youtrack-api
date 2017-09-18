@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.issues;
 
+import org.llorllale.youtrack.api.XmlComment;
 import java.time.Instant;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;

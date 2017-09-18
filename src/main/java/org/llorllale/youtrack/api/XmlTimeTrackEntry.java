@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.issues;
+package org.llorllale.youtrack.api;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
+import org.llorllale.youtrack.api.issues.jaxb.WorkItem;
 
 /**
  * <p>JAXB implementation of {@link WorkItem}.</p>
@@ -30,7 +31,8 @@ import java.util.Optional;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
-class XmlWorkItem implements WorkItem {
+class XmlTimeTrackEntry implements TimeTrackEntry {
+  private final Issue issue;
   private final org.llorllale.youtrack.api.issues.jaxb.WorkItem jaxbWorkItem;
 
   /**
@@ -38,8 +40,14 @@ class XmlWorkItem implements WorkItem {
    * @param jaxbWorkItem the JAXB class 
    * @since 0.3.0
    */
-  XmlWorkItem(org.llorllale.youtrack.api.issues.jaxb.WorkItem jaxbWorkItem) {
+  XmlTimeTrackEntry(Issue issue, org.llorllale.youtrack.api.issues.jaxb.WorkItem jaxbWorkItem) {
+    this.issue = issue;
     this.jaxbWorkItem = jaxbWorkItem;
+  }
+
+  @Override
+  public Issue issue() {
+    return issue;
   }
 
   @Override
@@ -57,10 +65,5 @@ class XmlWorkItem implements WorkItem {
   @Override
   public Optional<String> description() {
     return Optional.ofNullable(jaxbWorkItem.getDescription());
-  }
-
-  @Override
-  public String authorLoginName() {
-    return jaxbWorkItem.getAuthor().getLogin();
   }
 }

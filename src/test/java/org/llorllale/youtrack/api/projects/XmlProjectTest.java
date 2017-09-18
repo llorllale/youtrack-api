@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.projects;
 
+import org.llorllale.youtrack.api.XmlProject;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;

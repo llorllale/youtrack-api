@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.projects;
+package org.llorllale.youtrack.api;
 
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * A YouTrack project.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.2.0
+ * @since 0.4.0
  */
 public interface Project {
   /**
-   * The project's ID.
-   * @return the project's ID
+   * The project's id.
+   * @return the project's id
    * @since 0.2.0
    */
   public String id();
@@ -47,9 +46,9 @@ public interface Project {
   public Optional<String> description();
 
   /**
-   * The full name of the persons assigned to this project.
-   * @return the full name of the persons assigned to this project
-   * @since 0.2.0
+   * This {@link Project}'s {@link Issue issues}.
+   * @return this {@link Project}'s {@link Issue issues}
+   * @since 0.4.0
    */
-  public Set<String> nameOfAssignees();
+  public Issues issues();
 }

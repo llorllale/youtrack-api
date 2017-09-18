@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.issues;
+package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.issues.jaxb.Field;
 import org.llorllale.youtrack.api.issues.jaxb.Value;
 
 import java.time.Instant;
-import java.util.Optional;
+import org.llorllale.youtrack.api.session.Session;
 
 /**
  * JAXB implementation of {@link Issue}.
@@ -28,14 +28,19 @@ import java.util.Optional;
  * @since 0.1.0
  */
 class XmlIssue implements Issue {
+  private final Project project;
+  private final Session session;
   private final org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue;
 
   /**
    * Ctor.
+   * @param project this {@link Issue issue's} {@link Project}
    * @param jaxbIssue the JAXB issue to be adapted
    * @since 0.1.0
    */
-  public XmlIssue(org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue) {
+  XmlIssue(Project project, Session session, org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue) {
+    this.project = project;
+    this.session = session;
     this.jaxbIssue = jaxbIssue;
   }
 
@@ -80,17 +85,6 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public String assignee() {
-    return jaxbIssue.getField()
-            .stream()
-            .filter(f -> "Assignee".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
-            .findFirst()
-            .get();
-  }
-
-  @Override
   public String priority() {
     return jaxbIssue.getField()
             .stream()
@@ -99,27 +93,6 @@ class XmlIssue implements Issue {
             .map(Value::getValue)
             .findFirst()
             .get();
-  }
-
-  @Override
-  public String reporterName() {
-    return jaxbIssue.getField()
-            .stream()
-            .filter(f -> "reporterName".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
-            .findFirst()
-            .get();
-  }
-
-  @Override
-  public Optional<String> updaterName() {
-    return jaxbIssue.getField()
-            .stream()
-            .filter(f -> "updaterName".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
-            .findFirst();
   }
 
   @Override
@@ -145,13 +118,17 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public String projectId() {
-    return jaxbIssue.getField()
-            .stream()
-            .filter(f -> "projectShortName".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
-            .findFirst()
-            .get();
+  public Project project() {
+    return project;
+  }
+
+  @Override
+  public Comments comments() {
+    return new DefaultComments(session, this);
+  }
+
+  @Override
+  public TimeTracking timetracking() {
+    return new DefaultTimeTracking(session, this);
   }
 }

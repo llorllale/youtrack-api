@@ -17,7 +17,7 @@
 package org.llorllale.youtrack.api.mock;
 
 import java.time.Instant;
-import org.llorllale.youtrack.api.issues.Comment;
+import org.llorllale.youtrack.api.Comment;
 
 /**
  * <p>Mock implementation of {@link Comment} suitable for unit tests.</p>

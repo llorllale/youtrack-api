@@ -15,6 +15,7 @@
  */
 package org.llorllale.youtrack.api.issues;
 
+import org.llorllale.youtrack.api.Comment;
 import java.time.Duration;
 import java.time.LocalDate;
 import static java.util.stream.Collectors.toList;

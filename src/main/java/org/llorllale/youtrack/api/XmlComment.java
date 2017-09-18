@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.issues;
+package org.llorllale.youtrack.api;
 
 import java.time.Instant;
 
@@ -24,15 +24,23 @@ import java.time.Instant;
  * @since 0.2.0
  */
 class XmlComment implements Comment {
+  private final Issue issue;
   private final org.llorllale.youtrack.api.issues.jaxb.Comment jaxbComment;
 
   /**
    * Ctor.
+   * @param issue the {@link Issue} to which this comment is attached
    * @param jaxbComment the jaxb instance to be adapted into {@link Comment}
    * @since 0.2.0
    */
-  XmlComment(org.llorllale.youtrack.api.issues.jaxb.Comment jaxbComment) {
+  XmlComment(Issue issue, org.llorllale.youtrack.api.issues.jaxb.Comment jaxbComment) {
+    this.issue = issue;
     this.jaxbComment = jaxbComment;
+  }
+
+  @Override
+  public Issue issue() {
+    return issue;
   }
 
   @Override
@@ -43,16 +51,6 @@ class XmlComment implements Comment {
   @Override
   public Instant creationDate() {
     return Instant.ofEpochMilli(jaxbComment.getCreated());
-  }
-
-  @Override
-  public String authorLoginName() {
-    return jaxbComment.getAuthor();
-  }
-
-  @Override
-  public String issueId() {
-    return jaxbComment.getIssueId();
   }
 
   @Override

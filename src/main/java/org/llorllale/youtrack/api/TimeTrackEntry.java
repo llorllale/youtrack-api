@@ -14,43 +14,37 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.issues;
+package org.llorllale.youtrack.api;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
 
 /**
- * An item of <em>work</em> that is time-tracked as part of the effort to resolve an {@link Issue}.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.3.0
+ * @since 0.4.0
  */
-public interface WorkItem {
+public interface TimeTrackEntry {
+  public Issue issue();
   /**
    * The date when the item was entered into the {@link Issue issue}'s time-tracking.
    * @return the date when the item was entered into the {@link Issue issue}'s time-tracking
-   * @since 0.3.0
+   * @since 0.4.0
    */
   public LocalDate date();
 
   /**
    * The duration during which the work-item was worked on.
    * @return the duration during which the work-item was worked on
-   * @since 0.3.0
+   * @since 0.4.0
    */
   public Duration duration();
 
   /**
    * The item's description.
    * @return the item's description (if any was entered)
-   * @since 0.3.0
+   * @since 0.4.0
    */
   public Optional<String> description();
-
-  /**
-   * The login name of the user that registered the work item.
-   * @return the login name of the user that registered the work item
-   * @since 0.3.0
-   */
-  public String authorLoginName();
 }

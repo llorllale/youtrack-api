@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.issues;
+package org.llorllale.youtrack.api;
 
 import java.time.Instant;
 
@@ -39,23 +39,16 @@ public interface Comment {
   public Instant creationDate();
 
   /**
-   * The login name of the user that created the comment.
-   * @return the login name of the user that created the comment
-   * @since 0.2.0
-   */
-  public String authorLoginName();
-  
-  /**
-   * The {@link Issue#id() ID} of the issue on which this comment was created.
-   * @return the {@link Issue#id() ID} of the issue on which this comment was created
-   * @since 0.2.0
-   */
-  public String issueId();
-
-  /**
    * The text content of the comment.
    * @return the text content of the comment
    * @since 0.2.0
    */
   public String text();
+
+  /**
+   * The {@link Issue issue} on which this comment was created.
+   * @return the {@link Issue issue} on which this comment was created
+   * @since 0.2.0
+   */
+  public Issue issue();
 }

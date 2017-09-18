@@ -5,7 +5,7 @@
 
   <groupId>org.llorllale</groupId>
   <artifactId>youtrack-api</artifactId>
-  <version>0.3.0</version>
+  <version>0.4.0</version>
 
   <packaging>jar</packaging>
 
@@ -81,6 +81,11 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>4.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jamesmurty.utils</groupId>
+      <artifactId>java-xmlbuilder</artifactId>
+      <version>1.2</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
