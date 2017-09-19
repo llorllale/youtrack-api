@@ -1,0 +1,56 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#set($h5 = '#####')
+#set($h6 = '######')
+
+$h3 About
+`${project.artifactId}` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/), tested against version `${youtrackVersion}`.
+
+The API is currently unstable as we approach our [first milestone](https://github.com/llorllale/youtrack-api/milestone/1).
+
+<br/>
+
+$h4 Snippet
+
+    //login
+    final YouTrack youtrack = new YouTrack(
+        new PermanentTokenLogin("your_token").login()
+    );
+    
+    //creating an issue
+    youtrack.projects()
+        .all()
+        .stream()
+        .filter(p -> p.id().equals("project_id"))
+        .get()
+        .issues()
+        .create(new IssueSpec("summary", "type");
+
+<br/>
+
+$h4 Why another Java YouTrack API?
+Of the few other Java API projects for YouTrack that seem anywhere remotely "complete", all are lacking in several of the following aspects:
+
+* Fluency
+* OOP (they require "imperative-style" programming for clients)
+* Immutability
+* Documentation (including licensing)
+* Tests (unit + integration)
+* Project activity
+
+<br/>
+
+$h4 Include in maven projects
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>${project.artifactId}</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+View the [usage](./usage.html) and the [javadoc](./apidocs/index.html) resources for additional details.
+
+For bugs or enhancements, please use our [issue tracker](${project.url}/issues).
+ 

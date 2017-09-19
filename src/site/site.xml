@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2017 George Aristy (george.aristy@gmail.com).
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/DECORATION/1.7.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.7.0 http://maven.apache.org/xsd/decoration-1.7.0.xsd"
+         name="${project.artifactId}">
+  <skin>
+    <groupId>lt.velykis.maven.skins</groupId>
+    <artifactId>reflow-maven-skin</artifactId>
+    <version>1.1.1</version>
+  </skin>
+
+  <custom>
+    <reflowSkin>
+      <theme>bootswatch-flatly</theme>
+      <highlightJs>true</highlightJs>
+      <highlightJsTheme>sunburst</highlightJsTheme>
+      <toc>sidebar</toc>
+      <brand>
+        <!--
+        <name>
+          <![CDATA[
+            <img src="images/puzzle_16.png"/> youtrack-api
+          ]]>
+        </name>
+        -->
+        <href>./index.html</href>
+      </brand>
+      <bottomNav maxSpan="8">
+        <column>Documentation</column>
+        <column>Project</column>
+      </bottomNav>
+      <pages>
+        <index>
+          <sections>
+            <body />
+          </sections>
+        </index>
+        <usage>
+          <sections>
+            <body />
+          </sections>
+        </usage>
+      </pages>
+    </reflowSkin>
+  </custom>
+
+  <body>
+    <links>
+      <item name="About" href="./index.html"/>
+      <item name="GitHub" href="https://github.com/llorllale/youtrack-api"/>
+    </links>
+
+    <menu name="Documentation">
+      <item name="Usage" href="./usage.html"/>
+      <item name="JavaDocs ${project.version}" href="./apidocs/index.html"/>
+    </menu>
+
+    <menu name="Project">
+      <item name="Releases" href="https://github.com/llorllale/youtrack-api/releases"/>
+      <item name="Issue Tracking" href="https://github.com/llorllale/youtrack-api/issues"/>
+      <item name="License" href="./license.html"/>
+      <item name="Members" href="./team-list.html"/>
+      <item name="CheckStyle Report" href="./checkstyle.html"/>
+      <item name="FindBugs Report" href="./findbugs.html"/>
+      <item name="Test Coverage" href="./cobertura/index.html"/>
+    </menu>
+  </body>
+</project>
