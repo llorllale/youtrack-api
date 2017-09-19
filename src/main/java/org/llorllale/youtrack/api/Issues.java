@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Fetches issues from the YouTrack server.
+ * Issues API.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -58,8 +58,21 @@ public interface Issues {
    */
   public Optional<Issue> get(String id) throws IOException, UnauthorizedException;
 
+  /**
+   * Creates an issue according to the {@link IssueSpec spec}.
+   * @param spec the specifications for creating the issue
+   * @return the newly-created {@link Issue}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this
+   *     operation
+   * @since 0.4.0
+   */
   public Issue create(IssueSpec spec) throws IOException, UnauthorizedException;
 
+  /**
+   * Specifications for creating an {@link Issue}.
+   * @since 0.4.0
+   */
   public static class IssueSpec {
     final Instant creationDate;
     final String type;
@@ -68,6 +81,16 @@ public interface Issues {
     final String summary;
     final String description;
 
+    /**
+     * Primary ctor.
+     * @param creationDate the date the issue was created on
+     * @param type the issue's type (eg. "Bug")
+     * @param state the issue's state (eg. "Open")
+     * @param priority the issue's priority (eg. "Normal")
+     * @param summary the issue's summary (ie. its title)
+     * @param description the issue's description
+     * @since 0.4.0
+     */
     public IssueSpec(
         Instant creationDate, 
         String type, 
@@ -84,10 +107,30 @@ public interface Issues {
       this.description = description;
     }
 
+    /**
+     * Shorthand constructor that makes the following assumptions:
+     * <ul>
+     *   <li>creationDate is <em>now</em></li>
+     *   <li>status is <em>Open</em></li>
+     *   <li>priority is <em>Normal</em></li>
+     *   <li>description is empty</li>
+     * </ul>
+     * @param summary the issue's summary (ie. its title)
+     * @param type the issue's type (eg. "Bug")
+     * @since 0.4.0
+     * @see #IssueSpec(java.time.Instant, java.lang.String, java.lang.String, java.lang.String, 
+     *     java.lang.String, java.lang.String) 
+     */
     public IssueSpec(String summary, String type) {
       this(Instant.now(), type, "Open", "Normal", summary, "");
     }
 
+    /**
+     * Returns a new spec with {@code creationDate} and using {@code this} as a prototype.
+     * @param creationDate the date the issue was created on
+     * @return a new spec with {@code creationDate} and using {@code this} as a prototype
+     * @since 0.4.0
+     */
     public IssueSpec withCreationDate(Instant creationDate) {
       return new IssueSpec(
           creationDate, 
@@ -99,6 +142,12 @@ public interface Issues {
       );
     }
 
+    /**
+     * Returns a new spec with the given {@code state} and using {@code this} as a prototype.
+     * @param state the issue's state
+     * @return a new spec with the given {@code state} and using {@code this} as a prototype
+     * @since 0.4.0
+     */
     public IssueSpec withState(String state) {
       return new IssueSpec(
           this.creationDate, 
@@ -110,6 +159,12 @@ public interface Issues {
       );
     }
 
+    /**
+     * Returns a new spec with the given {@code priority} and using {@code this} as a prototype.
+     * @param priority the issue's priority
+     * @return a new spec with the given {@code priority} and using {@code this} as a prototype
+     * @since 0.4.0
+     */
     public IssueSpec withPriority(String priority) {
       return new IssueSpec(
           this.creationDate, 
@@ -121,6 +176,12 @@ public interface Issues {
       );
     }
 
+    /**
+     * Returns a new spec with the given {@code description} and using {@code this} as a prototype.
+     * @param description the issue's description
+     * @return a new spec with the given {@code description} and using {@code this} as a prototype
+     * @since 0.4.0
+     */
     public IssueSpec withDescription(String description) {
       return new IssueSpec(
           this.creationDate, 

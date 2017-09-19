@@ -129,6 +129,6 @@ public class UsernamePasswordLogin implements Login {
             )
         ).get();    //expected
 
-    return new BasicSession(youtrackUrl, Arrays.asList(cookie));
+    return new DefaultSession(youtrackUrl, Arrays.asList(cookie));
   }
 }

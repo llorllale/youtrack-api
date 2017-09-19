@@ -16,12 +16,13 @@
 
 package org.llorllale.youtrack.api;
 
+import org.llorllale.youtrack.api.issues.jaxb.WorkItem;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
-import org.llorllale.youtrack.api.issues.jaxb.WorkItem;
 
 /**
  * <p>JAXB implementation of {@link WorkItem}.</p>

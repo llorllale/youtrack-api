@@ -16,10 +16,8 @@
 
 package org.llorllale.youtrack.api;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
 import static java.util.stream.Collectors.toList;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -32,8 +30,12 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+
 /**
- *
+ * Default implementation of {@link Comments}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -43,10 +45,10 @@ class DefaultComments implements Comments {
   private final HttpClient httpClient;
 
   /**
-   * 
-   * @param session
-   * @param issue 
-   * @param httpClient
+   * Primary ctor.
+   * @param session the user's {@link Session}
+   * @param issue the {@link Issue} on which the comments are attached to
+   * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
   DefaultComments(Session session, Issue issue, HttpClient httpClient) {

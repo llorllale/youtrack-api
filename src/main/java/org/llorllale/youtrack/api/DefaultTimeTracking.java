@@ -16,9 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -30,8 +27,12 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+
 /**
- *
+ * Default implementation of {@link TimeTracking}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -41,9 +42,10 @@ class DefaultTimeTracking implements TimeTracking {
   private final HttpClient httpClient;
 
   /**
-   * 
-   * @param session
-   * @param issue 
+   * Primary ctor.
+   * @param session the user's {@link Session}
+   * @param issue the {@link Issue} to which this {@link TimeTracking} is attached to
+   * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
   DefaultTimeTracking(Session session, Issue issue, HttpClient httpClient) {
@@ -53,18 +55,15 @@ class DefaultTimeTracking implements TimeTracking {
   }
 
   /**
-   * 
-   * @param session
-   * @param issue 
+   * Uses the {@link HttpClients#createDefault() default} http client.
+   * @param session the user's {@link Session}
+   * @param issue the {@link Issue} to which this {@link TimeTracking} is attached to
    * @since 0.4.0
+   * @see #DefaultTimeTracking(org.llorllale.youtrack.api.session.Session, 
+   *     org.llorllale.youtrack.api.Issue, org.apache.http.client.HttpClient) 
    */
   DefaultTimeTracking(Session session, Issue issue) {
     this(session, issue, HttpClients.createDefault());
-  }
-
-  @Override
-  public Issue issue() {
-    return issue;
   }
 
   @Override
@@ -78,12 +77,7 @@ class DefaultTimeTracking implements TimeTracking {
     ).build();
     final HttpPost post = new HttpPost(uri);
     session.cookies().forEach(post::addHeader);
-    post.setEntity(
-        new StringEntity(
-            spec.asXmlString(),
-            ContentType.APPLICATION_XML
-        )
-    );
+    post.setEntity(spec.asHttpEntity());
     final Response response = new HttpResponseAsResponse(httpClient.execute(post));
     response.payload(); //TODO there must be a better way/design to trigger validation...
     final String url = response.rawResponse()

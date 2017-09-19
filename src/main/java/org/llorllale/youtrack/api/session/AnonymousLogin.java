@@ -47,6 +47,6 @@ public class AnonymousLogin implements Login {
   
   @Override
   public Session login() throws AuthenticationException, IOException {
-    return new BasicSession(youtrackUrl, Collections.emptyList());
+    return new DefaultSession(youtrackUrl, Collections.emptyList());
   }
 }

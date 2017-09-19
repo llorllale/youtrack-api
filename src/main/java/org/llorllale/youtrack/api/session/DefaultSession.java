@@ -29,7 +29,7 @@ import java.util.List;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class BasicSession implements Session {
+public class DefaultSession implements Session {
   private final URL youtrackUrl;
   private final List<Header> cookies;
 
@@ -39,7 +39,7 @@ public class BasicSession implements Session {
    * @param headers the session's state
    * @since 0.1.0
    */
-  public BasicSession(URL youtrackUrl, List<Header> headers) {
+  public DefaultSession(URL youtrackUrl, List<Header> headers) {
     this.youtrackUrl = youtrackUrl;
     this.cookies = new ArrayList<>(headers);
   }
@@ -50,7 +50,7 @@ public class BasicSession implements Session {
    * @param headers the session's state
    * @since 0.3.0
    */
-  public BasicSession(URL youtrackUrl, Header... headers) {
+  public DefaultSession(URL youtrackUrl, Header... headers) {
     this(youtrackUrl, Arrays.asList(headers));
   }
 

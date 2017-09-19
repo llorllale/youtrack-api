@@ -14,27 +14,34 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
-import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
 import java.util.List;
+import org.apache.http.Header;
+import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Fetches {@link Project projects} from the YouTrack server.
+ * Mock implementation of {@link Session}, suitable for unit tests.
+ * Sets {@link #baseUrl() baseUrl} to {@code http://some.url}, and no {@link #cookies() cookies} 
+ * are present.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public interface Projects {
-  /**
-   * All accessible {@link Project projects} by the user's {@link Session}.
-   * @return all accessible {@link Project projects} by the user's {@link Session}
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to access this
-   *     resource
-   * @since 0.4.0
-   */
-  public List<Project> all() throws IOException, UnauthorizedException;
+public class MockSession implements Session {
+  @Override
+  public URL baseUrl() {
+    try{
+      return new URL("http://some.url");
+    }catch(MalformedURLException e){
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public List<Header> cookies() {
+    return Collections.emptyList();
+  }
 }

@@ -18,8 +18,10 @@ package org.llorllale.youtrack.api;
 
 import static java.util.stream.Collectors.toList;
 
+import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.response.HttpResponseAsResponse;
 import org.llorllale.youtrack.api.response.Response;
@@ -32,8 +34,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import org.apache.http.Header;
-import org.apache.http.client.methods.HttpPut;
 
 /**
  * Default implementation of {@link Issues}.

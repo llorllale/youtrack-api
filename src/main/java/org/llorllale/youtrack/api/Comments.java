@@ -16,13 +16,14 @@
 
 package org.llorllale.youtrack.api;
 
+import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- * 
+ * API for {@link Comment comments} on an {@link Issue}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */

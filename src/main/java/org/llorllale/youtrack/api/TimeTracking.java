@@ -17,56 +17,96 @@
 package org.llorllale.youtrack.api;
 
 import com.jamesmurty.utils.XMLBuilder2;
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Optional;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- *
+ * <p>API for {@link Issue} timetracking.</p>
+ * 
+ * <p>Note: timetracking needs to be enabled for the {@link Project} in YouTrack.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public interface TimeTracking {
-  public Issue issue();
+  /**
+   * Creates a new {@link TimeTrackEntry entry}.
+   * @param spec the entry's {@link EntrySpec spec}
+   * @return the newly-created {@link TimeTrackEntry entry}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.4.0
+   */
   public TimeTrackEntry create(EntrySpec spec) throws IOException, UnauthorizedException;
 
+  /**
+   * Returns the {@link TimeTrackEntry entry} from the server, if it exists.
+   * @param id the entry's id
+   * @return the {@link TimeTrackEntry entry} from the server, if it exists
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.4.0
+   */
   public Optional<TimeTrackEntry> get(String id) throws IOException, UnauthorizedException;
 
+  /**
+   * <p>Specifications for creating a {@link TimeTrackEntry} on an {@link Issue}.</p>
+   * 
+   * <p>The new entry will always be created on the {@link Issue} attached to this 
+   * {@link TimeTracking}.</p>
+   * 
+   * @since 0.4.0
+   */
   public static final class EntrySpec {
-    private final Issue issue;
     private final LocalDate date;
     private final Duration duration;
     private final Optional<String> description;
     private final Optional<String> type;
 
     /**
-     * 
-     * @param issue
-     * @param date
-     * @param duration
-     * @param description
-     * @param type 
+     * Primary ctor.
+     * @param date the date when the entry was worked
+     * @param duration the duration for the work
+     * @param description description for the work
+     * @param type the work type (eg. "Development")
      * @since 0.4.0
      */
     public EntrySpec(
-        Issue issue, 
         LocalDate date, 
         Duration duration, 
         Optional<String> description, 
         Optional<String> type
     ) {
-      this.issue = issue;
       this.date = date;
       this.duration = duration;
       this.description = description;
       this.type = type;
     }
 
-    public EntrySpec(Issue issue, Duration duration) {
+    /**
+     * Shorthand constructor that assumes the following:
+     * <ul>
+     *   <li>date is <em>now</em></li>
+     *   <li>description is empty</li>
+     *   <li>type is empty</li>
+     * </ul>
+     * @param duration the work's duration
+     * @since 0.4.0
+     * @see #EntrySpec(java.time.LocalDate, java.time.Duration, java.util.Optional, 
+     *     java.util.Optional) 
+     */
+    public EntrySpec(Duration duration) {
       this(
-          issue, 
           LocalDate.now(), 
           duration, 
           Optional.empty(), 
@@ -74,9 +114,14 @@ public interface TimeTracking {
       );
     }
 
+    /**
+     * Returns a new spec with {@code date} and using {@code this} as a prototype.
+     * @param date the entry's date
+     * @return a new spec with {@code date} and using {@code this} as a prototype
+     * @since 0.4.0
+     */
     public EntrySpec withDate(LocalDate date) {
       return new EntrySpec(
-          this.issue, 
           date, 
           this.duration, 
           this.description, 
@@ -84,9 +129,14 @@ public interface TimeTracking {
       );
     }
 
+    /**
+     * Returns a new spec with {@code description} and using {@code this} as a prototype.
+     * @param description the entry's description
+     * @return a new spec with {@code description} and using {@code this} as a prototype
+     * @since 0.4.0
+     */
     public EntrySpec withDescription(String description) {
       return new EntrySpec(
-          this.issue, 
           this.date, 
           this.duration, 
           Optional.of(description), 
@@ -94,9 +144,14 @@ public interface TimeTracking {
       );
     }
 
+    /**
+     * Returns a new spec with {@code type} and using {@code this} as a prototype.
+     * @param type the entry's type
+     * @return a new spec with {@code type} and using {@code this} as a prototype
+     * @since 0.4.0
+     */
     public EntrySpec withType(String type) {
       return new EntrySpec(
-          this.issue, 
           this.date, 
           this.duration, 
           this.description, 
@@ -104,7 +159,11 @@ public interface TimeTracking {
       );
     }
 
-    public String asXmlString() {
+    /**
+     * Returns a {@link HttpEntity} representing this spec.
+     * @return a {@link HttpEntity} representing this spec
+     */
+    public HttpEntity asHttpEntity() {
       final XMLBuilder2 builder = XMLBuilder2.create("workItem")
           .elem("date").text(String.valueOf(date.atTime(0, 0))).up()
           .elem("duration").text(String.valueOf(duration.toMinutes())).up()
@@ -119,7 +178,7 @@ public interface TimeTracking {
                 .up()
       );
 
-      return builder.asString();
+      return new StringEntity(builder.toString(), ContentType.APPLICATION_XML);
     }
   }
 }

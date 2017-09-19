@@ -18,9 +18,9 @@ package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.issues.jaxb.Field;
 import org.llorllale.youtrack.api.issues.jaxb.Value;
+import org.llorllale.youtrack.api.session.Session;
 
 import java.time.Instant;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * JAXB implementation of {@link Issue}.
@@ -38,7 +38,11 @@ class XmlIssue implements Issue {
    * @param jaxbIssue the JAXB issue to be adapted
    * @since 0.1.0
    */
-  XmlIssue(Project project, Session session, org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue) {
+  XmlIssue(
+      Project project, 
+      Session session, 
+      org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue
+  ) {
     this.project = project;
     this.session = session;
     this.jaxbIssue = jaxbIssue;
