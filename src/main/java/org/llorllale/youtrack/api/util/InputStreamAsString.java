@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * Utility class to read all text content from an {@link InputStream} and
@@ -48,7 +49,7 @@ public class InputStreamAsString implements AutoCloseable {
    * @since 0.1.0
    */
   public String string() throws IOException {
-    return new BufferedReader(new InputStreamReader(inputStream))
+    return new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()))
         .lines()
         .reduce((l1,l2) -> l1.concat(l2).concat(NEW_LINE))
         .get()

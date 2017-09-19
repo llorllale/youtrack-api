@@ -71,7 +71,7 @@ public class UsernamePasswordLogin implements Login {
     this.youtrackUrl = youtrackUrl;
     this.httpClient = httpClient;
     this.username = username;
-    this.password = password;
+    this.password = Arrays.copyOf(password, password.length);
   }
 
   /**

@@ -316,7 +316,6 @@
             </goals>
             <configuration>
               <failOnError>true</failOnError>
-              <skip>true</skip>
             </configuration>
           </execution>
         </executions>
