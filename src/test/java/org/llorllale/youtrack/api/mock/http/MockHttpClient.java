@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.mock;
+package org.llorllale.youtrack.api.mock.http;
 
 import java.io.IOException;
 import org.apache.http.HttpHost;

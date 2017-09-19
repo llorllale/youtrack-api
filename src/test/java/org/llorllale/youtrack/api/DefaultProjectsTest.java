@@ -20,9 +20,9 @@ import org.apache.http.entity.StringEntity;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import org.llorllale.youtrack.api.mock.MockHttpClient;
-import org.llorllale.youtrack.api.mock.MockSession;
-import org.llorllale.youtrack.api.mock.response.MockOkResponse;
+import org.llorllale.youtrack.api.mock.http.MockHttpClient;
+import org.llorllale.youtrack.api.mock.http.MockSession;
+import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
  * Unit tests for {@link DefaultProjects}.

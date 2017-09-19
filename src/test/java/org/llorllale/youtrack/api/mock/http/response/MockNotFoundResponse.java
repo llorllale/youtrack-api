@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.mock.response;
+package org.llorllale.youtrack.api.mock.http.response;
 
 import java.util.Locale;
 import org.apache.http.Header;
@@ -28,26 +28,23 @@ import org.apache.http.params.HttpParams;
 
 /**
  * Mock implementation of {@link HttpResponse} suitable for unit tests.
- * It fakes an "OK" response from the server.
+ * Simulates a 404 error from the server.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class MockOkResponse implements HttpResponse {
+public class MockNotFoundResponse implements HttpResponse {
   private final StatusLine statusLine;
-  private final HttpEntity payload;
 
   /**
-   * Sets http status code 200.
-   * @param payload the mock {@link HttpEntity} to set as payload
+   * Ctor.
    * @since 0.4.0
    */
-  public MockOkResponse(HttpEntity payload) {
+  public MockNotFoundResponse() {
     this.statusLine = new BasicStatusLine(
         new ProtocolVersion("HTTP", 1, 1), 
-        200, 
-        "OK"
+        404, 
+        "Not Found"
     );
-    this.payload = payload;
   }
 
   @Override
@@ -82,7 +79,7 @@ public class MockOkResponse implements HttpResponse {
 
   @Override
   public HttpEntity getEntity() {
-    return payload;
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 
   @Override
@@ -184,4 +181,5 @@ public class MockOkResponse implements HttpResponse {
   public void setParams(HttpParams params) {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
+
 }
