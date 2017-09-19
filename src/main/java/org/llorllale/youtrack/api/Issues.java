@@ -21,8 +21,12 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  * Issues API.
@@ -113,16 +117,16 @@ public interface Issues {
      *   <li>creationDate is <em>now</em></li>
      *   <li>status is <em>Open</em></li>
      *   <li>priority is <em>Normal</em></li>
-     *   <li>description is empty</li>
+     *   <li>type is empty</li>
      * </ul>
      * @param summary the issue's summary (ie. its title)
-     * @param type the issue's type (eg. "Bug")
+     * @param description the issue's description (eg. "This is a test issue")
      * @since 0.4.0
      * @see #IssueSpec(java.time.Instant, java.lang.String, java.lang.String, java.lang.String, 
      *     java.lang.String, java.lang.String) 
      */
-    public IssueSpec(String summary, String type) {
-      this(Instant.now(), type, "Open", "Normal", summary, "");
+    public IssueSpec(String summary, String description) {
+      this(Instant.now(), "", "Open", "Normal", summary, description);
     }
 
     /**
@@ -190,6 +194,18 @@ public interface Issues {
           this.priority, 
           this.summary, 
           description
+      );
+    }
+
+    /**
+     * Returns a list of query parameters for this spec.
+     * @return a list of query parameters for this spec.
+     * @since 0.4.0
+     */
+    public List<NameValuePair> asQueryParams() {
+      return Arrays.asList(
+          new BasicNameValuePair("summary", summary),
+          new BasicNameValuePair("description", description)
       );
     }
   }

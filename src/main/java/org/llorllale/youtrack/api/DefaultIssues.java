@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import org.llorllale.youtrack.api.util.HttpUriRequestWithState;
 
 /**
  * Default implementation of {@link Issues}.
@@ -88,7 +89,7 @@ class DefaultIssues implements Issues {
     final HttpGet get = new HttpGet(uri);
     session.cookies().forEach(get::addHeader);
     final Response response = new HttpResponseAsResponse(httpClient.execute(get));
-    return response.payload()
+    return response.asHttpResponse()
         .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Issues.class))
         .get()
         .getIssue()
@@ -108,7 +109,7 @@ class DefaultIssues implements Issues {
     final HttpGet get = new HttpGet(ub.build());
     session.cookies().forEach(get::addHeader);
     final Response response = new HttpResponseAsResponse(httpClient.execute(get));
-    return response.payload()
+    return response.asHttpResponse()
         .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Issue.class))
         .map(i -> new XmlIssue(project, session, i));
   }
@@ -120,15 +121,17 @@ class DefaultIssues implements Issues {
             .toString()
             .concat("/issue")
     ).setParameter("project", project().id())
-        .setParameter("summary", spec.summary)
-        .setParameter("description", spec.description)
+        .addParameters(spec.asQueryParams())
         .build();
-    final HttpPut put = new HttpPut(uri);
-    session.cookies()
-        .stream()
-        .forEach(put::addHeader);
-    final Response response = new HttpResponseAsResponse(httpClient.execute(put));
-    response.payload(); //TODO how to better trigger validation logic?
+    final Response response = new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpUriRequestWithState(
+                session, 
+                new HttpPut(uri)
+            )
+        )
+    );
+    response.asHttpResponse(); //TODO how to better trigger validation logic?
     final Header location = response.rawResponse().getFirstHeader("Location");
     return this.get(
         location.getValue()

@@ -16,12 +16,9 @@
 
 package org.llorllale.youtrack.api.response;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
-import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Handles the case when the HTTP status code is {@code 401}.
@@ -29,32 +26,26 @@ import java.util.Optional;
  * @since 0.1.0
  */
 public class UnauthorizedResponse implements Response {
-  private final Response delegate;
+  private final Response base;
 
   /**
    * Ctor.
-   * @param delegate the next link in the chain
+   * @param base the next link in the chain
+   * @throws org.llorllale.youtrack.api.session.UnauthorizedException
    * @since 0.1.0
    */
-  public UnauthorizedResponse(Response delegate) {
-    this.delegate = delegate;
+  public UnauthorizedResponse(Response base) throws UnauthorizedException {
+    if (base.asHttpResponse().getStatusLine().getStatusCode() == 401) {
+      throw new UnauthorizedException(
+          "User unauthorized to access resource.", 
+          base.asHttpResponse()
+      );
+    }
+    this.base = base;
   }
   
   @Override
-  public Optional<HttpEntity> payload() 
-      throws UnauthorizedException, IOException {
-    if (delegate.rawResponse().getStatusLine().getStatusCode() == 401) {
-      throw new UnauthorizedException(
-          "User unauthorized to access resource.", 
-          delegate.rawResponse()
-      );
-    } else {
-      return delegate.payload();
-    }
-  }
-
-  @Override
-  public HttpResponse rawResponse() {
-    return delegate.rawResponse();
+  public HttpResponse asHttpResponse() {
+    return base.asHttpResponse();
   }
 }

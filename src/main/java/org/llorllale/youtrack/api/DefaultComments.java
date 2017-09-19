@@ -80,7 +80,7 @@ class DefaultComments implements Comments {
     ).build();
     final HttpGet get = new HttpGet(uri);
     session.cookies().stream().forEach(get::addHeader);
-    return new HttpResponseAsResponse(httpClient.execute(get)).payload()
+    return new HttpResponseAsResponse(httpClient.execute(get)).asHttpResponse()
         .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Comments.class))
         .map(c -> c.getComment().stream())
         .get()
@@ -106,7 +106,7 @@ class DefaultComments implements Comments {
         )
     );
     return new HttpResponseAsResponse(httpClient.execute(post))
-        .payload()
+        .asHttpResponse()
         .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Comments.class))
         .map(c -> c.getComment().stream())
         .get()

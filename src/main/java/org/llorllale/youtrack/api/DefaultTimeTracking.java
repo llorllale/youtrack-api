@@ -79,7 +79,7 @@ class DefaultTimeTracking implements TimeTracking {
     session.cookies().forEach(post::addHeader);
     post.setEntity(spec.asHttpEntity());
     final Response response = new HttpResponseAsResponse(httpClient.execute(post));
-    response.payload(); //TODO there must be a better way/design to trigger validation...
+    response.asHttpResponse(); //TODO there must be a better way/design to trigger validation...
     final String url = response.rawResponse()
         .getHeaders("Location")[0]  //expected
         .getValue();

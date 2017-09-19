@@ -61,9 +61,9 @@ public class HttpResponseAsResponse implements Response {
   }
 
   @Override
-  public Optional<HttpEntity> payload()
+  public Optional<HttpEntity> asHttpResponse()
       throws UnauthorizedException, IOException {
-    return delegate.payload();
+    return delegate.asHttpResponse();
   }
 
   @Override

@@ -50,7 +50,7 @@ public class UnsupportedResponse implements Response {
   }
 
   @Override
-  public Optional<HttpEntity> payload() 
+  public Optional<HttpEntity> asHttpResponse() 
           throws UnauthorizedException, IOException {
     throw new UnsupportedResponseException(
         String.format(

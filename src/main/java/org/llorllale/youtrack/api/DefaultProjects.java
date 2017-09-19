@@ -74,7 +74,7 @@ class DefaultProjects implements Projects {
     final HttpGet get = new HttpGet(uri);
     session.cookies().forEach(get::addHeader);
     final Response response = new HttpResponseAsResponse(httpClient.execute(get));
-    return response.payload()
+    return response.asHttpResponse()
         .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Projects.class))
         .map(p -> p.getProject())
         .get()

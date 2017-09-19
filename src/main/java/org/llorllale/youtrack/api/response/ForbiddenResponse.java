@@ -43,11 +43,11 @@ public class ForbiddenResponse implements Response {
   }
 
   @Override
-  public Optional<HttpEntity> payload() throws UnauthorizedException, IOException {
+  public Optional<HttpEntity> asHttpResponse() throws UnauthorizedException, IOException {
     if (delegate.rawResponse().getStatusLine().getStatusCode() == 403) {
       throw new UnauthorizedException("403: Forbidden", delegate.rawResponse());
     } else {
-      return delegate.payload();
+      return delegate.asHttpResponse();
     }
   }
 
