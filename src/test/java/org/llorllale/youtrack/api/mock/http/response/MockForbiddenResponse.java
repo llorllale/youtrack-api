@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api.mock.http.response;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
@@ -25,66 +23,28 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
 /**
- * Mock implementation of {@link HttpResponse} suitable for unit tests.
- * It fakes an "OK" response from the server.
+ * Mock implementation of {@link HttpReponse} suitable for unit tests.
+ * Simulates an HTTP response with code 403.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class MockOkResponse implements HttpResponse {
+public class MockForbiddenResponse implements HttpResponse {
   private final StatusLine statusLine;
-  private final HttpEntity payload;
-  private final List<Header> headers;
 
   /**
-   * Primary ctor.
-   * Sets http status code 200.
-   * @param payload the mock {@link HttpEntity} to set as payload
-   * @param headers the mock {@link Header headers}
+   * Ctor.
    * @since 0.4.0
    */
-  public MockOkResponse(HttpEntity payload, Header... headers) {
+  public MockForbiddenResponse() {
     this.statusLine = new BasicStatusLine(
         new ProtocolVersion("HTTP", 1, 1), 
-        200, 
-        "OK"
+        403, 
+        "Forbidden"
     );
-    this.payload = payload;
-    this.headers = Arrays.asList(headers);
-  }
-
-  /**
-   * Sets the {@link #getEntity() payload} to {@code null}.
-   * @param headers 
-   * @since 0.4.0
-   */
-  public MockOkResponse(Header... headers) {
-    this(null, headers);
-  }
-
-  /**
-   * Sets the {@link #getEntity() payload} to {@code null}.
-   * @since 0.4.0
-   * @see #MockOkResponse(org.apache.http.HttpEntity) 
-   */
-  public MockOkResponse() {
-    this((HttpEntity) null);
-  }
-
-  /**
-   * Uses {@code payload} as an {@link HttpEntity} with content type 
-   * {@link ContentType#APPLICATION_XML}.
-   * @param payload the mock payload
-   * @since 0.4.0
-   * @see #MockOkResponse(org.apache.http.HttpEntity) 
-   */
-  public MockOkResponse(String payload) {
-    this(new StringEntity(payload, ContentType.APPLICATION_XML));
   }
 
   @Override
@@ -119,7 +79,7 @@ public class MockOkResponse implements HttpResponse {
 
   @Override
   public HttpEntity getEntity() {
-    return payload;
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 
   @Override
@@ -164,7 +124,7 @@ public class MockOkResponse implements HttpResponse {
 
   @Override
   public Header[] getAllHeaders() {
-    return headers.toArray(new Header[]{});
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 
   @Override
@@ -221,4 +181,5 @@ public class MockOkResponse implements HttpResponse {
   public void setParams(HttpParams params) {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
+
 }
