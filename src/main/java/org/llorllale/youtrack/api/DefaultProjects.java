@@ -22,14 +22,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.response.HttpResponseAsResponse;
-import org.llorllale.youtrack.api.response.Response;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
+import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -38,7 +37,6 @@ import java.util.List;
  * @since 0.4.0
  */
 class DefaultProjects implements Projects {
-  private static final String RESOURCE = "/project/all";
   private final Session session;
   private final HttpClient httpClient;
 
@@ -66,20 +64,26 @@ class DefaultProjects implements Projects {
 
   @Override
   public List<Project> all() throws IOException, UnauthorizedException {
-    final URI uri = new NonCheckedUriBuilder(
-        session.baseUrl()
-            .toString()
-            .concat(RESOURCE)
-    ).build();
-    final HttpGet get = new HttpGet(uri);
-    session.cookies().forEach(get::addHeader);
-    final Response response = new HttpResponseAsResponse(httpClient.execute(get));
-    return response.asHttpResponse()
-        .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Projects.class))
-        .map(p -> p.getProject())
-        .get()
-        .stream()
-        .map(p -> new XmlProject(session, p))
-        .collect(toList());
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Projects.class)
+        .andThen(
+            projects -> projects.getProject()
+                .stream()
+                .map(p -> new XmlProject(session, p))
+        ).apply(
+            new HttpResponseAsResponse(
+                httpClient.execute(
+                    new HttpUriRequestWithSession(
+                        session, 
+                        new HttpGet(
+                            new NonCheckedUriBuilder(
+                                session.baseUrl()
+                                    .toString()
+                                    .concat("/project/all")
+                            ).build()
+                        )
+                    )
+                )
+            ).asHttpResponse().getEntity()
+        ).collect(toList());
   }
 }

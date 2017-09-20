@@ -26,6 +26,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,6 +39,16 @@ import java.util.Optional;
  */
 public interface TimeTracking {
   /**
+   * Returns all available {@link TimeTrackEntry work entries} for the {@link Issue}.
+   * @return all available {@link TimeTrackEntry work entries} for the {@link Issue}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.4.0
+   */
+  public List<TimeTrackEntry> all() throws IOException, UnauthorizedException;
+
+  /**
    * Creates a new {@link TimeTrackEntry entry}.
    * @param spec the entry's {@link EntrySpec spec}
    * @return the newly-created {@link TimeTrackEntry entry}
@@ -46,18 +57,7 @@ public interface TimeTracking {
    *     operation
    * @since 0.4.0
    */
-  public TimeTrackEntry create(EntrySpec spec) throws IOException, UnauthorizedException;
-
-  /**
-   * Returns the {@link TimeTrackEntry entry} from the server, if it exists.
-   * @param id the entry's id
-   * @return the {@link TimeTrackEntry entry} from the server, if it exists
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
-   *     operation
-   * @since 0.4.0
-   */
-  public Optional<TimeTrackEntry> get(String id) throws IOException, UnauthorizedException;
+  public TimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException;
 
   /**
    * <p>Specifications for creating a {@link TimeTrackEntry} on an {@link Issue}.</p>

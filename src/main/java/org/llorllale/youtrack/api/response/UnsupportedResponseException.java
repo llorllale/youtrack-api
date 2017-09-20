@@ -23,7 +23,6 @@ import org.apache.http.HttpResponse;
  * currently not supported by this library.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
- * @see UnsupportedResponse
  */
 public class UnsupportedResponseException extends RuntimeException {
   private static final long serialVersionUID = -4501820211696912590L;

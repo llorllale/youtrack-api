@@ -16,12 +16,12 @@
 
 package org.llorllale.youtrack.api.util;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import org.apache.http.NameValuePair;
 
 /**
  * <p>Hides all {@link URISyntaxException}s.</p>

@@ -16,12 +16,10 @@
 
 package org.llorllale.youtrack.api.response;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Throws an {@link UnauthorizedException} if status error code {@code 403} is received from 
@@ -30,29 +28,27 @@ import java.util.Optional;
  * @since 0.1.0
  */
 public class ForbiddenResponse implements Response {
-  private final Response delegate;
+  private final Response base;
 
   /**
    * Ctor.
-   * @param delegate the next link in the chain
+   * @param base the next link in the chain
    * @since 0.1.0
    * @see HttpResponseAsResponse
    */
-  public ForbiddenResponse(Response delegate) {
-    this.delegate = delegate;
+  public ForbiddenResponse(Response base) {
+    this.base = base;
   }
 
   @Override
-  public Optional<HttpEntity> asHttpResponse() throws UnauthorizedException, IOException {
-    if (delegate.rawResponse().getStatusLine().getStatusCode() == 403) {
-      throw new UnauthorizedException("403: Forbidden", delegate.rawResponse());
+  public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
+    if (base.asHttpResponse().getStatusLine().getStatusCode() == 403) {
+      throw new UnauthorizedException(
+          "403: Forbidden", 
+          base.asHttpResponse()
+      );
     } else {
-      return delegate.asHttpResponse();
+      return base.asHttpResponse();
     }
-  }
-
-  @Override
-  public HttpResponse rawResponse() {
-    return delegate.rawResponse();
   }
 }

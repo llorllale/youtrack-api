@@ -16,12 +16,10 @@
 
 package org.llorllale.youtrack.api.response;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
-import java.util.Optional;
 
 /**
  * <p>
@@ -36,7 +34,7 @@ import java.util.Optional;
  * @since 0.1.0
  */
 public class HttpResponseAsResponse implements Response {
-  private final Response delegate;
+  private final Response base;
 
   /**
    * Adapts the given {@code httpResponse} into a {@link Response}.
@@ -44,30 +42,18 @@ public class HttpResponseAsResponse implements Response {
    * @since 0.1.0
    */
   public HttpResponseAsResponse(HttpResponse httpResponse) {
-    this.delegate = 
-        new OkResponse(
-            new FoundResponse(
-                new NotFoundResponse(
-                    new UnauthorizedResponse(
-                        new ForbiddenResponse(
-                            new CreatedResponse(
-                                new UnsupportedResponse(httpResponse)
-                            )
-                        )
-                    )
+    this.base = 
+        new UnauthorizedResponse(
+            new ForbiddenResponse(
+                new IdentityResponse(
+                    httpResponse
                 )
             )
         );
   }
 
   @Override
-  public Optional<HttpEntity> asHttpResponse()
-      throws UnauthorizedException, IOException {
-    return delegate.asHttpResponse();
-  }
-
-  @Override
-  public HttpResponse rawResponse() {
-    return delegate.rawResponse();
+  public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
+    return base.asHttpResponse();
   }
 }

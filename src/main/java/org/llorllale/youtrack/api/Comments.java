@@ -41,10 +41,11 @@ public interface Comments {
   /**
    * Creates a new {@link Comment} for this {@link Issue}.
    * @param text the comment's text
-   * @return the newly created {@link Comment}
+   * @return this object
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this 
    *     operation
+   * @since 0.4.0
    */
-  public Comment post(String text) throws IOException, UnauthorizedException;
+  public Comments post(String text) throws IOException, UnauthorizedException;
 }

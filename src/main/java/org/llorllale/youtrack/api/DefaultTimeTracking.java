@@ -16,20 +16,23 @@
 
 package org.llorllale.youtrack.api;
 
+import static java.util.stream.Collectors.toList;
+
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.response.HttpResponseAsResponse;
-import org.llorllale.youtrack.api.response.Response;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
+import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
+import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
+import java.util.List;
+
 
 /**
  * Default implementation of {@link TimeTracking}.
@@ -67,28 +70,54 @@ class DefaultTimeTracking implements TimeTracking {
   }
 
   @Override
-  public TimeTrackEntry create(EntrySpec spec) throws IOException, UnauthorizedException {
-    final URI uri = new NonCheckedUriBuilder(
-        session.baseUrl()
-            .toString()
-            .concat("/issue/")
-            .concat(issue.id())
-            .concat("/timetracking/workitem")
-    ).build();
-    final HttpPost post = new HttpPost(uri);
-    session.cookies().forEach(post::addHeader);
-    post.setEntity(spec.asHttpEntity());
-    final Response response = new HttpResponseAsResponse(httpClient.execute(post));
-    response.asHttpResponse(); //TODO there must be a better way/design to trigger validation...
-    final String url = response.rawResponse()
-        .getHeaders("Location")[0]  //expected
-        .getValue();
-    return this.get(url.substring(url.lastIndexOf('/') + 1))
-        .get();
+  public List<TimeTrackEntry> all() throws IOException, UnauthorizedException {
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.WorkItems.class)
+        .andThen(
+            items -> items.getWorkItem()
+                .stream()
+                .map(i -> new XmlTimeTrackEntry(issue, i))
+        ).apply(
+            new HttpResponseAsResponse(
+                httpClient.execute(
+                    new HttpUriRequestWithSession(
+                        session, 
+                        new HttpGet(
+                            new NonCheckedUriBuilder(
+                                session.baseUrl()
+                                    .toString()
+                                    .concat("/issue/")
+                                    .concat(issue.id())
+                                    .concat("/timetracking/workitem")
+                            ).build()
+                        )
+                    )
+                )
+            ).asHttpResponse().getEntity()
+        ).collect(toList());
   }
 
   @Override
-  public Optional<TimeTrackEntry> get(String id) throws IOException, UnauthorizedException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public TimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpUriRequestWithSession(
+                session, 
+                new HttpRequestWithEntity(
+                    spec.asHttpEntity(),
+                    new HttpPost(
+                        new NonCheckedUriBuilder(
+                            session.baseUrl()
+                                .toString()
+                                .concat("/issue/")
+                                .concat(issue.id())
+                                .concat("/timetracking/workitem")
+                        ).build()
+                    )
+                )
+            )
+        )
+    ).asHttpResponse();
+
+    return this;
   }
 }

@@ -28,10 +28,11 @@ import org.llorllale.youtrack.api.response.HttpResponseAsResponse;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
+import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
+import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -71,47 +72,55 @@ class DefaultComments implements Comments {
 
   @Override
   public List<Comment> all() throws IOException, UnauthorizedException {
-    final URI uri = new NonCheckedUriBuilder(
-        session.baseUrl()
-            .toString()
-            .concat("/issue/")
-            .concat(issue.id())
-            .concat("/comment")
-    ).build();
-    final HttpGet get = new HttpGet(uri);
-    session.cookies().stream().forEach(get::addHeader);
-    return new HttpResponseAsResponse(httpClient.execute(get)).asHttpResponse()
-        .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Comments.class))
-        .map(c -> c.getComment().stream())
-        .get()
-        .map(c -> new XmlComment(issue, c))
-        .collect(toList());
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Comments.class)
+        .andThen(
+            comments -> comments.getComment()
+                .stream()
+                .map(c -> new XmlComment(issue, c))
+        ).apply(new HttpResponseAsResponse(
+                httpClient.execute(
+                    new HttpUriRequestWithSession(
+                        session, 
+                        new HttpGet(
+                            new NonCheckedUriBuilder(
+                                session.baseUrl()
+                                    .toString()
+                                    .concat("/issue/")
+                                    .concat(issue.id())
+                                    .concat("/comment")
+                            ).build()
+                        )
+                    )
+                )
+            ).asHttpResponse().getEntity()
+        ).collect(toList());
   }
 
   @Override
-  public Comment post(String text) throws IOException, UnauthorizedException {
-    final URI uri = new NonCheckedUriBuilder(
-        session.baseUrl()
-            .toString()
-            .concat("/issue/")
-            .concat(issue.id())
-            .concat("execute")
-    ).build();
-    final HttpPost post = new HttpPost(uri);
-    session.cookies().forEach(post::addHeader);
-    post.setEntity(
-        new StringEntity(
-            "comment=".concat(text), 
-            ContentType.APPLICATION_FORM_URLENCODED
+  public Comments post(String text) throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpUriRequestWithSession(
+                session, 
+                new HttpRequestWithEntity(
+                    new StringEntity(
+                        text, 
+                        ContentType.APPLICATION_FORM_URLENCODED
+                    ),
+                    new HttpPost(
+                        new NonCheckedUriBuilder(
+                            session.baseUrl()
+                                .toString()
+                                .concat("/issue/")
+                                .concat(issue.id())
+                                .concat("/execute")
+                        ).build()
+                    )
+                )
+            )
         )
-    );
-    return new HttpResponseAsResponse(httpClient.execute(post))
-        .asHttpResponse()
-        .map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Comments.class))
-        .map(c -> c.getComment().stream())
-        .get()
-        .map(c -> new XmlComment(issue, c))
-        .findAny()
-        .get();
+    ).asHttpResponse();
+
+    return this;
   }
 }

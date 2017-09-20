@@ -1,5 +1,5 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +17,29 @@
 package org.llorllale.youtrack.api.response;
 
 import org.apache.http.HttpResponse;
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
 
 /**
- * Handles HTTP response status codes received from the YouTrack server.
+ * Special {@link Response} that does no validation and just returns the {@link HttpResponse}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.1.0
+ * @since 0.4.0
  */
-public interface Response {
+public class IdentityResponse implements Response {
+  private final HttpResponse httpResponse;
+
   /**
-   * The {@link HttpResponse} received in the API's response.
-   * @return The asHttpResponse received in the API's response.
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform some
-   *     operation
-   * @since 0.1.0
+   * Ctor.
+   * @param httpResponse the http response
+   * @since 0.4.0
    */
-  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException;
+  public IdentityResponse(HttpResponse httpResponse) {
+    this.httpResponse = httpResponse;
+  }
+
+  @Override
+  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException {
+    return httpResponse;
+  }
 }

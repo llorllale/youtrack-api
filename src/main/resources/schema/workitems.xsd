@@ -21,7 +21,7 @@ limitations under the License.
   <xsd:element name="workItems">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element ref="workItem" minOccurs="0"/>
+        <xsd:element ref="workItem" maxOccurs="unbounded"/>
       </xsd:sequence>
     </xsd:complexType>
   </xsd:element>

@@ -70,7 +70,7 @@ public class DefaultIssuesTest {
   }
 
   /**
-   * DefaultIssues must return an empty optional if the Issue is not present.
+   * DefaultIssues must return an empty optional if the Issue is not found.
    */
   @Test
   public void testGetNonExistingIssue() throws Exception {

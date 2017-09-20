@@ -28,7 +28,8 @@ import org.apache.http.params.HttpParams;
 
 /**
  * Mock implementation of {@link HttpResponse} suitable for unit tests.
- * Simulates a 404 error from the server.
+ * Simulates a 404 error from the server and returns {@code null} from {@link #getEntity()} as per
+ * contract.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -79,7 +80,7 @@ public class MockNotFoundResponse implements HttpResponse {
 
   @Override
   public HttpEntity getEntity() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    return null;
   }
 
   @Override

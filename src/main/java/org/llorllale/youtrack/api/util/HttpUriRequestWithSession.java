@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api.util;
 
-import java.net.URI;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.ProtocolVersion;
@@ -25,22 +24,25 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.params.HttpParams;
 import org.llorllale.youtrack.api.session.Session;
 
+import java.net.URI;
+
 /**
- *
+ * Thin decorator around {@link HttpUriRequest} that attaches a {@link Session session's} state
+ * to a {@link HttpUriRequest}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class HttpUriRequestWithState implements HttpUriRequest {
+public class HttpUriRequestWithSession implements HttpUriRequest {
   private final HttpUriRequest base;
 
   /**
-   * 
-   * @param session
-   * @param base 
+   * Attaches the {@code session}'s state to {@code request}.
+   * @param session the user's {@link Session}
+   * @param request the http request to execute
    * @since 0.4.0
    */
-  public HttpUriRequestWithState(Session session, HttpUriRequest base) {
-    this.base = base;
+  public HttpUriRequestWithSession(Session session, HttpUriRequest request) {
+    this.base = request;
     session.cookies().forEach(this.base::addHeader);
   }
 
