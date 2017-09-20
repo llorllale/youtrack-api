@@ -14,46 +14,27 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.response;
+package org.llorllale.youtrack.api.util.response;
 
 import org.apache.http.HttpResponse;
+import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
 
 /**
- * <p>
- * {@link HttpResponse} -&gt; {@link Response} adapter class.
- * </p>
- * 
- * <p>
- * Client code should only have to rely on this implementation of 
- * {@link Response}.
- * </p>
+ * Handles HTTP response status codes received from the YouTrack server.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class HttpResponseAsResponse implements Response {
-  private final Response base;
-
+public interface Response {
   /**
-   * Adapts the given {@code httpResponse} into a {@link Response}.
-   * @param httpResponse the {@link HttpResponse} to be adapted
+   * The {@link HttpResponse} received in the API's response.
+   * @return The asHttpResponse received in the API's response.
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform some
+   *     operation
    * @since 0.1.0
    */
-  public HttpResponseAsResponse(HttpResponse httpResponse) {
-    this.base = 
-        new UnauthorizedResponse(
-            new ForbiddenResponse(
-                new IdentityResponse(
-                    httpResponse
-                )
-            )
-        );
-  }
-
-  @Override
-  public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
-    return base.asHttpResponse();
-  }
+  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException;
 }

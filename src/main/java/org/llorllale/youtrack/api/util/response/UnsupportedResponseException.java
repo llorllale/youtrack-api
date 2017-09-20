@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.response;
+package org.llorllale.youtrack.api.util.response;
 
 import org.apache.http.HttpResponse;
 

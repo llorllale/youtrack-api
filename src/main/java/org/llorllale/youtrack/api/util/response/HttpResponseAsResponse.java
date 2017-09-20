@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.response;
+package org.llorllale.youtrack.api.util.response;
 
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -22,31 +22,38 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import java.io.IOException;
 
 /**
- * Handles the case when the HTTP status code is {@code 401}.
+ * <p>
+ * {@link HttpResponse} -&gt; {@link Response} adapter class.
+ * </p>
+ * 
+ * <p>
+ * Client code should only have to rely on this implementation of 
+ * {@link Response}.
+ * </p>
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class UnauthorizedResponse implements Response {
+public class HttpResponseAsResponse implements Response {
   private final Response base;
 
   /**
-   * Ctor.
-   * @param base the next link in the chain
+   * Adapts the given {@code httpResponse} into a {@link Response}.
+   * @param httpResponse the {@link HttpResponse} to be adapted
    * @since 0.1.0
    */
-  public UnauthorizedResponse(Response base) {
-    this.base = base;
+  public HttpResponseAsResponse(HttpResponse httpResponse) {
+    this.base = 
+        new UnauthorizedResponse(
+            new ForbiddenResponse(
+                new IdentityResponse(
+                    httpResponse
+                )
+            )
+        );
   }
-  
+
   @Override
   public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
-    if (base.asHttpResponse().getStatusLine().getStatusCode() == 401) {
-      throw new UnauthorizedException(
-          "401: Unauthorized", 
-          base.asHttpResponse()
-      );
-    } else {
-      return base.asHttpResponse();
-    }
+    return base.asHttpResponse();
   }
 }

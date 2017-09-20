@@ -40,4 +40,4 @@
  * </p>
  * @since 0.1.0
  */
-package org.llorllale.youtrack.api.response;
+package org.llorllale.youtrack.api.util.response;

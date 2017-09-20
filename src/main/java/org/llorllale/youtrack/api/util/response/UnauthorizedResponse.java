@@ -1,5 +1,5 @@
-/*
- * Copyright 2017 George Aristy.
+/* 
+ * Copyright 2017 George Aristy (george.aristy@gmail.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.response;
+package org.llorllale.youtrack.api.util.response;
 
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -22,24 +22,31 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import java.io.IOException;
 
 /**
- * Special {@link Response} that does no validation and just returns the {@link HttpResponse}.
+ * Handles the case when the HTTP status code is {@code 401}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.1.0
  */
-public class IdentityResponse implements Response {
-  private final HttpResponse httpResponse;
+public class UnauthorizedResponse implements Response {
+  private final Response base;
 
   /**
    * Ctor.
-   * @param httpResponse the http response
-   * @since 0.4.0
+   * @param base the next link in the chain
+   * @since 0.1.0
    */
-  public IdentityResponse(HttpResponse httpResponse) {
-    this.httpResponse = httpResponse;
+  public UnauthorizedResponse(Response base) {
+    this.base = base;
   }
-
+  
   @Override
-  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException {
-    return httpResponse;
+  public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
+    if (base.asHttpResponse().getStatusLine().getStatusCode() == 401) {
+      throw new UnauthorizedException(
+          "401: Unauthorized", 
+          base.asHttpResponse()
+      );
+    } else {
+      return base.asHttpResponse();
+    }
   }
 }

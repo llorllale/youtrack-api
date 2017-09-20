@@ -21,7 +21,7 @@ import static java.util.stream.Collectors.toList;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.response.HttpResponseAsResponse;
+import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;

@@ -17,7 +17,7 @@
 package org.llorllale.youtrack.api.util;
 
 import org.apache.http.HttpEntity;
-import org.llorllale.youtrack.api.response.ParseException;
+import org.llorllale.youtrack.api.util.response.ParseException;
 
 import java.io.IOException;
 import java.util.function.Function;
