@@ -291,6 +291,14 @@
           <formats>
             <format>html</format>
           </formats>
+          <instrumentation>
+            <ignores>
+              <ignore>org.llorllale.youtrack.api.jaxb.*</ignore>
+            </ignores>
+            <excludes>
+              <exclude>org/llorllale/youtrack/api/jaxb/*.class</exclude>
+            </excludes>
+          </instrumentation>
         </configuration>
       </plugin>
     </plugins>
@@ -368,6 +376,14 @@
             <format>html</format>
             <format>xml</format>
           </formats>
+          <instrumentation>
+            <ignores>
+              <ignore>org.llorllale.youtrack.api.jaxb.*</ignore>
+            </ignores>
+            <excludes>
+              <exclude>org/llorllale/youtrack/api/jaxb/*.class</exclude>
+            </excludes>
+          </instrumentation>
         </configuration>
       </plugin>
       <plugin>
