@@ -24,13 +24,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -72,7 +72,7 @@ class DefaultComments implements Comments {
 
   @Override
   public List<Comment> all() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Comments.class)
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class)
         .andThen(
             comments -> comments.getComment()
                 .stream()

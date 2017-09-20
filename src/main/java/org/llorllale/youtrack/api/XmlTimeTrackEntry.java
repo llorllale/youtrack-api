@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.issues.jaxb.WorkItem;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -34,14 +32,14 @@ import java.util.Optional;
  */
 class XmlTimeTrackEntry implements TimeTrackEntry {
   private final Issue issue;
-  private final org.llorllale.youtrack.api.issues.jaxb.WorkItem jaxbWorkItem;
+  private final org.llorllale.youtrack.api.jaxb.WorkItem jaxbWorkItem;
 
   /**
    * Ctor.
    * @param jaxbWorkItem the JAXB class 
    * @since 0.3.0
    */
-  XmlTimeTrackEntry(Issue issue, org.llorllale.youtrack.api.issues.jaxb.WorkItem jaxbWorkItem) {
+  XmlTimeTrackEntry(Issue issue, org.llorllale.youtrack.api.jaxb.WorkItem jaxbWorkItem) {
     this.issue = issue;
     this.jaxbWorkItem = jaxbWorkItem;
   }

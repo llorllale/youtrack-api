@@ -16,8 +16,8 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.issues.jaxb.Field;
-import org.llorllale.youtrack.api.issues.jaxb.Value;
+import org.llorllale.youtrack.api.jaxb.Field;
+import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
 
 import java.time.Instant;
@@ -30,7 +30,7 @@ import java.time.Instant;
 class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
-  private final org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue;
+  private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
 
   /**
    * Ctor.
@@ -41,7 +41,7 @@ class XmlIssue implements Issue {
   XmlIssue(
       Project project, 
       Session session, 
-      org.llorllale.youtrack.api.issues.jaxb.Issue jaxbIssue
+      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
   ) {
     this.project = project;
     this.session = session;

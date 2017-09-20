@@ -27,14 +27,14 @@ import java.util.Optional;
  */
 class XmlProject implements Project {
   private final Session session;
-  private final org.llorllale.youtrack.api.issues.jaxb.Project jaxbProject;
+  private final org.llorllale.youtrack.api.jaxb.Project jaxbProject;
 
   /**
    * Ctor.
    * @param jaxbProject the JAXB instance to be adapted into {@link Project}
    * @since 0.2.0
    */
-  XmlProject(Session session, org.llorllale.youtrack.api.issues.jaxb.Project jaxbProject) {
+  XmlProject(Session session, org.llorllale.youtrack.api.jaxb.Project jaxbProject) {
     this.session = session;
     this.jaxbProject = jaxbProject;
   }

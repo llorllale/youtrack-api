@@ -383,7 +383,7 @@
             </goals>
             <configuration>
               <createJavaDocAnnotations>false</createJavaDocAnnotations>
-              <packageName>org.llorllale.youtrack.api.issues.jaxb</packageName>
+              <packageName>org.llorllale.youtrack.api.jaxb</packageName>
             </configuration>
           </execution>
         </executions>

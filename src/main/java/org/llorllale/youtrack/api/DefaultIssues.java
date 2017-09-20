@@ -23,12 +23,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -76,7 +76,7 @@ class DefaultIssues implements Issues {
 
   @Override
   public List<Issue> all() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Issues.class)
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class)
         .andThen(
             issues -> issues.getIssue()
                 .stream()
@@ -118,7 +118,7 @@ class DefaultIssues implements Issues {
                 )
             )
         ).asHttpResponse().getEntity()
-    ).map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.Issue.class))
+    ).map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class))
         .map(i -> new XmlIssue(project, session, i));
   }
 

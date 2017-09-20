@@ -22,13 +22,13 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -71,7 +71,7 @@ class DefaultTimeTracking implements TimeTracking {
 
   @Override
   public List<TimeTrackEntry> all() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.issues.jaxb.WorkItems.class)
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItems.class)
         .andThen(
             items -> items.getWorkItem()
                 .stream()

@@ -21,7 +21,7 @@
  * 
  * <p>
  * The principal interface is
- * {@link org.llorllale.youtrack.api.response.Response} that defines the set of
+ * {@link org.llorllale.youtrack.api.util.response.Response} that defines the set of
  * methods used by other library components to obtain access to the response
  * payloads from the remote YouTrack API.
  * </p>
@@ -34,7 +34,7 @@
  *
  * <p>
  * Client code is relieved from knowing the existence of all implementations by
- * use of the {@link org.llorllale.youtrack.api.response.HttpResponseAsResponse}
+ * use of the {@link org.llorllale.youtrack.api.util.response.HttpResponseAsResponse}
  * that internally employs the Chain of Responsibility pattern with all other
  * implementations.
  * </p>

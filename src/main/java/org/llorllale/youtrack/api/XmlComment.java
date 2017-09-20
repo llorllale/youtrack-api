@@ -25,7 +25,7 @@ import java.time.Instant;
  */
 class XmlComment implements Comment {
   private final Issue issue;
-  private final org.llorllale.youtrack.api.issues.jaxb.Comment jaxbComment;
+  private final org.llorllale.youtrack.api.jaxb.Comment jaxbComment;
 
   /**
    * Ctor.
@@ -33,7 +33,7 @@ class XmlComment implements Comment {
    * @param jaxbComment the jaxb instance to be adapted into {@link Comment}
    * @since 0.2.0
    */
-  XmlComment(Issue issue, org.llorllale.youtrack.api.issues.jaxb.Comment jaxbComment) {
+  XmlComment(Issue issue, org.llorllale.youtrack.api.jaxb.Comment jaxbComment) {
     this.issue = issue;
     this.jaxbComment = jaxbComment;
   }
