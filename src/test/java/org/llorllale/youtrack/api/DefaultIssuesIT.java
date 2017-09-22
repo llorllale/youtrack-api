@@ -48,13 +48,14 @@ public class DefaultIssuesIT {
     final Issue issue = new DefaultIssues(
         project(),
         session
-    ).create(new IssueSpec("summary", "description"));
+    ).create(new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testAll"), "description"));
 
     assertTrue(
         new DefaultIssues(
             project(),
             session
-        ).all().stream()
+        ).all()
+            .stream()
             .anyMatch(i -> i.id().equals(issue.id()))
     );
   }
@@ -64,7 +65,7 @@ public class DefaultIssuesIT {
     final Issue issue = new DefaultIssues(
         project(),
         session
-    ).create(new IssueSpec("summary", "description"));
+    ).create(new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testGet"), "description"));
 
 
     assertTrue(
@@ -81,7 +82,7 @@ public class DefaultIssuesIT {
         new DefaultIssues(
             project(),
             session
-        ).create(new IssueSpec("summary", "description"))
+        ).create(new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testCreate"), "description"))
     );
   }
 

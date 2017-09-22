@@ -51,17 +51,15 @@ public class DefaultCommentsIT {
         .findFirst()
         .get()
         .issues()
-        .create(new IssueSpec("Summary", "Description"));
+        .create(new IssueSpec(DefaultCommentsIT.class.getSimpleName(), "Description"));
   }
 
   @Test
   public void postAndGetAll() throws Exception {
-    issue.comments()
-        .post(comment1)
-        .post(comment2);
-
     assertTrue(
         new DefaultComments(session, issue)
+            .post(comment1)
+            .post(comment2)
             .all()
             .stream()
             .allMatch(c -> c.text().equals(comment1) || c.text().equals(comment2))

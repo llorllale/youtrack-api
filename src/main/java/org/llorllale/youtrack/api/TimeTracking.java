@@ -26,6 +26,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -165,9 +166,22 @@ public interface TimeTracking {
      */
     public HttpEntity asHttpEntity() {
       final XMLBuilder2 builder = XMLBuilder2.create("workItem")
-          .elem("date").text(String.valueOf(date.atTime(0, 0))).up()
-          .elem("duration").text(String.valueOf(duration.toMinutes())).up()
-          .elem("description").text(description.orElse("")).up();
+          .elem("date")
+              .text(
+                  String.valueOf(
+                      date.atTime(0, 0)
+                          .atZone(ZoneId.systemDefault())
+                          .toInstant()
+                          .toEpochMilli()
+                  )
+              )
+              .up()
+          .elem("duration")
+              .text(String.valueOf(duration.toMinutes()))
+              .up()
+          .elem("description")
+              .text(description.orElse(""))
+              .up();
 
       type.ifPresent(type -> 
           builder
@@ -178,7 +192,7 @@ public interface TimeTracking {
                 .up()
       );
 
-      return new StringEntity(builder.toString(), ContentType.APPLICATION_XML);
+      return new StringEntity(builder.asString(), ContentType.APPLICATION_XML);
     }
   }
 }

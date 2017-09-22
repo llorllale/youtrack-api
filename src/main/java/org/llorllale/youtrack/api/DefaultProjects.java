@@ -24,7 +24,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
-import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
+import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
@@ -72,7 +72,7 @@ class DefaultProjects implements Projects {
         ).apply(
             new HttpResponseAsResponse(
                 httpClient.execute(
-                    new HttpUriRequestWithSession(
+                    new HttpRequestWithSession(
                         session, 
                         new HttpGet(
                             new NonCheckedUriBuilder(

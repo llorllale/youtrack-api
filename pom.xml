@@ -162,6 +162,9 @@
             <groupId>io.fabric8</groupId>
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.21.0</version>
+            <configuration>
+              <showLogs>true</showLogs>
+            </configuration>
             <executions>
               <execution>
                 <id>youtrack-build</id>
@@ -188,7 +191,6 @@
                   <goal>start</goal>
                 </goals>
                 <configuration>
-                  <!--<showLogs>true</showLogs>-->
                   <images>
                     <image>
                       <alias>youtrack-api-integration-test</alias>

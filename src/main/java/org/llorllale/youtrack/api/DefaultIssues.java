@@ -26,7 +26,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
-import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
+import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
@@ -84,13 +84,13 @@ class DefaultIssues implements Issues {
         ).apply(
             new HttpResponseAsResponse(
                 httpClient.execute(
-                    new HttpUriRequestWithSession(
+                    new HttpRequestWithSession(
                         session, 
                         new HttpGet(
                             new NonCheckedUriBuilder(
                                 session.baseUrl()
                                     .toString()
-                                    .concat("/issue/by/project/")
+                                    .concat("/issue/byproject/")
                                     .concat(project().id())
                             ).build()
                         )
@@ -105,7 +105,7 @@ class DefaultIssues implements Issues {
     return Optional.ofNullable(
         new HttpResponseAsResponse(
             httpClient.execute(
-                new HttpUriRequestWithSession(
+                new HttpRequestWithSession(
                     session, 
                     new HttpGet(
                         new NonCheckedUriBuilder(
@@ -128,7 +128,7 @@ class DefaultIssues implements Issues {
         substringAfterLast(
             new HttpResponseAsResponse(
                 httpClient.execute(
-                    new HttpUriRequestWithSession(
+                    new HttpRequestWithSession(
                         session, 
                         new HttpPut(
                             new NonCheckedUriBuilder(

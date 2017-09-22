@@ -16,18 +16,26 @@
 
 package org.llorllale.youtrack.api.util;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.RequestLine;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.params.HttpParams;
+
+import java.net.URI;
 
 /**
- * Thin decorator around {@link HttpEntityEnclosingRequestBase} that sets the request's entity 
+ * Thin decorator around an {@link HttpUriRequest} that sets the request's entity 
  * payload through the constructor.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class HttpRequestWithEntity extends HttpEntityEnclosingRequestBase {
-  private final HttpEntityEnclosingRequest base;
+public class HttpRequestWithEntity implements HttpUriRequest {
+  private final HttpEntityEnclosingRequestBase base;
 
   /**
    * Ctor.
@@ -35,13 +43,118 @@ public class HttpRequestWithEntity extends HttpEntityEnclosingRequestBase {
    * @param base the base request
    * @since 0.4.0
    */
-  public HttpRequestWithEntity(HttpEntity entity, HttpEntityEnclosingRequestBase base) {
+  public HttpRequestWithEntity(HttpEntity entity, HttpPost base) {
     this.base = base;
     this.base.setEntity(entity);
   }
 
   @Override
   public String getMethod() {
-    return base.getRequestLine().getMethod();
+    return base.getMethod();
+  }
+
+  @Override
+  public URI getURI() {
+    return base.getURI();
+  }
+
+  @Override
+  public void abort() throws UnsupportedOperationException {
+    base.abort();
+  }
+
+  @Override
+  public boolean isAborted() {
+    return base.isAborted();
+  }
+
+  @Override
+  public RequestLine getRequestLine() {
+    return base.getRequestLine();
+  }
+
+  @Override
+  public ProtocolVersion getProtocolVersion() {
+    return base.getProtocolVersion();
+  }
+
+  @Override
+  public boolean containsHeader(String name) {
+    return base.containsHeader(name);
+  }
+
+  @Override
+  public Header[] getHeaders(String name) {
+    return base.getHeaders(name);
+  }
+
+  @Override
+  public Header getFirstHeader(String name) {
+    return base.getFirstHeader(name);
+  }
+
+  @Override
+  public Header getLastHeader(String name) {
+    return base.getLastHeader(name);
+  }
+
+  @Override
+  public Header[] getAllHeaders() {
+    return base.getAllHeaders();
+  }
+
+  @Override
+  public void addHeader(Header header) {
+    base.addHeader(header);
+  }
+
+  @Override
+  public void addHeader(String name, String value) {
+    base.addHeader(name, value);
+  }
+
+  @Override
+  public void setHeader(Header header) {
+    base.setHeader(header);
+  }
+
+  @Override
+  public void setHeader(String name, String value) {
+    base.setHeader(name, value);
+  }
+
+  @Override
+  public void setHeaders(Header[] headers) {
+    base.setHeaders(headers);
+  }
+
+  @Override
+  public void removeHeader(Header header) {
+    base.removeHeader(header);
+  }
+
+  @Override
+  public void removeHeaders(String name) {
+    base.removeHeaders(name);
+  }
+
+  @Override
+  public HeaderIterator headerIterator() {
+    return base.headerIterator();
+  }
+
+  @Override
+  public HeaderIterator headerIterator(String name) {
+    return base.headerIterator(name);
+  }
+
+  @Override
+  public HttpParams getParams() {
+    return base.getParams();
+  }
+
+  @Override
+  public void setParams(HttpParams params) {
+    base.setParams(params);
   }
 }

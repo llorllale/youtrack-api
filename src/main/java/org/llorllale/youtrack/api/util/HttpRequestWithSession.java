@@ -32,7 +32,7 @@ import java.net.URI;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class HttpUriRequestWithSession implements HttpUriRequest {
+public class HttpRequestWithSession implements HttpUriRequest {
   private final HttpUriRequest base;
 
   /**
@@ -41,7 +41,7 @@ public class HttpUriRequestWithSession implements HttpUriRequest {
    * @param request the http request to execute
    * @since 0.4.0
    */
-  public HttpUriRequestWithSession(Session session, HttpUriRequest request) {
+  public HttpRequestWithSession(Session session, HttpUriRequest request) {
     this.base = request;
     session.cookies().forEach(this.base::addHeader);
   }

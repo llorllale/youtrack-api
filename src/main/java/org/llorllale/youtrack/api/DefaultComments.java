@@ -28,7 +28,7 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
-import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
+import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
@@ -77,9 +77,10 @@ class DefaultComments implements Comments {
             comments -> comments.getComment()
                 .stream()
                 .map(c -> new XmlComment(issue, c))
-        ).apply(new HttpResponseAsResponse(
+        ).apply(
+            new HttpResponseAsResponse(
                 httpClient.execute(
-                    new HttpUriRequestWithSession(
+                    new HttpRequestWithSession(
                         session, 
                         new HttpGet(
                             new NonCheckedUriBuilder(
@@ -100,7 +101,7 @@ class DefaultComments implements Comments {
   public Comments post(String text) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         httpClient.execute(
-            new HttpUriRequestWithSession(
+            new HttpRequestWithSession(
                 session, 
                 new HttpRequestWithEntity(
                     new StringEntity(
@@ -121,6 +122,6 @@ class DefaultComments implements Comments {
         )
     ).asHttpResponse();
 
-    return this;
+    return new DefaultComments(session, issue);
   }
 }

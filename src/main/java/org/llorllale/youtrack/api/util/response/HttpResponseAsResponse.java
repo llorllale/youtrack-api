@@ -45,8 +45,10 @@ public class HttpResponseAsResponse implements Response {
     this.base = 
         new UnauthorizedResponse(
             new ForbiddenResponse(
-                new IdentityResponse(
-                    httpResponse
+                new InternalServerErrorResponse(
+                    new IdentityResponse(
+                        httpResponse
+                    )
                 )
             )
         );

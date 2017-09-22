@@ -26,7 +26,7 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
-import org.llorllale.youtrack.api.util.HttpUriRequestWithSession;
+import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
@@ -79,7 +79,7 @@ class DefaultTimeTracking implements TimeTracking {
         ).apply(
             new HttpResponseAsResponse(
                 httpClient.execute(
-                    new HttpUriRequestWithSession(
+                    new HttpRequestWithSession(
                         session, 
                         new HttpGet(
                             new NonCheckedUriBuilder(
@@ -100,7 +100,7 @@ class DefaultTimeTracking implements TimeTracking {
   public TimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         httpClient.execute(
-            new HttpUriRequestWithSession(
+            new HttpRequestWithSession(
                 session, 
                 new HttpRequestWithEntity(
                     spec.asHttpEntity(),
@@ -118,6 +118,6 @@ class DefaultTimeTracking implements TimeTracking {
         )
     ).asHttpResponse();
 
-    return this;
+    return new DefaultTimeTracking(session, issue);
   }
 }

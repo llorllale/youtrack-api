@@ -52,17 +52,17 @@ public class DefaultTimeTrackingIT {
         .findFirst()
         .get()
         .issues()
-        .create(new IssueSpec("Title", "Description"));
+        .create(new IssueSpec(DefaultTimeTrackingIT.class.getSimpleName(), "Description"));
   }
 
   @Test
-  public void createAndGetAll() throws Exception {
-    issue.timetracking()
-        .create(new EntrySpec(Duration.ofMinutes(45)))
-        .create(new EntrySpec(Duration.ofHours(1)));
-
+  public void createAndCountAll() throws Exception {
     assertThat(
-        issue.timetracking().all().size(),
+        new DefaultTimeTracking(session, issue)
+            .create(new EntrySpec(Duration.ofMinutes(45)))
+            .create(new EntrySpec(Duration.ofHours(1)))
+            .all()
+            .size(),
         is(2)
     );
   }
