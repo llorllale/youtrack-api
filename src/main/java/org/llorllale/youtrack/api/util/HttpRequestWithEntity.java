@@ -22,19 +22,17 @@ import org.apache.http.HttpEntity;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.params.HttpParams;
 
 import java.net.URI;
 
 /**
- * Thin decorator around an {@link HttpUriRequest} that sets the request's entity 
+ * Thin decorator around Apace http requests that sets the request's entity 
  * payload through the constructor.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class HttpRequestWithEntity implements HttpUriRequest {
+public class HttpRequestWithEntity extends HttpEntityEnclosingRequestBase {
   private final HttpEntityEnclosingRequestBase base;
 
   /**
@@ -43,9 +41,9 @@ public class HttpRequestWithEntity implements HttpUriRequest {
    * @param base the base request
    * @since 0.4.0
    */
-  public HttpRequestWithEntity(HttpEntity entity, HttpPost base) {
+  public HttpRequestWithEntity(HttpEntity entity, HttpEntityEnclosingRequestBase base) {
     this.base = base;
-    this.base.setEntity(entity);
+    this.setEntity(entity);
   }
 
   @Override
@@ -156,5 +154,20 @@ public class HttpRequestWithEntity implements HttpUriRequest {
   @Override
   public void setParams(HttpParams params) {
     base.setParams(params);
+  }
+
+  @Override
+  public HttpEntity getEntity() {
+    return this.base.getEntity();
+  }
+
+  @Override
+  public boolean expectContinue() {
+    return this.base.expectContinue();
+  }
+
+  @Override
+  public void setEntity(HttpEntity entity) {
+    this.base.setEntity(entity);
   }
 }

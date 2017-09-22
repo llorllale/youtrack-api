@@ -18,22 +18,26 @@ package org.llorllale.youtrack.api.util;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.params.HttpParams;
 import org.llorllale.youtrack.api.session.Session;
 
 import java.net.URI;
 
 /**
- * Thin decorator around {@link HttpUriRequest} that attaches a {@link Session session's} state
- * to a {@link HttpUriRequest}.
+ * Thin decorator around Apache http requests that attaches a {@link Session session's} state
+ * to itself.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class HttpRequestWithSession implements HttpUriRequest {
-  private final HttpUriRequest base;
+public class HttpRequestWithSession extends HttpEntityEnclosingRequestBase {
+  private final HttpRequestBase base;
+  private final boolean expectContinue;
+  private HttpEntity entity;
 
   /**
    * Attaches the {@code session}'s state to {@code request}.
@@ -41,9 +45,24 @@ public class HttpRequestWithSession implements HttpUriRequest {
    * @param request the http request to execute
    * @since 0.4.0
    */
-  public HttpRequestWithSession(Session session, HttpUriRequest request) {
+  public HttpRequestWithSession(Session session, HttpEntityEnclosingRequestBase request) {
     this.base = request;
-    session.cookies().forEach(this.base::addHeader);
+    this.expectContinue = request.expectContinue();
+    this.entity = request.getEntity();
+    session.cookies().forEach(this::addHeader);
+  }
+
+  /**
+   * Attaches the {@code session}'s state to {@code request}.
+   * @param session the user's {@link Session}
+   * @param request the http request to execute
+   * @since 0.4.0
+   */
+  public HttpRequestWithSession(Session session, HttpRequestBase request) {
+    this.base = request;
+    session.cookies().forEach(this::addHeader);
+    this.expectContinue = false;
+    this.entity = null;
   }
 
   @Override
@@ -154,5 +173,20 @@ public class HttpRequestWithSession implements HttpUriRequest {
   @Override
   public void setParams(HttpParams params) {
     base.setParams(params);
+  }
+
+  @Override
+  public HttpEntity getEntity() {
+    return this.entity;
+  }
+
+  @Override
+  public boolean expectContinue() {
+    return this.expectContinue;
+  }
+
+  @Override
+  public void setEntity(HttpEntity entity) {
+    this.entity = entity;
   }
 }

@@ -169,7 +169,7 @@ public interface TimeTracking {
           .elem("date")
               .text(
                   String.valueOf(
-                      date.atTime(0, 0)
+                      date.atStartOfDay()
                           .atZone(ZoneId.systemDefault())
                           .toInstant()
                           .toEpochMilli()
