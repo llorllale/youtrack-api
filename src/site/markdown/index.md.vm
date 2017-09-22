@@ -21,12 +21,14 @@ $h4 Snippet
     
     //creating an issue
     youtrack.projects()
-        .all()
+        .all()                                    //list all projects
         .stream()
         .filter(p -> p.id().equals("project_id"))
         .get()
         .issues()
-        .create(new IssueSpec("summary", "type");
+        .create(new IssueSpec("summary", "type")) //create issue for the selected project
+        .comments()
+        .post("This is my first comment!");       //posts a comment to the newly created issue
 
 <br/>
 

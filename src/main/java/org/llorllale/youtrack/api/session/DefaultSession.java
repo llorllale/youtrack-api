@@ -29,7 +29,7 @@ import java.util.List;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class DefaultSession implements Session {
+class DefaultSession implements Session {
   private final URL youtrackUrl;
   private final List<Header> cookies;
 

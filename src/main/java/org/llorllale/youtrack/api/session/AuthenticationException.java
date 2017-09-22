@@ -16,15 +16,13 @@
 
 package org.llorllale.youtrack.api.session;
 
-import org.llorllale.youtrack.api.YouTrackException;
-
 /**
  * Signals an error with the credentials that were provided.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  * @see UsernamePasswordLogin
  */
-public class AuthenticationException extends YouTrackException {
+public class AuthenticationException extends Exception {
   private static final long serialVersionUID = -6585053905710875326L;
   
   /**

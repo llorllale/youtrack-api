@@ -17,14 +17,13 @@
 package org.llorllale.youtrack.api.session;
 
 import org.apache.http.HttpResponse;
-import org.llorllale.youtrack.api.YouTrackException;
 
 /**
  * Signals that the attempted action is forbidden for the current user {@link Session session}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class UnauthorizedException extends YouTrackException {
+public class UnauthorizedException extends Exception {
   private static final long serialVersionUID = -2245180199390157205L;
 
   private final HttpResponse httpResponse;
