@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
@@ -105,7 +106,7 @@ class DefaultComments implements Comments {
                 session, 
                 new HttpRequestWithEntity(
                     new StringEntity(
-                        text, 
+                        "comment=".concat(text), 
                         ContentType.APPLICATION_FORM_URLENCODED
                     ),
                     new HttpPost(
@@ -115,6 +116,35 @@ class DefaultComments implements Comments {
                                 .concat("/issue/")
                                 .concat(issue.id())
                                 .concat("/execute")
+                        ).build()
+                    )
+                )
+            )
+        )
+    ).asHttpResponse();
+
+    return new DefaultComments(session, issue);
+  }
+
+  @Override
+  public Comments update(Comment comment, String text) throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpRequestWithSession(
+                session, 
+                new HttpRequestWithEntity(
+                    new StringEntity(
+                        String.format("{\"text\": \"%s\"}", text), 
+                        ContentType.APPLICATION_JSON
+                    ),
+                    new HttpPut(
+                        new NonCheckedUriBuilder(
+                            session.baseUrl()
+                                .toString()
+                                .concat("/issue/")
+                                .concat(issue.id())
+                                .concat("/comment/")
+                                .concat(comment.id())
                         ).build()
                     )
                 )

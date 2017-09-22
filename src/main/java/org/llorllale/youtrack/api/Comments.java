@@ -48,4 +48,16 @@ public interface Comments {
    * @since 0.4.0
    */
   public Comments post(String text) throws IOException, UnauthorizedException;
+
+  /**
+   * Updates the text content of a {@link Comment}.
+   * @param comment the {@link Comment} to update
+   * @param text the new text
+   * @return this object
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this 
+   *     operation
+   * @since 0.4.0
+   */
+  public Comments update(Comment comment, String text) throws IOException, UnauthorizedException;
 }

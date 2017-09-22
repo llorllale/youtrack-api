@@ -16,6 +16,9 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.Random;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,8 +35,6 @@ public class DefaultCommentsIT {
   private static IntegrationTestsConfig config;
   private static Session session;
   private static Issue issue;
-  private static final String comment1 = "First comment";
-  private static final String comment2 = "Second comment";
 
   @BeforeClass
   public static void setup() throws Exception {
@@ -56,13 +57,39 @@ public class DefaultCommentsIT {
 
   @Test
   public void postAndGetAll() throws Exception {
-    assertTrue(
+    final String text1 = "First comment " + new Random(System.currentTimeMillis()).nextInt();
+    final String text2 = "Second comment " + new Random(System.currentTimeMillis()).nextInt();
+
+    assertThat(
         new DefaultComments(session, issue)
-            .post(comment1)
-            .post(comment2)
+            .post(text1)
+            .post(text2)
             .all()
             .stream()
-            .allMatch(c -> c.text().equals(comment1) || c.text().equals(comment2))
+            .filter(c -> text1.equals(c.text()) || text2.equals(c.text()))
+            .count(),
+        is(2L)
+    );
+  }
+
+  @Test
+  public void postAndUpdateAndGet() throws Exception {
+    final String initialText = "Comment_" + new Random(System.currentTimeMillis()).nextInt();
+    final String finalText = "UpdatedComment_" + new Random(System.currentTimeMillis()).nextInt();
+    final Comment comment = new DefaultComments(session, issue)
+        .post(initialText)
+        .all()
+        .stream()
+        .filter(c -> initialText.equals(c.text()))
+        .findFirst()
+        .get();
+
+    assertTrue(
+        new DefaultComments(session, issue)
+            .update(comment, finalText)
+            .all()
+            .stream()
+            .noneMatch(c -> initialText.equals(c.text()))
     );
   }
 }
