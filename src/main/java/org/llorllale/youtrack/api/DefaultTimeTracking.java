@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.toList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -31,7 +30,7 @@ import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.stream.Stream;
 
 
 /**
@@ -70,13 +69,9 @@ class DefaultTimeTracking implements TimeTracking {
   }
 
   @Override
-  public List<TimeTrackEntry> all() throws IOException, UnauthorizedException {
+  public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException {
     return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItems.class)
-        .andThen(
-            items -> items.getWorkItem()
-                .stream()
-                .map(i -> new XmlTimeTrackEntry(issue, i))
-        ).apply(
+        .apply(
             new HttpResponseAsResponse(
                 httpClient.execute(
                     new HttpRequestWithSession(
@@ -93,7 +88,9 @@ class DefaultTimeTracking implements TimeTracking {
                     )
                 )
             ).asHttpResponse().getEntity()
-        ).collect(toList());
+        ).getWorkItem()
+            .stream()
+            .map(e -> new XmlTimeTrackEntry(issue, e));
   }
 
   @Override

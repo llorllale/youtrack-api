@@ -39,7 +39,7 @@ public class DefaultIssuesTest {
    * @throws Exception 
    */
   @Test
-  public void testAll() throws Exception {
+  public void testStream() throws Exception {
     assertThat(
         new DefaultIssues(
             new MockProject("PR-1", "Mock Name", "Mock Description"), 
@@ -47,8 +47,8 @@ public class DefaultIssuesTest {
             new MockHttpClient(
                 new MockOkResponse(ALL_ISSUES)
             )
-        ).all().size(),
-        is(1)
+        ).stream().count(),
+        is(1L)
     );
   }
 

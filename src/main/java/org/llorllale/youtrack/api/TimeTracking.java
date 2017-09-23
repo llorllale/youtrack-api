@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * <p>API for {@link Issue} timetracking.</p>
@@ -40,14 +40,16 @@ import java.util.Optional;
  */
 public interface TimeTracking {
   /**
-   * Returns all available {@link TimeTrackEntry work entries} for the {@link Issue}.
-   * @return all available {@link TimeTrackEntry work entries} for the {@link Issue}
+   * Returns a {@link Stream} with all available {@link TimeTrackEntry work entries} for the 
+   * {@link Issue}.
+   * @return a {@link Stream} with all available {@link TimeTrackEntry work entries} for the 
+   *     {@link Issue}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.4.0
    */
-  public List<TimeTrackEntry> all() throws IOException, UnauthorizedException;
+  public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException;
 
   /**
    * Creates a new {@link TimeTrackEntry entry}.

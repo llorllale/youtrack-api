@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.toList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -34,7 +33,7 @@ import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link Comments}.
@@ -72,13 +71,9 @@ class DefaultComments implements Comments {
   }
 
   @Override
-  public List<Comment> all() throws IOException, UnauthorizedException {
+  public Stream<Comment> stream() throws IOException, UnauthorizedException {
     return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class)
-        .andThen(
-            comments -> comments.getComment()
-                .stream()
-                .map(c -> new XmlComment(issue, c))
-        ).apply(
+        .apply(
             new HttpResponseAsResponse(
                 httpClient.execute(
                     new HttpRequestWithSession(
@@ -95,7 +90,9 @@ class DefaultComments implements Comments {
                     )
                 )
             ).asHttpResponse().getEntity()
-        ).collect(toList());
+        ).getComment()
+            .stream()
+            .map(c -> new XmlComment(issue, c));
   }
 
   @Override

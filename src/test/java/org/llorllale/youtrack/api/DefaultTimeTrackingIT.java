@@ -47,7 +47,6 @@ public class DefaultTimeTrackingIT {
 
     issue = new DefaultYouTrack(session)
         .projects()
-        .all()
         .stream()
         .findFirst()
         .get()
@@ -61,9 +60,9 @@ public class DefaultTimeTrackingIT {
         new DefaultTimeTracking(session, issue)
             .create(new EntrySpec(Duration.ofMinutes(45)))
             .create(new EntrySpec(Duration.ofHours(1)))
-            .all()
-            .size(),
-        is(2)
+            .stream()
+            .count(),
+        is(2L)
     );
   }
 }

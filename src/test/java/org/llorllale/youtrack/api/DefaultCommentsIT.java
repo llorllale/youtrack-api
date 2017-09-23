@@ -47,7 +47,6 @@ public class DefaultCommentsIT {
 
     issue = new DefaultYouTrack(session)
         .projects()
-        .all()
         .stream()
         .findFirst()
         .get()
@@ -64,7 +63,6 @@ public class DefaultCommentsIT {
         new DefaultComments(session, issue)
             .post(text1)
             .post(text2)
-            .all()
             .stream()
             .filter(c -> text1.equals(c.text()) || text2.equals(c.text()))
             .count(),
@@ -78,7 +76,6 @@ public class DefaultCommentsIT {
     final String finalText = "UpdatedComment_" + new Random(System.currentTimeMillis()).nextInt();
     final Comment comment = new DefaultComments(session, issue)
         .post(initialText)
-        .all()
         .stream()
         .filter(c -> initialText.equals(c.text()))
         .findFirst()
@@ -87,7 +84,6 @@ public class DefaultCommentsIT {
     assertTrue(
         new DefaultComments(session, issue)
             .update(comment, finalText)
-            .all()
             .stream()
             .noneMatch(c -> initialText.equals(c.text()))
     );

@@ -20,7 +20,7 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Fetches {@link Project projects} from the YouTrack server.
@@ -29,12 +29,14 @@ import java.util.List;
  */
 public interface Projects {
   /**
-   * All accessible {@link Project projects} by the user's {@link Session}.
-   * @return all accessible {@link Project projects} by the user's {@link Session}
+   * Returns a {@link Stream} with all accessible {@link Project projects} by the user's 
+   * {@link Session}.
+   * @return a {@link Stream} with all accessible {@link Project projects} by the user's 
+   *     {@link Session}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to access this
    *     resource
    * @since 0.4.0
    */
-  public List<Project> all() throws IOException, UnauthorizedException;
+  public Stream<Project> stream() throws IOException, UnauthorizedException;
 }

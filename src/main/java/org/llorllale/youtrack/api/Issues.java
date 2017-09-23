@@ -26,6 +26,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Issues API.
@@ -41,14 +42,14 @@ public interface Issues {
   public Project project();
 
   /**
-   * All {@link Issue issues} created for this {@link Project}.
-   * @return a non-{@code null} list of {@link Issue issues} for this {@link #project() project}
+   * A {@link Stream} with all {@link Issue issues} created for this {@link Project}.
+   * @return a {@link Stream} with all {@link Issue issues} for this {@link #project() project}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to access this
    *     resource
    * @since 0.4.0
    */
-  public List<Issue> all() throws IOException, UnauthorizedException;
+  public Stream<Issue> stream() throws IOException, UnauthorizedException;
 
   /**
    * The {@link Issue} with the given {@code id}, if it exists.

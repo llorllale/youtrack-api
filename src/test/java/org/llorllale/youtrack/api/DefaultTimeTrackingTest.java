@@ -42,8 +42,8 @@ public class DefaultTimeTrackingTest {
             new MockHttpClient(
                 new MockOkResponse(WORKITEMS)
             )
-        ).all().size(),
-        is(2)
+        ).stream().count(),
+        is(2L)
     );
   }
 

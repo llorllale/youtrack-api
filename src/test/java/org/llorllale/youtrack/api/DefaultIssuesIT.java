@@ -54,8 +54,7 @@ public class DefaultIssuesIT {
         new DefaultIssues(
             project(),
             session
-        ).all()
-            .stream()
+        ).stream()
             .anyMatch(i -> i.id().equals(issue.id()))
     );
   }
