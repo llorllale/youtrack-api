@@ -16,10 +16,12 @@
 
 package org.llorllale.youtrack.api.util;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * <p>Hides all {@link URISyntaxException}s.</p>
@@ -59,6 +61,17 @@ public class NonCheckedUriBuilder {
    */
   public NonCheckedUriBuilder setParameter(String name, String value) {
     this.builder.setParameter(name, value);
+    return this;
+  }
+
+  /**
+   * Adds {@code params} on the internal {@link URIBuilder}.
+   * @param params the query parameters
+   * @return this object
+   * @since 0.4.0
+   */
+  public NonCheckedUriBuilder addParameters(List<NameValuePair> params) {
+    this.builder.addParameters(params);
     return this;
   }
 

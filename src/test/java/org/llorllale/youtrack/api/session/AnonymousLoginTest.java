@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.session;
 
 import java.net.URL;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
- *
- * @author George Aristy george.aristy AT gmail DOT com
+ * Unit tests for {@link AnonymousLogin}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.4.0
  */
 public class AnonymousLoginTest {
-  /**
-   * Login method should always succeed
-   */
   @Test
-  public void successfulLogin() throws Exception {
-    new AnonymousLogin(new URL("http://some.url")).login();
+  public void login() throws Exception {
+    assertNotNull(
+        new AnonymousLogin(
+            new URL("http://some.url")
+        ).login()
+    );
   }
 }

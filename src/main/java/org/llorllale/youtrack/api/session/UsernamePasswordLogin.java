@@ -27,6 +27,7 @@ import org.apache.http.message.BasicHeader;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -47,8 +48,6 @@ import java.util.Arrays;
  * @since 0.1.0
  */
 public class UsernamePasswordLogin implements Login {
-  private static final String LOGIN_RESOURCE = "/user/login";
-
   private final URL youtrackUrl;
   private final HttpClient httpClient;
   private String username;
@@ -71,7 +70,7 @@ public class UsernamePasswordLogin implements Login {
     this.youtrackUrl = youtrackUrl;
     this.httpClient = httpClient;
     this.username = username;
-    this.password = password;
+    this.password = Arrays.copyOf(password, password.length);
   }
 
   /**
@@ -101,15 +100,16 @@ public class UsernamePasswordLogin implements Login {
       );
     }
 
-    final NonCheckedUriBuilder ub = 
-            new NonCheckedUriBuilder(youtrackUrl.toString() + LOGIN_RESOURCE);
-    ub.setParameter("login", username)
-        .setParameter("password", new String(password));
+    final URI uri = new NonCheckedUriBuilder(
+        youtrackUrl.toString().concat("/user/login")
+    ).setParameter("login", username)
+        .setParameter("password", new String(password))
+        .build();
 
     this.username = null;
     this.password = null;
 
-    final HttpPost post = new HttpPost(ub.build());
+    final HttpPost post = new HttpPost(uri);
     final HttpResponse response = httpClient.execute(post);
 
     if (response.getStatusLine().getStatusCode() != 200) {    //TODO there is more branching here
@@ -129,6 +129,6 @@ public class UsernamePasswordLogin implements Login {
             )
         ).get();    //expected
 
-    return new BasicSession(youtrackUrl, Arrays.asList(cookie));
+    return new DefaultSession(youtrackUrl, cookie);
   }
 }

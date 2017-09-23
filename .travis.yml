@@ -18,6 +18,16 @@ script:
   - mvn -P release-profile clean install
   - mvn -P integration-tests verify
   - mvn cobertura:cobertura
+  - mvn -P integration-tests cobertura:cobertura-integration-test
+  - mvn site
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: target/site/
+  github_token: $site_token
+  on:
+    tags: true

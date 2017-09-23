@@ -17,74 +17,42 @@
 package org.llorllale.youtrack.api.session;
 
 import java.net.URL;
-import static java.util.stream.Collectors.toList;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
  * Unit tests for {@link PermanentTokenLogin}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.3.0
+ * @since 0.4.0
  */
 public class PermanentTokenLoginTest {
-  /**
-   * Test same youtrack URL is returned in session.
-   * @throws Exception 
-   * @since 0.3.0
-   */
   @Test
-  public void assertBaseUrl() throws Exception {
-    final URL youtrackUrl = new URL("http://some.url");
-    assertThat(
+  public void login() throws Exception {
+    final String token = "abc123";
+    assertNotNull(
         new PermanentTokenLogin(
-            youtrackUrl, 
-            "123234345tlkjslfkjglkew4jl3k2j"
+            new URL("http://some.url"), 
+            token
         ).login()
-            .baseUrl(),
-        is(youtrackUrl)
     );
   }
 
-  /**
-   * Verify correct http header name.
-   * @throws Exception 
-   * @since 0.3.0
-   */
   @Test
-  public void assertTokenHeaderName() throws Exception {
-    assertThat(
-        new PermanentTokenLogin(
-            new URL("http://some.url"),
-            "123456"
-        ).login()
-            .cookies()
-            .stream()
-            .map(h -> h.getName())
-            .collect(toList()),
-        hasItem("Authorization")
-    );
-  }
+  public void loginHeader() throws Exception {
+    final String token = "abc123";
 
-  /**
-   * Correct http header value.
-   * @throws Exception 
-   * @since 0.3.0
-   */
-  @Test
-  public void assertTokenHeaderValue() throws Exception {
-    final String token = "aslkjf Q#$KJTl3k5tj l2kj";
-    assertThat(
+    assertTrue(
         new PermanentTokenLogin(
-            new URL("http://some.url"),
+            new URL("http://some.url"), 
             token
         ).login()
             .cookies()
             .stream()
-            .map(h -> h.getValue())
-            .collect(toList()),
-        hasItem("Bearer ".concat(token))
+            .allMatch(
+                h -> "Authorization".equals(h.getName()) && 
+                     "Bearer ".concat(token).equals(h.getValue())
+            )
     );
   }
 }

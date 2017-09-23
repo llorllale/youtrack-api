@@ -44,7 +44,7 @@ public class PermanentTokenLogin implements Login {
 
   @Override
   public Session login() throws AuthenticationException, IOException {
-    return new BasicSession(
+    return new DefaultSession(
         youtrackUrl, 
         new BasicHeader(
             "Authorization", 

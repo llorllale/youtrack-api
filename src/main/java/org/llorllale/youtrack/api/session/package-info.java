@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /**
- * <p>Collection of APIs necessary to obtain access to YouTrack's resources.</p>
+ * <p>Collection of APIs necessary to create sessions with YouTrack.</p>
  *
  * <p>Use the {@link org.llorllale.youtrack.api.session.Login} interface to obtain
  * a {@link org.llorllale.youtrack.api.session.Session} that you can then use
@@ -22,5 +22,6 @@
  * @since 0.1.0
  * @see org.llorllale.youtrack.api.session.UsernamePasswordLogin
  * @see org.llorllale.youtrack.api.session.AnonymousLogin
+ * @see org.llorllale.youtrack.api.session.PermanentTokenLogin
  */
 package org.llorllale.youtrack.api.session;
