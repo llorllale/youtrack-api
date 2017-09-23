@@ -1,0 +1,66 @@
+/*
+ * Copyright 2017 George Aristy.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.llorllale.youtrack.api;
+
+import static org.hamcrest.CoreMatchers.is;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
+
+/**
+ * Unit tests for {@link XmlUser}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.4.0
+ */
+public class XmlUserTest {
+  private static org.llorllale.youtrack.api.jaxb.User jaxbUser;
+
+  @BeforeClass
+  public static void setUpClass() throws Exception {
+    jaxbUser = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class, USER)
+        .jaxb();
+  }
+
+  /**
+   * Test of name method, of class XmlUser.
+   * @since 0.4.0
+   */
+  @Test
+  public void testName() {
+    assertThat(
+        new XmlUser(jaxbUser).name(),
+        is(jaxbUser.getFullName())
+    );
+  }
+
+  /**
+   * Test of email method, of class XmlUser.
+   * @since 0.4.0
+   */
+  @Test
+  public void testEmail() {
+    assertThat(
+        new XmlUser(jaxbUser).email(),
+        is(jaxbUser.getEmail())
+    );
+  }
+
+  private static final String USER =
+"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+"<user lastCreatedProject=\"HBR\" email=\"vadim.gurov@gmail.com\" fullName=\"Application Exception\"/>";
+}
