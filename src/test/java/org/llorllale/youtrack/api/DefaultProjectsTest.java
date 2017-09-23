@@ -41,8 +41,8 @@ public class DefaultProjectsTest {
                     new StringEntity(XML_RESPONSE)
                 )
             )
-        ).all().size(),
-        is(2)
+        ).stream().count(),
+        is(2L)
     );
   }
 

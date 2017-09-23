@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.toList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -29,7 +28,7 @@ import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link Projects}.
@@ -63,13 +62,9 @@ class DefaultProjects implements Projects {
   }
 
   @Override
-  public List<Project> all() throws IOException, UnauthorizedException {
+  public Stream<Project> stream() throws IOException, UnauthorizedException {
     return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Projects.class)
-        .andThen(
-            projects -> projects.getProject()
-                .stream()
-                .map(p -> new XmlProject(session, p))
-        ).apply(
+        .apply(
             new HttpResponseAsResponse(
                 httpClient.execute(
                     new HttpRequestWithSession(
@@ -84,6 +79,8 @@ class DefaultProjects implements Projects {
                     )
                 )
             ).asHttpResponse().getEntity()
-        ).collect(toList());
+        ).getProject()
+            .stream()
+            .map(p -> new XmlProject(session, p));
   }
 }

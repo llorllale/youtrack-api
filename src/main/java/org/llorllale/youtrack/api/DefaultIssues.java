@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 import org.apache.http.client.HttpClient;
@@ -31,8 +30,8 @@ import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link Issues}.
@@ -75,13 +74,9 @@ class DefaultIssues implements Issues {
   }
 
   @Override
-  public List<Issue> all() throws IOException, UnauthorizedException {
+  public Stream<Issue> stream() throws IOException, UnauthorizedException {
     return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class)
-        .andThen(
-            issues -> issues.getIssue()
-                .stream()
-                .map(i -> new XmlIssue(project, session, i))
-        ).apply(
+        .apply(
             new HttpResponseAsResponse(
                 httpClient.execute(
                     new HttpRequestWithSession(
@@ -97,7 +92,9 @@ class DefaultIssues implements Issues {
                     )
                 )
             ).asHttpResponse().getEntity()
-        ).collect(toList());
+        ).getIssue()
+            .stream()
+            .map(i -> new XmlIssue(project, session, i));
   }
 
   @Override

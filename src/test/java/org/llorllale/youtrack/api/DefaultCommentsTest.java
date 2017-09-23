@@ -32,7 +32,7 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
  */
 public class DefaultCommentsTest {
   @Test
-  public void testAll() throws Exception {
+  public void testStream() throws Exception {
     assertThat(
         new DefaultComments(
             new MockSession(), 
@@ -42,8 +42,8 @@ public class DefaultCommentsTest {
             new MockHttpClient(
                 new MockOkResponse(COMMENTS)
             )
-        ).all().size(),
-        is(2)
+        ).stream().count(),
+        is(2L)
     );
   }
 
