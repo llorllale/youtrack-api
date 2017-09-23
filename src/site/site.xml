@@ -26,18 +26,12 @@ limitations under the License.
 
   <custom>
     <reflowSkin>
+      <protocolRelativeURLs>true</protocolRelativeURLs>
       <theme>bootswatch-flatly</theme>
       <highlightJs>true</highlightJs>
       <highlightJsTheme>sunburst</highlightJsTheme>
       <toc>sidebar</toc>
       <brand>
-        <!--
-        <name>
-          <![CDATA[
-            <img src="images/puzzle_16.png"/> youtrack-api
-          ]]>
-        </name>
-        -->
         <href>./index.html</href>
       </brand>
       <bottomNav maxSpan="8">
