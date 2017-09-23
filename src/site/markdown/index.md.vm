@@ -14,21 +14,18 @@ The API is currently unstable as we approach our [first milestone](https://githu
 
 $h4 Snippet
 
-    //login
     final YouTrack youtrack = new YouTrack(
-        new PermanentTokenLogin("your_token").login()
+        new PermanentTokenLogin("your_token").login()   //login
     );
     
-    //creating an issue
     youtrack.projects()
-        .all()                                    //list all projects
-        .stream()
+        .stream()                                        //stream of all projects
         .filter(p -> p.id().equals("project_id"))
         .get()
-        .issues()
-        .create(new IssueSpec("summary", "type")) //create issue for the selected project
+        .issues()                                 
+        .create(new IssueSpec("summary", "description")) //create issue for the selected project
         .comments()
-        .post("This is my first comment!");       //posts a comment to the newly created issue
+        .post("This is my first comment!");              //posts a comment to the newly created issue
 
 <br/>
 
