@@ -22,6 +22,7 @@ import org.llorllale.youtrack.api.Comments;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.TimeTracking;
+import org.llorllale.youtrack.api.UsersOfIssue;
 
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
@@ -249,4 +250,8 @@ public class MockIssue implements Issue {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 
+  @Override
+  public UsersOfIssue users() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
 }

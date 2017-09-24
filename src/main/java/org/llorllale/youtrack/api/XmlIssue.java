@@ -135,4 +135,9 @@ class XmlIssue implements Issue {
   public TimeTracking timetracking() {
     return new DefaultTimeTracking(session, this);
   }
+
+  @Override
+  public UsersOfIssue users() {
+    return new DefaultUsersOfIssue(session, jaxbIssue);
+  }
 }

@@ -19,17 +19,17 @@ package org.llorllale.youtrack.api;
 /**
  * A JAXB implementation of {@link User}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.5.0
  */
 class XmlUser implements User {
   private final org.llorllale.youtrack.api.jaxb.User jaxbUser;
 
   /**
-   * Ctor.
+   * Primary ctor.
    * @param jaxbUser the jaxb instance
-   * @since 0.4.0
+   * @since 0.5.0
    */
-  public XmlUser(org.llorllale.youtrack.api.jaxb.User jaxbUser) {
+  XmlUser(org.llorllale.youtrack.api.jaxb.User jaxbUser) {
     this.jaxbUser = jaxbUser;
   }
 

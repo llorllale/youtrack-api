@@ -81,6 +81,13 @@ public interface Issue {
   public String description();
 
   /**
+   * Access to the issue's {@link User users}.
+   * @return access to the issue's {@link User users}
+   * @since 0.5.0
+   */
+  public UsersOfIssue users();
+
+  /**
    * Access to the issue's {@link Comment comments}.
    * @return Access to the issue's {@link Comment comments}.
    * @since 0.4.0
