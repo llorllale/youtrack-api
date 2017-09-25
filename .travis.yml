@@ -19,6 +19,7 @@ jobs:
 
 jobs:
   include:
+    if: type = push AND branch = master AND tag IS present
     script: mvn site
     deploy:
       provider: pages
