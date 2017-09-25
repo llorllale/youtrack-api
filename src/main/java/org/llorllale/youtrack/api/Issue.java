@@ -16,8 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.DataTransferObject;
 
+import java.io.IOException;
 import java.time.Instant;
 
 /**
@@ -103,4 +106,17 @@ public interface Issue<T> extends DataTransferObject<T> {
    * @since 0.4.0
    */
   public TimeTracking timetracking();
+
+  /**
+   * <p>Returns the same {@link Issue} after refreshing its data from the server.</p>
+   * 
+   * <p>This is a convenient shortcut for {@code issue.project().issues().get(issue.id())}.</p>
+   * 
+   * @return the same {@link Issue} after refreshing its data from the server
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.5.0
+   */
+  public Issue<T> refresh() throws IOException, UnauthorizedException;
 }

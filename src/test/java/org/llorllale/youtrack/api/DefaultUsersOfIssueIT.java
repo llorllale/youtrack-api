@@ -68,10 +68,8 @@ public class DefaultUsersOfIssueIT {
         )
     ).issue();
 
-    final Issue refresh = issue.project().issues().get(issue.id()).get();
-
     assertThat(
-        new DefaultUsersOfIssue(session, refresh)
+        new DefaultUsersOfIssue(session, issue.refresh())
             .updater().get()
             .name(),
         is(config.youtrackUser())
@@ -91,10 +89,8 @@ public class DefaultUsersOfIssueIT {
         )
     ).issue();
 
-    final Issue refresh = issue.project().issues().get(issue.id()).get();
-
     assertThat(
-        new DefaultUsersOfIssue(session, refresh)
+        new DefaultUsersOfIssue(session, issue.refresh())
             .assignee().get()
             .name(),
         is(config.youtrackUser())

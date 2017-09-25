@@ -74,7 +74,7 @@ class DefaultIssues implements Issues {
   }
 
   @Override
-  public Stream<Issue<?>> stream() throws IOException, UnauthorizedException {
+  public Stream<Issue> stream() throws IOException, UnauthorizedException {
     return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class)
         .apply(
             new HttpResponseAsResponse(
@@ -98,7 +98,7 @@ class DefaultIssues implements Issues {
   }
 
   @Override
-  public Optional<Issue<?>> get(String id) throws IOException, UnauthorizedException {
+  public Optional<Issue> get(String id) throws IOException, UnauthorizedException {
     return Optional.ofNullable(
         new HttpResponseAsResponse(
             httpClient.execute(
@@ -120,7 +120,7 @@ class DefaultIssues implements Issues {
   }
 
   @Override
-  public Issue<?> create(IssueSpec spec) throws IOException, UnauthorizedException {
+  public Issue create(IssueSpec spec) throws IOException, UnauthorizedException {
     return this.get(
         substringAfterLast(
             new HttpResponseAsResponse(

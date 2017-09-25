@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.mock;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
 import org.llorllale.youtrack.api.Comments;
@@ -23,6 +24,7 @@ import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.TimeTracking;
 import org.llorllale.youtrack.api.UsersOfIssue;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
@@ -280,5 +282,10 @@ public class MockIssue<T> implements Issue<T> {
   @Override
   public T asDto() {
     return dto;
+  }
+
+  @Override
+  public Issue<T> refresh() throws IOException, UnauthorizedException {
+    return this;
   }
 }

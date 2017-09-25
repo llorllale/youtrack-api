@@ -49,7 +49,7 @@ public interface Issues {
    *     resource
    * @since 0.4.0
    */
-  public Stream<Issue<?>> stream() throws IOException, UnauthorizedException;
+  public Stream<Issue> stream() throws IOException, UnauthorizedException;
 
   /**
    * The {@link Issue} with the given {@code id}, if it exists.
@@ -60,7 +60,7 @@ public interface Issues {
    *     operation
    * @since 0.4.0
    */
-  public Optional<Issue<?>> get(String id) throws IOException, UnauthorizedException;
+  public Optional<Issue> get(String id) throws IOException, UnauthorizedException;
 
   /**
    * Creates an issue according to the {@link IssueSpec spec}.
@@ -71,7 +71,7 @@ public interface Issues {
    *     operation
    * @since 0.4.0
    */
-  public Issue<?> create(IssueSpec spec) throws IOException, UnauthorizedException;
+  public Issue create(IssueSpec spec) throws IOException, UnauthorizedException;
 
   /**
    * Specifications for creating an {@link Issue}.
