@@ -1,33 +1,30 @@
 sudo: required
-
 services:
   - docker
-
 language: java
-
 cache:
   directories:
     - $HOME/.m2
-
 dist: trusty
-
 jdk:
   - openjdk8
 
-script: 
-  - mvn -P release-profile clean install
-  - mvn -P integration-tests verify
-  - mvn cobertura:cobertura
-  - mvn -P integration-tests cobertura:cobertura-integration-test
-  - mvn site
+jobs:
+  include:
+    if: type = pull_request
+    script: mvn -P release-profile clean install
+    script: mvn -P integration-tests verify
+    script: mvn -P integration-tests cobertura:cobertura-integration-test
+    script: bash <(curl -s https://codecov.io/bash)
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
-deploy:
-  provider: pages
-  skip_cleanup: true
-  local_dir: target/site/
-  github_token: $site_token
-  on:
-    tags: true
+jobs:
+  include:
+    script: mvn site
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      local_dir: target/site/
+      github_token: $site_token
+      on:
+        tags: true
+        branch: master

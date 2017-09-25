@@ -108,9 +108,11 @@ public interface Issue<T> extends DataTransferObject<T> {
   public TimeTracking timetracking();
 
   /**
-   * <p>Returns the same {@link Issue} after refreshing its data from the server.</p>
+   * Returns the same {@link Issue} after refreshing its data from the server.
    * 
-   * <p>This is a convenient shortcut for {@code issue.project().issues().get(issue.id())}.</p>
+   * <p>
+   * This is a convenient shortcut for {@code issue.project().issues().get(issue.id()).get()}.
+   * </p>
    * 
    * @return the same {@link Issue} after refreshing its data from the server
    * @throws IOException if the server is unavailable
