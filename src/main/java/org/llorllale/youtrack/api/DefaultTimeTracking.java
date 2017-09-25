@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  */
 class DefaultTimeTracking implements TimeTracking {
   private final Session session;
-  private final Issue issue;
+  private final Issue<?> issue;
   private final HttpClient httpClient;
 
   /**
@@ -50,7 +50,7 @@ class DefaultTimeTracking implements TimeTracking {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultTimeTracking(Session session, Issue issue, HttpClient httpClient) {
+  DefaultTimeTracking(Session session, Issue<?> issue, HttpClient httpClient) {
     this.session = session;
     this.issue = issue;
     this.httpClient = httpClient;
@@ -64,7 +64,7 @@ class DefaultTimeTracking implements TimeTracking {
    * @see #DefaultTimeTracking(org.llorllale.youtrack.api.session.Session, 
    *     org.llorllale.youtrack.api.Issue, org.apache.http.client.HttpClient) 
    */
-  DefaultTimeTracking(Session session, Issue issue) {
+  DefaultTimeTracking(Session session, Issue<?> issue) {
     this(session, issue, HttpClients.createDefault());
   }
 

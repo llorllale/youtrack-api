@@ -18,10 +18,14 @@ package org.llorllale.youtrack.api;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
+import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
@@ -36,63 +40,65 @@ import java.util.Optional;
  */
 class DefaultUsersOfIssue implements UsersOfIssue {
   private final Session session;
+  private final Issue<org.llorllale.youtrack.api.jaxb.Issue> issue;
   private final HttpClient httpClient;
-  private final String creatorLoginName;
-  private final Optional<String> updaterLoginName;
-  private final Optional<String> assigneeLoginName;
 
   /**
    * Primary ctor.
    * @param session the user's {@link Session}
+   * @param issue the parent {@link Issue}
    * @param jaxbIssue the jaxb instance of an Issue
    * @param httpClient the {@link HttpClient} to use
    * @since 0.5.0
    */
   DefaultUsersOfIssue(
       Session session,
-      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue,
+      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue,
       HttpClient httpClient
   ) {
     this.session = session;
+    this.issue = issue;
     this.httpClient = httpClient;
-    this.creatorLoginName = jaxbIssue.getField()
-        .stream()
-        .filter(f -> "reporterName".equals(f.getName()))
-        .map(f -> f.getValue().getValue())
-        .findFirst()
-        .get();
-    this.updaterLoginName = jaxbIssue.getField()
-        .stream()
-        .filter(f -> "updaterName".equals(f.getName()))
-        .map(f -> f.getValue().getValue())
-        .findFirst();
-    this.assigneeLoginName = jaxbIssue.getField()
-        .stream()
-        .filter(f -> "Assignee".equals(f.getName()))
-        .map(f -> f.getValue().getValue())
-        .findFirst();
   }
 
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
    * @param session the user's {@link Session}
+   * @param issue the parent {@link Issue}
    * @param jaxbIssue the jaxb instance of an Issue
    * @since 0.5.0
    */
   DefaultUsersOfIssue(
       Session session,
-      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
+      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue
   ) {
-    this(session, jaxbIssue, HttpClients.createDefault());
+    this(session, issue, HttpClients.createDefault());
   }
 
   @Override
   public User creator() throws IOException, UnauthorizedException {
-    return new XmlUser(getJaxbUser(creatorLoginName));
+    return new XmlUser(
+        getJaxbUser(
+            issue.asDto()
+                .getField()
+                .stream()
+                .filter(f -> "reporterName".equals(f.getName()))
+                .map(f -> f.getValue().getValue())
+                .findFirst()
+                .get()  //expected
+        )
+    );
   }
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
+    final Optional<String> updaterLoginName = issue.asDto()
+        .getField()
+        .stream()
+        .filter(f -> "updaterName".equals(f.getName()))
+        .map(f -> f.getValue().getValue())
+        .findFirst();
+
     final Optional<User> updater;
 
     if (updaterLoginName.isPresent()) {
@@ -106,6 +112,13 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
+    final Optional<String> assigneeLoginName = issue.asDto()
+        .getField()
+        .stream()
+        .filter(f -> "Assignee".equals(f.getName()))
+        .map(f -> f.getValue().getValue())
+        .findFirst();
+
     final Optional<User> assignee;
 
     if (assigneeLoginName.isPresent()) {
@@ -115,6 +128,33 @@ class DefaultUsersOfIssue implements UsersOfIssue {
     }
 
     return assignee;
+  }
+
+  @Override
+  public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpRequestWithSession(
+                session, 
+                new HttpRequestWithEntity(
+                    new StringEntity(
+                        "Assignee=".concat(user.loginName()),
+                        ContentType.APPLICATION_FORM_URLENCODED
+                    ),
+                    new HttpPost(
+                        new NonCheckedUriBuilder(
+                            session.baseUrl().toString()
+                                .concat("/issue/")
+                                .concat(issue.id())
+                                .concat("/execute")
+                        ).build()
+                    )
+                )
+            )
+        )
+    ).asHttpResponse();
+
+    return new DefaultUsersOfIssue(session, issue);
   }
 
   private org.llorllale.youtrack.api.jaxb.User getJaxbUser(String loginName) 

@@ -27,7 +27,7 @@ import java.time.Instant;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-class XmlIssue implements Issue {
+class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   private final Project project;
   private final Session session;
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
@@ -138,6 +138,11 @@ class XmlIssue implements Issue {
 
   @Override
   public UsersOfIssue users() {
-    return new DefaultUsersOfIssue(session, jaxbIssue);
+    return new DefaultUsersOfIssue(session, this);
+  }
+
+  @Override
+  public org.llorllale.youtrack.api.jaxb.Issue asDto() {
+    return jaxbIssue;
   }
 }

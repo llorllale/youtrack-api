@@ -60,7 +60,15 @@ public class XmlUserTest {
     );
   }
 
+  @Test
+  public void testLoginName() {
+    assertThat(
+        new XmlUser(jaxbUser).loginName(),
+        is(jaxbUser.getLogin())
+    );
+  }
+
   private static final String USER =
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-"<user lastCreatedProject=\"HBR\" email=\"vadim.gurov@gmail.com\" fullName=\"Application Exception\"/>";
+"<user lastCreatedProject=\"HBR\" login=\"exception\" email=\"vadim.gurov@gmail.com\" fullName=\"Application Exception\"/>";
 }

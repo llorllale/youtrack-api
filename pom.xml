@@ -403,14 +403,11 @@
             <goals>
               <goal>xjc</goal>
             </goals>
-            <configuration>
-              <createJavaDocAnnotations>false</createJavaDocAnnotations>
-              <packageName>org.llorllale.youtrack.api.jaxb</packageName>
-            </configuration>
           </execution>
         </executions>
         <configuration>
           <packageName>org.llorllale.youtrack.api.jaxb</packageName>
+          <createJavaDocAnnotations>false</createJavaDocAnnotations>
           <generateEpisode>false</generateEpisode>
           <addGeneratedAnnotation>false</addGeneratedAnnotation>
           <clearOutputDir>true</clearOutputDir>

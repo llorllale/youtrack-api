@@ -16,14 +16,17 @@
 
 package org.llorllale.youtrack.api;
 
+import org.llorllale.youtrack.api.util.DataTransferObject;
+
 import java.time.Instant;
 
 /**
  * A {@link YouTrack} issue.
  * @author George Aristy (george.aristy@gmail.com)
+ * @param <T> the underlying DTO's type
  * @since 0.1.0
  */
-public interface Issue {
+public interface Issue<T> extends DataTransferObject<T> {
   /**
    * The {@link Project} that the issue was created in.
    * @return the ID of the project that the issue was created in

@@ -14,37 +14,19 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.util;
 
 /**
- * A JAXB implementation of {@link User}.
+ * The underlying DTO fetched from the YouTrack server.
  * @author George Aristy (george.aristy@gmail.com)
+ * @param <T> the DTO's type
  * @since 0.5.0
  */
-class XmlUser implements User {
-  private final org.llorllale.youtrack.api.jaxb.User jaxbUser;
-
+public interface DataTransferObject<T> {
   /**
-   * Primary ctor.
-   * @param jaxbUser the jaxb instance
+   * Exposes this object as the underlying DTO fetched from the YouTrack server.
+   * @return this object as the underlying DTO fetched from the YouTrack server
    * @since 0.5.0
    */
-  XmlUser(org.llorllale.youtrack.api.jaxb.User jaxbUser) {
-    this.jaxbUser = jaxbUser;
-  }
-
-  @Override
-  public String name() {
-    return jaxbUser.getFullName();
-  }
-
-  @Override
-  public String email() {
-    return jaxbUser.getEmail();
-  }
-
-  @Override
-  public String loginName() {
-    return jaxbUser.getLogin();
-  }
+  public T asDto();
 }

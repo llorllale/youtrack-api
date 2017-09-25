@@ -56,4 +56,16 @@ public interface UsersOfIssue {
    * @since 0.5.0
    */
   public Optional<User> assignee() throws IOException, UnauthorizedException;
+
+  /**
+   * Assigns the {@link Issue} to the given {@link User}.
+   * @param user the {@link User} to assign the issue to
+   * @return this object
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.5.0
+   * @see #assignee() 
+   */
+  public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException;
 }

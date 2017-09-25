@@ -21,6 +21,7 @@ limitations under the License.
 
   <xsd:element name="user">
     <xsd:complexType>
+      <xsd:attribute name="login" type="xsd:string"/>
       <xsd:attribute name="fullName" type="xsd:string"/>
       <xsd:attribute name="email" value="xsd:string"/>
     </xsd:complexType>
