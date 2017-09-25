@@ -17,8 +17,11 @@ jobs:
         - mvn -P release-profile clean install
         - mvn -P integration-tests cobertura:cobertura-integration-test
         - bash <(curl -s https://codecov.io/bash)
+
+jobs:
+  include:
     - # deploy
-      if: branch = master AND tag IS present
+      if: type = push AND branch = master AND tag IS present
       script: mvn site
       deploy:
         provider: pages
