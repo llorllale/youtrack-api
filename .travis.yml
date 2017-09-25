@@ -11,21 +11,20 @@ jdk:
 
 jobs:
   include:
-    if: type = pull_request
-    script: mvn -P release-profile clean install
-    script: mvn -P integration-tests verify
-    script: mvn -P integration-tests cobertura:cobertura-integration-test
-    script: bash <(curl -s https://codecov.io/bash)
-
-jobs:
-  include:
-    if: type = push AND branch = master AND tag IS present
-    script: mvn site
-    deploy:
-      provider: pages
-      skip_cleanup: true
-      local_dir: target/site/
-      github_token: $site_token
-      on:
-        tags: true
-        branch: master
+    - stage: test
+      if: type = pull_request
+      script: mvn -P release-profile clean install
+      script: mvn -P integration-tests verify
+      script: mvn -P integration-tests cobertura:cobertura-integration-test
+      script: bash <(curl -s https://codecov.io/bash)
+    - stage: deploy
+      if: type = push AND branch = master AND tag IS present
+      script: mvn site
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        local_dir: target/site/
+        github_token: $site_token
+        on:
+          tags: true
+          branch: master
