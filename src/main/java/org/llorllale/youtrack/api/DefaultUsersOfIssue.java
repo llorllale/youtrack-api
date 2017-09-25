@@ -178,4 +178,9 @@ class DefaultUsersOfIssue implements UsersOfIssue {
             ).asHttpResponse().getEntity()
         );
   }
+
+  @Override
+  public Issue<?> issue() {
+    return issue;
+  }
 }

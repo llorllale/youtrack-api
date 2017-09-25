@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
@@ -68,4 +69,11 @@ public interface UsersOfIssue {
    * @see #assignee() 
    */
   public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException;
+
+  /**
+   * The enclosing {@link Issue}.
+   * @return the enclosing {@link Issue}
+   * @since 0.5.0
+   */
+  public Issue<?> issue();
 }

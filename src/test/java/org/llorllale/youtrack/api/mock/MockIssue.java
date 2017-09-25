@@ -27,9 +27,10 @@ import org.llorllale.youtrack.api.UsersOfIssue;
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
  * @author George Aristy (george.aristy@gmail.com)
+ * @param <T>
  * @since 0.4.0
  */
-public class MockIssue implements Issue {
+public class MockIssue<T> implements Issue<T> {
   private final Project project;
   private final String id;
   private final Instant creationDate;
@@ -38,6 +39,7 @@ public class MockIssue implements Issue {
   private final String priority;
   private final String summary;
   private final String description;
+  private final T dto;
 
   /**
    * Primary ctor.
@@ -49,6 +51,7 @@ public class MockIssue implements Issue {
    * @param priority
    * @param summary
    * @param description 
+   * @param dto 
    * @since 0.4.0
    */
   public MockIssue(
@@ -59,7 +62,8 @@ public class MockIssue implements Issue {
       String state, 
       String priority, 
       String summary, 
-      String description
+      String description,
+      T dto
   ) {
     this.project = project;
     this.id = id;
@@ -69,19 +73,30 @@ public class MockIssue implements Issue {
     this.priority = priority;
     this.summary = summary;
     this.description = description;
+    this.dto = dto;
   }
 
   /**
    * 
    * @param project 
+   * @param dto 
    * @since 0.4.0
    */
-  public MockIssue(Project project) {
-    this(project, "", Instant.now(), "", "", "", "", "");
+  public MockIssue(Project project, T dto) {
+    this(project, "", Instant.now(), "", "", "", "", "", dto);
   }
 
-  public MockIssue withId(String id) {
-    return new MockIssue(
+  /**
+   * {@code dto} is set to {@code null}
+   * @param project 
+   * @since 0.5.0
+   */
+  public MockIssue(Project project) {
+    this(project, null);
+  }
+
+  public MockIssue<T> withId(String id) {
+    return new MockIssue<>(
         this.project, 
         id, 
         this.creationDate, 
@@ -89,12 +104,13 @@ public class MockIssue implements Issue {
         this.state, 
         this.priority, 
         this.summary, 
-        this.description
+        this.description,
+        this.dto
     );
   }
 
-  public MockIssue withCreationDate(Instant creationDate) {
-    return new MockIssue(
+  public MockIssue<T> withCreationDate(Instant creationDate) {
+    return new MockIssue<>(
         this.project, 
         this.id,
         creationDate, 
@@ -102,12 +118,13 @@ public class MockIssue implements Issue {
         this.state, 
         this.priority, 
         this.summary, 
-        this.description
+        this.description,
+        this.dto
     );
   }
 
-  public MockIssue withType(String type) {
-    return new MockIssue(
+  public MockIssue<T> withType(String type) {
+    return new MockIssue<>(
         this.project, 
         this.id,
         this.creationDate, 
@@ -115,12 +132,13 @@ public class MockIssue implements Issue {
         this.state, 
         this.priority, 
         this.summary, 
-        this.description
+        this.description,
+        this.dto
     );
   }
 
-  public MockIssue withState(String state) {
-    return new MockIssue(
+  public MockIssue<T> withState(String state) {
+    return new MockIssue<>(
         this.project, 
         this.id,
         this.creationDate, 
@@ -128,12 +146,13 @@ public class MockIssue implements Issue {
         state, 
         this.priority, 
         this.summary, 
-        this.description
+        this.description,
+        this.dto
     );
   }
 
-  public MockIssue withPriority(String priority) {
-    return new MockIssue(
+  public MockIssue<T> withPriority(String priority) {
+    return new MockIssue<>(
         this.project, 
         this.id,
         this.creationDate, 
@@ -141,12 +160,13 @@ public class MockIssue implements Issue {
         this.state, 
         priority, 
         this.summary, 
-        this.description
+        this.description,
+        this.dto
     );
   }
 
-  public MockIssue withSummary(String summary) {
-    return new MockIssue(
+  public MockIssue<T> withSummary(String summary) {
+    return new MockIssue<>(
         this.project, 
         this.id,
         this.creationDate, 
@@ -154,12 +174,13 @@ public class MockIssue implements Issue {
         this.state, 
         this.priority, 
         summary, 
-        this.description
+        this.description,
+        this.dto
     );
   }
 
-  public MockIssue withDescription(String description) {
-    return new MockIssue(
+  public MockIssue<T> withDescription(String description) {
+    return new MockIssue<>(
         this.project, 
         this.id,
         this.creationDate, 
@@ -167,7 +188,8 @@ public class MockIssue implements Issue {
         this.state, 
         this.priority, 
         this.summary, 
-        description
+        description,
+        this.dto
     );
   }
 
@@ -253,5 +275,10 @@ public class MockIssue implements Issue {
   @Override
   public UsersOfIssue users() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public T asDto() {
+    return dto;
   }
 }

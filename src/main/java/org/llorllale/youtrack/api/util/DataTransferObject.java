@@ -17,7 +17,8 @@
 package org.llorllale.youtrack.api.util;
 
 /**
- * The underlying DTO fetched from the YouTrack server.
+ * <p>The underlying DTO fetched from the YouTrack server.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the DTO's type
  * @since 0.5.0

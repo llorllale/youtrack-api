@@ -22,6 +22,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockIssue;
+import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockAssertRequestHttpClient;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
 import org.llorllale.youtrack.api.mock.http.MockSession;
@@ -57,7 +59,10 @@ public class DefaultUsersOfIssueTest {
     assertThat(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            jaxbIssue,
+            new MockIssue<>(
+                new MockProject(), 
+                jaxbIssue
+            ),
             new MockAssertRequestHttpClient(
                 new MockHttpClient(
                     new MockOkResponse(CREATOR)
@@ -85,7 +90,10 @@ public class DefaultUsersOfIssueTest {
     assertThat(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            jaxbIssue,
+            new MockIssue<>(
+                new MockProject(), 
+                jaxbIssue
+            ),
             new MockAssertRequestHttpClient(
                 new MockHttpClient(
                     new MockOkResponse(UPDATER)
@@ -112,16 +120,19 @@ public class DefaultUsersOfIssueTest {
   @Test
   public void testNoUpdater() throws Exception {
     assertFalse(
-       new DefaultUsersOfIssue(
-           new MockSession(), 
-           new XmlStringAsJaxb<>(
-               org.llorllale.youtrack.api.jaxb.Issue.class, 
-               ISSUE_NO_ASSIGNEE_UPDATER
-           ).jaxb(),
-           new MockHttpClient(
-               new MockForbiddenResponse()
-           )
-       ).updater().isPresent()
+        new DefaultUsersOfIssue(
+            new MockSession(), 
+            new MockIssue<>(
+                new MockProject(), 
+                new XmlStringAsJaxb<>(
+                    org.llorllale.youtrack.api.jaxb.Issue.class, 
+                    ISSUE_NO_ASSIGNEE_UPDATER
+                ).jaxb()
+            ),
+            new MockHttpClient(
+                new MockForbiddenResponse()
+            )
+        ).updater().isPresent()
     );
   }
 
@@ -134,7 +145,10 @@ public class DefaultUsersOfIssueTest {
     assertThat(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            jaxbIssue,
+            new MockIssue<>(
+                new MockProject(), 
+                jaxbIssue
+            ),
             new MockHttpClient(
                 new MockOkResponse(ASSIGNEE)
             )
@@ -151,16 +165,19 @@ public class DefaultUsersOfIssueTest {
   @Test
   public void testNoAssignee() throws Exception {
     assertFalse(
-       new DefaultUsersOfIssue(
-           new MockSession(), 
-           new XmlStringAsJaxb<>(
-               org.llorllale.youtrack.api.jaxb.Issue.class, 
-               ISSUE_NO_ASSIGNEE_UPDATER
-           ).jaxb(),
-           new MockHttpClient(
-               new MockForbiddenResponse()
-           )
-       ).assignee().isPresent()
+        new DefaultUsersOfIssue(
+            new MockSession(), 
+            new MockIssue<>(
+                new MockProject(), 
+                new XmlStringAsJaxb<>(
+                    org.llorllale.youtrack.api.jaxb.Issue.class, 
+                    ISSUE_NO_ASSIGNEE_UPDATER
+                ).jaxb()
+            ),
+            new MockHttpClient(
+                new MockForbiddenResponse()
+            )
+        ).assignee().isPresent()
     );
   }
 
