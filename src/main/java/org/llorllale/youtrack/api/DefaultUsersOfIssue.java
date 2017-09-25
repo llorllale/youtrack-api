@@ -138,7 +138,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
                 session, 
                 new HttpRequestWithEntity(
                     new StringEntity(
-                        "Assignee=".concat(user.loginName()),
+                        "command=Assignee ".concat(user.loginName()),
                         ContentType.APPLICATION_FORM_URLENCODED
                     ),
                     new HttpPost(
