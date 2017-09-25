@@ -21,7 +21,7 @@ jobs:
 jobs:
   include:
     - # deploy
-      if: type = push AND branch = master AND tag IS present
+      if: type = push AND branch = master AND tag =~ ^[0-9].[0-9].[0-9]$
       script: mvn site
       deploy:
         provider: pages
