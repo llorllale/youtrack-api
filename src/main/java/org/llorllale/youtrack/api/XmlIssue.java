@@ -19,7 +19,9 @@ package org.llorllale.youtrack.api;
 import org.llorllale.youtrack.api.jaxb.Field;
 import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
+import java.io.IOException;
 import java.time.Instant;
 
 /**
@@ -27,7 +29,7 @@ import java.time.Instant;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-class XmlIssue implements Issue {
+class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   private final Project project;
   private final Session session;
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
@@ -134,5 +136,23 @@ class XmlIssue implements Issue {
   @Override
   public TimeTracking timetracking() {
     return new DefaultTimeTracking(session, this);
+  }
+
+  @Override
+  public UsersOfIssue users() {
+    return new DefaultUsersOfIssue(session, this);
+  }
+
+  @Override
+  public org.llorllale.youtrack.api.jaxb.Issue asDto() {
+    return jaxbIssue;
+  }
+
+  @Override
+  public Issue<org.llorllale.youtrack.api.jaxb.Issue> refresh() 
+      throws IOException, UnauthorizedException {
+    return project().issues()
+        .get(id())
+        .get();
   }
 }

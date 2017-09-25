@@ -46,6 +46,14 @@ public class MockProject implements Project {
     this.description = Optional.of(description);
   }
 
+  /**
+   * 
+   * @since 0.4.0
+   */
+  public MockProject() {
+    this("", "", "");
+  }
+
   @Override
   public String id() {
     return id;

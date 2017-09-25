@@ -16,14 +16,20 @@
 
 package org.llorllale.youtrack.api;
 
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.DataTransferObject;
+
+import java.io.IOException;
 import java.time.Instant;
 
 /**
  * A {@link YouTrack} issue.
  * @author George Aristy (george.aristy@gmail.com)
+ * @param <T> the underlying DTO's type
  * @since 0.1.0
  */
-public interface Issue {
+public interface Issue<T> extends DataTransferObject<T> {
   /**
    * The {@link Project} that the issue was created in.
    * @return the ID of the project that the issue was created in
@@ -81,6 +87,13 @@ public interface Issue {
   public String description();
 
   /**
+   * Access to the issue's {@link User users}.
+   * @return access to the issue's {@link User users}
+   * @since 0.5.0
+   */
+  public UsersOfIssue users();
+
+  /**
    * Access to the issue's {@link Comment comments}.
    * @return Access to the issue's {@link Comment comments}.
    * @since 0.4.0
@@ -93,4 +106,19 @@ public interface Issue {
    * @since 0.4.0
    */
   public TimeTracking timetracking();
+
+  /**
+   * Returns the same {@link Issue} after refreshing its data from the server.
+   * 
+   * <p>
+   * This is a convenient shortcut for {@code issue.project().issues().get(issue.id()).get()}.
+   * </p>
+   * 
+   * @return the same {@link Issue} after refreshing its data from the server
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.5.0
+   */
+  public Issue<T> refresh() throws IOException, UnauthorizedException;
 }
