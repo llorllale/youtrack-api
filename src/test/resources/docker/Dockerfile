@@ -8,7 +8,7 @@ WORKDIR /opt/youtrack
 
 RUN apt-get update && apt-get install -y supervisor && rm -rf /var/lib/apt/lists/*
 
-RUN wget https://download.jetbrains.com/charisma/youtrack-${youtrack.version}.jar -O /opt/youtrack/bin/youtrack.jar
+RUN wget https://download.jetbrains.com/charisma/youtrack-${youtrackVersion}.jar -O /opt/youtrack/bin/youtrack.jar
 
 ADD supervisor/youtrack.conf /etc/supervisor/conf.d/youtrack.conf
 

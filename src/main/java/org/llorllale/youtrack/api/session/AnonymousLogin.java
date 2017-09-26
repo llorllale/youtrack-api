@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api.session;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 
 /**
  * <p>
@@ -46,6 +47,6 @@ public class AnonymousLogin implements Login {
   
   @Override
   public Session login() throws AuthenticationException, IOException {
-    return new AnonymousSession(youtrackUrl);
+    return new DefaultSession(youtrackUrl, Collections.emptyList());
   }
 }

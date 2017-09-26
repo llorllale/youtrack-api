@@ -17,19 +17,19 @@
 package org.llorllale.youtrack.api.session;
 
 import static java.util.Objects.isNull;
-import static java.util.stream.Collectors.toList;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * <p>A login for the simple username/password use case.</p>
@@ -48,8 +48,6 @@ import java.util.List;
  * @since 0.1.0
  */
 public class UsernamePasswordLogin implements Login {
-  private static final String LOGIN_RESOURCE = "/user/login";
-
   private final URL youtrackUrl;
   private final HttpClient httpClient;
   private String username;
@@ -72,7 +70,7 @@ public class UsernamePasswordLogin implements Login {
     this.youtrackUrl = youtrackUrl;
     this.httpClient = httpClient;
     this.username = username;
-    this.password = password;
+    this.password = Arrays.copyOf(password, password.length);
   }
 
   /**
@@ -102,21 +100,35 @@ public class UsernamePasswordLogin implements Login {
       );
     }
 
-    final NonCheckedUriBuilder ub = 
-            new NonCheckedUriBuilder(youtrackUrl.toString() + LOGIN_RESOURCE);
-    ub.setParameter("login", username)
-        .setParameter("password", new String(password));
+    final URI uri = new NonCheckedUriBuilder(
+        youtrackUrl.toString().concat("/user/login")
+    ).setParameter("login", username)
+        .setParameter("password", new String(password))
+        .build();
 
     this.username = null;
     this.password = null;
 
-    final HttpPost post = new HttpPost(ub.build());
+    final HttpPost post = new HttpPost(uri);
     final HttpResponse response = httpClient.execute(post);
 
-    if (response.getStatusLine().getStatusCode() != 200) {
+    if (response.getStatusLine().getStatusCode() != 200) {    //TODO there is more branching here
       throw new AuthenticationException("Invalid credentials.");
     }
 
-    return new AuthenticatedSession(youtrackUrl, Arrays.asList(response.getAllHeaders()));
+    final Header cookie = Arrays.asList(response.getAllHeaders())
+        .stream()
+        .filter(h -> "Set-Cookie".equals(h.getName()))
+        .map(h -> new BasicHeader("Cookie", h.getValue().split(";")[0]))
+        .reduce(
+            (h1, h2) -> new BasicHeader(
+                "Cookie", 
+                h1.getValue()
+                    .concat("; ")
+                    .concat(h2.getValue())
+            )
+        ).get();    //expected
+
+    return new DefaultSession(youtrackUrl, cookie);
   }
 }

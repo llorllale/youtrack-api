@@ -1,5 +1,5 @@
-/**
- * Copyright 2017 George Aristy
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,42 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.session;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.IntegrationTestsConfig;
 
 /**
  * Integration tests for {@link UsernamePasswordLogin}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.1.0
+ * @since 0.4.0
  */
 public class UsernamePasswordLoginIT {
-  private static IntegrationTestsConfig config;
-  
-  @BeforeClass
-  public static void setUpClass() throws Exception {
-    config = new IntegrationTestsConfig();
-  }
-  
-  /**
-   * Test of login method, of class UsernamePasswordLogin.
-   * @since 0.1.0
-   */
   @Test
-  public void successfulLogin() throws Exception {
-    final Session session = new UsernamePasswordLogin(
+  public void login() throws Exception {
+    final IntegrationTestsConfig config = new IntegrationTestsConfig();
+
+    assertThat(
+        new UsernamePasswordLogin(
             config.youtrackUrl(), 
             config.youtrackUser(), 
             config.youtrackPwd()
-    ).login();
-    
-    assertThat(session.baseUrl(), is(config.youtrackUrl()));
-    assertThat(session.cookies(), is(not(empty())));
+        ).login()
+            .cookies(),
+        is(not(empty()))
+    );
   }
 }
