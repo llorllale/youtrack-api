@@ -25,9 +25,12 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.StandardErrorCheck;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -82,5 +85,26 @@ class DefaultProjects implements Projects {
         ).getProject()
             .stream()
             .map(p -> new XmlProject(session, p));
+  }
+
+  @Override
+  public Optional<Project> get(String id) throws IOException, UnauthorizedException {
+    return new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpRequestWithSession(
+                session, 
+                new HttpGet(
+                    new NonCheckedUriBuilder(
+                        session.baseUrl().toString()
+                            .concat("/admin/project/")
+                            .concat(id)
+                    ).build()
+                )
+            )
+        )
+    ).applyOnEntity(
+        new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class), 
+        new StandardErrorCheck()
+    ).map(p -> new XmlProject(session, p));
   }
 }

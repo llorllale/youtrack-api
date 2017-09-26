@@ -32,8 +32,7 @@ public class XmlUserTest {
 
   @BeforeClass
   public static void setUpClass() throws Exception {
-    jaxbUser = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class, USER)
-        .jaxb();
+    jaxbUser = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class).apply(USER);
   }
 
   /**

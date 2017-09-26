@@ -117,7 +117,7 @@
     <profile>
       <id>integration-tests</id>
       <properties>
-        <youtrack.test.docker.name>${project.artifactId}-test-${project.version}</youtrack.test.docker.name>
+        <youtrack.test.docker.name>${project.artifactId}-integration-tests</youtrack.test.docker.name>
         <youtrack.test.user>root</youtrack.test.user>
         <youtrack.test.user.token>perm:cm9vdA==.eW91dHJhY2stYXBpLXRlc3Q=.nOe5IYpv520S120tK18hc2tkm8oCI4</youtrack.test.user.token>
         <youtrack.test.pwd>youtrack</youtrack.test.pwd>

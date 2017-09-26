@@ -44,10 +44,10 @@ public class DefaultUsersOfIssueTest {
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbIssue = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class, ISSUE_WITH_ASSIGNEE_UPDATER).jaxb();
-    jaxbCreator = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class, CREATOR).jaxb();
-    jaxbUpdater = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class, UPDATER).jaxb();
-    jaxbAssignee = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class, ASSIGNEE).jaxb();
+    jaxbIssue = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class).apply(ISSUE_WITH_ASSIGNEE_UPDATER);
+    jaxbCreator = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class).apply(CREATOR);
+    jaxbUpdater = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class).apply(UPDATER);
+    jaxbAssignee = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class).apply(ASSIGNEE);
   }
 
   /**
@@ -124,10 +124,8 @@ public class DefaultUsersOfIssueTest {
             new MockSession(), 
             new MockIssue<>(
                 new MockProject(), 
-                new XmlStringAsJaxb<>(
-                    org.llorllale.youtrack.api.jaxb.Issue.class, 
-                    ISSUE_NO_ASSIGNEE_UPDATER
-                ).jaxb()
+                new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class)
+                    .apply(ISSUE_NO_ASSIGNEE_UPDATER)
             ),
             new MockHttpClient(
                 new MockForbiddenResponse()
@@ -169,10 +167,8 @@ public class DefaultUsersOfIssueTest {
             new MockSession(), 
             new MockIssue<>(
                 new MockProject(), 
-                new XmlStringAsJaxb<>(
-                    org.llorllale.youtrack.api.jaxb.Issue.class, 
-                    ISSUE_NO_ASSIGNEE_UPDATER
-                ).jaxb()
+                new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class)
+                    .apply(ISSUE_NO_ASSIGNEE_UPDATER)
             ),
             new MockHttpClient(
                 new MockForbiddenResponse()

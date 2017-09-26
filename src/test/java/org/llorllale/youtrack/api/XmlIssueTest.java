@@ -36,10 +36,7 @@ public class XmlIssueTest {
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbIssue = new XmlStringAsJaxb<>(
-        org.llorllale.youtrack.api.jaxb.Issue.class, 
-        XML_ISSUE
-    ).jaxb();
+    jaxbIssue = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class).apply(XML_ISSUE);
   }
 
   @Test

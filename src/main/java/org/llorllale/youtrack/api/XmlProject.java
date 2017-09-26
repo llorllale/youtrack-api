@@ -41,7 +41,8 @@ class XmlProject implements Project {
 
   @Override
   public String id() {
-    return jaxbProject.getShortName();
+    return Optional.ofNullable(jaxbProject.getShortName())
+        .orElse(jaxbProject.getId());
   }
 
   @Override

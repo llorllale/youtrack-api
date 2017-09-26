@@ -37,10 +37,8 @@ public class XmlTimeTrackEntryTest {
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbWorkItem = new XmlStringAsJaxb<>(
-        org.llorllale.youtrack.api.jaxb.WorkItem.class, 
-        XML
-    ).jaxb();
+    jaxbWorkItem = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItem.class)
+        .apply(XML);
   }
 
   @Test

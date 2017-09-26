@@ -16,21 +16,20 @@
 
 package org.llorllale.youtrack.api;
 
-import static org.junit.Assert.assertNotNull;
+import java.util.Random;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
-import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultIssues}.
+ * Integration tests for {@link DefaultProjects}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
  */
-public class DefaultIssuesIT {
+public class DefaultProjectsIT {
   private static IntegrationTestsConfig config;
   private static Session session;
 
@@ -43,44 +42,44 @@ public class DefaultIssuesIT {
     ).login();
   }
 
+  /**
+   * Checks that stream works insofar as to include the pre-existing project.
+   * @throws Exception 
+   * @since 0.6.0
+   */
   @Test
-  public void testAll() throws Exception {
-    final Issue issue = new DefaultIssues(
-        project(),
-        session
-    ).create(new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testAll"), "description"));
-
+  public void testStream() throws Exception {
     assertTrue(
-        new DefaultIssues(
-            project(),
-            session
-        ).stream()
-            .anyMatch(i -> i.id().equals(issue.id()))
+        new DefaultProjects(session).stream()
+            .anyMatch(p -> config.youtrackTestProjectId().equals(p.id()))
     );
   }
 
+  /**
+   * Should return pre-existing project.
+   * @throws Exception 
+   * @since 0.6.0
+   */
   @Test
-  public void createAndGetIssue() throws Exception {
-    final Issue issue = new DefaultIssues(
-        project(),
-        session
-    ).create(new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testGet"), "description"));
-
-
+  public void testGetExistingProject() throws Exception {
     assertTrue(
-        new DefaultIssues(
-            project(),
-            session
-        ).get(issue.id()).isPresent()
+        new DefaultProjects(session)
+            .get(config.youtrackTestProjectId())
+            .isPresent()
     );
   }
 
-
-  private final Project project() {
-    return new MockProject(
-        config.youtrackTestProjectId(), 
-        "", 
-        ""
+  /**
+   * Should return an empty optional for an input that has not issues.
+   * @throws Exception 
+   * @since 0.6.0
+   */
+  @Test
+  public void testGetNonExistingProject() throws Exception {
+    assertFalse(
+        new DefaultProjects(session)
+            .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
+            .isPresent()
     );
   }
 }

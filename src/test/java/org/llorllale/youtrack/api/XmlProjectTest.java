@@ -29,43 +29,76 @@ import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
  * @since 0.4.0
  */
 public class XmlProjectTest {
-  private static org.llorllale.youtrack.api.jaxb.Project jaxbProject;
+  private static org.llorllale.youtrack.api.jaxb.Project jaxbProjectWithShortName;
+  private static org.llorllale.youtrack.api.jaxb.Project jaxbProjectWithId;
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbProject = new XmlStringAsJaxb<>(
-        org.llorllale.youtrack.api.jaxb.Project.class, 
-        PROJECT
-    ).jaxb();
+    jaxbProjectWithShortName = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class)
+        .apply(PROJECT_WITH_SHORTNAME);
+    jaxbProjectWithId = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class)
+        .apply(PROJECT_WITH_ID);
   }
 
   @Test
-  public void testId() {
+  public void testIdFromShortName() {
     assertThat(
-        new XmlProject(new MockSession(), jaxbProject).id(),
-        is(jaxbProject.getShortName())
+        new XmlProject(new MockSession(), jaxbProjectWithShortName).id(),
+        is(jaxbProjectWithShortName.getShortName())
+    );
+  }
+
+  /**
+   * 
+   * @since 0.6.0
+   */
+  @Test
+  public void testIdFromId() {
+    assertThat(
+        new XmlProject(new MockSession(), jaxbProjectWithId).id(),
+        is(jaxbProjectWithId.getId())
     );
   }
 
   @Test
   public void testName() {
     assertThat(
-        new XmlProject(new MockSession(), jaxbProject).name(),
-        is(jaxbProject.getName())
+        new XmlProject(new MockSession(), jaxbProjectWithShortName).name(),
+        is(jaxbProjectWithShortName.getName())
     );
   }
 
   @Test
   public void testDescription() {
     assertThat(
-        new XmlProject(new MockSession(), jaxbProject).description().get(),
-        is(jaxbProject.getDescription())
+        new XmlProject(new MockSession(), jaxbProjectWithShortName).description().get(),
+        is(jaxbProjectWithShortName.getDescription())
     );
   }
 
-  private static final String PROJECT =
+  private static final String PROJECT_WITH_SHORTNAME =
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" shortName=\"HBR\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\">\n" +
+"  <assigneesFullName>\n" +
+"    <sub value=\"Adam Jordens\"/>\n" +
+"    <sub value=\"Application Exception\"/>\n" +
+"  </assigneesFullName>\n" +
+"  <assigneesLogin>\n" +
+"    <sub value=\"ajordens\"/>\n" +
+"    <sub value=\"app_exception\"/>\n" +
+"  </assigneesLogin>\n" +
+"  <subsystems>\n" +
+"    <sub value=\"No subsystem\"/>\n" +
+"    <sub value=\"Configuration\"/>\n" +
+"    <sub value=\"HQL\"/>\n" +
+"    <sub value=\"Settings\"/>\n" +
+"    <sub value=\"UI\"/>\n" +
+"  </subsystems>\n" +
+"</project>";
+
+  private static final String PROJECT_WITH_ID =
+"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+"<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" id=\"IT-TEST\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\">\n" +
 "  <assigneesFullName>\n" +
 "    <sub value=\"Adam Jordens\"/>\n" +
 "    <sub value=\"Application Exception\"/>\n" +
