@@ -16,27 +16,14 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
-import java.io.IOException;
-
 /**
- * Entry point for the YouTrack API.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
  */
-public interface YouTrack {
-  /**
-   * Access to the {@link Project projects} API.
-   * @return Access to the {@link Project projects} API.
-   * @since 0.4.0
-   */
-  public Projects projects();
-
-  /**
-   * Returns the {@link Priorities} API.
-   * @return the {@link Priorities} API
-   * @since 0.6.0
-   */
-  public Priorities priorities();
+public interface AssignedPriority extends Priority {
+  public Priority changeTo(Priority other) throws IOException, UnauthorizedException;
 }
