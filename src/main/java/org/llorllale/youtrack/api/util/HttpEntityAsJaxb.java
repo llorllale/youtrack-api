@@ -17,11 +17,8 @@
 package org.llorllale.youtrack.api.util;
 
 import org.apache.http.HttpEntity;
-import org.llorllale.youtrack.api.util.response.ParseException;
 
 import java.io.IOException;
-import java.util.function.Function;
-import javax.xml.bind.JAXBException;
 
 /**
  * Utility class to read the text content received from YouTrack in this 
@@ -30,7 +27,7 @@ import javax.xml.bind.JAXBException;
  * @param <T> the JAXB root element type class
  * @since 0.1.0
  */
-public class HttpEntityAsJaxb<T> implements Function<HttpEntity, T> {
+public class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, IOException> {
   private final Class<T> rootType;
 
   /**
@@ -43,19 +40,8 @@ public class HttpEntityAsJaxb<T> implements Function<HttpEntity, T> {
   }
 
   @Override
-  public T apply(HttpEntity entity) {
-    try {
-      return new XmlStringAsJaxb<>(
-          rootType,
-          new InputStreamAsString(entity.getContent()).string()
-      ).jaxb();
-    } catch (JAXBException | IOException e) {
-      throw new ParseException(
-          String.format("Unable to parse entity for type %s", 
-              rootType.getName()
-          ), 
-          e
-      );
-    }
+  public T apply(HttpEntity entity) throws IOException {
+    return new XmlStringAsJaxb<>(rootType)
+        .apply(new InputStreamAsString(entity.getContent()).string());
   }
 }

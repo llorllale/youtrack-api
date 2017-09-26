@@ -35,10 +35,7 @@ public class XmlCommentTest {
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbComment = new XmlStringAsJaxb<>(
-        org.llorllale.youtrack.api.jaxb.Comment.class, 
-        XML
-    ).jaxb();
+    jaxbComment = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comment.class).apply(XML);
   }
 
   @Test

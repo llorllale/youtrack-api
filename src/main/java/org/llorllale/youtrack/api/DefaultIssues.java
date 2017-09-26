@@ -27,6 +27,8 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.StandardErrorCheck;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
@@ -99,24 +101,24 @@ class DefaultIssues implements Issues {
 
   @Override
   public Optional<Issue> get(String id) throws IOException, UnauthorizedException {
-    return Optional.ofNullable(
-        new HttpResponseAsResponse(
-            httpClient.execute(
-                new HttpRequestWithSession(
-                    session, 
-                    new HttpGet(
-                        new NonCheckedUriBuilder(
-                            session.baseUrl()
-                                .toString()
-                                .concat("/issue/")
-                                .concat(id)
-                        ).build()
-                    )
+    return new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpRequestWithSession(
+                session, 
+                new HttpGet(
+                    new NonCheckedUriBuilder(
+                        session.baseUrl()
+                            .toString()
+                            .concat("/issue/")
+                            .concat(id)
+                    ).build()
                 )
             )
-        ).asHttpResponse().getEntity()
-    ).map(new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class))
-        .map(i -> new XmlIssue(project, session, i));
+        )
+    ).applyOnEntity(
+        new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class), 
+        new StandardErrorCheck()
+    ).map(i -> new XmlIssue(project, session, i));
   }
 
   @Override

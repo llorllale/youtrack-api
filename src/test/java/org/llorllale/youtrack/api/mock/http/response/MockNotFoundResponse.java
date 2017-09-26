@@ -23,29 +23,33 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
 /**
  * Mock implementation of {@link HttpResponse} suitable for unit tests.
- * Simulates a 404 error from the server and returns {@code null} from {@link #getEntity()} as per
- * contract.
+ * Simulates a 404 error from the server and returns the given {@code entity}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public class MockNotFoundResponse implements HttpResponse {
   private final StatusLine statusLine;
+  private final HttpEntity entity;
 
   /**
    * Ctor.
+   * @param xml the xml payload that YouTrack returns in 404 responses
    * @since 0.4.0
    */
-  public MockNotFoundResponse() {
+  public MockNotFoundResponse(String xml) {
     this.statusLine = new BasicStatusLine(
         new ProtocolVersion("HTTP", 1, 1), 
         404, 
         "Not Found"
     );
+    this.entity = new StringEntity(xml, ContentType.APPLICATION_XML);
   }
 
   @Override
@@ -80,7 +84,7 @@ public class MockNotFoundResponse implements HttpResponse {
 
   @Override
   public HttpEntity getEntity() {
-    return null;
+    return entity;
   }
 
   @Override

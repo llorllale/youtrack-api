@@ -20,6 +20,7 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -39,4 +40,15 @@ public interface Projects {
    * @since 0.4.0
    */
   public Stream<Project> stream() throws IOException, UnauthorizedException;
+
+  /**
+   * Returns the {@link Project} with the given {@code id}, if any.
+   * @param id the project's {@link Project#id() id}
+   * @return the {@link Project} with the given {@code id}, if any
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.6.0
+   */
+  public Optional<Project> get(String id) throws IOException, UnauthorizedException;
 }

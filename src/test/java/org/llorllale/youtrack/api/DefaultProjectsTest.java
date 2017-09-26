@@ -18,10 +18,13 @@ package org.llorllale.youtrack.api;
 
 import org.apache.http.entity.StringEntity;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
 import org.llorllale.youtrack.api.mock.http.MockSession;
+import org.llorllale.youtrack.api.mock.http.response.MockNotFoundResponse;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
@@ -30,15 +33,14 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
  * @since 0.4.0
  */
 public class DefaultProjectsTest {
-
   @Test
-  public void responseOk() throws Exception {
+  public void streamWithResponseOk() throws Exception {
     assertThat(
         new DefaultProjects(
             new MockSession(), 
             new MockHttpClient(
                 new MockOkResponse(
-                    new StringEntity(XML_RESPONSE)
+                    new StringEntity(ALL_PROJECTS_RESPONSE)
                 )
             )
         ).stream().count(),
@@ -46,7 +48,44 @@ public class DefaultProjectsTest {
     );
   }
 
-  private static final String XML_RESPONSE = 
+  /**
+   * Returns optional with project if it exists.
+   * @throws Exception 
+   * @since 0.6.0
+   */
+  @Test
+  public void getWithExistingProject() throws Exception {
+    assertTrue(
+        new DefaultProjects(
+            new MockSession(),
+            new MockHttpClient(
+                new MockOkResponse(ONE_PROJECT_RESPONSE)
+            )
+        ).get("ID").isPresent()
+    );
+  }
+
+  /**
+   * Returns empty optional if project does not exist.
+   * @throws Exception 
+   * @since 0.6.0
+   */
+  @Test
+  public void getWithNonExistingProject() throws Exception {
+    assertFalse(
+        new DefaultProjects(
+            new MockSession(),
+            new MockHttpClient(
+                new MockNotFoundResponse(
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+                    "<error>Project not found.</error>"
+                )
+            )
+        ).get("ID").isPresent()
+    );
+  }
+
+  private static final String ALL_PROJECTS_RESPONSE = 
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 "<projects>\n" +
 "  <project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" shortName=\"HBR\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\">\n" +
@@ -80,4 +119,13 @@ public class DefaultProjectsTest {
 "    </subsystems>\n" +
 "  </project>\n" +
 "</projects>";
+
+  private static final String ONE_PROJECT_RESPONSE =
+"<project name=\"test project\" id=\"TP\" lead=\"root\"\n" +
+"   assigneesUrl=\"http://localhost:8080/charisma/rest/admin/project/TP/assignee/\"\n" +
+"   subsystemsUrl=\"http://localhost:8080/charisma/rest/admin/project/TP/subsystem/\"\n" +
+"   buildsUrl=\"http://localhost:8080/charisma/rest/admin/project/TP/build/\"\n" +
+"   versionsUrl=\"http://localhost:8080/charisma/rest/admin/project/TP/version/\"\n" +
+"   startingNumber=\"1\"\n" +
+"/>";
 }

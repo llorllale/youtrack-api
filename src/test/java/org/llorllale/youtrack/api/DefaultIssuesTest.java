@@ -79,7 +79,10 @@ public class DefaultIssuesTest {
             new MockProject("ID1", "Name", "Desc"),
             new MockSession(),
             new MockHttpClient(
-                new MockNotFoundResponse()
+                new MockNotFoundResponse(
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+                    "<error>Issue not found.</error>"
+                )
             )
         ).get("ID").isPresent()
     );

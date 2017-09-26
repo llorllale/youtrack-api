@@ -29,21 +29,21 @@ limitations under the License.
   <xsd:element name="project">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="assigneesFullName">
+        <xsd:element name="assigneesFullName" minOccurs="0">
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element ref="sub" maxOccurs="unbounded"/>
             </xsd:sequence>
           </xsd:complexType>
         </xsd:element>
-        <xsd:element name="assigneesLogin">
+        <xsd:element name="assigneesLogin" minOccurs="0">
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element ref="sub" maxOccurs="unbounded"/>
             </xsd:sequence>
           </xsd:complexType>
         </xsd:element>
-        <xsd:element name="subsystems">
+        <xsd:element name="subsystems" minOccurs="0">
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element ref="sub" maxOccurs="unbounded"/>
@@ -51,6 +51,7 @@ limitations under the License.
           </xsd:complexType>
         </xsd:element>
       </xsd:sequence>
+      <xsd:attribute name="id" type="xsd:string"/>
       <xsd:attribute name="name" type="xsd:string"/>
       <xsd:attribute name="shortName" type="xsd:string"/>
       <xsd:attribute name="description" type="xsd:string"/>
