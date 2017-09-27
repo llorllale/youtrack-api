@@ -39,29 +39,33 @@ import java.util.stream.Stream;
  * @since 0.4.0
  */
 class DefaultProjects implements Projects {
+  private final YouTrack youtrack;
   private final Session session;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
+   * @param youtrack the parent {@link YouTrack}
    * @param session the user's {@link Session}
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultProjects(Session session, HttpClient httpClient) {
+  DefaultProjects(YouTrack youtrack, Session session, HttpClient httpClient) {
+    this.youtrack = youtrack;
     this.session = session;
     this.httpClient = httpClient;
   }
 
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
+   * @param youtrack the parent {@link YouTrack}
    * @param session the user's {@link Session}
    * @since 0.4.0
    * @see #DefaultProjects(org.llorllale.youtrack.api.session.Session, 
    *     org.apache.http.client.HttpClient) 
    */
-  DefaultProjects(Session session) {
-    this(session, HttpClients.createDefault());
+  DefaultProjects(YouTrack youtrack, Session session) {
+    this(youtrack, session, HttpClients.createDefault());
   }
 
   @Override
@@ -84,7 +88,7 @@ class DefaultProjects implements Projects {
             ).asHttpResponse().getEntity()
         ).getProject()
             .stream()
-            .map(p -> new XmlProject(session, p));
+            .map(p -> new XmlProject(youtrack, session, p));
   }
 
   @Override
@@ -105,6 +109,6 @@ class DefaultProjects implements Projects {
     ).applyOnEntity(
         new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class), 
         new StandardErrorCheck()
-    ).map(p -> new XmlProject(session, p));
+    ).map(p -> new XmlProject(youtrack, session, p));
   }
 }

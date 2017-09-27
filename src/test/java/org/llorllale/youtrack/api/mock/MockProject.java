@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.YouTrack;
 
 /**
  * Mock implementation of {@link Project} suitable for unit tests.
@@ -97,5 +98,10 @@ public class MockProject implements Project {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public YouTrack youtrack() {
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 }

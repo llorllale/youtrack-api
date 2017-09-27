@@ -16,32 +16,25 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
- * Default implementation of {@link YouTrack}.
+ * Unit tests for {@link XmlPriority}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
  */
-public class DefaultYouTrack implements YouTrack {
-  private final Session session;
-
-  /**
-   * Primary ctor.
-   * @param session the user's {@link Session}
-   * @since 0.4.0
-   */
-  public DefaultYouTrack(Session session) {
-    this.session = session;
-  }
-
-  @Override
-  public Projects projects() {
-    return new DefaultProjects(this, session);
-  }
-
-  @Override
-  public Priorities priorities() {
-    return new DefaultPriorities(session);
+public class XmlPriorityTest {
+  @Test
+  public void testAsString() {
+    assertThat(
+        new XmlPriority(
+            new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Value.class)
+                .apply("<value colorIndex=\"20\">Show-stopper</value>")
+        ).asString(),
+        is("Show-stopper")
+    );
   }
 }

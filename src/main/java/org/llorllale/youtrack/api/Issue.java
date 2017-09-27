@@ -120,5 +120,5 @@ public interface Issue<T> extends DataTransferObject<T> {
    *     operation
    * @since 0.5.0
    */
-  public Issue<T> refresh() throws IOException, UnauthorizedException;
+  public Issue refresh() throws IOException, UnauthorizedException;
 }
