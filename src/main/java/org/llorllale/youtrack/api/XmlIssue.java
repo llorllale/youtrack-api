@@ -91,14 +91,8 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   }
 
   @Override
-  public String priority() {
-    return jaxbIssue.getField()
-            .stream()
-            .filter(f -> "Priority".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
-            .findFirst()
-            .get();
+  public AssignedPriority priority() {
+    return new XmlAssignedPriority(this, session);
   }
 
   @Override
@@ -149,7 +143,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   }
 
   @Override
-  public Issue<org.llorllale.youtrack.api.jaxb.Issue> refresh() 
+  public Issue refresh() 
       throws IOException, UnauthorizedException {
     return project().issues()
         .get(id())

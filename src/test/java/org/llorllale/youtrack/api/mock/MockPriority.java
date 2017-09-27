@@ -14,34 +14,29 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.Priority;
 
 /**
- * Default implementation of {@link YouTrack}.
+ * Mock implementation of {@link Priority} suitable for unit tests.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
  */
-public class DefaultYouTrack implements YouTrack {
-  private final Session session;
+public class MockPriority implements Priority {
+  private final String string;
 
   /**
-   * Primary ctor.
-   * @param session the user's {@link Session}
-   * @since 0.4.0
+   * Ctor.
+   * @param string 
+   * @since 0.6.0
    */
-  public DefaultYouTrack(Session session) {
-    this.session = session;
+  public MockPriority(String string) {
+    this.string = string;
   }
 
   @Override
-  public Projects projects() {
-    return new DefaultProjects(session);
-  }
-
-  @Override
-  public Priorities priorities() {
-    return new DefaultPriorities(session);
+  public String asString() {
+    return string;
   }
 }

@@ -16,17 +16,13 @@
 
 package org.llorllale.youtrack.api;
 
-import java.io.IOException;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 /**
  * JAXB adapter for {@link Priority}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.6.0
  */
-class XmlPriority implements Priority<org.llorllale.youtrack.api.jaxb.Value> {
+class XmlPriority implements Priority {
   private final org.llorllale.youtrack.api.jaxb.Value jaxb;
-  private final YouTrack youtrack;
 
   /**
    * Ctor.
@@ -34,33 +30,12 @@ class XmlPriority implements Priority<org.llorllale.youtrack.api.jaxb.Value> {
    * @param youtrack the {@link YouTrack} parent
    * @since 0.6.0
    */
-  XmlPriority(org.llorllale.youtrack.api.jaxb.Value jaxb, YouTrack youtrack) {
+  XmlPriority(org.llorllale.youtrack.api.jaxb.Value jaxb) {
     this.jaxb = jaxb;
-    this.youtrack = youtrack;
   }
 
   @Override
   public String asString() {
     return jaxb.getValue();
-  }
-
-  @Override
-  public Priority<org.llorllale.youtrack.api.jaxb.Value> lower() throws IOException, UnauthorizedException {
-    return youtrack.priorities().lower(this);
-  }
-
-  @Override
-  public Priority<org.llorllale.youtrack.api.jaxb.Value> higher() throws IOException, UnauthorizedException {
-    return youtrack.priorities().higher(this);
-  }
-
-  @Override
-  public int compareTo(Priority<org.llorllale.youtrack.api.jaxb.Value> other) {
-    return this.asDto().getColorIndex() - other.asDto().getColorIndex();
-  }
-
-  @Override
-  public org.llorllale.youtrack.api.jaxb.Value asDto() {
-    return jaxb;
   }
 }
