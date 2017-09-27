@@ -16,18 +16,12 @@
 
 package org.llorllale.youtrack.api;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
-import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.Arrays;
 
 /**
  * JAXB impl of {@link AssignedPriority}.
@@ -37,33 +31,19 @@ import java.io.IOException;
 class XmlAssignedPriority implements AssignedPriority {
   private final Issue<org.llorllale.youtrack.api.jaxb.Issue> issue;
   private final Session session;
-  private final HttpClient httpClient;
 
   /**
    * Primary ctor.
    * @param issue the parent {@link Issue}
    * @param session the user's {@link Session}
-   * @param httpClient the {@link HttpClient} to use
    * @since 0.6.0
    */
   XmlAssignedPriority(
       Issue<org.llorllale.youtrack.api.jaxb.Issue> issue,
-      Session session,
-      HttpClient httpClient
+      Session session
   ) {
     this.issue = issue;
     this.session = session;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Uses the {@link HttpClients#createDefault() default} http client.
-   * @param issue the parent {@link Issue}
-   * @param session the user's {@link Session}
-   * @since 0.6.0
-   */
-  XmlAssignedPriority(Issue<org.llorllale.youtrack.api.jaxb.Issue> issue, Session session) {
-    this(issue, session, HttpClients.createDefault());
   }
 
   @Override
@@ -73,27 +53,14 @@ class XmlAssignedPriority implements AssignedPriority {
 
   @Override
   public AssignedPriority changeTo(Priority other) throws IOException, UnauthorizedException {
-    new HttpResponseAsResponse(
-        httpClient.execute(
-            new HttpRequestWithSession(
-                session, 
-                new HttpRequestWithEntity(
-                    new StringEntity(
-                        "command=Priority ".concat(other.asString()), 
-                        ContentType.APPLICATION_FORM_URLENCODED
-                    ), 
-                    new HttpPost(
-                        session.baseUrl().toString()
-                            .concat("/issue/")
-                            .concat(issue.id())
-                            .concat("/execute")
-                    )
-                )
+    return new XmlAssignedPriority(
+        this.issue().update(
+            Arrays.asList(
+                new AbstractMap.SimpleEntry<>("Priority", other.asString())
             )
-        )
-    ).asHttpResponse();
-
-    return new XmlAssignedPriority(issue.refresh(), session);
+        ), 
+        session
+    );
   }
 
   @Override

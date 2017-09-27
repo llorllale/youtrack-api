@@ -29,4 +29,21 @@ limitations under the License.
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="stateBundle">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="state" type="xsd:string" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:simpleContent>
+              <xsd:extension base="xsd:string">
+                <xsd:attribute name="isResolved" type="xsd:boolean"/>
+              </xsd:extension>
+            </xsd:simpleContent>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
 </xsd:schema>
