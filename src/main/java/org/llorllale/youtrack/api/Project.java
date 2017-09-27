@@ -51,4 +51,11 @@ public interface Project {
    * @since 0.4.0
    */
   public Issues issues();
+
+  /**
+   * Returns the parent {@link YouTrack} instance.
+   * @return the parent {@link YouTrack} instance
+   * @since 0.6.0
+   */
+  public YouTrack youtrack();
 }

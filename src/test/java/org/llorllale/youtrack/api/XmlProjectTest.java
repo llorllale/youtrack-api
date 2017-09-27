@@ -43,7 +43,7 @@ public class XmlProjectTest {
   @Test
   public void testIdFromShortName() {
     assertThat(
-        new XmlProject(new MockSession(), jaxbProjectWithShortName).id(),
+        new XmlProject(null, new MockSession(), jaxbProjectWithShortName).id(),
         is(jaxbProjectWithShortName.getShortName())
     );
   }
@@ -55,7 +55,7 @@ public class XmlProjectTest {
   @Test
   public void testIdFromId() {
     assertThat(
-        new XmlProject(new MockSession(), jaxbProjectWithId).id(),
+        new XmlProject(null, new MockSession(), jaxbProjectWithId).id(),
         is(jaxbProjectWithId.getId())
     );
   }
@@ -63,7 +63,7 @@ public class XmlProjectTest {
   @Test
   public void testName() {
     assertThat(
-        new XmlProject(new MockSession(), jaxbProjectWithShortName).name(),
+        new XmlProject(null, new MockSession(), jaxbProjectWithShortName).name(),
         is(jaxbProjectWithShortName.getName())
     );
   }
@@ -71,7 +71,7 @@ public class XmlProjectTest {
   @Test
   public void testDescription() {
     assertThat(
-        new XmlProject(new MockSession(), jaxbProjectWithShortName).description().get(),
+        new XmlProject(null, new MockSession(), jaxbProjectWithShortName).description().get(),
         is(jaxbProjectWithShortName.getDescription())
     );
   }

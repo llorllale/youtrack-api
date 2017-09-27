@@ -19,8 +19,10 @@ package org.llorllale.youtrack.api.mock;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
+import org.llorllale.youtrack.api.AssignedPriority;
 import org.llorllale.youtrack.api.Comments;
 import org.llorllale.youtrack.api.Issue;
+import org.llorllale.youtrack.api.Priority;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.TimeTracking;
 import org.llorllale.youtrack.api.UsersOfIssue;
@@ -38,7 +40,7 @@ public class MockIssue<T> implements Issue<T> {
   private final Instant creationDate;
   private final String type;
   private final String state;
-  private final String priority;
+  private final Priority priority;
   private final String summary;
   private final String description;
   private final T dto;
@@ -62,7 +64,7 @@ public class MockIssue<T> implements Issue<T> {
       Instant creationDate, 
       String type, 
       String state, 
-      String priority, 
+      Priority priority, 
       String summary, 
       String description,
       T dto
@@ -85,7 +87,7 @@ public class MockIssue<T> implements Issue<T> {
    * @since 0.4.0
    */
   public MockIssue(Project project, T dto) {
-    this(project, "", Instant.now(), "", "", "", "", "", dto);
+    this(project, "", Instant.now(), "", "", new MockPriority("Normal"), "", "", dto);
   }
 
   /**
@@ -160,7 +162,7 @@ public class MockIssue<T> implements Issue<T> {
         this.creationDate, 
         this.type, 
         this.state, 
-        priority, 
+        new MockPriority(priority), 
         this.summary, 
         this.description,
         this.dto
@@ -250,8 +252,8 @@ public class MockIssue<T> implements Issue<T> {
   }
 
   @Override
-  public String priority() {
-    return priority;
+  public AssignedPriority priority() {
+    return new MockAssignedPriority(priority.asString(), this);
   }
 
   @Override

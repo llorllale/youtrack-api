@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,22 +17,25 @@
 package org.llorllale.youtrack.api;
 
 /**
- * Entry point for the YouTrack API.
+ * JAXB adapter for {@link Priority}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
  */
-public interface YouTrack {
-  /**
-   * Access to the {@link Project projects} API.
-   * @return Access to the {@link Project projects} API.
-   * @since 0.4.0
-   */
-  public Projects projects();
+class XmlPriority implements Priority {
+  private final org.llorllale.youtrack.api.jaxb.Value jaxb;
 
   /**
-   * Returns the {@link Priorities} API.
-   * @return the {@link Priorities} API
+   * Ctor.
+   * @param jaxb the DTO
+   * @param youtrack the {@link YouTrack} parent
    * @since 0.6.0
    */
-  public Priorities priorities();
+  XmlPriority(org.llorllale.youtrack.api.jaxb.Value jaxb) {
+    this.jaxb = jaxb;
+  }
+
+  @Override
+  public String asString() {
+    return jaxb.getValue();
+  }
 }

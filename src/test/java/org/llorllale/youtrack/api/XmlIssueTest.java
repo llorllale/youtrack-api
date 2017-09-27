@@ -113,7 +113,7 @@ public class XmlIssueTest {
             project(),
             session(),
             jaxbIssue
-        ).priority(),
+        ).priority().asString(),
         is(jaxbIssue.getField()
             .stream()
             .filter(f -> "Priority".equals(f.getName()))

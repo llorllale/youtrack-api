@@ -37,6 +37,7 @@ public class DefaultProjectsTest {
   public void streamWithResponseOk() throws Exception {
     assertThat(
         new DefaultProjects(
+            null,
             new MockSession(), 
             new MockHttpClient(
                 new MockOkResponse(
@@ -57,6 +58,7 @@ public class DefaultProjectsTest {
   public void getWithExistingProject() throws Exception {
     assertTrue(
         new DefaultProjects(
+            null,
             new MockSession(),
             new MockHttpClient(
                 new MockOkResponse(ONE_PROJECT_RESPONSE)
@@ -74,6 +76,7 @@ public class DefaultProjectsTest {
   public void getWithNonExistingProject() throws Exception {
     assertFalse(
         new DefaultProjects(
+            null,
             new MockSession(),
             new MockHttpClient(
                 new MockNotFoundResponse(

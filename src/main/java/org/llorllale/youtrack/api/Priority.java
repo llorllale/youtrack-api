@@ -17,22 +17,19 @@
 package org.llorllale.youtrack.api;
 
 /**
- * Entry point for the YouTrack API.
+ * A priority configured in the YouTrack system.
+ * 
+ * <p>Instances of {@link Priority} have not necessarily been assigned to an {@link Issue}.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
+ * @see AssignedPriority
  */
-public interface YouTrack {
+public interface Priority {
   /**
-   * Access to the {@link Project projects} API.
-   * @return Access to the {@link Project projects} API.
-   * @since 0.4.0
-   */
-  public Projects projects();
-
-  /**
-   * Returns the {@link Priorities} API.
-   * @return the {@link Priorities} API
+   * Returns a string representation of this {@link Priority}.
+   * @return a string representation of this {@link Priority}
    * @since 0.6.0
    */
-  public Priorities priorities();
+  public String asString();
 }

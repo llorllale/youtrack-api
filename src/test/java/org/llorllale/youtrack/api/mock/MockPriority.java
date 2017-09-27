@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
+
+import org.llorllale.youtrack.api.Priority;
 
 /**
- * Entry point for the YouTrack API.
+ * Mock implementation of {@link Priority} suitable for unit tests.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
  */
-public interface YouTrack {
-  /**
-   * Access to the {@link Project projects} API.
-   * @return Access to the {@link Project projects} API.
-   * @since 0.4.0
-   */
-  public Projects projects();
+public class MockPriority implements Priority {
+  private final String string;
 
   /**
-   * Returns the {@link Priorities} API.
-   * @return the {@link Priorities} API
+   * Ctor.
+   * @param string 
    * @since 0.6.0
    */
-  public Priorities priorities();
+  public MockPriority(String string) {
+    this.string = string;
+  }
+
+  @Override
+  public String asString() {
+    return string;
+  }
 }

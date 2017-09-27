@@ -50,7 +50,7 @@ public class DefaultProjectsIT {
   @Test
   public void testStream() throws Exception {
     assertTrue(
-        new DefaultProjects(session).stream()
+        new DefaultProjects(null, session).stream()
             .anyMatch(p -> config.youtrackTestProjectId().equals(p.id()))
     );
   }
@@ -63,7 +63,7 @@ public class DefaultProjectsIT {
   @Test
   public void testGetExistingProject() throws Exception {
     assertTrue(
-        new DefaultProjects(session)
+        new DefaultProjects(null, session)
             .get(config.youtrackTestProjectId())
             .isPresent()
     );
@@ -77,7 +77,7 @@ public class DefaultProjectsIT {
   @Test
   public void testGetNonExistingProject() throws Exception {
     assertFalse(
-        new DefaultProjects(session)
+        new DefaultProjects(null, session)
             .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
             .isPresent()
     );

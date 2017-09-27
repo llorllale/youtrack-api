@@ -17,31 +17,27 @@
 package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+
+import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
- * Default implementation of {@link YouTrack}.
+ * API for accessing YouTrack {@link Priority priorities} at the global level.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.6.0
  */
-public class DefaultYouTrack implements YouTrack {
-  private final Session session;
-
+public interface Priorities {
   /**
-   * Primary ctor.
-   * @param session the user's {@link Session}
-   * @since 0.4.0
+   * Returns a stream with all configured {@link Priority priorities} assignable to 
+   * {@link Issue issues}.
+   * 
+   * @return stream with all configured {@link Priority priorities} assignable to 
+   *     {@link Issue issues}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.6.0
    */
-  public DefaultYouTrack(Session session) {
-    this.session = session;
-  }
-
-  @Override
-  public Projects projects() {
-    return new DefaultProjects(this, session);
-  }
-
-  @Override
-  public Priorities priorities() {
-    return new DefaultPriorities(session);
-  }
+  public Stream<Priority> stream() throws IOException, UnauthorizedException;
 }

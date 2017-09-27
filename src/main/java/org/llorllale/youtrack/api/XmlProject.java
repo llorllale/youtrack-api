@@ -26,15 +26,22 @@ import java.util.Optional;
  * @since 0.2.0
  */
 class XmlProject implements Project {
+  private final YouTrack youtrack;
   private final Session session;
   private final org.llorllale.youtrack.api.jaxb.Project jaxbProject;
 
   /**
    * Ctor.
+   * @param youtrack the parent {@link YouTrack}
    * @param jaxbProject the JAXB instance to be adapted into {@link Project}
    * @since 0.2.0
    */
-  XmlProject(Session session, org.llorllale.youtrack.api.jaxb.Project jaxbProject) {
+  XmlProject(
+      YouTrack youtrack, 
+      Session session, 
+      org.llorllale.youtrack.api.jaxb.Project jaxbProject
+  ) {
+    this.youtrack = youtrack;
     this.session = session;
     this.jaxbProject = jaxbProject;
   }
@@ -58,5 +65,10 @@ class XmlProject implements Project {
   @Override
   public Issues issues() {
     return new DefaultIssues(this, session);
+  }
+
+  @Override
+  public YouTrack youtrack() {
+    return youtrack;
   }
 }

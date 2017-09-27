@@ -68,9 +68,9 @@ public interface Issue<T> extends DataTransferObject<T> {
   /**
    * The issue's priority.
    * @return The issue's priority.
-   * @since 0.1.0
+   * @since 0.6.0
    */
-  public String priority();
+  public AssignedPriority priority();
 
   /**
    * The issue's summary.
@@ -120,5 +120,5 @@ public interface Issue<T> extends DataTransferObject<T> {
    *     operation
    * @since 0.5.0
    */
-  public Issue<T> refresh() throws IOException, UnauthorizedException;
+  public Issue refresh() throws IOException, UnauthorizedException;
 }

@@ -16,23 +16,25 @@
 
 package org.llorllale.youtrack.api;
 
-/**
- * Entry point for the YouTrack API.
- * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
- */
-public interface YouTrack {
-  /**
-   * Access to the {@link Project projects} API.
-   * @return Access to the {@link Project projects} API.
-   * @since 0.4.0
-   */
-  public Projects projects();
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
-  /**
-   * Returns the {@link Priorities} API.
-   * @return the {@link Priorities} API
-   * @since 0.6.0
-   */
-  public Priorities priorities();
+/**
+ * Unit tests for {@link XmlPriority}.
+ * @author George Aristy (george.aristy@gmail.com)
+ * @since 0.6.0
+ */
+public class XmlPriorityTest {
+  @Test
+  public void testAsString() {
+    assertThat(
+        new XmlPriority(
+            new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Value.class)
+                .apply("<value colorIndex=\"20\">Show-stopper</value>")
+        ).asString(),
+        is("Show-stopper")
+    );
+  }
 }

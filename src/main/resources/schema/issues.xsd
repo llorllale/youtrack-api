@@ -41,6 +41,7 @@ limitations under the License.
       <xsd:simpleContent>
         <xsd:extension base="xsd:string">
           <xsd:attribute name="url" type="xsd:string"/>
+          <xsd:attribute name="colorIndex" type="xsd:int"/>
         </xsd:extension>
       </xsd:simpleContent>
     </xsd:complexType>
