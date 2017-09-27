@@ -93,7 +93,7 @@ class XmlAssignedPriority implements AssignedPriority {
         )
     ).asHttpResponse();
 
-    return new XmlAssignedPriority(issue, session);
+    return new XmlAssignedPriority(issue.refresh(), session);
   }
 
   @Override
