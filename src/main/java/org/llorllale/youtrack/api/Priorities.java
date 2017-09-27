@@ -17,8 +17,8 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.stream.Stream;
+import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -38,51 +38,59 @@ public interface Priorities {
    *     operation
    * @since 0.6.0
    */
-  public Stream<Priority> stream() throws IOException, UnauthorizedException;
+  public Stream<Priority<?>> stream() throws IOException, UnauthorizedException;
 
   /**
    * Returns the lowest configured {@link Priority}
    * 
+   * @param <T>
    * @return the lowest configured {@link Priority}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.6.0
    */
-  public Priority lowest() throws IOException, UnauthorizedException;
+  public <T> Priority<T> lowest() throws IOException, UnauthorizedException;
 
   /**
    * Returns the highest configured {@link Priority}
    * 
+   * @param <T>
    * @return the highest configured {@link Priority}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.6.0
    */
-  public Priority highest() throws IOException, UnauthorizedException;
+  public <T> Priority<T> highest() throws IOException, UnauthorizedException;
 
   /**
-   * Returns the next lower {@link Priority}, if one exists.
+   * Returns the next lower {@link Priority}, or {@code start} if it is already the 
+   * {@link #lowest() lowest}.
    * 
+   * @param <T>
    * @param start the priority to compare against
-   * @return the next lower {@link Priority}, if one exists
+   * @return the next lower {@link Priority}, or {@code start} if it is already the 
+   *     {@link #lowest() lowest}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.6.0
    */
-  public Optional<Priority> lower(Priority start) throws IOException, UnauthorizedException;
+  public <T> Priority<T> lower(Priority<T> start) throws IOException, UnauthorizedException;
 
   /**
-   * Returns the next higher {@link Priority}, if one exists.
+   * Returns the next higher {@link Priority}, or {@code start} if it is already the 
+   * {@link #highest() highest}.
    * 
+   * @param <T>
    * @param start the priority to compare against
-   * @return the next higher {@link Priority}, if one exists
+   * @return the next higher {@link Priority}, or {@code start} if it is already the 
+   *     {@link #highest() highest}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.6.0
    */
-  public Optional<Priority> higher(Priority start) throws IOException, UnauthorizedException;
+  public <T> Priority<T> higher(Priority<T> start) throws IOException, UnauthorizedException;
 }

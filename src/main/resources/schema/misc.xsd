@@ -18,14 +18,12 @@ limitations under the License.
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             elementFormDefault="unqualified">
 
+  <xsd:import schemaLocation="issues.xsd"/>
+
   <xsd:element name="enumeration">
     <xsd:complexType>
       <xsd:sequence>
-        <xsd:element name="value" type="xsd:string" maxOccurs="unbounded">
-          <xsd:complexType>
-            <xsd:attribute name="colorIndex" type="xsd:int"/>
-          </xsd:complexType>
-        </xsd:element>
+        <xsd:element ref="value" maxOccurs="unbounded"/>
       </xsd:sequence>
       <xsd:attribute name="name" type="xsd:string"/>
     </xsd:complexType>

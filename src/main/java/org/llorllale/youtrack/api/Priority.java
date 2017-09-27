@@ -20,6 +20,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
 import java.util.Optional;
+import org.llorllale.youtrack.api.util.DataTransferObject;
 
 /**
  * A priority configured in the YouTrack system.
@@ -27,10 +28,11 @@ import java.util.Optional;
  * <p>Instances of {@link Priority} have not necessarily been assigned to an {@link Issue}.</p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
+ * @param <T>
  * @since 0.6.0
  * @see AssignedPriority
  */
-public interface Priority extends Comparable<Priority> {
+public interface Priority<T> extends Comparable<Priority<T>>, DataTransferObject<T> {
   /**
    * Returns a string representation of this {@link Priority}.
    * @return a string representation of this {@link Priority}
@@ -47,7 +49,7 @@ public interface Priority extends Comparable<Priority> {
    * @throws UnauthorizedException 
    * @since 0.6.0
    */
-  public Optional<Priority> lower() throws IOException, UnauthorizedException;
+  public Priority<T> lower() throws IOException, UnauthorizedException;
 
-  public Optional<Priority> higher() throws IOException, UnauthorizedException;
+  public Priority<T> higher() throws IOException, UnauthorizedException;
 }

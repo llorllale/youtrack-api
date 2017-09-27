@@ -70,7 +70,7 @@ public interface Issue<T> extends DataTransferObject<T> {
    * @return The issue's priority.
    * @since 0.1.0
    */
-  public AssignedPriority priority();
+  public AssignedPriority<?> priority();
 
   /**
    * The issue's summary.

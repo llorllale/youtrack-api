@@ -16,10 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
-import java.io.IOException;
-
 /**
  * Entry point for the YouTrack API.
  * @author George Aristy (george.aristy@gmail.com)

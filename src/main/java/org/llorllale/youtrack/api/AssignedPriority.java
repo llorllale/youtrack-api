@@ -24,6 +24,6 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.6.0
  */
-public interface AssignedPriority extends Priority {
-  public Priority changeTo(Priority other) throws IOException, UnauthorizedException;
+public interface AssignedPriority<T> extends Priority<T> {
+  public AssignedPriority<T> changeTo(Priority<?> other) throws IOException, UnauthorizedException;
 }
