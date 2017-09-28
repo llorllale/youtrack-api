@@ -61,7 +61,7 @@ public class XmlIssueIT {
   public void testUpdateAndRefresh() throws Exception {
     assertThat(
       new XmlIssue(
-          new MockProject(), 
+          issue.project(), 
           session, 
           (org.llorllale.youtrack.api.jaxb.Issue) issue.asDto()
       ).update(ImmutableMap.of("Assignee", config.youtrackUser()))

@@ -53,12 +53,9 @@ class XmlAssignedPriority implements AssignedPriority {
 
   @Override
   public AssignedPriority changeTo(Priority other) throws IOException, UnauthorizedException {
-    return new XmlAssignedPriority(
-        this.issue().update(
-            ImmutableMap.of("Priotity", other.asString())
-        ), 
-        session
-    );
+    return this.issue()
+        .update(ImmutableMap.of("Priority", other.asString()))
+        .priority();
   }
 
   @Override
