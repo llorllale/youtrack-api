@@ -18,8 +18,11 @@ package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.llorllale.youtrack.api.AssignedPriority;
+import org.llorllale.youtrack.api.AssignedState;
 import org.llorllale.youtrack.api.Comments;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Priority;
@@ -39,7 +42,7 @@ public class MockIssue<T> implements Issue<T> {
   private final String id;
   private final Instant creationDate;
   private final String type;
-  private final String state;
+  private final AssignedState state;
   private final Priority priority;
   private final String summary;
   private final String description;
@@ -247,7 +250,7 @@ public class MockIssue<T> implements Issue<T> {
   }
 
   @Override
-  public String state() {
+  public AssignedState state() {
     return state;
   }
 
@@ -289,5 +292,10 @@ public class MockIssue<T> implements Issue<T> {
   @Override
   public Issue<T> refresh() throws IOException, UnauthorizedException {
     return this;
+  }
+
+  @Override
+  public Issue update(List<Map.Entry<String, String>> args) throws IOException, UnauthorizedException {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

@@ -62,10 +62,10 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * The issue's state.
-   * @return The issue's state.
-   * @since 0.1.0
+   * @return the issue's state.
+   * @since 0.7.0
    */
-  public State state();
+  public AssignedState state();
 
   /**
    * The issue's priority.

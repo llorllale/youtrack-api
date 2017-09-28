@@ -21,10 +21,19 @@ import java.util.stream.Stream;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- *
+ * Access to all {@link State states} configured in YouTrack.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
 public interface States {
+  /**
+   * Returns a stream of all {@link States} configured in YouTrack.
+   * 
+   * @return a stream of all {@link States} configured in YouTrack
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.7.0
+   */
   public Stream<State> stream() throws IOException, UnauthorizedException;
 }
