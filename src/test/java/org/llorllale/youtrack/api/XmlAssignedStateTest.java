@@ -45,9 +45,7 @@ public class XmlAssignedStateTest {
             new MockIssue<>(
                 new MockProject(), 
                 jaxbIssue
-            ), 
-            new MockSession()
-        ).asString(),
+            )        ).asString(),
         is(jaxbIssue.getField().stream()
             .filter(f -> "State".equals(f.getName()))
             .map(f -> f.getValue().getValue())
