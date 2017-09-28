@@ -29,13 +29,28 @@ import java.util.stream.Stream;
  */
 public interface States {
   /**
-   * Returns a stream of all {@link States} configured in YouTrack.
+   * Returns a stream of all {@link State states} configured in YouTrack.
    * 
-   * @return a stream of all {@link States} configured in YouTrack
+   * @return a stream of all {@link State states} configured in YouTrack
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.7.0
    */
   public Stream<State> stream() throws IOException, UnauthorizedException;
+
+  /**
+   * Returns a stream of all {@link State states} that mark an {@link Issue} as 
+   * {@link AssignedState#resolved() resolved}.
+   * 
+   * @return a stream of all {@link State states} that mark an {@link Issue} as 
+   *     {@link AssignedState#resolved() resolved}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.7.0
+   * @see Issue#state() 
+   * @see AssignedState#resolved() 
+   */
+  public Stream<State> resolving() throws IOException, UnauthorizedException;
 }

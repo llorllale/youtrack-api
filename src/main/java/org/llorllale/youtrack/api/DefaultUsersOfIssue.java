@@ -16,16 +16,14 @@
 
 package org.llorllale.youtrack.api;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
-import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
@@ -132,29 +130,9 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException {
-    new HttpResponseAsResponse(
-        httpClient.execute(
-            new HttpRequestWithSession(
-                session, 
-                new HttpRequestWithEntity(
-                    new StringEntity(
-                        "command=Assignee ".concat(user.loginName()),
-                        ContentType.APPLICATION_FORM_URLENCODED
-                    ),
-                    new HttpPost(
-                        new NonCheckedUriBuilder(
-                            session.baseUrl().toString()
-                                .concat("/issue/")
-                                .concat(issue.id())
-                                .concat("/execute")
-                        ).build()
-                    )
-                )
-            )
-        )
-    ).asHttpResponse();
-
-    return new DefaultUsersOfIssue(session, issue);
+    return this.issue()
+        .update(ImmutableMap.of("Assignee", user.loginName()))
+        .users();
   }
 
   private org.llorllale.youtrack.api.jaxb.User getJaxbUser(String loginName) 

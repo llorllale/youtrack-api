@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.jaxb.StateBundle;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
@@ -59,7 +60,18 @@ class DefaultStates implements States {
 
   @Override
   public Stream<State> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.StateBundle.class).apply(
+    return this.allJaxbStates().map(XmlState::new);
+  }
+
+  @Override
+  public Stream<State> resolving() throws IOException, UnauthorizedException {
+    return this.allJaxbStates()
+        .filter(StateBundle.State::isIsResolved)
+        .map(XmlState::new);
+  }
+
+  private Stream<StateBundle.State> allJaxbStates() throws IOException, UnauthorizedException {
+    return new HttpEntityAsJaxb<>(StateBundle.class).apply(
         new HttpResponseAsResponse(
             httpClient.execute(
                 new HttpRequestWithSession(
@@ -70,6 +82,6 @@ class DefaultStates implements States {
                 )
             )
         ).asHttpResponse().getEntity()
-    ).getState().stream().map(XmlState::new);
+    ).getState().stream();
   }
 }

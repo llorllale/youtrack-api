@@ -37,6 +37,6 @@ class XmlState implements State {
 
   @Override
   public String asString() {
-    return jaxb.toString();
+    return jaxb.getValue();
   }
 }
