@@ -80,14 +80,20 @@ public class XmlAssignedStateIT {
         .get();
 
     assertFalse(
-        new XmlAssignedState(issueChangeTo, session).resolved()
+        new XmlAssignedState(issueResolved, session).resolved()
     );
 
     assertTrue(
-        new XmlAssignedState(issueChangeTo, session).changeTo(resolving).resolved()
+        new XmlAssignedState(issueResolved, session).changeTo(resolving).resolved()
     );
   }
 
+  /**
+   * Tests the changeTo method.
+   * 
+   * @throws Exception 
+   * @since 0.7.0
+   */
   @Test
   public void testChangeTo() throws Exception {
     final State initial = issueChangeTo.state();

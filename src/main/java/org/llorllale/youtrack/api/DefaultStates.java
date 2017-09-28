@@ -77,7 +77,7 @@ class DefaultStates implements States {
                 new HttpRequestWithSession(
                     session, 
                     new HttpGet(
-                        session.baseUrl().toString().concat("/admin/customfield/stateBundle/State")
+                        session.baseUrl().toString().concat("/admin/customfield/stateBundle/States")
                     )
                 )
             )
