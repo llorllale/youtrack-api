@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -26,8 +27,6 @@ import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.Arrays;
 
 /**
  * JAXB implementation of {@link AssignedState}.
@@ -96,9 +95,7 @@ class XmlAssignedState implements AssignedState {
   public AssignedState changeTo(State other) throws IOException, UnauthorizedException {
     return new XmlAssignedState(
         this.issue().update(
-            Arrays.asList(
-                new AbstractMap.SimpleEntry<>("State", this.asString())
-            )
+            ImmutableMap.of("State", other.asString())
         ), 
         session
     );

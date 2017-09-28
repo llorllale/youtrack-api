@@ -16,12 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
+import com.google.common.collect.ImmutableMap;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.Arrays;
 
 /**
  * JAXB impl of {@link AssignedPriority}.
@@ -55,9 +54,7 @@ class XmlAssignedPriority implements AssignedPriority {
   public AssignedPriority changeTo(Priority other) throws IOException, UnauthorizedException {
     return new XmlAssignedPriority(
         this.issue().update(
-            Arrays.asList(
-                new AbstractMap.SimpleEntry<>("Priority", other.asString())
-            )
+            ImmutableMap.of("Priotity", other.asString())
         ), 
         session
     );

@@ -31,7 +31,6 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -174,8 +173,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   }
 
   @Override
-  public Issue update(List<Map.Entry<String, String>> args) 
-      throws IOException, UnauthorizedException {
+  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         httpClient.execute(
             new HttpRequestWithSession(
@@ -183,8 +181,8 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
                 new HttpRequestWithEntity(
                     new StringEntity(
                         "command=".concat(
-                            args.stream()
-                                .map(e -> e.getKey().concat(" ").concat(e.getValue()))
+                            args.entrySet().stream()
+                                .map(e -> String.join(" ", e.getKey(), e.getValue()))
                                 .collect(Collectors.joining(" "))
                         ), 
                         ContentType.APPLICATION_FORM_URLENCODED

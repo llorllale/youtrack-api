@@ -22,7 +22,6 @@ import org.llorllale.youtrack.api.util.DataTransferObject;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -135,5 +134,5 @@ public interface Issue<T> extends DataTransferObject<T> {
    *     operation
    * @since 0.7.0
    */
-  public Issue update(List<Map.Entry<String, String>> args) throws IOException, UnauthorizedException;
+  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException;
 }
