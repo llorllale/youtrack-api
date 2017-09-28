@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import com.google.common.collect.ImmutableMap;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;

@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import com.google.common.collect.ImmutableMap;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 

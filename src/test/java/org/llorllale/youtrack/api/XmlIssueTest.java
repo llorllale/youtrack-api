@@ -95,7 +95,7 @@ public class XmlIssueTest {
             project(),
             session(),
             jaxbIssue
-        ).state(),
+        ).state().asString(),
         is(jaxbIssue.getField()
             .stream()
             .filter(f -> "State".equals(f.getName()))

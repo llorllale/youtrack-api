@@ -47,7 +47,7 @@ public interface AssignedState extends State {
   /**
    * Changes the parent {@link Issue issue's} state and returns a new {@link AssignedState} 
    * representing {@code other}.
-   * @param other
+   * @param other the new {@link State} to change to
    * @return  a new {@link AssignedState} representing {@code other}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this

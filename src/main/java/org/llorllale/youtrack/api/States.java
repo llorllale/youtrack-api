@@ -16,9 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+
 import java.io.IOException;
 import java.util.stream.Stream;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Access to all {@link State states} configured in YouTrack.

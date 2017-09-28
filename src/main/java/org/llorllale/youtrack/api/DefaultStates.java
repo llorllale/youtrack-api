@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import java.io.IOException;
-import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -26,6 +24,9 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
+
+import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
  * Default impl of {@link States}.
