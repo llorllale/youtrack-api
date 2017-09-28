@@ -109,7 +109,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
 
   @Override
   public AssignedState state() {
-    return new XmlAssignedState(this, session);
+    return new XmlAssignedState(this);
   }
 
   @Override

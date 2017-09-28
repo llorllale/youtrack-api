@@ -80,11 +80,11 @@ public class XmlAssignedStateIT {
         .get();
 
     assertFalse(
-        new XmlAssignedState(issueResolved, session).resolved()
+        new XmlAssignedState(issueResolved).resolved()
     );
 
     assertTrue(
-        new XmlAssignedState(issueResolved, session).changeTo(resolving).resolved()
+        new XmlAssignedState(issueResolved).changeTo(resolving).resolved()
     );
   }
 
@@ -99,12 +99,12 @@ public class XmlAssignedStateIT {
     final State initial = issueChangeTo.state();
     final State other = issueChangeTo.project().youtrack().states()
         .stream()
-        .filter(s -> s.asString().equals(initial.asString()))
+        .filter(s -> !s.asString().equals(initial.asString()))
         .findAny()
         .get();
 
     assertThat(
-        new XmlAssignedState(issueChangeTo, session).changeTo(other).asString(),
+        new XmlAssignedState(issueChangeTo).changeTo(other).asString(),
         is(not(initial.asString()))
     );
   }

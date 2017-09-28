@@ -18,14 +18,7 @@ package org.llorllale.youtrack.api;
 
 import com.google.common.collect.ImmutableMap;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
-import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
 
@@ -36,37 +29,14 @@ import java.io.IOException;
  */
 class XmlAssignedState implements AssignedState {
   private final Issue<org.llorllale.youtrack.api.jaxb.Issue> issue;
-  private final Session session;
-  private final HttpClient httpClient;
 
   /**
    * Primary ctor.
    * @param issue the parent {@link Issue}
-   * @param session the user's {@link Session}
-   * @param httpClient the {@link HttpClient} to use
    * @since 0.7.0
    */
-  XmlAssignedState(
-      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue, 
-      Session session, 
-      HttpClient httpClient
-  ) {
+  XmlAssignedState(Issue<org.llorllale.youtrack.api.jaxb.Issue> issue) {
     this.issue = issue;
-    this.session = session;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Uses the {@link HttpClients#createDefault() default} http client.
-   * @param issue the parent {@link Issue}
-   * @param session the user's {@link Session}
-   * @since 0.7.0
-   */
-  XmlAssignedState(
-      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue, 
-      Session session
-  ) {
-    this(issue, session, HttpClients.createDefault());
   }
 
   @Override
@@ -76,30 +46,19 @@ class XmlAssignedState implements AssignedState {
 
   @Override
   public boolean resolved() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.StateBundle.class).apply(
-        new HttpResponseAsResponse(
-            httpClient.execute(
-                new HttpRequestWithSession(
-                    session, 
-                    new HttpGet(
-                        session.baseUrl().toString()
-                            .concat("/admin/customfield/stateBundle/States")
-                    )
-                )
-            )
-        ).asHttpResponse().getEntity()
-    ).getState().stream()
-        .anyMatch(s -> s.getValue().equals(this.asString()) && s.isIsResolved());
+    return this.issue()
+        .project()
+        .youtrack()
+        .states()
+        .resolving()
+        .anyMatch(s -> s.asString().equals(this.asString()));
   }
 
   @Override
   public AssignedState changeTo(State other) throws IOException, UnauthorizedException {
-    return new XmlAssignedState(
-        this.issue().update(
-            ImmutableMap.of("State", other.asString())
-        ), 
-        session
-    );
+    return this.issue()
+        .update(ImmutableMap.of("State", other.asString()))
+        .state();
   }
 
   @Override
