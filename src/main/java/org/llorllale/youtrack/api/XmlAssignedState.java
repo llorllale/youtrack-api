@@ -48,7 +48,6 @@ class XmlAssignedState implements AssignedState {
   public boolean resolved() throws IOException, UnauthorizedException {
     return this.issue()
         .project()
-        .youtrack()
         .states()
         .resolving()
         .anyMatch(s -> s.asString().equals(this.asString()));

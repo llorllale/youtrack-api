@@ -56,8 +56,10 @@ public class HttpResponseAsResponse implements Response {
         new UnauthorizedResponse(
             new ForbiddenResponse(
                 new InternalServerErrorResponse(
-                    new IdentityResponse(
-                        httpResponse
+                    new BadRequest(
+                        new IdentityResponse(
+                            httpResponse
+                        )
                     )
                 )
             )

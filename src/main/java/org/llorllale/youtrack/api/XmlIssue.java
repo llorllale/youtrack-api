@@ -16,11 +16,12 @@
 
 package org.llorllale.youtrack.api;
 
+
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.llorllale.youtrack.api.jaxb.Field;
 import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
@@ -30,7 +31,9 @@ import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -179,14 +182,17 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
             new HttpRequestWithSession(
                 session, 
                 new HttpRequestWithEntity(
-                    new StringEntity(
-                        "command=".concat(
-                            args.entrySet().stream()
-                                .map(e -> String.join(" ", e.getKey(), e.getValue()))
-                                .collect(Collectors.joining(" "))
-                        ), 
-                        ContentType.APPLICATION_FORM_URLENCODED
-                    ), 
+                    new UrlEncodedFormEntity(
+                        Arrays.asList(
+                            new BasicNameValuePair(
+                              "command",
+                                args.entrySet().stream()
+                                    .map(e -> e.getKey().concat(" ").concat(e.getValue()))
+                                    .collect(Collectors.joining(" "))
+                            )
+                        ),
+                        StandardCharsets.UTF_8
+                    ),
                     new HttpPost(
                         session.baseUrl().toString()
                             .concat("/issue/")

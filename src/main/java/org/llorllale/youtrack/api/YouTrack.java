@@ -35,11 +35,4 @@ public interface YouTrack {
    * @since 0.6.0
    */
   public Priorities priorities();
-
-  /**
-   * Returns the {@link States} API.
-   * @return the {@link States} API
-   * @since 0.7.0
-   */
-  public States states();
 }

@@ -16,9 +16,12 @@
 
 package org.llorllale.youtrack.api;
 
+import com.google.common.net.UrlEscapers;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
 import org.llorllale.youtrack.api.jaxb.StateBundle;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -35,27 +38,36 @@ import java.util.stream.Stream;
  * @since 0.7.0
  */
 class DefaultStates implements States {
+  private final Project project;
   private final Session session;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
+   * @param project the parent {@link Project}
    * @param session the user's {@link Session}
    * @param httpClient the {@link HttpClient} to use
    * @since 0.7.0
    */
-  DefaultStates(Session session, HttpClient httpClient) {
+  DefaultStates(Project project, Session session, HttpClient httpClient) {
+    this.project = project;
     this.session = session;
     this.httpClient = httpClient;
   }
 
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
+   * @param project the parent {@link Project}
    * @param session the user's {@link Session}
    * @since 0.7.0
    */
-  DefaultStates(Session session) {
-    this(session, HttpClients.createDefault());
+  DefaultStates(Project project, Session session) {
+    this(project, session, HttpClients.createDefault());
+  }
+
+  @Override
+  public Project project() {
+    return project;
   }
 
   @Override
@@ -71,13 +83,35 @@ class DefaultStates implements States {
   }
 
   private Stream<StateBundle.State> allJaxbStates() throws IOException, UnauthorizedException {
+    //first lookup name of the custom field bundle for the project
+    final String bundleName = new HttpEntityAsJaxb<>(ProjectCustomField.class).apply(
+        new HttpResponseAsResponse(
+            httpClient.execute(
+                new HttpRequestWithSession(
+                    session, 
+                    new HttpGet(
+                        session.baseUrl().toString()
+                            .concat("/admin/project/")
+                            .concat(this.project().id())
+                            .concat("/customfield/State")
+                    )
+                )
+            )
+        ).asHttpResponse().getEntity()
+    ).getParam().getValue();
+
+    //then return all states belonging to the bundle
     return new HttpEntityAsJaxb<>(StateBundle.class).apply(
         new HttpResponseAsResponse(
             httpClient.execute(
                 new HttpRequestWithSession(
                     session, 
                     new HttpGet(
-                        session.baseUrl().toString().concat("/admin/customfield/stateBundle/States")
+                        session.baseUrl().toString()
+                            .concat("/admin/customfield/stateBundle/")
+                            .concat(
+                                UrlEscapers.urlPathSegmentEscaper().escape(bundleName)
+                            )
                     )
                 )
             )

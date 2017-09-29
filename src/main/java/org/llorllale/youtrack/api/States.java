@@ -23,15 +23,24 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
- * Access to all {@link State states} configured in YouTrack.
+ * Access to all {@link State states} configured in for a {@link Project}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
 public interface States {
   /**
-   * Returns a stream of all {@link State states} configured in YouTrack.
+   * Returns the parent {@link Project}.
+   * @return the parent {@link Project}
+   * @since 0.7.0
+   */
+  public Project project();
+
+  /**
+   * Returns a stream of all {@link State states} configured for the parent 
+   * {@link #project() project}.
    * 
-   * @return a stream of all {@link State states} configured in YouTrack
+   * @return a stream of all {@link State states} configured for the parent 
+   *     {@link #project() project}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
@@ -40,15 +49,18 @@ public interface States {
   public Stream<State> stream() throws IOException, UnauthorizedException;
 
   /**
-   * Returns a stream of all {@link State states} that mark an {@link Issue} as 
+   * Returns a stream consisting of a subset of {@link #stream() all} {@link State states} 
+   * configured for the parent {@link #project() project} that mark an {@link Issue} as 
    * {@link AssignedState#resolved() resolved}.
    * 
-   * @return a stream of all {@link State states} that mark an {@link Issue} as 
+   * @return a stream consisting of a subset of {@link #stream() all} {@link State states} 
+   *     configured for the parent {@link #project() project} that mark an {@link Issue} as 
    *     {@link AssignedState#resolved() resolved}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.7.0
+   * @see #stream() 
    * @see Issue#state() 
    * @see AssignedState#resolved() 
    */

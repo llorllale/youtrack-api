@@ -71,4 +71,9 @@ class XmlProject implements Project {
   public YouTrack youtrack() {
     return youtrack;
   }
+
+  @Override
+  public States states() {
+    return new DefaultStates(this, session);
+  }
 }

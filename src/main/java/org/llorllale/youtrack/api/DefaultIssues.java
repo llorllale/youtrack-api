@@ -77,26 +77,23 @@ class DefaultIssues implements Issues {
 
   @Override
   public Stream<Issue> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class)
-        .apply(
-            new HttpResponseAsResponse(
-                httpClient.execute(
-                    new HttpRequestWithSession(
-                        session, 
-                        new HttpGet(
-                            new NonCheckedUriBuilder(
-                                session.baseUrl()
-                                    .toString()
-                                    .concat("/issue/byproject/")
-                                    .concat(project().id())
-                            ).build()
-                        )
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).apply(
+        new HttpResponseAsResponse(
+            httpClient.execute(
+                new HttpRequestWithSession(
+                    session, 
+                    new HttpGet(
+                        session.baseUrl()
+                            .toString()
+                            .concat("/issue/byproject/")
+                            .concat(project().id())
                     )
                 )
-            ).asHttpResponse().getEntity()
-        ).getIssue()
-            .stream()
-            .map(i -> new XmlIssue(project, session, i));
+            )
+        ).asHttpResponse().getEntity()
+    ).getIssue()
+        .stream()
+        .map(i -> new XmlIssue(project, session, i));
   }
 
   @Override
@@ -106,12 +103,10 @@ class DefaultIssues implements Issues {
             new HttpRequestWithSession(
                 session, 
                 new HttpGet(
-                    new NonCheckedUriBuilder(
-                        session.baseUrl()
-                            .toString()
-                            .concat("/issue/")
-                            .concat(id)
-                    ).build()
+                    session.baseUrl()
+                        .toString()
+                        .concat("/issue/")
+                        .concat(id)
                 )
             )
         )

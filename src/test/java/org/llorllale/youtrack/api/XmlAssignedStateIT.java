@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UsernamePasswordLogin;
 
 /**
  * Integration tests for {@link XmlAssignedState}.
@@ -41,7 +42,8 @@ public class XmlAssignedStateIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
+    session = new UsernamePasswordLogin(config.youtrackUrl(), "root", "youtrack".toCharArray()).login();
+//    session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
     issueChangeTo = new DefaultYouTrack(session).projects().stream()
         .findAny()
         .get()
@@ -74,7 +76,7 @@ public class XmlAssignedStateIT {
    */
   @Test
   public void testResolved() throws Exception {
-    final State resolving = issueResolved.project().youtrack().states()
+    final State resolving = issueResolved.project().states()
         .resolving()
         .findAny()
         .get();
@@ -97,7 +99,7 @@ public class XmlAssignedStateIT {
   @Test
   public void testChangeTo() throws Exception {
     final State initial = issueChangeTo.state();
-    final State other = issueChangeTo.project().youtrack().states()
+    final State other = issueChangeTo.project().states()
         .stream()
         .filter(s -> !s.asString().equals(initial.asString()))
         .findAny()

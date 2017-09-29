@@ -44,9 +44,4 @@ public class DefaultYouTrack implements YouTrack {
   public Priorities priorities() {
     return new DefaultPriorities(session);
   }
-
-  @Override
-  public States states() {
-    return new DefaultStates(session);
-  }
 }

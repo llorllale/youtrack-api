@@ -31,17 +31,19 @@ import org.llorllale.youtrack.api.session.Session;
  */
 public class DefaultStatesIT {
   private static Session session;
+  private static Project project;
 
   @BeforeClass
   public static void setup() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
     session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
+    project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 
   @Test
   public void testStream() throws Exception {
     assertThat(
-        new DefaultStates(session).stream().count(),
+        new DefaultStates(project, session).stream().count(),
         is(greaterThan(0L))
     );
   }
@@ -49,7 +51,7 @@ public class DefaultStatesIT {
   @Test
   public void testResolving() throws Exception {
     assertThat(
-        new DefaultStates(session).resolving().count(),
+        new DefaultStates(project, session).resolving().count(),
         is(greaterThan(0L))
     );
   }

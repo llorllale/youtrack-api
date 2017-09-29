@@ -16,12 +16,10 @@
 
 package org.llorllale.youtrack.api;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
-import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
@@ -33,6 +31,7 @@ import org.llorllale.youtrack.api.session.Session;
 public class DefaultIssuesIT {
   private static IntegrationTestsConfig config;
   private static Session session;
+  private static Project project;
 
   @BeforeClass
   public static void setup() throws Exception {
@@ -41,46 +40,35 @@ public class DefaultIssuesIT {
         config.youtrackUrl(), 
         config.youtrackUserToken()
     ).login();
+    project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 
   @Test
   public void testAll() throws Exception {
-    final Issue issue = new DefaultIssues(
-        project(),
-        session
-    ).create(new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testAll"), "description"));
+    final Issue issue = new DefaultIssues(project, session)
+        .create(
+            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testAll"), "description")
+        );
 
     assertTrue(
-        new DefaultIssues(
-            project(),
-            session
-        ).stream()
+        new DefaultIssues(project, session)
+            .stream()
             .anyMatch(i -> i.id().equals(issue.id()))
     );
   }
 
   @Test
   public void createAndGetIssue() throws Exception {
-    final Issue issue = new DefaultIssues(
-        project(),
-        session
-    ).create(new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testGet"), "description"));
-
+    final Issue issue = new DefaultIssues(project, session)
+        .create(
+            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testGet"), "description")
+        );
 
     assertTrue(
         new DefaultIssues(
-            project(),
+            project,
             session
         ).get(issue.id()).isPresent()
-    );
-  }
-
-
-  private final Project project() {
-    return new MockProject(
-        config.youtrackTestProjectId(), 
-        "", 
-        ""
     );
   }
 }
