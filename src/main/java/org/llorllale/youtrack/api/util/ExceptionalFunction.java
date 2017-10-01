@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api.util;
 
+import java.util.function.Function;
+
 /**
  * Generic function that can throw an {@link Exception}.
  * 
@@ -35,4 +37,18 @@ public interface ExceptionalFunction<T, R, E extends Exception> {
    * @since 0.6.0
    */
   public R apply(T input) throws E;
+
+  /**
+   * Returns a composed {@link ExceptionalFunction} that first applies itself to the input, then
+   * applies {@code after} to the result.
+   * 
+   * @param <V> the type parameter for the resulting value
+   * @param after the function to be called on the result of {@link #apply(java.lang.Object)}
+   * @return a composed {@link ExceptionalFunction} that first applies itself to the input, then
+   *     applies {@code after} to the result
+   * @since 0.7.0
+   */
+  public default <V> ExceptionalFunction<T, V, E> andThen(Function<R, V> after) {
+    return (T input) -> after.apply(apply(input));
+  }
 }

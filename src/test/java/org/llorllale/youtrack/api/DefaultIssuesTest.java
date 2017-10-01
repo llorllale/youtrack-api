@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
@@ -38,6 +39,7 @@ public class DefaultIssuesTest {
    * {@link DefaultIssues} must return all issues.
    * @throws Exception 
    */
+  @Ignore
   @Test
   public void testStream() throws Exception {
     assertThat(

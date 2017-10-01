@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 import org.apache.http.client.HttpClient;
@@ -24,16 +25,22 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.Counter;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.PageUri;
+import org.llorllale.youtrack.api.util.Pagination;
 import org.llorllale.youtrack.api.util.StandardErrorCheck;
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Default implementation of {@link Issues}.
@@ -77,23 +84,35 @@ class DefaultIssues implements Issues {
 
   @Override
   public Stream<Issue> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).apply(
-        new HttpResponseAsResponse(
-            httpClient.execute(
-                new HttpRequestWithSession(
-                    session, 
-                    new HttpGet(
-                        session.baseUrl()
-                            .toString()
-                            .concat("/issue/byproject/")
-                            .concat(project().id())
+    return StreamSupport.stream(
+        Spliterators.spliteratorUnknownSize(
+            new Pagination<>(
+                new PageUri(
+                    new Counter(0, 10),
+                    n -> new HttpRequestWithSession(
+                        session, 
+                        new HttpGet(
+                            new UncheckedUriBuilder(
+                                session.baseUrl().toString()
+                                    .concat("/issue/byproject/")
+                                    .concat(project().id())
+                            ).setParameter("after", String.valueOf(n))
+                                .build()
+                        )
                     )
-                )
-            )
-        ).asHttpResponse().getEntity()
-    ).getIssue()
-        .stream()
-        .map(i -> new XmlIssue(project, session, i));
+                ),
+                new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class)
+                    .andThen(
+                        issues -> 
+                            issues.getIssue().stream()
+                                .map(issue -> new XmlIssue(project, session, issue))
+                                .collect(toList())
+                    )
+            ), 
+            Spliterator.DISTINCT
+        ), 
+        false
+    );
   }
 
   @Override
@@ -125,7 +144,7 @@ class DefaultIssues implements Issues {
                     new HttpRequestWithSession(
                         session, 
                         new HttpPut(
-                            new NonCheckedUriBuilder(
+                            new UncheckedUriBuilder(
                                 session.baseUrl()
                                     .toString()
                                     .concat("/issue")

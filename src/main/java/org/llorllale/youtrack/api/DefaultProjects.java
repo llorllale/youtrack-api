@@ -24,8 +24,8 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
 import org.llorllale.youtrack.api.util.StandardErrorCheck;
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
@@ -77,10 +77,8 @@ class DefaultProjects implements Projects {
                     new HttpRequestWithSession(
                         session, 
                         new HttpGet(
-                            new NonCheckedUriBuilder(
-                                session.baseUrl()
-                                    .toString()
-                                    .concat("/project/all")
+                            new UncheckedUriBuilder(
+                                session.baseUrl().toString().concat("/project/all")
                             ).build()
                         )
                     )
@@ -98,7 +96,7 @@ class DefaultProjects implements Projects {
             new HttpRequestWithSession(
                 session, 
                 new HttpGet(
-                    new NonCheckedUriBuilder(
+                    new UncheckedUriBuilder(
                         session.baseUrl().toString()
                             .concat("/admin/project/")
                             .concat(id)

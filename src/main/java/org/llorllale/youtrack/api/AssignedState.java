@@ -23,12 +23,14 @@ import java.io.IOException;
 
 /**
  * A {@link State} that has been assigned to an {@link Issue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
 public interface AssignedState extends State {
   /**
    * The parent {@link Issue}.
+   * 
    * @return the parent {@link Issue}
    * @since 0.7.0
    */
@@ -36,6 +38,7 @@ public interface AssignedState extends State {
 
   /**
    * Whether the parent {@link Issue} is resolved.
+   * 
    * @return whether the parent {@link Issue} is resolved
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
@@ -47,6 +50,7 @@ public interface AssignedState extends State {
   /**
    * Changes the parent {@link Issue issue's} state and returns a new {@link AssignedState} 
    * representing {@code other}.
+   * 
    * @param other the new {@link State} to change to
    * @return  a new {@link AssignedState} representing {@code other}
    * @throws IOException if the server is unavailable

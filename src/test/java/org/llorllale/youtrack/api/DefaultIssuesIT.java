@@ -44,7 +44,7 @@ public class DefaultIssuesIT {
   }
 
   @Test
-  public void testAll() throws Exception {
+  public void testStream() throws Exception {
     final Issue issue = new DefaultIssues(project, session)
         .create(
             new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testAll"), "description")

@@ -25,7 +25,7 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
@@ -144,7 +144,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
                     new HttpRequestWithSession(
                         session, 
                         new HttpGet(
-                            new NonCheckedUriBuilder(
+                            new UncheckedUriBuilder(
                                 session.baseUrl()
                                     .toString()
                                     .concat("/user/")

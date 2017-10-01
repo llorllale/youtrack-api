@@ -24,7 +24,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
-import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 
 import java.io.IOException;
 import java.net.URI;
@@ -100,7 +100,7 @@ public class UsernamePasswordLogin implements Login {
       );
     }
 
-    final URI uri = new NonCheckedUriBuilder(
+    final URI uri = new UncheckedUriBuilder(
         youtrackUrl.toString().concat("/user/login")
     ).setParameter("login", username)
         .setParameter("password", new String(password))
