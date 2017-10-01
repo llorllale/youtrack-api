@@ -29,7 +29,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
@@ -79,9 +79,8 @@ class DefaultComments implements Comments {
                     new HttpRequestWithSession(
                         session, 
                         new HttpGet(
-                            new NonCheckedUriBuilder(
-                                session.baseUrl()
-                                    .toString()
+                            new UncheckedUriBuilder(
+                                session.baseUrl().toString()
                                     .concat("/issue/")
                                     .concat(issue.id())
                                     .concat("/comment")
@@ -107,9 +106,8 @@ class DefaultComments implements Comments {
                         ContentType.APPLICATION_FORM_URLENCODED
                     ),
                     new HttpPost(
-                        new NonCheckedUriBuilder(
-                            session.baseUrl()
-                                .toString()
+                        new UncheckedUriBuilder(
+                            session.baseUrl().toString()
                                 .concat("/issue/")
                                 .concat(issue.id())
                                 .concat("/execute")
@@ -135,9 +133,8 @@ class DefaultComments implements Comments {
                         ContentType.APPLICATION_JSON
                     ),
                     new HttpPut(
-                        new NonCheckedUriBuilder(
-                            session.baseUrl()
-                                .toString()
+                        new UncheckedUriBuilder(
+                            session.baseUrl().toString()
                                 .concat("/issue/")
                                 .concat(issue.id())
                                 .concat("/comment/")

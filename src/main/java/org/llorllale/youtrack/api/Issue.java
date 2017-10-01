@@ -22,6 +22,7 @@ import org.llorllale.youtrack.api.util.DataTransferObject;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Map;
 
 /**
  * A {@link YouTrack} issue.
@@ -60,10 +61,10 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * The issue's state.
-   * @return The issue's state.
-   * @since 0.1.0
+   * @return the issue's state.
+   * @since 0.7.0
    */
-  public String state();
+  public AssignedState state();
 
   /**
    * The issue's priority.
@@ -121,4 +122,17 @@ public interface Issue<T> extends DataTransferObject<T> {
    * @since 0.5.0
    */
   public Issue refresh() throws IOException, UnauthorizedException;
+
+  /**
+   * Updates this {@link Issue} with properties defined in {@code args} and returns a new 
+   * {@link Issue} reflecting those changes.
+   * @param args the properties to update
+   * @return a new {@link Issue} reflecting the changes brought about by updating this issue with
+   *     {@code args}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.7.0
+   */
+  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException;
 }

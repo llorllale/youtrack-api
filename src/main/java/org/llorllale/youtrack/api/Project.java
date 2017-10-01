@@ -58,4 +58,11 @@ public interface Project {
    * @since 0.6.0
    */
   public YouTrack youtrack();
+
+  /**
+   * Returns the {@link States} API.
+   * @return the {@link States} API
+   * @since 0.7.0
+   */
+  public States states();
 }

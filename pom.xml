@@ -111,6 +111,11 @@
       <artifactId>commons-lang3</artifactId>
       <version>3.6</version>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>23.0</version>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -155,7 +160,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.21.0</version>
             <configuration>
-              <!--<showLogs>true</showLogs>-->
+              <showLogs>true</showLogs>
             </configuration>
             <executions>
               <execution>

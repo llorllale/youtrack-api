@@ -32,19 +32,21 @@ import java.util.List;
  * 
  * <p>The main motivator for this class is to reduce all the {@code try...catch} noise in the 
  * calling code. These errors should never occur anyway once the code is shipped.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class NonCheckedUriBuilder {
+public class UncheckedUriBuilder {
   private final URIBuilder builder;
 
   /**
    * Constructs the internal {@link URIBuilder} with the given {@code baseUrl}.
+   * 
    * @param baseUrl an initial url
    * @throws RuntimeException wrapping any internal {@link URISyntaxException}
    * @since 0.1.0
    */
-  public NonCheckedUriBuilder(String baseUrl) {
+  public UncheckedUriBuilder(String baseUrl) {
     try {
       this.builder = new URIBuilder(baseUrl);
     } catch (URISyntaxException e) {
@@ -54,29 +56,32 @@ public class NonCheckedUriBuilder {
 
   /**
    * Calls the internal {@link URIBuilder#setParameter(String, String)} with the values provided.
+   * 
    * @param name the name of the parameter
    * @param value the value of the parameter
    * @return this object
    * @since 0.1.0
    */
-  public NonCheckedUriBuilder setParameter(String name, String value) {
+  public UncheckedUriBuilder setParameter(String name, String value) {
     this.builder.setParameter(name, value);
     return this;
   }
 
   /**
    * Adds {@code params} on the internal {@link URIBuilder}.
+   * 
    * @param params the query parameters
    * @return this object
    * @since 0.4.0
    */
-  public NonCheckedUriBuilder addParameters(List<NameValuePair> params) {
+  public UncheckedUriBuilder addParameters(List<NameValuePair> params) {
     this.builder.addParameters(params);
     return this;
   }
 
   /**
    * Builds the {@link URI}.
+   * 
    * @return the {@link URI} built by the internal {@link URIBuilder}
    * @throws RuntimeException wrapping any internal {@link URISyntaxException}
    * @since 0.1.0

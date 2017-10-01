@@ -16,13 +16,26 @@
 
 package org.llorllale.youtrack.api;
 
+
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.llorllale.youtrack.api.jaxb.Field;
 import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
+import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * JAXB implementation of {@link Issue}.
@@ -33,9 +46,29 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   private final Project project;
   private final Session session;
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
+  private final HttpClient httpClient;
 
   /**
-   * Ctor.
+   * Primary ctor.
+   * @param project this {@link Issue issue's} {@link Project}
+   * @param jaxbIssue the JAXB issue to be adapted
+   * @param httpClient the {@link HttpClient} to use
+   * @since 0.1.0
+   */
+  XmlIssue(
+      Project project, 
+      Session session, 
+      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue,
+      HttpClient httpClient
+  ) {
+    this.project = project;
+    this.session = session;
+    this.jaxbIssue = jaxbIssue;
+    this.httpClient = httpClient;
+  }
+
+  /**
+   * Uses the {@link HttpClients#createDefault() default} http client.
    * @param project this {@link Issue issue's} {@link Project}
    * @param jaxbIssue the JAXB issue to be adapted
    * @since 0.1.0
@@ -45,9 +78,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
       Session session, 
       org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
   ) {
-    this.project = project;
-    this.session = session;
-    this.jaxbIssue = jaxbIssue;
+    this(project, session, jaxbIssue, HttpClients.createDefault());
   }
 
   @Override
@@ -80,14 +111,8 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   }
 
   @Override
-  public String state() {
-    return jaxbIssue.getField()
-            .stream()
-            .filter(f -> "State".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
-            .findFirst()
-            .get();
+  public AssignedState state() {
+    return new XmlAssignedState(this);
   }
 
   @Override
@@ -148,5 +173,37 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
     return project().issues()
         .get(id())
         .get();
+  }
+
+  @Override
+  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        httpClient.execute(
+            new HttpRequestWithSession(
+                session, 
+                new HttpRequestWithEntity(
+                    new UrlEncodedFormEntity(
+                        Arrays.asList(
+                            new BasicNameValuePair(
+                              "command",
+                                args.entrySet().stream()
+                                    .map(e -> e.getKey().concat(" ").concat(e.getValue()))
+                                    .collect(Collectors.joining(" "))
+                            )
+                        ),
+                        StandardCharsets.UTF_8
+                    ),
+                    new HttpPost(
+                        session.baseUrl().toString()
+                            .concat("/issue/")
+                            .concat(this.id())
+                            .concat("/execute")
+                    )
+                )
+            )
+        )
+    ).asHttpResponse();
+
+    return this.refresh();
   }
 }

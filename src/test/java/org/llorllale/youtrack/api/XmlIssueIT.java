@@ -16,7 +16,9 @@
 
 package org.llorllale.youtrack.api;
 
-import static org.junit.Assert.assertTrue;
+import com.google.common.collect.ImmutableMap;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
@@ -24,51 +26,46 @@ import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultIssues}.
+ * Integration tests for {@link XmlIssue}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.7.0
  */
-public class DefaultIssuesIT {
+public class XmlIssueIT {
   private static IntegrationTestsConfig config;
   private static Session session;
-  private static Project project;
+  private static Issue issue;
 
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentTokenLogin(
-        config.youtrackUrl(), 
-        config.youtrackUserToken()
-    ).login();
-    project = new DefaultYouTrack(session).projects().stream().findAny().get();
+    session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
+    issue = new DefaultYouTrack(session).projects().stream()
+        .findAny()
+        .get()
+        .issues()
+        .create(
+            new IssueSpec(
+                XmlIssueIT.class.getSimpleName().concat(".testUpdateAndRefresh"), 
+                "integration tests"
+            )
+        );
   }
 
+  /**
+   * Test of the update method (the refresh operation is implicit).
+   * @throws Exception 
+   * @since 0.7.0
+   */
   @Test
-  public void testStream() throws Exception {
-    final Issue issue = new DefaultIssues(project, session)
-        .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testAll"), "description")
-        );
-
-    assertTrue(
-        new DefaultIssues(project, session)
-            .stream()
-            .anyMatch(i -> i.id().equals(issue.id()))
-    );
-  }
-
-  @Test
-  public void createAndGetIssue() throws Exception {
-    final Issue issue = new DefaultIssues(project, session)
-        .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testGet"), "description")
-        );
-
-    assertTrue(
-        new DefaultIssues(
-            project,
-            session
-        ).get(issue.id()).isPresent()
+  public void testUpdateAndRefresh() throws Exception {
+    assertThat(
+      new XmlIssue(
+          issue.project(), 
+          session, 
+          (org.llorllale.youtrack.api.jaxb.Issue) issue.asDto()
+      ).update(ImmutableMap.of("Assignee", config.youtrackUser()))
+          .users().assignee().get().loginName(),
+        is(config.youtrackUser())
     );
   }
 }

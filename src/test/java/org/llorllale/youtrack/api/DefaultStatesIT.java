@@ -16,59 +16,43 @@
 
 package org.llorllale.youtrack.api;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultIssues}.
+ * Integration tests for {@link DefaultStates}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.7.0
  */
-public class DefaultIssuesIT {
-  private static IntegrationTestsConfig config;
+public class DefaultStatesIT {
   private static Session session;
   private static Project project;
 
   @BeforeClass
   public static void setup() throws Exception {
-    config = new IntegrationTestsConfig();
-    session = new PermanentTokenLogin(
-        config.youtrackUrl(), 
-        config.youtrackUserToken()
-    ).login();
+    final IntegrationTestsConfig config = new IntegrationTestsConfig();
+    session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
     project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 
   @Test
   public void testStream() throws Exception {
-    final Issue issue = new DefaultIssues(project, session)
-        .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testAll"), "description")
-        );
-
-    assertTrue(
-        new DefaultIssues(project, session)
-            .stream()
-            .anyMatch(i -> i.id().equals(issue.id()))
+    assertThat(
+        new DefaultStates(project, session).stream().count(),
+        is(greaterThan(0L))
     );
   }
 
   @Test
-  public void createAndGetIssue() throws Exception {
-    final Issue issue = new DefaultIssues(project, session)
-        .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testGet"), "description")
-        );
-
-    assertTrue(
-        new DefaultIssues(
-            project,
-            session
-        ).get(issue.id()).isPresent()
+  public void testResolving() throws Exception {
+    assertThat(
+        new DefaultStates(project, session).resolving().count(),
+        is(greaterThan(0L))
     );
   }
 }

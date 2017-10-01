@@ -26,7 +26,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.NonCheckedUriBuilder;
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
@@ -77,9 +77,8 @@ class DefaultTimeTracking implements TimeTracking {
                     new HttpRequestWithSession(
                         session, 
                         new HttpGet(
-                            new NonCheckedUriBuilder(
-                                session.baseUrl()
-                                    .toString()
+                            new UncheckedUriBuilder(
+                                session.baseUrl().toString()
                                     .concat("/issue/")
                                     .concat(issue.id())
                                     .concat("/timetracking/workitem")
@@ -102,9 +101,8 @@ class DefaultTimeTracking implements TimeTracking {
                 new HttpRequestWithEntity(
                     spec.asHttpEntity(),
                     new HttpPost(
-                        new NonCheckedUriBuilder(
-                            session.baseUrl()
-                                .toString()
+                        new UncheckedUriBuilder(
+                            session.baseUrl().toString()
                                 .concat("/issue/")
                                 .concat(issue.id())
                                 .concat("/timetracking/workitem")
