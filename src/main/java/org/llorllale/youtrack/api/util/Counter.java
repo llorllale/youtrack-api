@@ -42,6 +42,6 @@ public class Counter implements Supplier<Integer> {
 
   @Override
   public Integer get() {
-    return start.addAndGet(increment);
+    return start.getAndAdd(increment);
   }
 }
