@@ -39,9 +39,4 @@ public class DefaultYouTrack implements YouTrack {
   public Projects projects() {
     return new DefaultProjects(this, session);
   }
-
-  @Override
-  public Priorities priorities() {
-    return new DefaultPriorities(session);
-  }
 }

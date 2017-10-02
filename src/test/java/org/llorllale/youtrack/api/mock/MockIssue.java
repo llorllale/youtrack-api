@@ -18,13 +18,13 @@ package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Map;
+import java.util.Collection;
 import java.util.Objects;
-import org.llorllale.youtrack.api.AssignedPriority;
-import org.llorllale.youtrack.api.AssignedState;
+import org.llorllale.youtrack.api.AssignedField;
 import org.llorllale.youtrack.api.Comments;
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Issue;
-import org.llorllale.youtrack.api.Priority;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.TimeTracking;
 import org.llorllale.youtrack.api.UsersOfIssue;
@@ -32,6 +32,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T>
  * @since 0.4.0
@@ -40,21 +41,16 @@ public class MockIssue<T> implements Issue<T> {
   private final Project project;
   private final String id;
   private final Instant creationDate;
-  private final String type;
-  private final AssignedState state;
-  private final Priority priority;
   private final String summary;
   private final String description;
   private final T dto;
 
   /**
    * Primary ctor.
+   * 
    * @param project
    * @param id
    * @param creationDate
-   * @param type
-   * @param state
-   * @param priority
    * @param summary
    * @param description 
    * @param dto 
@@ -64,9 +60,6 @@ public class MockIssue<T> implements Issue<T> {
       Project project, 
       String id, 
       Instant creationDate, 
-      String type, 
-      AssignedState state, 
-      Priority priority, 
       String summary, 
       String description,
       T dto
@@ -74,9 +67,6 @@ public class MockIssue<T> implements Issue<T> {
     this.project = project;
     this.id = id;
     this.creationDate = creationDate;
-    this.type = type;
-    this.state = state;
-    this.priority = priority;
     this.summary = summary;
     this.description = description;
     this.dto = dto;
@@ -93,9 +83,6 @@ public class MockIssue<T> implements Issue<T> {
         project, 
         "", 
         Instant.now(), 
-        "", 
-        new MockAssignedState("Open", false), 
-        new MockPriority("Normal"), 
         "", 
         "", 
         dto
@@ -116,9 +103,6 @@ public class MockIssue<T> implements Issue<T> {
         this.project, 
         id, 
         this.creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
         this.summary, 
         this.description,
         this.dto
@@ -130,51 +114,6 @@ public class MockIssue<T> implements Issue<T> {
         this.project, 
         this.id,
         creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
-        this.summary, 
-        this.description,
-        this.dto
-    );
-  }
-
-  public MockIssue<T> withType(String type) {
-    return new MockIssue<>(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        type, 
-        this.state, 
-        this.priority, 
-        this.summary, 
-        this.description,
-        this.dto
-    );
-  }
-
-  public MockIssue<T> withState(AssignedState state) {
-    return new MockIssue<>(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        this.type, 
-        state, 
-        this.priority, 
-        this.summary, 
-        this.description,
-        this.dto
-    );
-  }
-
-  public MockIssue<T> withPriority(String priority) {
-    return new MockIssue<>(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        this.type, 
-        this.state, 
-        new MockPriority(priority), 
         this.summary, 
         this.description,
         this.dto
@@ -186,9 +125,6 @@ public class MockIssue<T> implements Issue<T> {
         this.project, 
         this.id,
         this.creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
         summary, 
         this.description,
         this.dto
@@ -200,9 +136,6 @@ public class MockIssue<T> implements Issue<T> {
         this.project, 
         this.id,
         this.creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
         this.summary, 
         description,
         this.dto
@@ -254,21 +187,6 @@ public class MockIssue<T> implements Issue<T> {
   }
 
   @Override
-  public String type() {
-    return type;
-  }
-
-  @Override
-  public AssignedState state() {
-    return state;
-  }
-
-  @Override
-  public AssignedPriority priority() {
-    return new MockAssignedPriority(priority.asString(), this);
-  }
-
-  @Override
   public String summary() {
     return summary;
   }
@@ -304,7 +222,12 @@ public class MockIssue<T> implements Issue<T> {
   }
 
   @Override
-  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException {
+  public Issue update(Field field, FieldValue value) throws IOException, UnauthorizedException {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public Collection<AssignedField> fields() {
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 }

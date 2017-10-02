@@ -17,24 +17,34 @@
 package org.llorllale.youtrack.api;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
+import org.llorllale.youtrack.api.session.PermanentTokenLogin;
+import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Unit tests for {@link XmlPriority}.
+ * Integration tests for {@link DefaultFields}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-public class XmlPriorityTest {
+public class DefaultFieldsIT {
+  private static Session session;
+  private static Project project;
+
+  @BeforeClass
+  public static void setup() throws Exception {
+    final IntegrationTestsConfig config = new IntegrationTestsConfig();
+    session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
+  }
+
   @Test
-  public void testAsString() {
+  public void testStream() throws Exception {
     assertThat(
-        new XmlPriority(
-            new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Value.class)
-                .apply("<value colorIndex=\"20\">Show-stopper</value>")
-        ).asString(),
-        is("Show-stopper")
+        new DefaultFields(session, project).stream().count(),
+        is(greaterThan(0L))
     );
   }
 }

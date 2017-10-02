@@ -16,23 +16,32 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.jaxb.StateBundle;
+import org.llorllale.youtrack.api.jaxb.Value;
 
 /**
- * JAXB impl of {@link State}.
+ * JAXB impl of {@link FieldValue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.7.0
+ * @since 0.8.0
  */
-class XmlState implements State {
-  private final StateBundle.State jaxb;
+class XmlFieldValue implements FieldValue {
+  private final Value jaxb;
+  private final Field field;
 
   /**
-   * Ctor.
-   * @param jaxb the jaxb DTO
-   * @since 0.7.0
+   * Primary ctor.
+   * @param jaxb the jaxb instance to adapt
+   * @param field the parent {@link Field}
+   * @since 0.8.0
    */
-  XmlState(StateBundle.State jaxb) {
+  XmlFieldValue(Value jaxb, Field field) {
     this.jaxb = jaxb;
+    this.field = field;
+  }
+
+  @Override
+  public Field field() {
+    return field;
   }
 
   @Override

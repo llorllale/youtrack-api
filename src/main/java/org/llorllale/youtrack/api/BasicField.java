@@ -17,19 +17,34 @@
 package org.llorllale.youtrack.api;
 
 /**
- * A priority configured in the YouTrack system.
- * 
- * <p>Instances of {@link Priority} have not necessarily been assigned to an {@link Issue}.</p>
+ * Default impl of {@link Field}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
- * @see AssignedPriority
+ * @since 0.8.0
  */
-public interface Priority {
+class BasicField implements Field {
+  private final String name;
+  private final Project project;
+
   /**
-   * Returns a string representation of this {@link Priority}.
-   * @return a string representation of this {@link Priority}
-   * @since 0.6.0
+   * Primary ctor.
+   * 
+   * @param name the field's name
+   * @param project the parent {@link Project}
+   * @since 0.8.0
    */
-  public String asString();
+  BasicField(String name, Project project) {
+    this.name = name;
+    this.project = project;
+  }
+
+  @Override
+  public Project project() {
+    return project;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
 }

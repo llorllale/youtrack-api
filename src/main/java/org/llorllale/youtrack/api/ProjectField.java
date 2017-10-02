@@ -20,28 +20,23 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
- * A {@link Priority} that has been assigned to an {@link Issue}.
+ * An extended {@link Field} that provides its possible {@link #values() values}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-public interface AssignedPriority extends Priority {
+public interface ProjectField extends Field {
   /**
-   * The parent {@link Issue}.
-   * @return the parent {@link Issue}
-   * @since 0.6.0
-   */
-  public Issue issue();
-
-  /**
-   * Changes the parent {@link Issue issue's} priority to {@code other}.
-   * @param other the new {@link Priority}
-   * @return an {@link AssignedPriority} representing {@code other}
+   * Returns all possible {@link FieldValue values} for this {@link Field}.
+   * 
+   * @return all possible {@link FieldValue values} for this {@link Field}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
-   *     operation
-   * @since 0.6.0
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
+   *     this operation
+   * @since 0.8.0
    */
-  public AssignedPriority changeTo(Priority other) throws IOException, UnauthorizedException;
+  public Stream<FieldValue> values() throws IOException, UnauthorizedException;
 }

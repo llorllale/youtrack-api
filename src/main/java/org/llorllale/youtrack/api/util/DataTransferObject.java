@@ -26,6 +26,7 @@ package org.llorllale.youtrack.api.util;
 public interface DataTransferObject<T> {
   /**
    * Exposes this object as the underlying DTO fetched from the YouTrack server.
+   * 
    * @return this object as the underlying DTO fetched from the YouTrack server
    * @since 0.5.0
    */

@@ -28,6 +28,7 @@ import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
  * Unit tests for {@link XmlIssue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -64,60 +65,6 @@ public class XmlIssueTest {
             .filter(f -> "created".equals(f.getName()))
             .map(f -> f.getValue().getValue())
             .map(v -> Instant.ofEpochMilli(Long.parseLong(v)))
-            .findAny()
-            .get()
-        )
-    );
-  }
-
-  @Test
-  public void testType() {
-    assertThat(
-        new XmlIssue(
-            project(),
-            session(),
-            jaxbIssue
-        ).type(),
-        is(jaxbIssue.getField()
-            .stream()
-            .filter(f -> "Type".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findAny()
-            .get()
-        )
-    );
-  }
-
-  @Test
-  public void testState() {
-    assertThat(
-        new XmlIssue(
-            project(),
-            session(),
-            jaxbIssue
-        ).state().asString(),
-        is(jaxbIssue.getField()
-            .stream()
-            .filter(f -> "State".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findAny()
-            .get()
-        )
-    );
-  }
-
-  @Test
-  public void testPriority() {
-    assertThat(
-        new XmlIssue(
-            project(),
-            session(),
-            jaxbIssue
-        ).priority().asString(),
-        is(jaxbIssue.getField()
-            .stream()
-            .filter(f -> "Priority".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
             .findAny()
             .get()
         )

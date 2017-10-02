@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.mock;
-
-import org.llorllale.youtrack.api.Priority;
+package org.llorllale.youtrack.api;
 
 /**
- * Mock implementation of {@link Priority} suitable for unit tests.
+ * A property of {@link Issue issues}.
+ * 
+ * <p>Fields are configured on a per-{@link Project project} basis.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-public class MockPriority implements Priority {
-  private final String string;
+public interface Field {
+  /**
+   * Returns the parent {@link Project}.
+   * 
+   * @return the parent {@link Project}
+   * @since 0.8.0
+   */
+  public Project project();
 
   /**
-   * Ctor.
-   * @param string 
-   * @since 0.6.0
+   * Returns the name of this {@link Field}.
+   * 
+   * @return the name of this {@link Field}
+   * @since 0.8.0
    */
-  public MockPriority(String string) {
-    this.string = string;
-  }
-
-  @Override
-  public String asString() {
-    return string;
-  }
+  public String name();
 }

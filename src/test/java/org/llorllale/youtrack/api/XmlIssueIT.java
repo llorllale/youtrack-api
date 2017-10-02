@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
+import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
@@ -58,12 +59,14 @@ public class XmlIssueIT {
    */
   @Test
   public void testUpdateAndRefresh() throws Exception {
+    final Field field = new BasicField("Assignee", issue.project());
+
     assertThat(
       new XmlIssue(
           issue.project(), 
           session, 
           (org.llorllale.youtrack.api.jaxb.Issue) issue.asDto()
-      ).update(ImmutableMap.of("Assignee", config.youtrackUser()))
+      ).update(field, new BasicFieldValue(config.youtrackUser(), field))
           .users().assignee().get().loginName(),
         is(config.youtrackUser())
     );

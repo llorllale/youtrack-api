@@ -28,11 +28,4 @@ public interface YouTrack {
    * @since 0.4.0
    */
   public Projects projects();
-
-  /**
-   * Returns the {@link Priorities} API.
-   * @return the {@link Priorities} API
-   * @since 0.6.0
-   */
-  public Priorities priorities();
 }

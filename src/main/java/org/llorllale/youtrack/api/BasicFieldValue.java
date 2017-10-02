@@ -17,15 +17,34 @@
 package org.llorllale.youtrack.api;
 
 /**
- * An {@link Issue issue's} state.
+ * Basic impl of {@link FieldValue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.7.0
+ * @since 0.8.0
  */
-public interface State {
+class BasicFieldValue implements FieldValue {
+  private final String value;
+  private final Field field;
+
   /**
-   * Returns this {@link State} as a string.
-   * @return this {@link State} as a string
-   * @since 0.7.0
+   * Ctor.
+   * 
+   * @param value the value
+   * @param field the owner {@link Field}
+   * @since 0.8.0
    */
-  public String asString();
+  BasicFieldValue(String value, Field field) {
+    this.value = value;
+    this.field = field;
+  }
+
+  @Override
+  public Field field() {
+    return field;
+  }
+
+  @Override
+  public String asString() {
+    return value;
+  }
 }

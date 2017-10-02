@@ -51,6 +51,7 @@ limitations under the License.
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element ref="value"/>
+        <xsd:element name="valueId" type="xsd:string"/>
       </xsd:sequence>
       <xsd:attribute name="name" type="xsd:string" use="required"/>
     </xsd:complexType>

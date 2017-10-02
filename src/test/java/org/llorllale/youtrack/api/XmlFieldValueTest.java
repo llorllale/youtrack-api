@@ -17,42 +17,33 @@
 package org.llorllale.youtrack.api;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.session.PermanentTokenLogin;
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.jaxb.Value;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
- * Integration tests for {@link DefaultStates}.
+ * Unit tests for {@link XmlFieldValue}
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.7.0
+ * @since 0.8.0
  */
-public class DefaultStatesIT {
-  private static Session session;
-  private static Project project;
+public class XmlFieldValueTest {
+  private static Value jaxb;
 
   @BeforeClass
   public static void setup() throws Exception {
-    final IntegrationTestsConfig config = new IntegrationTestsConfig();
-    session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
-    project = new DefaultYouTrack(session).projects().stream().findAny().get();
+    jaxb = new XmlStringAsJaxb<>(Value.class).apply(XML);
   }
 
   @Test
-  public void testStream() throws Exception {
+  public void testAsString() {
     assertThat(
-        new DefaultStates(project, session).stream().count(),
-        is(greaterThan(0L))
+        new XmlFieldValue(jaxb, null).asString(),
+        is(jaxb.getValue())
     );
   }
 
-  @Test
-  public void testResolving() throws Exception {
-    assertThat(
-        new DefaultStates(project, session).resolving().count(),
-        is(greaterThan(0L))
-    );
-  }
+  private static final String XML = "<value>Bug</value>";
 }

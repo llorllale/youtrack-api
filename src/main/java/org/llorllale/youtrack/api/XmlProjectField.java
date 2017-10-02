@@ -16,13 +16,13 @@
 
 package org.llorllale.youtrack.api;
 
-import com.google.common.net.UrlEscapers;
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.jaxb.Enumeration;
 import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
-import org.llorllale.youtrack.api.jaxb.StateBundle;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
@@ -33,36 +33,30 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
- * Default impl of {@link States}.
+ * JAXB adapter for {@link Field}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.7.0
+ * @since 0.8.0
  */
-class DefaultStates implements States {
+class XmlProjectField implements ProjectField {
+  private final ProjectCustomField jaxb;
   private final Project project;
   private final Session session;
   private final HttpClient httpClient;
 
   /**
-   * Primary ctor.
-   * @param project the parent {@link Project}
+   * Ctor.
+   * 
+   * @param jaxb the jaxb object to adapt to {@link Field}
+   * @param project the owner {@link Project}
    * @param session the user's {@link Session}
-   * @param httpClient the {@link HttpClient} to use
-   * @since 0.7.0
+   * @since 0.8.0
    */
-  DefaultStates(Project project, Session session, HttpClient httpClient) {
+  XmlProjectField(ProjectCustomField jaxb, Project project, Session session) {
+    this.jaxb = jaxb;
     this.project = project;
     this.session = session;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Uses the {@link HttpClients#createDefault() default} http client.
-   * @param project the parent {@link Project}
-   * @param session the user's {@link Session}
-   * @since 0.7.0
-   */
-  DefaultStates(Project project, Session session) {
-    this(project, session, HttpClients.createDefault());
+    this.httpClient = HttpClients.createDefault();
   }
 
   @Override
@@ -71,19 +65,12 @@ class DefaultStates implements States {
   }
 
   @Override
-  public Stream<State> stream() throws IOException, UnauthorizedException {
-    return this.allJaxbStates().map(XmlState::new);
+  public String name() {
+    return jaxb.getName();
   }
 
   @Override
-  public Stream<State> resolving() throws IOException, UnauthorizedException {
-    return this.allJaxbStates()
-        .filter(StateBundle.State::isIsResolved)
-        .map(XmlState::new);
-  }
-
-  private Stream<StateBundle.State> allJaxbStates() throws IOException, UnauthorizedException {
-    //first lookup name of the custom field bundle for the project
+  public Stream<FieldValue> values() throws IOException, UnauthorizedException {
     final String bundleName = new HttpEntityAsJaxb<>(ProjectCustomField.class).apply(
         new HttpResponseAsResponse(
             httpClient.execute(
@@ -92,30 +79,34 @@ class DefaultStates implements States {
                     new HttpGet(
                         session.baseUrl().toString()
                             .concat("/admin/project/")
-                            .concat(this.project().id())
-                            .concat("/customfield/State")
+                            .concat(project().id())
+                            .concat("/customfield/")
+                            .concat(substringAfterLast(jaxb.getUrl(), "/"))
                     )
                 )
             )
         ).asHttpResponse().getEntity()
     ).getParam().getValue();
 
-    //then return all states belonging to the bundle
-    return new HttpEntityAsJaxb<>(StateBundle.class).apply(
+    return new HttpEntityAsJaxb<>(Enumeration.class).apply(
         new HttpResponseAsResponse(
             httpClient.execute(
                 new HttpRequestWithSession(
                     session, 
                     new HttpGet(
                         session.baseUrl().toString()
-                            .concat("/admin/customfield/stateBundle/")
-                            .concat(
-                                UrlEscapers.urlPathSegmentEscaper().escape(bundleName)
-                            )
+                            .concat("/admin/customfield/bundle/")
+                            .concat(bundleName)
                     )
                 )
             )
         ).asHttpResponse().getEntity()
-    ).getState().stream();
+    ).getValue().stream()
+        .map(v -> 
+            new XmlFieldValue(
+                v, 
+                new XmlProjectField(jaxb, project, session)
+            )
+        );
   }
 }

@@ -16,28 +16,44 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
-import java.util.stream.Stream;
 
 /**
- * API for accessing YouTrack {@link Priority priorities} at the global level.
+ * Adapts a given {@link FieldValue} into a {@link SelectableFieldValue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-public interface Priorities {
+class DefaultSelectableFieldValue implements SelectableFieldValue {
+  private final FieldValue fieldValue;
+  private final Issue issue;
+
   /**
-   * Returns a stream with all configured {@link Priority priorities} assignable to 
-   * {@link Issue issues}.
+   * Ctor.
    * 
-   * @return stream with all configured {@link Priority priorities} assignable to 
-   *     {@link Issue issues}
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
-   *     operation
-   * @since 0.6.0
+   * @param fieldValue the {@link FieldValue} to adapt
+   * @param issue the parent {@link Issue}
+   * @since 0.8.0
    */
-  public Stream<Priority> stream() throws IOException, UnauthorizedException;
+  DefaultSelectableFieldValue(FieldValue fieldValue, Issue issue) {
+    this.fieldValue = fieldValue;
+    this.issue = issue;
+  }
+
+  @Override
+  public Issue apply() throws IOException, UnauthorizedException {
+    return this.issue.update(this.field(), this);
+  }
+
+  @Override
+  public Field field() {
+    return fieldValue.field();
+  }
+
+  @Override
+  public String asString() {
+    return fieldValue.asString();
+  }
 }
