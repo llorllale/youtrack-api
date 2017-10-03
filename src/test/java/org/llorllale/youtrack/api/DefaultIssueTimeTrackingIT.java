@@ -16,44 +16,52 @@
 
 package org.llorllale.youtrack.api;
 
+import java.time.Duration;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.llorllale.youtrack.api.Issues.IssueSpec;
+import org.llorllale.youtrack.api.IssueTimeTracking.EntrySpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultTimeTracking}.
- *
+ * Integration tests for {@link DefaultIssueTimeTracking}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
+ * @since 0.4.0
  */
-public class DefaultTimeTrackingIT {
+public class DefaultIssueTimeTrackingIT {
+  private static IntegrationTestsConfig config;
   private static Session session;
-  private static Project project;
+  private static Issue issue;
 
   @BeforeClass
   public static void setup() throws Exception {
-    final IntegrationTestsConfig config = new IntegrationTestsConfig();
-    session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
-    project = new DefaultYouTrack(session).projects().stream().findAny().get();
+    config = new IntegrationTestsConfig();
+
+    session = new PermanentTokenLogin(
+        config.youtrackUrl(), 
+        config.youtrackUserToken()
+    ).login();
+
+    issue = new DefaultYouTrack(session)
+        .projects()
+        .stream()
+        .findFirst()
+        .get()
+        .issues()
+        .create(new IssueSpec(DefaultIssueTimeTrackingIT.class.getSimpleName(), "Description"));
   }
 
   @Test
-  public void testEnabled() throws Exception {
-    assertTrue(
-        new DefaultTimeTracking(project, session).enabled()
-    );
-  }
-
-  @Test
-  public void testTypes() throws Exception {
-    assertThat(
-        new DefaultTimeTracking(project, session).types().count(),
-        is(greaterThan(0L))
+  public void createAndCountAll() throws Exception {
+    assertThat(new DefaultIssueTimeTracking(session, issue)
+            .create(new EntrySpec(Duration.ofMinutes(45)))
+            .create(new EntrySpec(Duration.ofHours(1)))
+            .stream()
+            .count(),
+        is(2L)
     );
   }
 }

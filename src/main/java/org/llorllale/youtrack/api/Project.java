@@ -72,4 +72,12 @@ public interface Project {
    * @since 0.8.0
    */
   public Fields fields();
+
+  /**
+   * Access the project's {@link TimeTracking timetracking} settings.
+   * 
+   * @return the project's {@link TimeTracking timetracking} settings
+   * @since 0.8.0
+   */
+  public TimeTracking timetracking();
 }

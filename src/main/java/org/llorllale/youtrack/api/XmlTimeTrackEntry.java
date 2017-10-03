@@ -27,6 +27,7 @@ import java.util.Optional;
  * 
  * <p>This class adapts {@link org.llorllale.youtrack.api.issues.jaxb.WorkItem} into 
  * {@link WorkItem}.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
@@ -36,6 +37,7 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
 
   /**
    * Ctor.
+   * 
    * @param jaxbWorkItem the JAXB class 
    * @since 0.3.0
    */
@@ -64,5 +66,11 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
   @Override
   public Optional<String> description() {
     return Optional.ofNullable(jaxbWorkItem.getDescription());
+  }
+
+  @Override
+  public Optional<TimeTrackEntryType> type() {
+    return Optional.ofNullable(jaxbWorkItem.getWorkType())
+        .map(XmlTimeTrackEntryType::new);
   }
 }

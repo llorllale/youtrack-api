@@ -26,15 +26,14 @@ import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
- * Unit tests for {@link DefaultTimeTracking}.
+ * Unit tests for {@link DefaultIssueTimeTracking}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class DefaultTimeTrackingTest {
+public class DefaultIssueTimeTrackingTest {
   @Test
   public void testAll() throws Exception {
-    assertThat(
-        new DefaultTimeTracking(
+    assertThat(new DefaultIssueTimeTracking(
             new MockSession(), 
             new MockIssue(
                 new MockProject("", "", "")

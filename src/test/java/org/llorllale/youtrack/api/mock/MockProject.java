@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.llorllale.youtrack.api.Fields;
 import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.TimeTracking;
 import org.llorllale.youtrack.api.YouTrack;
 
 /**
@@ -110,6 +111,11 @@ public class MockProject implements Project {
 
   @Override
   public Fields fields() {
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  }
+
+  @Override
+  public TimeTracking timetracking() {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 }

@@ -21,14 +21,23 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 /**
+ * An entry in an {@link Issue issue's} timetracking.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public interface TimeTrackEntry {
+  /**
+   * The parent {@link Issue}.
+   * 
+   * @return the parent {@link Issue}
+   * @since 0.8.0
+   */
   public Issue issue();
+
   /**
    * The date when the item was entered into the {@link Issue issue}'s time-tracking.
+   * 
    * @return the date when the item was entered into the {@link Issue issue}'s time-tracking
    * @since 0.4.0
    */
@@ -36,6 +45,7 @@ public interface TimeTrackEntry {
 
   /**
    * The duration during which the work-item was worked on.
+   * 
    * @return the duration during which the work-item was worked on
    * @since 0.4.0
    */
@@ -43,8 +53,17 @@ public interface TimeTrackEntry {
 
   /**
    * The item's description.
+   * 
    * @return the item's description (if any was entered)
    * @since 0.4.0
    */
   public Optional<String> description();
+
+  /**
+   * The entry's {@link TimeTrackEntryType type}.
+   * 
+   * @return the entry's {@link TimeTrackEntryType type}
+   * @since 0.8.0
+   */
+  public Optional<TimeTrackEntryType> type();
 }

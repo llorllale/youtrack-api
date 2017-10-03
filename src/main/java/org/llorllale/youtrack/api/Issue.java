@@ -89,10 +89,14 @@ public interface Issue {
   /**
    * Access to the issue's {@link TimeTrackEntry timetracking}.
    * 
-   * @return Access to the issue's {@link TimeTrackEntry timetracking}.
+   * <p><strong>Note:</strong> it is important that you first check whether timetracking is 
+   * {@link TimeTracking#enabled() enabled} for the {@link Project}.</p>
+   * 
+   * @return access to the issue's {@link TimeTrackEntry timetracking}.
    * @since 0.4.0
+   * @see TimeTracking#enabled() 
    */
-  public TimeTracking timetracking();
+  public IssueTimeTracking timetracking();
 
   /**
    * Returns the same {@link Issue} after refreshing its data from the server.
