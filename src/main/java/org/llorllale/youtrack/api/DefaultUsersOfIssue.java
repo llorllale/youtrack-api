@@ -36,7 +36,8 @@ import java.util.Optional;
  */
 class DefaultUsersOfIssue implements UsersOfIssue {
   private final Session session;
-  private final Issue<org.llorllale.youtrack.api.jaxb.Issue> issue;
+  private final Issue issue;
+  private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
   private final Field field;
   private final HttpClient httpClient;
 
@@ -50,11 +51,13 @@ class DefaultUsersOfIssue implements UsersOfIssue {
    */
   DefaultUsersOfIssue(
       Session session,
-      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue,
+      Issue issue,
+      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue,
       HttpClient httpClient
   ) {
     this.session = session;
     this.issue = issue;
+    this.jaxbIssue = jaxbIssue;
     this.field = new BasicField("Assignee", issue.project());
     this.httpClient = httpClient;
   }
@@ -68,17 +71,17 @@ class DefaultUsersOfIssue implements UsersOfIssue {
    */
   DefaultUsersOfIssue(
       Session session,
-      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue
+      Issue issue,
+      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
   ) {
-    this(session, issue, HttpClients.createDefault());
+    this(session, issue, jaxbIssue, HttpClients.createDefault());
   }
 
   @Override
   public User creator() throws IOException, UnauthorizedException {
     return new XmlUser(
         getJaxbUser(
-            issue.asDto()
-                .getField()
+            jaxbIssue.getField()
                 .stream()
                 .filter(f -> "reporterName".equals(f.getName()))
                 .map(f -> f.getValue().getValue())
@@ -90,8 +93,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
-    final Optional<String> updaterLoginName = issue.asDto()
-        .getField()
+    final Optional<String> updaterLoginName = jaxbIssue.getField()
         .stream()
         .filter(f -> "updaterName".equals(f.getName()))
         .map(f -> f.getValue().getValue())
@@ -110,8 +112,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
-    final Optional<String> assigneeLoginName = issue.asDto()
-        .getField()
+    final Optional<String> assigneeLoginName = jaxbIssue.getField()
         .stream()
         .filter(f -> field.name().equals(f.getName()))
         .map(f -> f.getValue().getValue())
@@ -159,7 +160,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
   }
 
   @Override
-  public Issue<?> issue() {
+  public Issue issue() {
     return issue;
   }
 }

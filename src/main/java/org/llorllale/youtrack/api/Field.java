@@ -40,4 +40,16 @@ public interface Field {
    * @since 0.8.0
    */
   public String name();
+
+  /**
+   * Whether this and {@code other} both represent the same field.
+   * 
+   * @param other other {@link Field field}
+   * @return {@code true} if {@code this} and {@code other} both represent the same field, 
+   *     {@code false} otherwise
+   * @since 0.8.0
+   */
+  public default boolean isSameField(Field other) {
+    return this.name().equals(other.name());
+  }
 }

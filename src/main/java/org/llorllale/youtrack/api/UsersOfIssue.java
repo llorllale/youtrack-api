@@ -75,5 +75,5 @@ public interface UsersOfIssue {
    * @return the enclosing {@link Issue}
    * @since 0.5.0
    */
-  public Issue<?> issue();
+  public Issue issue();
 }

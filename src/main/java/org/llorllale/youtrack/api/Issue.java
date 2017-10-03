@@ -18,7 +18,6 @@ package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.DataTransferObject;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -28,10 +27,9 @@ import java.util.List;
  * A {@link YouTrack} issue.
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @param <T> the underlying DTO's type
  * @since 0.1.0
  */
-public interface Issue<T> extends DataTransferObject<T> {
+public interface Issue {
   /**
    * The {@link Project} that the issue was created in.
    * 

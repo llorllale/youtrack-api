@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
@@ -47,28 +48,23 @@ public class DefaultAssignedFieldIT {
   }
 
   @Test
-  public void testIssue() {
-  }
-
-  @Test
-  public void testValue() {
-  }
-
-  @Test
   public void testChange() throws Exception {
-    final org.llorllale.youtrack.api.jaxb.Field jaxb = 
-        ((org.llorllale.youtrack.api.jaxb.Issue) issue.asDto()).getField().get(0);
+    final DefaultAssignedField field = (DefaultAssignedField) issue.fields().get(0);
+    final FieldValue other = issue.project().fields().stream()
+        .filter(f -> field.isSameField(f))
+        .findAny()
+        .get()
+        .values()
+        .findAny()
+        .get();
 
-    assertThat(
-        new DefaultAssignedField(issue.fields().get(0), issue, jaxb)
+    assertTrue(
+        field.change().filter(v -> v.isEqualTo(other))
+            .findAny().get().apply().fields().stream()
+            .filter(f -> f.isSameField(field))
+            .findAny().get()
+            .value()
+            .isEqualTo(other)
     );
-  }
-
-  @Test
-  public void testProject() {
-  }
-
-  @Test
-  public void testName() {
   }
 }

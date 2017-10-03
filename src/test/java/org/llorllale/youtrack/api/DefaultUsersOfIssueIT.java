@@ -46,58 +46,53 @@ public class DefaultUsersOfIssueIT {
 
   @Test
   public void testCreator() throws Exception {
+    final DefaultUsersOfIssue test = 
+        (DefaultUsersOfIssue) issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testCreator")).users();
+
     assertThat(
-        new DefaultUsersOfIssue(
-            session, 
-            issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testCreator"))
-        ).creator().loginName(),
+        test.creator().loginName(),
         is(config.youtrackUser())
     );
   }
 
   @Test
   public void testAssignToAndUpdater() throws Exception {
-    final Issue issue = new DefaultUsersOfIssue(
-        session, 
-        issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndUpdater"))
-    ).assignTo(
-        new MockUser(
-            config.youtrackUser(), 
-            "test@test.com", 
-            config.youtrackUser()
-        )
-    ).issue();
+    final Issue issue = 
+        ((DefaultUsersOfIssue) issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndUpdater"))
+            .users())
+                .assignTo(
+                    new MockUser(
+                        config.youtrackUser(),
+                        "test@test.com",
+                        config.youtrackUser()
+                    )
+                ).issue();
 
     assertThat(
-        new DefaultUsersOfIssue(session, issue.refresh())
-            .updater().get()
-            .name(),
+        ((DefaultUsersOfIssue) issue.users()).updater().get().name(),
         is(config.youtrackUser())
     );
   }
 
   @Test
   public void testAssignToAndAssignee() throws Exception {
-    final Issue issue = new DefaultUsersOfIssue(
-        session, 
-        issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndAssignee"))
-    ).assignTo(
-        new MockUser(
-            config.youtrackUser(), 
-            "test@test.com", 
-            config.youtrackUser()
-        )
-    ).issue();
+    final Issue issue = 
+        ((DefaultUsersOfIssue) issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndAssignee")).users())
+            .assignTo(
+                new MockUser(
+                    config.youtrackUser(),
+                    "test@test.com",
+                    config.youtrackUser()
+                )
+            ).issue();
 
     assertThat(
-        new DefaultUsersOfIssue(session, issue.refresh())
-            .assignee().get()
-            .name(),
+        ((DefaultUsersOfIssue) issue.users()).assignee().get().name(),
         is(config.youtrackUser())
     );
   }
 
-  private final Issue issue(String name) throws Exception {
+  private Issue issue(String name) throws Exception {
     return new DefaultYouTrack(session)
         .projects()
         .stream()

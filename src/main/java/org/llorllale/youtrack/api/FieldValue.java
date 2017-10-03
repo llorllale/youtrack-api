@@ -38,4 +38,16 @@ public interface FieldValue {
    * @since 0.8.0
    */
   public String asString();
+
+  /**
+   * Whether this value is equal to {@code other} and both share the same parent {@link Field}.
+   * 
+   * @param other the other {@link FieldValue} to compare to
+   * @return {@code true} if this {@link FieldValue} is equal to {@code other}, and both belong to
+   *     the same parent {@link Field}; otherwise {@code false}
+   * @since 0.8.0
+   */
+  public default boolean isEqualTo(FieldValue other) {
+    return this.field().isSameField(other.field()) && this.asString().equals(other.asString());
+  }
 }

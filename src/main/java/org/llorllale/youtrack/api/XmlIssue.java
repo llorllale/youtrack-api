@@ -42,7 +42,7 @@ import java.util.List;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
+class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
@@ -81,6 +81,16 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
       org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
   ) {
     this(project, session, jaxbIssue, HttpClients.createDefault());
+  }
+
+  /**
+   * For testing purporses.
+   * 
+   * @param prototype the prototype
+   * @since 0.8.0
+   */
+  XmlIssue(XmlIssue prototype) {
+    this(prototype.project(), prototype.session, prototype.jaxbIssue);
   }
 
   @Override
@@ -137,12 +147,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
 
   @Override
   public UsersOfIssue users() {
-    return new DefaultUsersOfIssue(session, this);
-  }
-
-  @Override
-  public org.llorllale.youtrack.api.jaxb.Issue asDto() {
-    return jaxbIssue;
+    return new DefaultUsersOfIssue(session, this, jaxbIssue);
   }
 
   @Override
@@ -185,7 +190,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
 
   @Override
   public List<AssignedField> fields() {
-    return this.asDto().getField().stream()
+    return jaxbIssue.getField().stream()
         .filter(f -> nonNull(f.getValueId()))
         .map(f -> 
             new DefaultAssignedField(
