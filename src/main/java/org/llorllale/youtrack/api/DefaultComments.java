@@ -42,7 +42,7 @@ import java.util.stream.Stream;
  */
 class DefaultComments implements Comments {
   private final Session session;
-  private final Issue<?> issue;
+  private final Issue issue;
   private final HttpClient httpClient;
 
   /**
@@ -52,7 +52,7 @@ class DefaultComments implements Comments {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultComments(Session session, Issue<?> issue, HttpClient httpClient) {
+  DefaultComments(Session session, Issue issue, HttpClient httpClient) {
     this.session = session;
     this.issue = issue;
     this.httpClient = httpClient;
@@ -66,7 +66,7 @@ class DefaultComments implements Comments {
    * @see #DefaultComments(org.llorllale.youtrack.api.session.Session, 
    *     org.llorllale.youtrack.api.Issue, org.apache.http.client.HttpClient) 
    */
-  DefaultComments(Session session, Issue<?> issue) {
+  DefaultComments(Session session, Issue issue) {
     this(session, issue, HttpClients.createDefault());
   }
 

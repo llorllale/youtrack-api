@@ -58,6 +58,15 @@ limitations under the License.
         </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="name" type="xsd:string"/>
+      <xsd:attribute name="url" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="projectCustomFieldRefs">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="projectCustomField" maxOccurs="unbounded"/>
+      </xsd:sequence>
     </xsd:complexType>
   </xsd:element>
 

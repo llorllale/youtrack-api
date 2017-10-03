@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import com.google.common.collect.ImmutableMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
@@ -58,12 +57,10 @@ public class XmlIssueIT {
    */
   @Test
   public void testUpdateAndRefresh() throws Exception {
+    final Field field = new BasicField("Assignee", issue.project());
+
     assertThat(
-      new XmlIssue(
-          issue.project(), 
-          session, 
-          (org.llorllale.youtrack.api.jaxb.Issue) issue.asDto()
-      ).update(ImmutableMap.of("Assignee", config.youtrackUser()))
+      new XmlIssue((XmlIssue) issue).update(field, new BasicFieldValue(config.youtrackUser(), field))
           .users().assignee().get().loginName(),
         is(config.youtrackUser())
     );

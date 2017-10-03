@@ -14,29 +14,26 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.mock;
+package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.Priority;
+import static org.hamcrest.CoreMatchers.is;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
- * Mock implementation of {@link Priority} suitable for unit tests.
+ * Unit tests for {@link BasicFieldValue}.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0-SNAPSHOT
  */
-public class MockPriority implements Priority {
-  private final String string;
+public class BasicFieldValueTest {
+  @Test
+  public void testAsString() {
+    final String string = "test";
 
-  /**
-   * Ctor.
-   * @param string 
-   * @since 0.6.0
-   */
-  public MockPriority(String string) {
-    this.string = string;
-  }
-
-  @Override
-  public String asString() {
-    return string;
+    assertThat(
+        new BasicFieldValue(string, null).asString(),
+        is(string)
+    );
   }
 }

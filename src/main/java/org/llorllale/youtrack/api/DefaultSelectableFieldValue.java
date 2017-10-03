@@ -14,47 +14,46 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.mock;
+package org.llorllale.youtrack.api;
 
-import java.io.IOException;
-import org.llorllale.youtrack.api.AssignedPriority;
-import org.llorllale.youtrack.api.Issue;
-import org.llorllale.youtrack.api.Priority;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
+import java.io.IOException;
+
 /**
- * Mock implementation of {@link AssignedPriority} for tests.
+ * Adapts a given {@link FieldValue} into a {@link SelectableFieldValue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-public class MockAssignedPriority implements AssignedPriority {
-  private final String string;
+class DefaultSelectableFieldValue implements SelectableFieldValue {
+  private final FieldValue fieldValue;
   private final Issue issue;
 
   /**
    * Ctor.
-   * @param string
-   * @param issue 
-   * @since 0.6.0
+   * 
+   * @param fieldValue the {@link FieldValue} to adapt
+   * @param issue the parent {@link Issue}
+   * @since 0.8.0
    */
-  public MockAssignedPriority(String string, Issue issue) {
-    this.string = string;
+  DefaultSelectableFieldValue(FieldValue fieldValue, Issue issue) {
+    this.fieldValue = fieldValue;
     this.issue = issue;
   }
 
   @Override
-  public Issue issue() {
-    return issue;
+  public Issue apply() throws IOException, UnauthorizedException {
+    return this.issue.update(this.field(), this);
   }
 
   @Override
-  public AssignedPriority changeTo(Priority other) throws IOException, UnauthorizedException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public Field field() {
+    return fieldValue.field();
   }
 
   @Override
   public String asString() {
-    return string;
+    return fieldValue.asString();
   }
-
 }

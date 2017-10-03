@@ -20,28 +20,39 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
- * A {@link Priority} that has been assigned to an {@link Issue}.
+ * A {@link Field} that is attached to an {@link Issue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-public interface AssignedPriority extends Priority {
+public interface AssignedField extends Field {
   /**
-   * The parent {@link Issue}.
-   * @return the parent {@link Issue}
-   * @since 0.6.0
+   * The {@link Issue} to which this {@link AssignedField} is attached to.
+   * 
+   * @return the {@link Issue} to which this {@link AssignedField} is attached to
+   * @since 0.8.0
    */
   public Issue issue();
 
   /**
-   * Changes the parent {@link Issue issue's} priority to {@code other}.
-   * @param other the new {@link Priority}
-   * @return an {@link AssignedPriority} representing {@code other}
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
-   *     operation
-   * @since 0.6.0
+   * This field's {@link FieldValue value}.
+   * 
+   * @return this field's {@link FieldValue value}
+   * @since 0.8.0
    */
-  public AssignedPriority changeTo(Priority other) throws IOException, UnauthorizedException;
+  public FieldValue value();
+
+  /**
+   * Returns a stream of values that can be selected for this {@link AssignedField}.
+   * 
+   * @return a stream of values that can be selected for this {@link AssignedField}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
+   *     this operation
+   * @since 0.8.0
+   */
+  public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException;
 }

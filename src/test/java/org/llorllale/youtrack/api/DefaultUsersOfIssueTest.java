@@ -33,6 +33,7 @@ import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
  * Unit tests for {@link DefaultUsersOfIssue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
@@ -52,6 +53,7 @@ public class DefaultUsersOfIssueTest {
 
   /**
    * DefaultUsersOfIssue must return the Issue's creator (there must always be a creator).
+   * 
    * @since 0.5.0
    */
   @Test
@@ -59,10 +61,10 @@ public class DefaultUsersOfIssueTest {
     assertThat(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            new MockIssue<>(
-                new MockProject(), 
-                jaxbIssue
+            new MockIssue(
+                new MockProject()
             ),
+            jaxbIssue,
             new MockAssertRequestHttpClient(
                 new MockHttpClient(
                     new MockOkResponse(CREATOR)
@@ -90,10 +92,10 @@ public class DefaultUsersOfIssueTest {
     assertThat(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            new MockIssue<>(
-                new MockProject(), 
-                jaxbIssue
+            new MockIssue(
+                new MockProject()
             ),
+            jaxbIssue,
             new MockAssertRequestHttpClient(
                 new MockHttpClient(
                     new MockOkResponse(UPDATER)
@@ -122,11 +124,10 @@ public class DefaultUsersOfIssueTest {
     assertFalse(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            new MockIssue<>(
-                new MockProject(), 
-                new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class)
-                    .apply(ISSUE_NO_ASSIGNEE_UPDATER)
+            new MockIssue(
+                new MockProject()
             ),
+            new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class).apply(ISSUE_NO_ASSIGNEE_UPDATER),
             new MockHttpClient(
                 new MockForbiddenResponse()
             )
@@ -143,10 +144,10 @@ public class DefaultUsersOfIssueTest {
     assertThat(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            new MockIssue<>(
-                new MockProject(), 
-                jaxbIssue
+            new MockIssue(
+                new MockProject()
             ),
+            jaxbIssue,
             new MockHttpClient(
                 new MockOkResponse(ASSIGNEE)
             )
@@ -165,11 +166,10 @@ public class DefaultUsersOfIssueTest {
     assertFalse(
         new DefaultUsersOfIssue(
             new MockSession(), 
-            new MockIssue<>(
-                new MockProject(), 
-                new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class)
-                    .apply(ISSUE_NO_ASSIGNEE_UPDATER)
+            new MockIssue(
+                new MockProject()
             ),
+            new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class).apply(ISSUE_NO_ASSIGNEE_UPDATER),
             new MockHttpClient(
                 new MockForbiddenResponse()
             )

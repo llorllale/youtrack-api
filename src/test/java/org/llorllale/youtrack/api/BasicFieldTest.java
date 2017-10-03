@@ -16,20 +16,24 @@
 
 package org.llorllale.youtrack.api;
 
+import static org.hamcrest.CoreMatchers.is;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
 /**
- * A priority configured in the YouTrack system.
- * 
- * <p>Instances of {@link Priority} have not necessarily been assigned to an {@link Issue}.</p>
+ * Unit tests for {@link BasicField}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
- * @see AssignedPriority
+ * @since 0.8.0
  */
-public interface Priority {
-  /**
-   * Returns a string representation of this {@link Priority}.
-   * @return a string representation of this {@link Priority}
-   * @since 0.6.0
-   */
-  public String asString();
+public class BasicFieldTest {
+  @Test
+  public void testName() {
+    final String name = "test";
+
+    assertThat(
+        new BasicField(name, null).name(),
+        is(name)
+    );
+  }
 }

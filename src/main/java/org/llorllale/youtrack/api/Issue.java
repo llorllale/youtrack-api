@@ -18,21 +18,21 @@ package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.DataTransferObject;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Map;
+import java.util.List;
 
 /**
  * A {@link YouTrack} issue.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @param <T> the underlying DTO's type
  * @since 0.1.0
  */
-public interface Issue<T> extends DataTransferObject<T> {
+public interface Issue {
   /**
    * The {@link Project} that the issue was created in.
+   * 
    * @return the ID of the project that the issue was created in
    * @since 0.4.0
    */
@@ -40,6 +40,7 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * The issue's id.
+   * 
    * @return the issue's id
    * @since 0.1.0
    */
@@ -47,34 +48,15 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * The date the issue was created.
+   * 
    * @return The date the issue was created.
    * @since 0.1.0
    */
   public Instant creationDate();
 
   /**
-   * The issue's type.
-   * @return The issue's type.
-   * @since 0.1.0
-   */
-  public String type();
-
-  /**
-   * The issue's state.
-   * @return the issue's state.
-   * @since 0.7.0
-   */
-  public AssignedState state();
-
-  /**
-   * The issue's priority.
-   * @return The issue's priority.
-   * @since 0.6.0
-   */
-  public AssignedPriority priority();
-
-  /**
    * The issue's summary.
+   * 
    * @return The issue's summary.
    * @since 0.1.0
    */
@@ -82,6 +64,7 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * The issue's description.
+   * 
    * @return The issue's description.
    * @since 0.1.0
    */
@@ -89,6 +72,7 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * Access to the issue's {@link User users}.
+   * 
    * @return access to the issue's {@link User users}
    * @since 0.5.0
    */
@@ -96,6 +80,7 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * Access to the issue's {@link Comment comments}.
+   * 
    * @return Access to the issue's {@link Comment comments}.
    * @since 0.4.0
    */
@@ -103,6 +88,7 @@ public interface Issue<T> extends DataTransferObject<T> {
 
   /**
    * Access to the issue's {@link TimeTrackEntry timetracking}.
+   * 
    * @return Access to the issue's {@link TimeTrackEntry timetracking}.
    * @since 0.4.0
    */
@@ -124,15 +110,27 @@ public interface Issue<T> extends DataTransferObject<T> {
   public Issue refresh() throws IOException, UnauthorizedException;
 
   /**
-   * Updates this {@link Issue} with properties defined in {@code args} and returns a new 
-   * {@link Issue} reflecting those changes.
-   * @param args the properties to update
+   * Updates this issue's {@link Field field} to the given {@link FieldValue value} and returns a 
+   * new {@link Issue} reflecting those changes.
+   * 
+   * @param field the issue's {@link Field field}
+   * @param value the field's {@link FieldValue value}
    * @return a new {@link Issue} reflecting the changes brought about by updating this issue with
    *     {@code args}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.7.0
+   * @see #fields() 
    */
-  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException;
+  public Issue update(Field field, FieldValue value) throws IOException, UnauthorizedException;
+
+  /**
+   * All {@link AssignedField fields} of this {@link Issue}.
+   * 
+   * @return all {@link AssignedField fields} of this {@link Issue}
+   * @since 0.8.0
+   * @see #update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) 
+   */
+  public List<AssignedField> fields();
 }

@@ -18,13 +18,13 @@ package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
-import org.llorllale.youtrack.api.AssignedPriority;
-import org.llorllale.youtrack.api.AssignedState;
+import org.llorllale.youtrack.api.AssignedField;
 import org.llorllale.youtrack.api.Comments;
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Issue;
-import org.llorllale.youtrack.api.Priority;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.TimeTracking;
 import org.llorllale.youtrack.api.UsersOfIssue;
@@ -32,180 +32,93 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @param <T>
  * @since 0.4.0
  */
-public class MockIssue<T> implements Issue<T> {
+public class MockIssue implements Issue {
   private final Project project;
   private final String id;
   private final Instant creationDate;
-  private final String type;
-  private final AssignedState state;
-  private final Priority priority;
   private final String summary;
   private final String description;
-  private final T dto;
 
   /**
    * Primary ctor.
+   * 
    * @param project
    * @param id
    * @param creationDate
-   * @param type
-   * @param state
-   * @param priority
    * @param summary
    * @param description 
-   * @param dto 
    * @since 0.4.0
    */
   public MockIssue(
       Project project, 
       String id, 
       Instant creationDate, 
-      String type, 
-      AssignedState state, 
-      Priority priority, 
       String summary, 
-      String description,
-      T dto
+      String description
   ) {
     this.project = project;
     this.id = id;
     this.creationDate = creationDate;
-    this.type = type;
-    this.state = state;
-    this.priority = priority;
     this.summary = summary;
     this.description = description;
-    this.dto = dto;
   }
 
   /**
    * 
    * @param project 
-   * @param dto 
    * @since 0.4.0
    */
-  public MockIssue(Project project, T dto) {
+  public MockIssue(Project project) {
     this(
         project, 
         "", 
         Instant.now(), 
         "", 
-        new MockAssignedState("Open", false), 
-        new MockPriority("Normal"), 
-        "", 
-        "", 
-        dto
+        ""
     );
   }
 
-  /**
-   * {@code dto} is set to {@code null}
-   * @param project 
-   * @since 0.5.0
-   */
-  public MockIssue(Project project) {
-    this(project, null);
-  }
-
-  public MockIssue<T> withId(String id) {
-    return new MockIssue<>(
+  public MockIssue withId(String id) {
+    return new MockIssue(
         this.project, 
         id, 
         this.creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
         this.summary, 
-        this.description,
-        this.dto
+        this.description
     );
   }
 
-  public MockIssue<T> withCreationDate(Instant creationDate) {
-    return new MockIssue<>(
+  public MockIssue withCreationDate(Instant creationDate) {
+    return new MockIssue(
         this.project, 
         this.id,
         creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
         this.summary, 
-        this.description,
-        this.dto
+        this.description
     );
   }
 
-  public MockIssue<T> withType(String type) {
-    return new MockIssue<>(
+  public MockIssue withSummary(String summary) {
+    return new MockIssue(
         this.project, 
         this.id,
         this.creationDate, 
-        type, 
-        this.state, 
-        this.priority, 
-        this.summary, 
-        this.description,
-        this.dto
-    );
-  }
-
-  public MockIssue<T> withState(AssignedState state) {
-    return new MockIssue<>(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        this.type, 
-        state, 
-        this.priority, 
-        this.summary, 
-        this.description,
-        this.dto
-    );
-  }
-
-  public MockIssue<T> withPriority(String priority) {
-    return new MockIssue<>(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        this.type, 
-        this.state, 
-        new MockPriority(priority), 
-        this.summary, 
-        this.description,
-        this.dto
-    );
-  }
-
-  public MockIssue<T> withSummary(String summary) {
-    return new MockIssue<>(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
         summary, 
-        this.description,
-        this.dto
+        this.description
     );
   }
 
-  public MockIssue<T> withDescription(String description) {
-    return new MockIssue<>(
+  public MockIssue withDescription(String description) {
+    return new MockIssue(
         this.project, 
         this.id,
         this.creationDate, 
-        this.type, 
-        this.state, 
-        this.priority, 
         this.summary, 
-        description,
-        this.dto
+        description
     );
   }
 
@@ -254,21 +167,6 @@ public class MockIssue<T> implements Issue<T> {
   }
 
   @Override
-  public String type() {
-    return type;
-  }
-
-  @Override
-  public AssignedState state() {
-    return state;
-  }
-
-  @Override
-  public AssignedPriority priority() {
-    return new MockAssignedPriority(priority.asString(), this);
-  }
-
-  @Override
   public String summary() {
     return summary;
   }
@@ -294,17 +192,17 @@ public class MockIssue<T> implements Issue<T> {
   }
 
   @Override
-  public T asDto() {
-    return dto;
-  }
-
-  @Override
-  public Issue<T> refresh() throws IOException, UnauthorizedException {
+  public Issue refresh() throws IOException, UnauthorizedException {
     return this;
   }
 
   @Override
-  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException {
+  public Issue update(Field field, FieldValue value) throws IOException, UnauthorizedException {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public List<AssignedField> fields() {
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 }

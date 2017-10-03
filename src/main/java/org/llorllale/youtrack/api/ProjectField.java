@@ -17,26 +17,26 @@
 package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+
+import java.io.IOException;
+import java.util.stream.Stream;
 
 /**
- * Default implementation of {@link YouTrack}.
+ * An extended {@link Field} that provides its possible {@link #values() values}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.8.0
  */
-public class DefaultYouTrack implements YouTrack {
-  private final Session session;
-
+public interface ProjectField extends Field {
   /**
-   * Primary ctor.
-   * @param session the user's {@link Session}
-   * @since 0.4.0
+   * Returns all possible {@link FieldValue values} for this {@link Field}.
+   * 
+   * @return all possible {@link FieldValue values} for this {@link Field}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
+   *     this operation
+   * @since 0.8.0
    */
-  public DefaultYouTrack(Session session) {
-    this.session = session;
-  }
-
-  @Override
-  public Projects projects() {
-    return new DefaultProjects(this, session);
-  }
+  public Stream<FieldValue> values() throws IOException, UnauthorizedException;
 }

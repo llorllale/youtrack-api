@@ -23,21 +23,29 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
- * API for accessing YouTrack {@link Priority priorities} at the global level.
+ * Access to all the {@link Field fields} of a {@link Project project} that are configured for
+ * {@link Issue issues}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-public interface Priorities {
+public interface Fields {
   /**
-   * Returns a stream with all configured {@link Priority priorities} assignable to 
-   * {@link Issue issues}.
+   * Returns the {@link Project} to which this {@link Fields} belongs.
    * 
-   * @return stream with all configured {@link Priority priorities} assignable to 
-   *     {@link Issue issues}
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
-   *     operation
-   * @since 0.6.0
+   * @return the {@link Project} to which this {@link Fields} belongs
+   * @since 0.8.0
    */
-  public Stream<Priority> stream() throws IOException, UnauthorizedException;
+  public Project project();
+
+  /**
+   * Returns a stream of all configured {@link ProjectField fields} for this {@link Project}.
+   * 
+   * @return a stream of all configured {@link ProjectField fields} for this {@link Project}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
+   *     this operation
+   * @since 0.8.0
+   */
+  public Stream<ProjectField> stream() throws IOException, UnauthorizedException;
 }

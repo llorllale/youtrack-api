@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -38,7 +36,9 @@ import java.util.Optional;
  */
 class DefaultUsersOfIssue implements UsersOfIssue {
   private final Session session;
-  private final Issue<org.llorllale.youtrack.api.jaxb.Issue> issue;
+  private final Issue issue;
+  private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
+  private final Field field;
   private final HttpClient httpClient;
 
   /**
@@ -51,11 +51,14 @@ class DefaultUsersOfIssue implements UsersOfIssue {
    */
   DefaultUsersOfIssue(
       Session session,
-      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue,
+      Issue issue,
+      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue,
       HttpClient httpClient
   ) {
     this.session = session;
     this.issue = issue;
+    this.jaxbIssue = jaxbIssue;
+    this.field = new BasicField("Assignee", issue.project());
     this.httpClient = httpClient;
   }
 
@@ -68,17 +71,17 @@ class DefaultUsersOfIssue implements UsersOfIssue {
    */
   DefaultUsersOfIssue(
       Session session,
-      Issue<org.llorllale.youtrack.api.jaxb.Issue> issue
+      Issue issue,
+      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
   ) {
-    this(session, issue, HttpClients.createDefault());
+    this(session, issue, jaxbIssue, HttpClients.createDefault());
   }
 
   @Override
   public User creator() throws IOException, UnauthorizedException {
     return new XmlUser(
         getJaxbUser(
-            issue.asDto()
-                .getField()
+            jaxbIssue.getField()
                 .stream()
                 .filter(f -> "reporterName".equals(f.getName()))
                 .map(f -> f.getValue().getValue())
@@ -90,8 +93,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
-    final Optional<String> updaterLoginName = issue.asDto()
-        .getField()
+    final Optional<String> updaterLoginName = jaxbIssue.getField()
         .stream()
         .filter(f -> "updaterName".equals(f.getName()))
         .map(f -> f.getValue().getValue())
@@ -110,10 +112,9 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
-    final Optional<String> assigneeLoginName = issue.asDto()
-        .getField()
+    final Optional<String> assigneeLoginName = jaxbIssue.getField()
         .stream()
-        .filter(f -> "Assignee".equals(f.getName()))
+        .filter(f -> field.name().equals(f.getName()))
         .map(f -> f.getValue().getValue())
         .findFirst();
 
@@ -130,9 +131,10 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException {
-    return this.issue()
-        .update(ImmutableMap.of("Assignee", user.loginName()))
-        .users();
+    return this.issue().update(
+        this.field,
+        new BasicFieldValue(user.loginName(), this.field)
+    ).users();
   }
 
   private org.llorllale.youtrack.api.jaxb.User getJaxbUser(String loginName) 
@@ -158,7 +160,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
   }
 
   @Override
-  public Issue<?> issue() {
+  public Issue issue() {
     return issue;
   }
 }

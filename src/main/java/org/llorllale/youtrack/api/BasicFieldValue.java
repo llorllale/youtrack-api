@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,25 +17,34 @@
 package org.llorllale.youtrack.api;
 
 /**
- * JAXB adapter for {@link Priority}.
+ * Basic impl of {@link FieldValue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-class XmlPriority implements Priority {
-  private final org.llorllale.youtrack.api.jaxb.Value jaxb;
+class BasicFieldValue implements FieldValue {
+  private final String value;
+  private final Field field;
 
   /**
    * Ctor.
-   * @param jaxb the DTO
-   * @param youtrack the {@link YouTrack} parent
-   * @since 0.6.0
+   * 
+   * @param value the value
+   * @param field the owner {@link Field}
+   * @since 0.8.0
    */
-  XmlPriority(org.llorllale.youtrack.api.jaxb.Value jaxb) {
-    this.jaxb = jaxb;
+  BasicFieldValue(String value, Field field) {
+    this.value = value;
+    this.field = field;
+  }
+
+  @Override
+  public Field field() {
+    return field;
   }
 
   @Override
   public String asString() {
-    return jaxb.getValue();
+    return value;
   }
 }

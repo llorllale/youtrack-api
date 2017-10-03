@@ -16,14 +16,14 @@
 
 package org.llorllale.youtrack.api;
 
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.llorllale.youtrack.api.jaxb.Field;
-import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
@@ -34,15 +34,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * JAXB implementation of {@link Issue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
+class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
@@ -50,6 +50,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
 
   /**
    * Primary ctor.
+   * 
    * @param project this {@link Issue issue's} {@link Project}
    * @param jaxbIssue the JAXB issue to be adapted
    * @param httpClient the {@link HttpClient} to use
@@ -69,6 +70,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
 
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
+   * 
    * @param project this {@link Issue issue's} {@link Project}
    * @param jaxbIssue the JAXB issue to be adapted
    * @since 0.1.0
@@ -81,6 +83,16 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
     this(project, session, jaxbIssue, HttpClients.createDefault());
   }
 
+  /**
+   * For testing purporses.
+   * 
+   * @param prototype the prototype
+   * @since 0.8.0
+   */
+  XmlIssue(XmlIssue prototype) {
+    this(prototype.project(), prototype.session, prototype.jaxbIssue);
+  }
+
   @Override
   public String id() {
     return jaxbIssue.getId();
@@ -91,8 +103,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
     return Instant.ofEpochMilli(jaxbIssue.getField()
             .stream()
             .filter(f -> "created".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
+            .map(f -> f.getValue().getValue())
             .map(Long::valueOf)
             .findFirst()
             .get()
@@ -100,33 +111,11 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
   }
 
   @Override
-  public String type() {
-    return jaxbIssue.getField()
-            .stream()
-            .filter(f -> "Type".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
-            .findFirst()
-            .get();
-  }
-
-  @Override
-  public AssignedState state() {
-    return new XmlAssignedState(this);
-  }
-
-  @Override
-  public AssignedPriority priority() {
-    return new XmlAssignedPriority(this, session);
-  }
-
-  @Override
   public String summary() {
     return jaxbIssue.getField()
             .stream()
             .filter(f -> "summary".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
+            .map(f -> f.getValue().getValue())
             .findFirst()
             .get();
   }
@@ -136,8 +125,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
     return jaxbIssue.getField()
             .stream()
             .filter(f -> "description".equals(f.getName()))
-            .map(Field::getValue)
-            .map(Value::getValue)
+            .map(f -> f.getValue().getValue())
             .findFirst()
             .get();
   }
@@ -159,24 +147,19 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
 
   @Override
   public UsersOfIssue users() {
-    return new DefaultUsersOfIssue(session, this);
+    return new DefaultUsersOfIssue(session, this, jaxbIssue);
   }
 
   @Override
-  public org.llorllale.youtrack.api.jaxb.Issue asDto() {
-    return jaxbIssue;
-  }
-
-  @Override
-  public Issue refresh() 
-      throws IOException, UnauthorizedException {
-    return project().issues()
+  public Issue refresh() throws IOException, UnauthorizedException {
+    return this.project().issues()
         .get(id())
         .get();
   }
 
   @Override
-  public Issue update(Map<String, String> args) throws IOException, UnauthorizedException {
+  public Issue update(Field field, FieldValue value) 
+      throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         httpClient.execute(
             new HttpRequestWithSession(
@@ -186,9 +169,7 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
                         Arrays.asList(
                             new BasicNameValuePair(
                               "command",
-                                args.entrySet().stream()
-                                    .map(e -> e.getKey().concat(" ").concat(e.getValue()))
-                                    .collect(Collectors.joining(" "))
+                              String.join(" ", field.name(), value.asString())
                             )
                         ),
                         StandardCharsets.UTF_8
@@ -205,5 +186,18 @@ class XmlIssue implements Issue<org.llorllale.youtrack.api.jaxb.Issue> {
     ).asHttpResponse();
 
     return this.refresh();
+  }
+
+  @Override
+  public List<AssignedField> fields() {
+    return jaxbIssue.getField().stream()
+        .filter(f -> nonNull(f.getValueId()))
+        .map(f -> 
+            new DefaultAssignedField(
+                new BasicField(f.getName(), project),
+                this, 
+                f
+            )
+        ).collect(toList());
   }
 }

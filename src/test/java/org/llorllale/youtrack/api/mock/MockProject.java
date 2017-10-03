@@ -18,9 +18,9 @@ package org.llorllale.youtrack.api.mock;
 
 import java.util.Objects;
 import java.util.Optional;
+import org.llorllale.youtrack.api.Fields;
 import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.Project;
-import org.llorllale.youtrack.api.States;
 import org.llorllale.youtrack.api.YouTrack;
 
 /**
@@ -37,6 +37,7 @@ public class MockProject implements Project {
 
   /**
    * Ctor.
+   * 
    * @param id the mock project's id
    * @param name the mock project's name
    * @param description the mock project's description
@@ -49,6 +50,7 @@ public class MockProject implements Project {
   }
 
   /**
+   * Primary ctor.
    * 
    * @since 0.4.0
    */
@@ -107,7 +109,7 @@ public class MockProject implements Project {
   }
 
   @Override
-  public States states() {
+  public Fields fields() {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 }

@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.jaxb.ProjectCustomFieldRefs;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
@@ -29,48 +30,50 @@ import java.io.IOException;
 import java.util.stream.Stream;
 
 /**
- * Default impl of {@link Priorities}.
+ * Default impl of {@link Fields}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.6.0
+ * @since 0.8.0
  */
-class DefaultPriorities implements Priorities {
+class DefaultFields implements Fields {
   private final Session session;
+  private final Project project;
   private final HttpClient httpClient;
 
   /**
-   * Primary ctor.
+   * Ctor.
+   * 
    * @param session the user's {@link Session}
-   * @param httpClient the {@link HttpClient} to use
-   * @since 0.6.0
+   * @param project the parent {@link Project}
+   * @since 0.8.0
    */
-  DefaultPriorities(Session session, HttpClient httpClient) {
+  DefaultFields(Session session, Project project) {
     this.session = session;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Uses the {@link HttpClients#createDefault() default} http client.
-   * @param session the user's {@link Session}
-   * @since 0.6.0
-   */
-  DefaultPriorities(Session session) {
-    this(session, HttpClients.createDefault());
+    this.project = project;
+    this.httpClient = HttpClients.createDefault();
   }
 
   @Override
-  public Stream<Priority> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Enumeration.class).apply(
+  public Project project() {
+    return project;
+  }
+
+  @Override
+  public Stream<ProjectField> stream() throws IOException, UnauthorizedException {
+    return new HttpEntityAsJaxb<>(ProjectCustomFieldRefs.class).apply(
         new HttpResponseAsResponse(
             httpClient.execute(
                 new HttpRequestWithSession(
-                    session, 
+                    session,
                     new HttpGet(
                         session.baseUrl().toString()
-                            .concat("/admin/customfield/bundle/Priorities")
+                            .concat("/admin/project/")
+                            .concat(project().id())
+                            .concat("/customfield")
                     )
                 )
             )
         ).asHttpResponse().getEntity()
-    ).getValue().stream().map(XmlPriority::new);
+    ).getProjectCustomField().stream().map(f -> new XmlProjectField(f, project, session));
   }
 }

@@ -17,8 +17,7 @@
 package org.llorllale.youtrack.api.util;
 
 /**
- * A runtime exception usted to encapsulate checked exceptions within Java 8's functional and 
- * stream interfaces.
+ * A runtime exception used to wrap checked exceptions.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0

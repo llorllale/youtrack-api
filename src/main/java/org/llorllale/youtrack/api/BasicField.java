@@ -17,15 +17,34 @@
 package org.llorllale.youtrack.api;
 
 /**
- * An {@link Issue issue's} state.
+ * Default impl of {@link Field}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.7.0
+ * @since 0.8.0
  */
-public interface State {
+class BasicField implements Field {
+  private final String name;
+  private final Project project;
+
   /**
-   * Returns this {@link State} as a string.
-   * @return this {@link State} as a string
-   * @since 0.7.0
+   * Primary ctor.
+   * 
+   * @param name the field's name
+   * @param project the parent {@link Project}
+   * @since 0.8.0
    */
-  public String asString();
+  BasicField(String name, Project project) {
+    this.name = name;
+    this.project = project;
+  }
+
+  @Override
+  public Project project() {
+    return project;
+  }
+
+  @Override
+  public String name() {
+    return name;
+  }
 }

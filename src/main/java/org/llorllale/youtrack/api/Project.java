@@ -20,12 +20,14 @@ import java.util.Optional;
 
 /**
  * A YouTrack project.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public interface Project {
   /**
    * The project's id.
+   * 
    * @return the project's id
    * @since 0.2.0
    */
@@ -33,6 +35,7 @@ public interface Project {
 
   /**
    * The project's name.
+   * 
    * @return the project's name
    * @since 0.2.0
    */
@@ -40,6 +43,7 @@ public interface Project {
 
   /**
    * The project's description.
+   * 
    * @return the project's optional description
    * @since 0.2.0
    */
@@ -47,6 +51,7 @@ public interface Project {
 
   /**
    * This {@link Project}'s {@link Issue issues}.
+   * 
    * @return this {@link Project}'s {@link Issue issues}
    * @since 0.4.0
    */
@@ -54,15 +59,17 @@ public interface Project {
 
   /**
    * Returns the parent {@link YouTrack} instance.
+   * 
    * @return the parent {@link YouTrack} instance
    * @since 0.6.0
    */
   public YouTrack youtrack();
 
   /**
-   * Returns the {@link States} API.
-   * @return the {@link States} API
-   * @since 0.7.0
+   * Returns the {@link Fields} API.
+   * 
+   * @return the {@link Fields} API
+   * @since 0.8.0
    */
-  public States states();
+  public Fields fields();
 }

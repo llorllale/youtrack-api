@@ -22,6 +22,7 @@ import java.util.Optional;
 
 /**
  * Adapter {@link org.llorllale.youtrack.api.issues.jaxb.Project} -> {@link Project}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.2.0
  */
@@ -73,7 +74,7 @@ class XmlProject implements Project {
   }
 
   @Override
-  public States states() {
-    return new DefaultStates(this, session);
+  public Fields fields() {
+    return new DefaultFields(session, this);
   }
 }
