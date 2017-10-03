@@ -33,6 +33,9 @@ import java.util.NoSuchElementException;
 /**
  * An {@link Iterator} that holds the contents of a single page of results from the YouTrack server.
  * 
+ * <p>Note: the {@link #hasNext()} and {@link #next()} methods wrap checked exceptions inside
+ * {@link UncheckedException}.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the type of the contents of this page
  * @since 0.7.0
@@ -91,12 +94,14 @@ public class Page<T> implements Iterator<T> {
   /**
    * Special {@link Page} that always returns {@code false} from {@link #hasNext()} and throws a
    * {@link NoSuchElementException} from {@link #next()}.
+   * 
    * @param <T> the type parameter for the results enclosed
    * @since 0.7.0
    */
   public static final class Empty<T> extends Page<T> {
     /**
      * Ctor.
+     * 
      * @since 0.7.0
      */
     public Empty() {

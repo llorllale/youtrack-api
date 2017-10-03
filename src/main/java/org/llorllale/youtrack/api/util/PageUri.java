@@ -36,6 +36,7 @@ public class PageUri implements Supplier<HttpUriRequest> {
 
   /**
    * Ctor.
+   * 
    * @param pageNum the page number supplier
    * @param combiner accepts a value from {@code pageNum} and produces a working 
    *     {@link HttpUriRequest} for a {@link Page}

@@ -26,6 +26,9 @@ import java.util.NoSuchElementException;
 /**
  * An {@link Iterator} that encapsulates a paginated resource from the YouTrack server.
  * 
+ * <p>Note: the {@link #hasNext()} and {@link #next()} methods wrap checked exceptions inside
+ * {@link UncheckedException}.</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the resource's type
  * @since 0.7.0
@@ -39,6 +42,7 @@ public class Pagination<T> implements Iterator<T> {
 
   /**
    * Ctor.
+   * 
    * @param pageRequest the supplier for each {@link Page page's} uri
    * @param mapper maps each page's URI into its corresponding contents
    * @since 0.7.0
