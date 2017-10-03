@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
-import static javafx.scene.input.KeyCode.T;
 import org.llorllale.youtrack.api.AssignedField;
 import org.llorllale.youtrack.api.Comments;
 import org.llorllale.youtrack.api.Field;
