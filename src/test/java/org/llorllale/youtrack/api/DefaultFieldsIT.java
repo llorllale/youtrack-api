@@ -38,6 +38,7 @@ public class DefaultFieldsIT {
   public static void setup() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
     session = new PermanentTokenLogin(config.youtrackUrl(), config.youtrackUserToken()).login();
+    project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 
   @Test
