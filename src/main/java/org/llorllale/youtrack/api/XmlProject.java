@@ -77,4 +77,9 @@ class XmlProject implements Project {
   public Fields fields() {
     return new DefaultFields(session, this);
   }
+
+  @Override
+  public TimeTracking timetracking() {
+    return new DefaultTimeTracking(this, session);
+  }
 }

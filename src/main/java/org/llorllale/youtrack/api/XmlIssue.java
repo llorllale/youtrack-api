@@ -141,8 +141,8 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public TimeTracking timetracking() {
-    return new DefaultTimeTracking(session, this);
+  public IssueTimeTracking timetracking() {
+    return new DefaultIssueTimeTracking(session, this);
   }
 
   @Override

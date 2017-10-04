@@ -26,9 +26,9 @@ import org.llorllale.youtrack.api.Field;
 import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Project;
-import org.llorllale.youtrack.api.TimeTracking;
 import org.llorllale.youtrack.api.UsersOfIssue;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.IssueTimeTracking;
 
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
@@ -182,7 +182,7 @@ public class MockIssue implements Issue {
   }
 
   @Override
-  public TimeTracking timetracking() {
+  public IssueTimeTracking timetracking() {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 
