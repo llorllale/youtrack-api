@@ -50,6 +50,6 @@ public interface Field {
    * @since 0.8.0
    */
   public default boolean isSameField(Field other) {
-    return this.name().equals(other.name());
+    return this.name().equals(other.name()) && this.project().equals(other.project());
   }
 }

@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import org.apache.http.client.HttpClient;
@@ -35,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * JAXB implementation of {@link Issue}.
@@ -160,6 +162,21 @@ class XmlIssue implements Issue {
   @Override
   public Issue update(Field field, FieldValue value) 
       throws IOException, UnauthorizedException {
+    return this.update(String.join(" ", field.name(), value.asString()));
+  }
+
+  @Override
+  public Issue update(Map<Field, FieldValue> fields) 
+      throws IOException, UnauthorizedException {
+    return this.update(
+        fields.entrySet().stream()
+            .map(e -> String.join(" ", e.getKey().name(), e.getValue().asString()))
+            .collect(joining(" "))
+    );
+  }
+
+  private Issue update(String commands) 
+      throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         httpClient.execute(
             new HttpRequestWithSession(
@@ -167,10 +184,7 @@ class XmlIssue implements Issue {
                 new HttpRequestWithEntity(
                     new UrlEncodedFormEntity(
                         Arrays.asList(
-                            new BasicNameValuePair(
-                              "command",
-                              String.join(" ", field.name(), value.asString())
-                            )
+                            new BasicNameValuePair("command", commands)
                         ),
                         StandardCharsets.UTF_8
                     ),

@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.session.Session;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -81,5 +82,29 @@ class XmlProject implements Project {
   @Override
   public TimeTracking timetracking() {
     return new DefaultTimeTracking(this, session);
+  }
+
+  @Override
+  public int hashCode() {
+    return this.id().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (obj == null) {
+      return false;
+    }
+
+    if (!this.getClass().isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+
+    final XmlProject other = (XmlProject) obj;
+
+    return Objects.equals(this.id(), other.id());
   }
 }

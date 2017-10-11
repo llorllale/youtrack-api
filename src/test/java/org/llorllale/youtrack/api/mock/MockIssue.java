@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api.mock;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.llorllale.youtrack.api.AssignedField;
 import org.llorllale.youtrack.api.Comments;
@@ -204,5 +205,10 @@ public class MockIssue implements Issue {
   @Override
   public List<AssignedField> fields() {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  }
+
+  @Override
+  public Issue update(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }

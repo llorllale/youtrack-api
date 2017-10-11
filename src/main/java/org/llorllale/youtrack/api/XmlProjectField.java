@@ -30,6 +30,7 @@ import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -108,5 +109,32 @@ class XmlProjectField implements ProjectField {
                 new XmlProjectField(jaxb, project, session)
             )
         );
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 5;
+    hash = 47 * hash + Objects.hashCode(this.name());
+    hash = 47 * hash + Objects.hashCode(this.project().id());
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (obj == null) {
+      return false;
+    }
+
+    if (!this.getClass().isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+
+    final XmlProjectField other = (XmlProjectField) obj;
+
+    return this.isSameField(other);
   }
 }
