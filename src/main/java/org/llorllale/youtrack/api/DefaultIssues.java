@@ -149,7 +149,7 @@ class DefaultIssues implements Issues {
                                     .toString()
                                     .concat("/issue")
                             ).setParameter("project", project().id())
-                                .addParameters(spec.asQueryParams())
+                                .addParameters(spec.asNameValuePairs())
                                 .build()
                         )
                     )

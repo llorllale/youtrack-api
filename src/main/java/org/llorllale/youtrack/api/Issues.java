@@ -130,7 +130,7 @@ public interface Issues {
      * @return this spec as name-value pairs
      * @since 0.4.0
      */
-    public List<NameValuePair> asQueryParams() {
+    public List<NameValuePair> asNameValuePairs() {
       return Arrays.asList(
           new BasicNameValuePair("summary", summary),
           new BasicNameValuePair("description", description)

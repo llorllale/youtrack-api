@@ -16,8 +16,10 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.HashMap;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
@@ -51,18 +53,51 @@ public class XmlIssueIT {
   }
 
   /**
-   * Test of the update method (the refresh operation is implicit).
+   * Test of the 
+   * {@link Issue#update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) single update} 
+   * method (the refresh operation is implicit).
+   * 
    * @throws Exception 
    * @since 0.7.0
    */
   @Test
-  public void testUpdateAndRefresh() throws Exception {
+  public void testSingleUpdateAndRefresh() throws Exception {
     final Field field = new BasicField("Assignee", issue.project());
 
     assertThat(
       new XmlIssue((XmlIssue) issue).update(field, new BasicFieldValue(config.youtrackUser(), field))
           .users().assignee().get().loginName(),
         is(config.youtrackUser())
+    );
+  }
+
+  /**
+   * Test of the 
+   * {@link Issue#update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) single update} 
+   * method (the refresh operation is implicit).
+   * 
+   * @throws Exception 
+   * @since 0.8.0
+   */
+  @Test
+  public void testMultiUpdateAndRefresh() throws Exception {
+    final Field f1 = new BasicField("Assignee", issue.project());   
+    final FieldValue v1 = new BasicFieldValue(config.youtrackUser(), f1);
+    final Field f2 = new BasicField("State", issue.project());
+    final FieldValue v2 = new BasicFieldValue("Closed", f2);
+
+//    final Issue i = new XmlIssue((XmlIssue) issue).update(
+//        new HashMap<Field, FieldValue>(){{put(f1,v1); put(f2,v2);}}
+//    );
+
+    final Issue i = new XmlIssue((XmlIssue) issue).update(f1, v1).update(f2, v2);
+
+    assertTrue(
+        i.fields().stream().anyMatch(f -> f.equals(f1) && f.value().equals(v1))
+    );
+
+    assertTrue(
+        i.fields().stream().anyMatch(f -> f.equals(f2) && f.value().equals(v2))
     );
   }
 }
