@@ -18,6 +18,8 @@ package org.llorllale.youtrack.api;
 
 import org.llorllale.youtrack.api.jaxb.Value;
 
+import java.util.Objects;
+
 /**
  * JAXB impl of {@link FieldValue}.
  * 
@@ -47,5 +49,36 @@ class XmlFieldValue implements FieldValue {
   @Override
   public String asString() {
     return jaxb.getValue();
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 59 * hash + Objects.hashCode(this.asString());
+    hash = 59 * hash + Objects.hashCode(this.field);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (obj == null) {
+      return false;
+    }
+
+    if (!FieldValue.class.isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+
+    final FieldValue other = (FieldValue) obj;
+
+    if (!Objects.equals(this.asString(), other.asString())) {
+      return false;
+    }
+
+    return Objects.equals(this.field(), other.field());
   }
 }

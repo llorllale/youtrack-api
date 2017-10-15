@@ -68,11 +68,11 @@ class BasicField implements Field {
       return false;
     }
 
-    if (!this.getClass().isAssignableFrom(obj.getClass())) {
+    if (!Field.class.isAssignableFrom(obj.getClass())) {
       return false;
     }
 
-    final BasicField other = (BasicField) obj;
+    final Field other = (Field) obj;
 
     return this.isSameField(other);
   }

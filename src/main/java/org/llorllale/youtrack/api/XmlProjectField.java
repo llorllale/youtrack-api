@@ -18,6 +18,8 @@ package org.llorllale.youtrack.api;
 
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
+import com.google.common.net.UrlEscapers;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -72,22 +74,24 @@ class XmlProjectField implements ProjectField {
 
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
-    final String bundleName = new HttpEntityAsJaxb<>(ProjectCustomField.class).apply(
-        new HttpResponseAsResponse(
-            httpClient.execute(
-                new HttpRequestWithSession(
-                    session, 
-                    new HttpGet(
-                        session.baseUrl().toString()
-                            .concat("/admin/project/")
-                            .concat(project().id())
-                            .concat("/customfield/")
-                            .concat(substringAfterLast(jaxb.getUrl(), "/"))
+    final String bundleName = UrlEscapers.urlPathSegmentEscaper().escape(
+        new HttpEntityAsJaxb<>(ProjectCustomField.class).apply(
+            new HttpResponseAsResponse(
+                httpClient.execute(
+                    new HttpRequestWithSession(
+                        session, 
+                        new HttpGet(
+                            session.baseUrl().toString()
+                                .concat("/admin/project/")
+                                .concat(project().id())
+                                .concat("/customfield/")
+                                .concat(substringAfterLast(jaxb.getUrl(), "/"))
+                        )
                     )
                 )
-            )
-        ).asHttpResponse().getEntity()
-    ).getParam().getValue();
+            ).asHttpResponse().getEntity()
+        ).getParam().getValue()
+    );
 
     return new HttpEntityAsJaxb<>(Enumeration.class).apply(
         new HttpResponseAsResponse(
@@ -129,11 +133,11 @@ class XmlProjectField implements ProjectField {
       return false;
     }
 
-    if (!this.getClass().isAssignableFrom(obj.getClass())) {
+    if (!Field.class.isAssignableFrom(obj.getClass())) {
       return false;
     }
 
-    final XmlProjectField other = (XmlProjectField) obj;
+    final Field other = (Field) obj;
 
     return this.isSameField(other);
   }

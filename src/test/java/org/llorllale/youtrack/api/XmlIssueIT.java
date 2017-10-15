@@ -81,16 +81,29 @@ public class XmlIssueIT {
    */
   @Test
   public void testMultiUpdateAndRefresh() throws Exception {
-    final Field f1 = new BasicField("Assignee", issue.project());   
-    final FieldValue v1 = new BasicFieldValue(config.youtrackUser(), f1);
-    final Field f2 = new BasicField("State", issue.project());
-    final FieldValue v2 = new BasicFieldValue("Closed", f2);
-
-//    final Issue i = new XmlIssue((XmlIssue) issue).update(
-//        new HashMap<Field, FieldValue>(){{put(f1,v1); put(f2,v2);}}
-//    );
-
-    final Issue i = new XmlIssue((XmlIssue) issue).update(f1, v1).update(f2, v2);
+    final AssignedField f1 = issue.fields().get(0);
+    final FieldValue v1 = issue.project().fields()
+        .stream()
+        .filter(f -> f.isSameField(f1))
+        .findAny()
+        .get()
+        .values()
+        .filter(v -> !v.isEqualTo(f1.value()))
+        .findAny()
+        .get();
+    final AssignedField f2 = issue.fields().get(1);
+    final FieldValue v2 = issue.project().fields()
+        .stream()
+        .filter(f -> f.isSameField(f2))
+        .findAny()
+        .get()
+        .values()
+        .filter(v -> !v.isEqualTo(f2.value()))
+        .findAny()
+        .get();
+    final Issue i = new XmlIssue((XmlIssue) issue).update(
+        new HashMap<Field, FieldValue>(){{put(f1,v1); put(f2,v2);}}
+    );
 
     assertTrue(
         i.fields().stream().anyMatch(f -> f.equals(f1) && f.value().equals(v1))

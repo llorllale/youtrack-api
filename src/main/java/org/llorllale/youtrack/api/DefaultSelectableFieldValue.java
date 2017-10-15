@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Adapts a given {@link FieldValue} into a {@link SelectableFieldValue}.
@@ -55,5 +56,15 @@ class DefaultSelectableFieldValue implements SelectableFieldValue {
   @Override
   public String asString() {
     return fieldValue.asString();
+  }
+
+  @Override
+  public int hashCode() {
+    return this.fieldValue.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return this.fieldValue.equals(obj);
   }
 }
