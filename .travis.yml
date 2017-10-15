@@ -19,7 +19,7 @@ jobs:
         - bash <(curl -s https://codecov.io/bash)
     - # deploy
       if: type = push AND tag IS present
-      script: mvn site
+      script: mvn -P site site
       deploy:
         provider: pages
         skip_cleanup: true
