@@ -94,14 +94,11 @@ public class MockProject implements Project {
     if (obj == null) {
       return false;
     }
-    if (getClass() != obj.getClass()) {
+    if (!(obj instanceof Project)) {
       return false;
     }
-    final MockProject other = (MockProject) obj;
-    if (!Objects.equals(this.id, other.id)) {
-      return false;
-    }
-    return true;
+    final Project other = (Project) obj;
+    return Objects.equals(this.id(), other.id());
   }
 
   @Override

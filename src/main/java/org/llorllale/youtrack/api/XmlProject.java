@@ -99,11 +99,11 @@ class XmlProject implements Project {
       return false;
     }
 
-    if (!this.getClass().isAssignableFrom(obj.getClass())) {
+    if (!Project.class.isAssignableFrom(obj.getClass())) {
       return false;
     }
 
-    final XmlProject other = (XmlProject) obj;
+    final Project other = (Project) obj;
 
     return Objects.equals(this.id(), other.id());
   }

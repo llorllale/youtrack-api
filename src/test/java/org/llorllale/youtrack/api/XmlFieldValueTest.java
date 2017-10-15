@@ -17,10 +17,13 @@
 package org.llorllale.youtrack.api;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.jaxb.Value;
+import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
@@ -45,5 +48,88 @@ public class XmlFieldValueTest {
     );
   }
 
+  @Test
+  public void equalsItself() {
+    final FieldValue fv = new XmlFieldValue(jaxb("v"), field("f"));
+
+    assertTrue(
+        fv.equals(fv)
+    );
+  }
+
+  @Test
+  public void equalsOtherFieldValue() {
+    assertTrue(
+      new XmlFieldValue(jaxb("value"), field("field")).equals(fieldValue("field", "value"))
+    );
+  }
+
+  @Test
+  public void notEqualsNull() {
+    assertFalse(
+        new XmlFieldValue(jaxb("value"), field("field")).equals(null)
+    );
+  }
+
+  @Test
+  public void notEqualsObject() {
+    assertFalse(
+        new XmlFieldValue(jaxb("value"), field("field")).equals(new Object())
+    );
+  }
+
+  @Test
+  public void notEqualsOtherField() {
+    assertFalse(
+        new XmlFieldValue(jaxb("value"), field("field1")).equals(fieldValue("value", "field2"))
+    );
+  }
+
   private static final String XML = "<value>Bug</value>";
+
+  private Value jaxb(String string) {
+    return new Value(){{setValue(string);}};
+  }
+
+  private Field field(String name) {
+    return field(name, new MockProject());
+  }
+
+  private Field field(String name, Project project) {
+    return new Field() {
+      @Override
+      public Project project() {
+        return project;
+      }
+
+      @Override
+      public String name() {
+        return name;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+        if(!(obj instanceof Field)) {
+          return false;
+        }
+
+        final Field other = (Field) obj;
+        return this.isSameField(other);
+      }
+    };
+  }
+
+  private FieldValue fieldValue(String fieldName, String fieldValue) {
+    return new FieldValue() {
+      @Override
+      public Field field() {
+        return XmlFieldValueTest.this.field(fieldName);
+      }
+
+      @Override
+      public String asString() {
+        return fieldValue;
+      }
+    };
+  }
 }

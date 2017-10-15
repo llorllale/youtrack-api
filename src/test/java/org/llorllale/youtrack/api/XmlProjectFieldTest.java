@@ -17,7 +17,9 @@
 package org.llorllale.youtrack.api;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
@@ -46,6 +48,82 @@ public class XmlProjectFieldTest {
     );
   }
 
+  @Test
+  public void equalsItself() {
+    final Field f = new XmlProjectField(jaxb, new MockProject(), new MockSession());
+
+    assertTrue(
+        f.equals(f)
+    );
+  }
+
+  @Test
+  public void equalsOtherField() {
+    assertTrue(
+        new XmlProjectField(jaxb, new MockProject(), new MockSession()).equals(field(jaxb.getName(), new MockProject()))
+    );
+  }
+
+  @Test
+  public void notEqualsNull() {
+    assertFalse(
+        new XmlProjectField(jaxb, new MockProject(), new MockSession()).equals(null)
+    );
+  }
+
+  @Test
+  public void notEqualsObject() {
+    assertFalse(
+        new XmlProjectField(jaxb, new MockProject(), new MockSession()).equals(new Object())
+    );
+  }
+
+  @Test
+  public void notEqualsFieldWithDiffName() {
+    assertFalse(
+        new XmlProjectField(
+            new ProjectCustomField(){{setName("name1");}}, 
+            new MockProject(), 
+            new MockSession()
+        ).equals(field("name2", new MockProject()))
+    );
+  }
+
+  @Test
+  public void notEqualsFieldFromDiffProject() {
+    assertFalse(
+        new XmlProjectField(
+            new ProjectCustomField(){{setName("name");}}, 
+            new MockProject("p1", "p1", ""), 
+            new MockSession()
+        ).equals(field("name", new MockProject("p2", "p2", "")))
+    );
+  }
+
   private static final String XML =
 "<projectCustomField name=\"Priority\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"; 
+
+  private Field field(String name, Project project) {
+    return new Field() {
+      @Override
+      public Project project() {
+        return project;
+      }
+
+      @Override
+      public String name() {
+        return name;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+        if(!(obj instanceof Field)) {
+          return false;
+        }
+
+        final Field other = (Field) obj;
+        return this.isSameField(other);
+      }
+    };
+  }
 }
