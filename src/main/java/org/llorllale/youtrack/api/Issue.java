@@ -22,6 +22,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A {@link YouTrack} issue.
@@ -128,6 +129,20 @@ public interface Issue {
    * @see #fields() 
    */
   public Issue update(Field field, FieldValue value) throws IOException, UnauthorizedException;
+
+  /**
+   * Updates this issue with the {@code fields} provided, returning a new {@link Issue} reflecting
+   * those changes.
+   * 
+   * @param fields the collection of fields and their values to update
+   * @return a new {@link Issue} reflecting those changes
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 0.8.0
+   * @see #update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) 
+   */
+  public Issue update(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException;
 
   /**
    * All {@link AssignedField fields} of this {@link Issue}.

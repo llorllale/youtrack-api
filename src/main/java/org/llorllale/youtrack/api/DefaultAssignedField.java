@@ -69,11 +69,21 @@ class DefaultAssignedField implements AssignedField {
 
   @Override
   public Project project() {
-    return issue.project();
+    return field.project();
   }
 
   @Override
   public String name() {
     return field.name();
+  }
+
+  @Override
+  public int hashCode() {
+    return this.field.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object other) {
+    return this.field.equals(other);
   }
 }

@@ -18,6 +18,8 @@ package org.llorllale.youtrack.api;
 
 import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
+import com.google.common.net.UrlEscapers;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -30,6 +32,7 @@ import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -71,22 +74,24 @@ class XmlProjectField implements ProjectField {
 
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
-    final String bundleName = new HttpEntityAsJaxb<>(ProjectCustomField.class).apply(
-        new HttpResponseAsResponse(
-            httpClient.execute(
-                new HttpRequestWithSession(
-                    session, 
-                    new HttpGet(
-                        session.baseUrl().toString()
-                            .concat("/admin/project/")
-                            .concat(project().id())
-                            .concat("/customfield/")
-                            .concat(substringAfterLast(jaxb.getUrl(), "/"))
+    final String bundleName = UrlEscapers.urlPathSegmentEscaper().escape(
+        new HttpEntityAsJaxb<>(ProjectCustomField.class).apply(
+            new HttpResponseAsResponse(
+                httpClient.execute(
+                    new HttpRequestWithSession(
+                        session, 
+                        new HttpGet(
+                            session.baseUrl().toString()
+                                .concat("/admin/project/")
+                                .concat(project().id())
+                                .concat("/customfield/")
+                                .concat(substringAfterLast(jaxb.getUrl(), "/"))
+                        )
                     )
                 )
-            )
-        ).asHttpResponse().getEntity()
-    ).getParam().getValue();
+            ).asHttpResponse().getEntity()
+        ).getParam().getValue()
+    );
 
     return new HttpEntityAsJaxb<>(Enumeration.class).apply(
         new HttpResponseAsResponse(
@@ -108,5 +113,32 @@ class XmlProjectField implements ProjectField {
                 new XmlProjectField(jaxb, project, session)
             )
         );
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 5;
+    hash = 47 * hash + Objects.hashCode(this.name());
+    hash = 47 * hash + Objects.hashCode(this.project().id());
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (obj == null) {
+      return false;
+    }
+
+    if (!Field.class.isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+
+    final Field other = (Field) obj;
+
+    return this.isSameField(other);
   }
 }

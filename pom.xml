@@ -160,7 +160,7 @@
             <artifactId>docker-maven-plugin</artifactId>
             <version>0.21.0</version>
             <configuration>
-              <showLogs>true</showLogs>
+              <!--<showLogs>true</showLogs>-->
             </configuration>
             <executions>
               <execution>

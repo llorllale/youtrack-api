@@ -23,7 +23,10 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -79,28 +82,69 @@ public interface Issues {
   public static class IssueSpec {
     private final String summary;
     private final String description;
+    private final Map<Field, FieldValue> fields;
 
     /**
      * Primary ctor.
+     * 
+     * @param summary the issue's summary (ie. its title)
+     * @param description the issue's description
+     * @param fields the fields to set
+     * @since 0.8.0
+     */
+    private IssueSpec(String summary, String description, Map<Field, FieldValue> fields) {
+      this.summary = summary;
+      this.description = description;
+      this.fields = fields;
+    }
+
+    /**
+     * Ctor.
+     * 
      * @param summary the issue's summary (ie. its title)
      * @param description the issue's description
      * @since 0.4.0
      */
     public IssueSpec(String summary, String description) {
-      this.summary = summary;
-      this.description = description;
+      this(summary, description, new HashMap<>());
     }
 
     /**
-     * Returns a list of query parameters for this spec.
-     * @return a list of query parameters for this spec.
+     * Will set the issue's {@link Field field} to the specified {@link FieldValue value} once
+     * {@link #create(org.llorllale.youtrack.api.Issues.IssueSpec) created}.
+     * 
+     * @param field the field to set
+     * @param value the field's value
+     * @return a new instance of this spec with the summary, description, and all fields
+     * @since 0.8.0
+     * @see Issue#update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) 
+     */
+    public IssueSpec with(Field field, FieldValue value) {
+      this.fields.put(field, value);
+      return new IssueSpec(this.summary, this.description, this.fields);
+    }
+
+    /**
+     * Represents this spec as name-value pairs.
+     * 
+     * @return this spec as name-value pairs
      * @since 0.4.0
      */
-    public List<NameValuePair> asQueryParams() {
+    public List<NameValuePair> asNameValuePairs() {
       return Arrays.asList(
           new BasicNameValuePair("summary", summary),
           new BasicNameValuePair("description", description)
       );
+    }
+
+    /**
+     * Represents this spec as Issue {@link Field fields} and {@link FieldValue values}.
+     * 
+     * @return this spec as Issue {@link Field fields} and {@link FieldValue values}
+     * @since 0.8.0
+     */
+    public Map<Field, FieldValue> asFields() {
+      return Collections.unmodifiableMap(fields);
     }
   }
 }

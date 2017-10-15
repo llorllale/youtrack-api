@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.Objects;
+
 /**
  * Basic impl of {@link FieldValue}.
  * 
@@ -46,5 +48,36 @@ class BasicFieldValue implements FieldValue {
   @Override
   public String asString() {
     return value;
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 29 * hash + Objects.hashCode(this.value);
+    hash = 29 * hash + Objects.hashCode(this.field);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+
+    if (obj == null) {
+      return false;
+    }
+
+    if (!FieldValue.class.isAssignableFrom(obj.getClass())) {
+      return false;
+    }
+
+    final FieldValue other = (FieldValue) obj;
+
+    if (!Objects.equals(this.asString(), other.asString())) {
+      return false;
+    }
+
+    return Objects.equals(this.field(), other.field());
   }
 }

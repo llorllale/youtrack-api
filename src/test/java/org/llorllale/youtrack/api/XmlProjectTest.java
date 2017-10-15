@@ -17,9 +17,12 @@
 package org.llorllale.youtrack.api;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
@@ -73,6 +76,43 @@ public class XmlProjectTest {
     assertThat(
         new XmlProject(null, new MockSession(), jaxbProjectWithShortName).description().get(),
         is(jaxbProjectWithShortName.getDescription())
+    );
+  }
+
+  @Test
+  public void notEqualsNull() {
+    assertFalse(
+        new XmlProject(null, null, jaxbProjectWithId).equals(null)
+    );
+  }
+
+  @Test
+  public void notEqualsObject() {
+    assertFalse(
+        new XmlProject(null, null, jaxbProjectWithId).equals(new Object())
+    );
+  }
+
+  @Test
+  public void equalsItself() {
+    final Project p = new XmlProject(null, null, jaxbProjectWithId);
+
+    assertTrue(
+        p.equals(p)
+    );
+  }
+
+  @Test
+  public void equalsOtherProjectSameId() {
+    assertTrue(
+        new XmlProject(null, null, jaxbProjectWithShortName).equals(new MockProject(jaxbProjectWithShortName.getShortName(), "", ""))
+    );
+  }
+
+  @Test
+  public void notEqualsOtherProjectWithDiffId() {
+    assertFalse(
+        new XmlProject(null, null, jaxbProjectWithShortName).equals(new MockProject(jaxbProjectWithId.getId(), "", ""))
     );
   }
 

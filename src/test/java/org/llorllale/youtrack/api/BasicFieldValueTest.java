@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
  * Unit tests for {@link BasicFieldValue}.
@@ -35,5 +36,91 @@ public class BasicFieldValueTest {
         new BasicFieldValue(string, null).asString(),
         is(string)
     );
+  }
+
+  @Test
+  public void notEqualsWithObject() {
+    assertFalse(
+        new BasicFieldValue("", field("test")).equals(new Object())
+    );
+  }
+
+  @Test
+  public void notEqualsWithNull() {
+    assertFalse(
+        new BasicFieldValue("", field("test")).equals(null)
+    );
+  }
+
+  @Test
+  public void notEqualsWithDiffFieldValue() {
+    assertFalse(
+        new BasicFieldValue("value1", field("test")).equals(fieldValue("test", "value2"))
+    );
+  }
+
+  @Test
+  public void notEqualsWithDiffFields() {
+    assertFalse(
+        new BasicFieldValue("value", field("field1")).equals(fieldValue("field2", "value"))
+    );
+  }
+
+  @Test
+  public void equalsItself() {
+    final BasicFieldValue fv = new BasicFieldValue("value", field("field"));
+
+    assertTrue(
+        fv.equals(fv)
+    );
+  }
+
+  @Test
+  public void equalsOtherFieldValue() {
+    assertTrue(
+      new BasicFieldValue("value", field("field")).equals(fieldValue("field", "value"))
+    );
+  }
+
+  private Field field(String name) {
+    return field(name, new MockProject());
+  }
+
+  private Field field(String name, Project project) {
+    return new Field() {
+      @Override
+      public Project project() {
+        return project;
+      }
+
+      @Override
+      public String name() {
+        return name;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+        if(!(obj instanceof Field)) {
+          return false;
+        }
+
+        final Field other = (Field) obj;
+        return this.isSameField(other);
+      }
+    };
+  }
+
+  private FieldValue fieldValue(String fieldName, String fieldValue) {
+    return new FieldValue() {
+      @Override
+      public Field field() {
+        return BasicFieldValueTest.this.field(fieldName);
+      }
+
+      @Override
+      public String asString() {
+        return fieldValue;
+      }
+    };
   }
 }
