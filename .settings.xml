@@ -3,6 +3,9 @@
   <profiles>
     <profile>
       <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <properties>
         <gpg.executable>gpg</gpg.executable>
         <gpg.passphrase>${env.gpg_passphrase}</gpg.passphrase>
