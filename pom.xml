@@ -400,73 +400,45 @@
             </instrumentation>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jaxb2-maven-plugin</artifactId>
+          <version>2.3</version>
+          <executions>
+            <execution>
+              <id>xjc</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>xjc</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <packageName>org.llorllale.youtrack.api.jaxb</packageName>
+            <createJavaDocAnnotations>false</createJavaDocAnnotations>
+            <generateEpisode>false</generateEpisode>
+            <addGeneratedAnnotation>false</addGeneratedAnnotation>
+            <clearOutputDir>true</clearOutputDir>
+            <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
+            <sources>
+              <source>src/main/resources/schema</source>
+            </sources>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
-        <executions>
-          <execution>
-            <id>validate</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <configLocation>google_checks.xml</configLocation>
-              <encoding>UTF-8</encoding>
-              <consoleOutput>true</consoleOutput>
-              <failsOnError>true</failsOnError>
-              <linkXRef>false</linkXRef>
-              <violationSeverity>info</violationSeverity>
-              <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>3.0.5</version>
-        <executions>
-          <execution>
-            <id>findbugs</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <failOnError>true</failOnError>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>jaxb2-maven-plugin</artifactId>
-        <version>2.3</version>
-        <executions>
-          <execution>
-            <id>xjc</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>xjc</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <packageName>org.llorllale.youtrack.api.jaxb</packageName>
-          <createJavaDocAnnotations>false</createJavaDocAnnotations>
-          <generateEpisode>false</generateEpisode>
-          <addGeneratedAnnotation>false</addGeneratedAnnotation>
-          <clearOutputDir>true</clearOutputDir>
-          <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-          <sources>
-            <source>src/main/resources/schema</source>
-          </sources>
-        </configuration>
       </plugin>
     </plugins>
   </build>

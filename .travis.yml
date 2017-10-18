@@ -14,7 +14,7 @@ jobs:
     - # test
       if: type = pull_request
       script: 
-        - mvn -P release-profile clean install
+        - mvn -P release-profile -DskipTests=true clean install
         - mvn -P integration-tests cobertura:cobertura-integration-test
         - bash <(curl -s https://codecov.io/bash)
     - # deploy
