@@ -14,12 +14,14 @@ jobs:
     - # test
       if: type = pull_request
       script: 
-        - mvn -P release-profile clean install
+        - mvn -P release-profile -DskipTests=true clean install
         - mvn -P integration-tests cobertura:cobertura-integration-test
         - bash <(curl -s https://codecov.io/bash)
     - # deploy
       if: type = push AND tag IS present
-      script: mvn site
+      script: 
+        - mvn --settings .settings.xml -P deploy clean deploy
+        - mvn -P site clean site
       deploy:
         provider: pages
         skip_cleanup: true
