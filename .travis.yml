@@ -20,7 +20,7 @@ jobs:
     - # deploy
       if: type = push AND tag IS present
       script: 
-        - mvn --settings .settings.xml -P deploy clean deploy
+        - mvn -P deploy clean deploy
         - mvn -P site clean site
       deploy:
         provider: pages
