@@ -22,7 +22,7 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -76,12 +76,13 @@ public interface Issues {
   public Issue create(IssueSpec spec) throws IOException, UnauthorizedException;
 
   /**
-   * Specifications for creating an {@link Issue}.
+   * Specifications for an {@link Issue}.
+   * 
    * @since 0.4.0
    */
   public static class IssueSpec {
     private final String summary;
-    private final String description;
+    private final Optional<String> description;
     private final Map<Field, FieldValue> fields;
 
     /**
@@ -92,21 +93,43 @@ public interface Issues {
      * @param fields the fields to set
      * @since 0.8.0
      */
-    private IssueSpec(String summary, String description, Map<Field, FieldValue> fields) {
+    private IssueSpec(String summary, Optional<String> description, Map<Field, FieldValue> fields) {
       this.summary = summary;
       this.description = description;
       this.fields = fields;
     }
 
     /**
-     * Ctor.
+     * Sets the fields to an empty map.
+     * 
+     * @param summary the issue's summary
+     * @param description an optional describing the issue's <em>description</em> attribute
+     * @since 0.9.0
+     */
+    IssueSpec(String summary, Optional<String> description) {
+      this(summary, description, new HashMap<>());
+    }
+
+    /**
+     * Specify the issue's {@link Issue#summary() summary} and 
+     * {@link Issue#description() description}.
      * 
      * @param summary the issue's summary (ie. its title)
      * @param description the issue's description
      * @since 0.4.0
      */
     public IssueSpec(String summary, String description) {
-      this(summary, description, new HashMap<>());
+      this(summary, Optional.of(description));
+    }
+
+    /**
+     * Specify the issue's {@link Issue#summary() summary} only.
+     * 
+     * @param summary the issue's summary 
+     * @since 0.9.0
+     */
+    public IssueSpec(String summary) {
+      this(summary, Optional.empty());
     }
 
     /**
@@ -117,7 +140,8 @@ public interface Issues {
      * @param value the field's value
      * @return a new instance of this spec with the summary, description, and all fields
      * @since 0.8.0
-     * @see Issue#update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) 
+     * @see UpdateIssue#field(org.llorllale.youtrack.api.Field, 
+     *     org.llorllale.youtrack.api.FieldValue) 
      */
     public IssueSpec with(Field field, FieldValue value) {
       this.fields.put(field, value);
@@ -131,10 +155,10 @@ public interface Issues {
      * @since 0.4.0
      */
     public List<NameValuePair> asNameValuePairs() {
-      return Arrays.asList(
-          new BasicNameValuePair("summary", summary),
-          new BasicNameValuePair("description", description)
-      );
+      final List<NameValuePair> pairs = new ArrayList<>();
+      pairs.add(new BasicNameValuePair("summary", summary));
+      description.ifPresent(d -> pairs.add(new BasicNameValuePair("description", d)));
+      return pairs;
     }
 
     /**

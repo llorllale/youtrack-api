@@ -19,17 +19,16 @@ package org.llorllale.youtrack.api.mock;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.llorllale.youtrack.api.AssignedField;
 import org.llorllale.youtrack.api.Comments;
-import org.llorllale.youtrack.api.Field;
-import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.UsersOfIssue;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.IssueTimeTracking;
+import org.llorllale.youtrack.api.UpdateIssue;
 
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
@@ -173,8 +172,8 @@ public class MockIssue implements Issue {
   }
 
   @Override
-  public String description() {
-    return description;
+  public Optional<String> description() {
+    return Optional.of(description);
   }
 
   @Override
@@ -198,17 +197,12 @@ public class MockIssue implements Issue {
   }
 
   @Override
-  public Issue update(Field field, FieldValue value) throws IOException, UnauthorizedException {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  @Override
   public List<AssignedField> fields() {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 
   @Override
-  public Issue update(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public UpdateIssue update() {
+    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
 }

@@ -110,8 +110,7 @@ public interface IssueTimeTracking {
      * 
      * @param duration the work's duration
      * @since 0.4.0
-     * @see #EntrySpec(java.time.LocalDate, java.time.Duration, java.util.Optional, 
-     *     java.util.Optional) 
+     * @see #EntrySpec(LocalDate, Duration, Optional, Optional) 
      */
     public EntrySpec(Duration duration) {
       this(

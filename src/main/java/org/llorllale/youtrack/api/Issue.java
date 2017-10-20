@@ -22,7 +22,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * A {@link YouTrack} issue.
@@ -66,10 +66,10 @@ public interface Issue {
   /**
    * The issue's description.
    * 
-   * @return The issue's description.
+   * @return the issue's description
    * @since 0.1.0
    */
-  public String description();
+  public Optional<String> description();
 
   /**
    * Access to the issue's {@link User users}.
@@ -115,41 +115,19 @@ public interface Issue {
   public Issue refresh() throws IOException, UnauthorizedException;
 
   /**
-   * Updates this issue's {@link Field field} to the given {@link FieldValue value} and returns a 
-   * new {@link Issue} reflecting those changes.
+   * The {@link UpdateIssue} API for this {@link Issue}.
    * 
-   * @param field the issue's {@link Field field}
-   * @param value the field's {@link FieldValue value}
-   * @return a new {@link Issue} reflecting the changes brought about by updating this issue with
-   *     {@code args}
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
-   *     operation
-   * @since 0.7.0
-   * @see #fields() 
+   * @return the {@link UpdateIssue} API for this {@link Issue}
+   * @since 0.9.0
    */
-  public Issue update(Field field, FieldValue value) throws IOException, UnauthorizedException;
-
-  /**
-   * Updates this issue with the {@code fields} provided, returning a new {@link Issue} reflecting
-   * those changes.
-   * 
-   * @param fields the collection of fields and their values to update
-   * @return a new {@link Issue} reflecting those changes
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
-   *     operation
-   * @since 0.8.0
-   * @see #update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) 
-   */
-  public Issue update(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException;
+  public UpdateIssue update();
 
   /**
    * All {@link AssignedField fields} of this {@link Issue}.
    * 
    * @return all {@link AssignedField fields} of this {@link Issue}
    * @since 0.8.0
-   * @see #update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) 
+   * @see UpdateIssue#fields(java.util.Map) 
    */
   public List<AssignedField> fields();
 }

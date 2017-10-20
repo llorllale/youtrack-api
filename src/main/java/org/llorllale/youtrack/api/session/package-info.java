@@ -18,7 +18,8 @@
  *
  * <p>Use the {@link org.llorllale.youtrack.api.session.Login} interface to obtain
  * a {@link org.llorllale.youtrack.api.session.Session} that you can then use
- * with the other CRUD APIs.</p>
+ * to access other functions of this library.</p>
+ * 
  * @since 0.1.0
  * @see org.llorllale.youtrack.api.session.UsernamePasswordLogin
  * @see org.llorllale.youtrack.api.session.AnonymousLogin

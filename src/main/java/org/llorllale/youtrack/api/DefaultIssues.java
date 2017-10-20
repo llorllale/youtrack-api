@@ -157,6 +157,6 @@ class DefaultIssues implements Issues {
             ).asHttpResponse().getFirstHeader("Location").getValue(),
             "/"
         )
-    ).get().update(spec.asFields());
+    ).get().update().fields(spec.asFields());
   }
 }
