@@ -17,10 +17,8 @@
 package org.llorllale.youtrack.api.util;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
@@ -45,10 +43,10 @@ public class Page<T> implements Iterator<T> {
   private final HttpUriRequest request;
   private final ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper;
   private final Deque<T> contents;
-  private final HttpClient httpClient;
 
   /**
    * Ctor.
+   * 
    * @param request the {@link HttpUriRequest} for the page
    * @param mapper the mapping function to transform the results from YouTrack into types T
    * @since 0.7.0
@@ -60,32 +58,31 @@ public class Page<T> implements Iterator<T> {
     this.request = request;
     this.mapper = mapper;
     this.contents = new ArrayDeque<>();
-    this.httpClient = HttpClients.createDefault();
   }
 
   @Override
   public boolean hasNext() {
-    if (contents.isEmpty()) {
+    if (this.contents.isEmpty()) {
       try {
-        contents.addAll(
-            mapper.apply(
+        this.contents.addAll(
+            this.mapper.apply(
                 new HttpResponseAsResponse(
-                    httpClient.execute(request)
+                    HttpClients.createDefault().execute(this.request)
                 ).asHttpResponse().getEntity()
             )
         );
-      } catch (IOException | UnauthorizedException e) {
+      } catch (IOException e) {
         throw new UncheckedException(e);
       }
     }
 
-    return !contents.isEmpty();
+    return !this.contents.isEmpty();
   }
 
   @Override
   public T next() {
-    if (hasNext()) {
-      return contents.pop();
+    if (this.hasNext()) {
+      return this.contents.pop();
     }
 
     throw new NoSuchElementException();

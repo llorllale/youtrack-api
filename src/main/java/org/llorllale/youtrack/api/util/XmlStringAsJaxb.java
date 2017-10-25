@@ -27,6 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 /**
  * Utility class to unmarshal an XML document in string form to its JAXB 
  * representation.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the type class of the XML root element
  * @since 0.1.0
@@ -36,6 +37,7 @@ public class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, ParseE
 
   /**
    * Ctor.
+   * 
    * @param rootType the type class of the XML root element
    * @since 0.1.0
    */
@@ -44,7 +46,7 @@ public class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, ParseE
   }
 
   @Override
-  public T apply(String xml) {
+  public T apply(String xml) throws ParseException {
     try {
       final JAXBContext ctx = JAXBContext.newInstance(rootType);
       final Unmarshaller um = ctx.createUnmarshaller();

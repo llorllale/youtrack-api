@@ -68,7 +68,7 @@ public class HttpResponseAsResponse implements Response {
 
   @Override
   public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
-    return base.asHttpResponse();
+    return this.base.asHttpResponse();
   }
 
   /**
@@ -103,9 +103,9 @@ public class HttpResponseAsResponse implements Response {
     if (nonNull(this.asHttpResponse().getEntity())) {
       result = new ApplyIf<>(condition,function)
           .apply(
-              new InputStreamAsString(
+              new InputStreamAsString().apply(
                   this.asHttpResponse().getEntity().getContent()
-              ).string()
+              )
           );
     } else {
       result = Optional.empty();

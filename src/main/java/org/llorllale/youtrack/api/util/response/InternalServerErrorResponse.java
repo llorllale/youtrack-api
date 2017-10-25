@@ -43,18 +43,18 @@ public class InternalServerErrorResponse implements Response {
 
   @Override
   public HttpResponse asHttpResponse() throws IOException, UnauthorizedException {
-    if (base.asHttpResponse().getStatusLine().getStatusCode() 
+    if (this.base.asHttpResponse().getStatusLine().getStatusCode() 
         == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
       throw new IOException(
           String.format(
               "500 Internal Server error. Payload: %s", 
-              new InputStreamAsString(
-                  base.asHttpResponse().getEntity().getContent()
-              ).string()
+              new InputStreamAsString().apply(
+                  this.base.asHttpResponse().getEntity().getContent()
+              )
           )
       );
     }
 
-    return base.asHttpResponse();
+    return this.base.asHttpResponse();
   }
 }

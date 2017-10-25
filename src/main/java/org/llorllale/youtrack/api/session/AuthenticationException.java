@@ -16,17 +16,21 @@
 
 package org.llorllale.youtrack.api.session;
 
+import java.io.IOException;
+
 /**
  * Signals an error with the credentials that were provided.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
- * @see UsernamePasswordLogin
+ * @see Login
  */
-public class AuthenticationException extends Exception {
+public class AuthenticationException extends IOException {
   private static final long serialVersionUID = -6585053905710875326L;
   
   /**
    * Ctor.
+   * 
    * @param message the exception message
    * @since 0.1.0
    */

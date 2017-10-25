@@ -25,39 +25,18 @@ import java.nio.charset.Charset;
 /**
  * Utility class to read all text content from an {@link InputStream} and
  * return it in string form.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class InputStreamAsString implements AutoCloseable {
-  private static final String NEW_LINE = System.getProperty("line.separator");
-  private final InputStream inputStream;
-
-  /**
-   * Ctor.
-   * @param inputStream the inputstream from which to read the text contents
-   * @since 0.1.0
-   */
-  public InputStreamAsString(InputStream inputStream) {
-    this.inputStream = inputStream;
-  }
-
-
-  /**
-   * Returns the contents of the underlying {@link InputStream} in string form.
-   * @return the contents of the underlying {@link InputStream}
-   * @throws IOException thrown by the underlying {@link InputStream}
-   * @since 0.1.0
-   */
-  public String string() throws IOException {
-    return new BufferedReader(new InputStreamReader(inputStream, Charset.defaultCharset()))
+public class InputStreamAsString implements ExceptionalFunction<InputStream, String, IOException> {
+  @Override
+  public String apply(InputStream input) throws IOException {
+    final String newLine = System.getProperty("line.separator");
+    return new BufferedReader(new InputStreamReader(input, Charset.defaultCharset()))
         .lines()
-        .reduce((l1,l2) -> l1.concat(l2).concat(NEW_LINE))
+        .reduce((line1,line2) -> line1.concat(newLine).concat(line2))
         .get()
         .trim();
-  }
-
-  @Override
-  public void close() throws IOException {
-    this.inputStream.close();
   }
 }
