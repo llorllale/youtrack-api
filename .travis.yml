@@ -20,7 +20,9 @@ jobs:
     - # deploy
       if: type = push AND tag IS present
       script: 
-        - mvn -P deploy clean deploy
+        - openssl aes-256-cbc -K $encrypted_af28e35ab9a0_key -iv $encrypted_af28e35ab9a0_iv -in release/codesigning.asc.enc -out release/codesigning.asc -d
+        - gpg --fast-import release/codesigning.asc
+        - mvn --settings release/mvnsettings.xml -P deploy -DskipTests=true clean deploy 
         - mvn -P site clean site
       deploy:
         provider: pages
@@ -30,3 +32,10 @@ jobs:
         on:
           tags: true
           branch: master
+
+env:
+  global:
+    secure: "izk4D+HhEvK4tb2uA3XbzwYnrIg8SwGI4iwdPkYQRaHRIjqqlOuavvCWdccOgIPY4gizyAN4F801kOnxAuXqSsxJsKurth/5JYL33+7NoOAupO0yHfHjZejR0uFDQ2DppsRfQOCLutyXms1dAZPfkXnEDpKAZQfxdmyetsFdpbwIwJJuUX6hpJvY7laYdE/lYooDah4EW++QNVSbnkUtemmOy/DcJ8JRgbVYQKRqIeyBvtwL/G2HcW8UTLlloT7BmNGhBaUsKda1YEGMd2I5kA21Kqc3qIadUhxfx1ifymb1ZAW4EQhJT+W+yBr0deQBBBBJY3+MhZnr2ywCahaaznrKSenoyxtobUeBX6QThumb/YAo3Ou2jvZOXD3tzCc6+YDEAgIszCn9e/GRygd8JPvrnaGGhpQrWe2dEf5vQbvHOv12h8KHLoxmhlNuUyJ4m2qNN8AS5rTgcOp8TocBs2wCZgFu0Rqqr1nR/M6n51m4UaG3mXlAS1hF+O2zYCY7aZ+3Sd1wXYEWWtDt2A3Qq9T+NDKXQ7VAVFobEzOudhweGFlWs28NI6HL47nhUhacck44XCuEvfMVDWuUISMTUp/2EJx1yfRdl3VqK5mEkqpgy0avdMKbG21EZUDLo0HXzrv/8AKNKjGIjkjWAIXVAfelkgLAVW5B+EgGO4OxrO4="
+    secure: "RCTRpnbct3Zl6qjlpFeY8+G5A6AHQ9bPMWy5tJZ8D/y8ugj9zvFjvZTNqAV1KHX4vAiay3SLukX94o2oY0JOp0nJoLUAKES77tJW3S9Alr72hOmQUeJMI0w6+HUTMuxWomeDaT7fIz/tfOEaNZsPR0ReBNEpiMIUhyP7EJv84nPcKYshetRPntpB5rugAsx+bAXDn0FeGCEJaM0c5TNWb8XYJoHTgizsmmwirA5hQ4tZlBcO4VNUXOC+lSLBbYj4NcNzpnumXpDBqJSYpSuQpW3U/DoEHzgMPwefGYVxCxz16ma0VZdLQdJ0+B5zeO+qujEkKUUk6QS+j7hP6RT1qTjPxdRFrQB5lP8YliqHKwPQh3lIf9hEcIJgmf3RIctF+uTAdhcXrXtLKUeLDea+HgAFyE8YUt5KZzgoylOkW/uGuxVN6YqgPrE7NSt2S2e+rK8591arys+yCj9Zr225A7SHI7gdAmp88fRi7LgsIcR4NFJYpOUM4cJsEEWUCGs6rE27OlDF/If+f15Il0CJGL4b6skZ4N8ys4gxRrUPzabBQVAb1xIqOpiGqhnMBuUaKQ5g9BMg0y1ascNsbwAnhwhbfWFMeiSomUeUkTLYUUkSYaXa2P+gqY/V++0EvmW6EQ9LMM4xDJqKDbovA6art3rgjxtX2yvCf8G33Z20jbU="
+    secure: "SKkafi3rWx0AOWcrKEOoVJ0kx1PqU44ALuIM3i0cBwgX5OcTX4Dgo29iGSzmFT4+wFyQzXr58JbVg5PKxitDVeUI8wzWHHXvlpNe/AhIwmCoZufGkDLTs3Nyr06sVvlfPxG3KhT15bjKYyDa5pqq85e3lVy3U3DkDLjYuPwKfgU8hV5hHCgW2Rds4tcsgdAmVTewA4gIiZ+PPaGzLezqJT+0IKCpzs862Jm5GlIlZgc2Qymy2lNxp4p1NfD3KVrM9yPoSo0qrvfereoaktgW4kKy1/ZzGdXk5SE/cvl2OBYsbSdZspagl3dve/+cBxn2l8BQIlk7ivziHKACmezRTo19irT3GEj6WYoPE8Vb5IH6J2ZAk/5vySX9BlbvnxeXT74KzstLhz76cW6DkP+3LVOC6mQUk7YRI9VKYyqJjb5ads4DiOmszEiPizVafGz4lVhScrZP5PzAzNaz1LsTKkKwnFsVWKZqu8Zikf4vocz0olahri/nilXXFk9hvMyKY9RrASsErmquU/gfh/8C4/Lh+7S1qm/gMRUaeykWZzF1apXoO/bwO/vKZIWRmNKKSkiqJX8GWrW4Wgi3p3Q7hu1lzQAG4c7RqatdwwZ7ysqTW/wWY5m3ZrWy5/OyakRnI9OwnYJt4YzHEMohOjUuVJNiILWJkwgtIxjvQGOQxzc="
+    secure: "BH5CSeoS/kgu91armOWvz6x2+7TVW1sLjVGVxq06AMqt7tUo8vfQjJB4MwrACSqGDoDLag/Hg5XCOCllKgb0SuM+VZcqS5T9WbM4Jy/E2jThfHsoDMVJkTjQ3p5k/uOECHrisvy1l4rZPSUzSwwrEsHJvkUyroEmdn21s/kyWnzAqFQtsRo2sY9A8ijCTX/K1nWHAXYaAwh6o7R9GZIrP3bYA5B9y+LM/E5ayDKN+nO5ph0gOMYnHzegM1U5C0vPl8LqEifGsijviGw4t/LwZaidjEMAOKeHhmt2kfr/kQ11ZefI9Ap7ua13yHNkfRXk7nzYqJ2kie03UguGe8Fw+fnPYGIv1up3KsO6GBi55QsWtQGdpqQqMDrUurV8U1rKQyUtRS1txof41aaulynLC28/Sp+7z2t3Apug6x5V8WDob0pRMX2yQoAsai0vTtE3vDMkDGSOU0bWn9Rpvhn35pg4wzhV+i7a/NnrBLzkY35pAU9zm9Y4xXXsJLs1VXEC554RtEjoNq7xN9Jmh/mzoyoqvC55/r7M58dLnwQRE6+r3pHlC70n5nZXS8UFgMJXwa03aYx/z8Hh8/PmD5GiyQgVA48/X1eBcOdW56HHdBY0WkS6Rs+5wHhIcSieD+WIzsLNalH+lPqJlL5EAUYSFaZ60slbYnTys4r8EDWyv8k="
