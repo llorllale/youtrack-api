@@ -17,26 +17,15 @@
 package org.llorllale.youtrack.api;
 
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
-import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 /**
  * JAXB implementation of {@link Issue}.
@@ -48,30 +37,9 @@ class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
   private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
-  private final HttpClient httpClient;
 
   /**
    * Primary ctor.
-   * 
-   * @param project this {@link Issue issue's} {@link Project}
-   * @param jaxbIssue the JAXB issue to be adapted
-   * @param httpClient the {@link HttpClient} to use
-   * @since 0.1.0
-   */
-  XmlIssue(
-      Project project, 
-      Session session, 
-      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue,
-      HttpClient httpClient
-  ) {
-    this.project = project;
-    this.session = session;
-    this.jaxbIssue = jaxbIssue;
-    this.httpClient = httpClient;
-  }
-
-  /**
-   * Uses the {@link HttpClients#createDefault() default} http client.
    * 
    * @param project this {@link Issue issue's} {@link Project}
    * @param jaxbIssue the JAXB issue to be adapted
@@ -82,11 +50,13 @@ class XmlIssue implements Issue {
       Session session, 
       org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
   ) {
-    this(project, session, jaxbIssue, HttpClients.createDefault());
+    this.project = project;
+    this.session = session;
+    this.jaxbIssue = jaxbIssue;
   }
 
   /**
-   * For testing purporses.
+   * For testing purposes.
    * 
    * @param prototype the prototype
    * @since 0.8.0
@@ -123,13 +93,12 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public String description() {
+  public Optional<String> description() {
     return jaxbIssue.getField()
             .stream()
             .filter(f -> "description".equals(f.getName()))
             .map(f -> f.getValue().getValue())
-            .findFirst()
-            .get();
+            .findAny();
   }
 
   @Override
@@ -160,46 +129,8 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public Issue update(Field field, FieldValue value) 
-      throws IOException, UnauthorizedException {
-    return this.update(String.join(" ", field.name(), value.asString()));
-  }
-
-  @Override
-  public Issue update(Map<Field, FieldValue> fields) 
-      throws IOException, UnauthorizedException {
-    return this.update(
-        fields.entrySet().stream()
-            .map(e -> String.join(" ", e.getKey().name(), e.getValue().asString()))
-            .collect(joining(" "))
-    );
-  }
-
-  private Issue update(String commands) 
-      throws IOException, UnauthorizedException {
-    new HttpResponseAsResponse(
-        httpClient.execute(
-            new HttpRequestWithSession(
-                session, 
-                new HttpRequestWithEntity(
-                    new UrlEncodedFormEntity(
-                        Arrays.asList(
-                            new BasicNameValuePair("command", commands)
-                        ),
-                        StandardCharsets.UTF_8
-                    ),
-                    new HttpPost(
-                        session.baseUrl().toString()
-                            .concat("/issue/")
-                            .concat(this.id())
-                            .concat("/execute")
-                    )
-                )
-            )
-        )
-    ).asHttpResponse();
-
-    return this.refresh();
+  public UpdateIssue update() {
+    return new DefaultUpdateIssue(this, session);
   }
 
   @Override

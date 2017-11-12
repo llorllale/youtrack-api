@@ -37,7 +37,7 @@ public interface SelectableFieldValue extends FieldValue {
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
    *     this operation
    * @since 0.8.0
-   * @see Issue#update(org.llorllale.youtrack.api.Field, org.llorllale.youtrack.api.FieldValue) 
+   * @see UpdateIssue#field(Field, FieldValue)
    */
   public Issue apply() throws IOException, UnauthorizedException;
 }
