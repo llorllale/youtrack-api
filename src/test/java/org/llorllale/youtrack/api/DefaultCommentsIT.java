@@ -69,23 +69,4 @@ public class DefaultCommentsIT {
         is(2L)
     );
   }
-
-  @Test
-  public void postAndUpdateAndGet() throws Exception {
-    final String initialText = "Comment_" + new Random(System.currentTimeMillis()).nextInt();
-    final String finalText = "UpdatedComment_" + new Random(System.currentTimeMillis()).nextInt();
-    final Comment comment = new DefaultComments(session, issue)
-        .post(initialText)
-        .stream()
-        .filter(c -> initialText.equals(c.text()))
-        .findFirst()
-        .get();
-
-    assertTrue(
-        new DefaultComments(session, issue)
-            .update(comment, finalText)
-            .stream()
-            .noneMatch(c -> initialText.equals(c.text()))
-    );
-  }
 }

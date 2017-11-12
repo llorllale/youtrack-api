@@ -20,7 +20,6 @@ package org.llorllale.youtrack.api;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
@@ -37,6 +36,7 @@ import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link Comments}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -47,6 +47,7 @@ class DefaultComments implements Comments {
 
   /**
    * Primary ctor.
+   * 
    * @param session the user's {@link Session}
    * @param issue the {@link Issue} on which the comments are attached to
    * @param httpClient the {@link HttpClient} to use
@@ -60,6 +61,7 @@ class DefaultComments implements Comments {
 
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
+   * 
    * @param session the user's {@link Session}
    * @param issue the {@link Issue} on which the comments are attached to
    * @since 0.4.0
@@ -75,14 +77,14 @@ class DefaultComments implements Comments {
     return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class)
         .apply(
             new HttpResponseAsResponse(
-                httpClient.execute(
+                this.httpClient.execute(
                     new HttpRequestWithSession(
                         session, 
                         new HttpGet(
                             new UncheckedUriBuilder(
-                                session.baseUrl().toString()
+                                this.session.baseUrl().toString()
                                     .concat("/issue/")
-                                    .concat(issue.id())
+                                    .concat(this.issue().id())
                                     .concat("/comment")
                             ).build()
                         )
@@ -91,15 +93,15 @@ class DefaultComments implements Comments {
             ).asHttpResponse().getEntity()
         ).getComment()
             .stream()
-            .map(c -> new XmlComment(issue, c));
+            .map(c -> new XmlComment(this.issue(), this.session, c));
   }
 
   @Override
   public Comments post(String text) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-        httpClient.execute(
+        this.httpClient.execute(
             new HttpRequestWithSession(
-                session, 
+                this.session, 
                 new HttpRequestWithEntity(
                     new StringEntity(
                         "comment=".concat(text), 
@@ -107,9 +109,9 @@ class DefaultComments implements Comments {
                     ),
                     new HttpPost(
                         new UncheckedUriBuilder(
-                            session.baseUrl().toString()
+                            this.session.baseUrl().toString()
                                 .concat("/issue/")
-                                .concat(issue.id())
+                                .concat(this.issue().id())
                                 .concat("/execute")
                         ).build()
                     )
@@ -118,34 +120,11 @@ class DefaultComments implements Comments {
         )
     ).asHttpResponse();
 
-    return new DefaultComments(session, issue);
+    return new DefaultComments(this.session, this.issue());
   }
 
   @Override
-  public Comments update(Comment comment, String text) throws IOException, UnauthorizedException {
-    new HttpResponseAsResponse(
-        httpClient.execute(
-            new HttpRequestWithSession(
-                session, 
-                new HttpRequestWithEntity(
-                    new StringEntity(
-                        String.format("{\"text\": \"%s\"}", text), 
-                        ContentType.APPLICATION_JSON
-                    ),
-                    new HttpPut(
-                        new UncheckedUriBuilder(
-                            session.baseUrl().toString()
-                                .concat("/issue/")
-                                .concat(issue.id())
-                                .concat("/comment/")
-                                .concat(comment.id())
-                        ).build()
-                    )
-                )
-            )
-        )
-    ).asHttpResponse();
-
-    return new DefaultComments(session, issue);
+  public Issue issue() {
+    return this.issue;
   }
 }

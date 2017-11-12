@@ -24,12 +24,14 @@ import java.util.stream.Stream;
 
 /**
  * API for {@link Comment comments} on an {@link Issue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public interface Comments {
   /**
    * A {@link Stream} with all comments for this {@link Issue}.
+   * 
    * @return A {@link Stream} with all comments for this {@link Issue}.
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is unauthorized to access this 
@@ -40,8 +42,9 @@ public interface Comments {
 
   /**
    * Creates a new {@link Comment} for this {@link Issue}.
+   * 
    * @param text the comment's text
-   * @return this object
+   * @return this {@link Comments}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this 
    *     operation
@@ -50,14 +53,10 @@ public interface Comments {
   public Comments post(String text) throws IOException, UnauthorizedException;
 
   /**
-   * Updates the text content of a {@link Comment}.
-   * @param comment the {@link Comment} to update
-   * @param text the new text
-   * @return this object
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this 
-   *     operation
-   * @since 0.4.0
+   * The parent {@link Issue}.
+   * 
+   * @return the parent {@link Issue}
+   * @since 0.9.0
    */
-  public Comments update(Comment comment, String text) throws IOException, UnauthorizedException;
+  public Issue issue();
 }
