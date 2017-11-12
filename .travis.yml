@@ -1,32 +1,38 @@
 sudo: required
 services:
-  - docker
+- docker
 language: java
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
 dist: trusty
 jdk:
-  - openjdk8
-
+- openjdk8
 jobs:
   include:
-    - # test
-      if: type = pull_request
-      script: 
-        - mvn -P release-profile -DskipTests=true clean install
-        - mvn -P integration-tests cobertura:cobertura-integration-test
-        - bash <(curl -s https://codecov.io/bash)
-    - # deploy
-      if: type = push AND tag IS present
-      script: 
-        - mvn -P deploy clean deploy
-        - mvn -P site clean site
-      deploy:
-        provider: pages
-        skip_cleanup: true
-        local_dir: target/site/
-        github_token: $site_token
-        on:
-          tags: true
-          branch: master
+  - if: type = pull_request
+    script:
+    - mvn -P release-profile -DskipTests=true clean install
+    - mvn -P integration-tests cobertura:cobertura-integration-test
+    - bash <(curl -s https://codecov.io/bash)
+  - if: type = push AND tag IS present
+    script:
+    - openssl aes-256-cbc -K $encrypted_af28e35ab9a0_key -iv $encrypted_af28e35ab9a0_iv
+      -in release/codesigning.asc.enc -out release/codesigning.asc -d
+    - gpg --fast-import release/codesigning.asc
+    - mvn --settings release/mvnsettings.xml -P deploy -DskipTests=true clean deploy
+    - mvn -P site clean site
+    deploy:
+      provider: pages
+      skip_cleanup: true
+      local_dir: target/site/
+      github_token: "$site_token"
+      on:
+        tags: true
+        branch: master
+env:
+  global:
+  - secure: Ly/cSCAsrpP7wqbJU67zG/rqcJIIE/KqAVlGK84+zHi/jY9x9FeXecccmnLuPzWL60rlEYI93drnTHf1lVOiz4P6Hvhkfg4zarGljtzKUeE7BnZlreHtbGUWV8IgDlaK/ovoFC4/wsU/Od2WZGA19hJN6iFxV/3cJljxC0AlUQ7GGjpbZUX/4k29CKTWO4NF4EmQJqViWBeSuLeo+F8hTq/pcmtkSFFbzRqu4GAmcC4MxKojhZ8QHY5VeLRTPtvwAdDm8mTifS8cguGk6JoHEsHGiJhcJe8gkDwFix+vaC/9WZ5KgBDs9PP46lBM5RdnP7b4iOsPRfnigz5W/70p6lbe5gJcgByIO/sVfcSDK1UHITzpg2GCvSoc8QUV2f6l8z4mYBaiq0JkSAWxu84ukZLPVKqbZ0+RbgvVGFeYpRt9Xw/OAv13ZMdAa3a3h+4pYeaviNIbu9y0O9wnGo5dc0qK7HwuaxVY8XdTW+Vu81OGbeGWMu1MBzSzTKYuHNJfY62KD+f1x4Snrtqa2D9LeQEt2nqffynOuB7Eka/+nI9mYZ3wz6FTJ7HRZJa4Na4W9RfO1jndxlJdfJqXyUgppb5wFC+WXgwjAmN0sBdCw+O0Gv95UXPX3XaxQlI0YTHkwlxKanxjRJ/uyqxl9OJFz+kB9TysyYOk4fa5pRfLq1U=
+  - secure: qQRYP3BqV3M0NMQdApqjRkVnCmVZwqxWDfoSBFFip5fqVjR4tBpMshs1Srtma2hbG7AcNoMPrYpx9+GfmfdR12QKh3X7d3/Xjw2ZX8TdibCCEbzcRI3JQvwLXkfo6ihJj/B32pPnhPQeH/hk3GL6Ui7oUha1NiwTd6dgtJ/Xg7pHTt3XPeigXFa60H1lhTCRAgZy583QzqPPz9G7lm7fIT6xWuO/iWp+8FOkGoHKDg/JgwfgJ2t66m/3rL/Fsld6YKMHh/Qp9C2r3K5yiJClLGp+ZV8aKUXoAz1sPrSugyp2WfiiNnrFUxbiBbSIgAvoM3jn50/nBd9dMfujgHGgyIJMZSUOjjE5s6rlLR3sdrqE1EXWt7hdW99WkMI7bOUtUVYzZVbbPP/md0ctUmfjZ0nNOPDhB8BUPc3Z+3SvWKKeF4eh3hHCiTOnqD5V957MkvCoiGm4ORYhg9/6yotbtyFbPyEjjJAupcaL0dD9t439OukAye+Y5LQpbmn7+AoV07orD96BP/097/vP2rlQlJ1DGPXwwTJTyS9GPS2GxkqGTiThEuvRAM/fw5WzXZoNvs4hHz3ZidkuBwM5WXWF1KZhk+I/AOZvXLAJZg4Z1GPnbHyOSSrS2Zy/6asvXWreAKHnKgeLdSnYVF5QaSln67hlF9SXK9fFlFFcdmJ0+2E=
+  - secure: Gj8xWYfny05btyBVVGf8Zoi/pzxoy78dvBRx9kDE/NcqFEb9K/sEJF3iCyrTbMs9ELm81JAu6Z8ngX2UX6nR0aP7IakuBp2E2O6NzcqjUW0M0/Ffwi9Uyz6b67VtEtvSvoM7dloOPz7RDyZHWWApg2VkI0ICWBg9vULwKPg9gSZvMR1TtCU4+rJz8Wui/nRYw704f+fF8pNz1x0b86HZHWSmGuQ2qqsOmuSUMLRbHHQcqt63XWhs1VqovD1nXEGrvRD8M41wtZV75t94zyOwJlgREn33vr1AenMI2pJqekZA16fi3zwV0bXKKLEr4ghxfrJbl4m4g4nDvkzHuox22ZdztctL/8qDj3e84K0R28qH9RAWdeAnKqK/M3QOfHjRjmhE+bP/J3i0BSwvyGLDKdNvVWAIAWn0IM/jGpaIIO3BsW1QP7cV9kY6cSsGXGdq7M0fDMI6DrRzdjOHKGN1iEdMTZtI73E0A63iXYPRf4aol345fM9ZABJAk72qY8uuKJEPzs0e70nkuQoFO6PTgAoSHTXHBguBwIJDidTb1PRQ+y+Kf1Yd0Q+AbiDRn/wn2fBd4pIApDFfNIxQMnizvfEpeugJRANXlsDabn8fjKQ/7sS84EOLtmq4VKtVZOdDb36H65CNIpz/QGVPKTnEr4KbJrzx+6YaW6xaV4amJrg=
+  - secure: Lu54Jjyz/MSVC+/g/+8BLYhFqnF4Mw2rgIbpYjIoKANo0AJ4gbLA33xJYAcjO8mJAXUU3Xuaz/IPIY0L4kuzoNRGHPx2CP7SSPdrzEypMdfUq+7ViU6Q/ppRh3WPRjn9nyQ8G+ZxWxjM571f8v9YrJ9dfv3AJEcwcAS3DL9ESrg8y9ZFZrOudtMrxcFdQrAAV49bcgJcnoAhbL4gpqzJHQqUBL6vot5OwdGqb7IGTx+8xj+dsBvMnZUPbRKMbThvz7gZO2q87oMo2NLQyaOlyume7kfCgPWYgKk9dQ0GHH1fKUm3NvXFvu8wDydn7+/A65YeQnv2CmyxCWLwSngg9peg/WifoKur9haPCpIalUNQxN8egIu0tlblu4EaxKdiuCobp+ElAhLqM3v+uklkP6Ulx7+fs3jGT35HVZNmVb+R9OqhVE2klcjssaENoO1aENqOh8xLKONsSa0nSCXBDZej6X8kY8v2f/YDJv2S1y9TZuvPj0cfcYH/ba1yLwW+KWxsc7zXbnfKHCCf9KPDht8OHoBuy7uw2DfTHDXjQbEjSmyz81ixP7PYWbAxfCHmyPhBh6+sRhzfmcU5kXxVDZL6OMlKZW5PHgEr6wVBl4YUO1NETKE0QeKk1IHqUn7ULGL8KUzymasN6V6x5MLywhEQWCuqORv5UVyYRrWBYqI=

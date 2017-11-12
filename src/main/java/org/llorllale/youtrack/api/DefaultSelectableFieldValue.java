@@ -45,7 +45,7 @@ class DefaultSelectableFieldValue implements SelectableFieldValue {
 
   @Override
   public Issue apply() throws IOException, UnauthorizedException {
-    return this.issue.update(this.field(), this);
+    return this.issue.update().field(this.field(), this);
   }
 
   @Override

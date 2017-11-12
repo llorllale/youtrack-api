@@ -91,7 +91,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException {
-    return this.issue().update(
+    return this.issue().update().field(
         this.field,
         new BasicFieldValue(user.loginName(), this.field)
     ).users();
