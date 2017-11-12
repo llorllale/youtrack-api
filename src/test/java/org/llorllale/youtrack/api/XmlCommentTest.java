@@ -23,10 +23,13 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockProject;
+import org.llorllale.youtrack.api.mock.http.MockSession;
+import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
  * Unit tests for {@link XmlComment}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -41,7 +44,7 @@ public class XmlCommentTest {
   @Test
   public void testId() {
     assertThat(
-        new XmlComment(issue(), jaxbComment).id(),
+        new XmlComment(issue(), session(), jaxbComment).id(),
         is(jaxbComment.getId())
     );
   }
@@ -49,7 +52,7 @@ public class XmlCommentTest {
   @Test
   public void testCreationDate() {
     assertThat(
-        new XmlComment(issue(), jaxbComment).creationDate(),
+        new XmlComment(issue(), session(), jaxbComment).creationDate(),
         is(Instant.ofEpochMilli(jaxbComment.getCreated()))
     );
   }
@@ -57,7 +60,7 @@ public class XmlCommentTest {
   @Test
   public void testText() {
     assertThat(
-        new XmlComment(issue(), jaxbComment).text(),
+        new XmlComment(issue(), session(), jaxbComment).text(),
         is(jaxbComment.getText())
     );
   }
@@ -65,6 +68,10 @@ public class XmlCommentTest {
   private Issue issue() {
     return new MockIssue(new MockProject("PR-1", "", ""))
         .withId("I-23");
+  }
+
+  private Session session() {
+    return new MockSession();
   }
 
   private static final String XML =

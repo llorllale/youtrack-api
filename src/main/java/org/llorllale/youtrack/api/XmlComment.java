@@ -16,45 +16,131 @@
 
 package org.llorllale.youtrack.api;
 
+
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
+import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
+import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
+
+import java.io.IOException;
 import java.time.Instant;
+
 
 /**
  * JAXB implementation of {@link Comment}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.2.0
  */
 class XmlComment implements Comment {
+  private final String id;
+  private final long creationDate;
+  private final String text;
   private final Issue issue;
-  private final org.llorllale.youtrack.api.jaxb.Comment jaxbComment;
+  private final Session session;
 
   /**
-   * Ctor.
+   * Primary ctor.
+   * 
+   * @param id the comment's id
+   * @param creationDate the date when the comment was created (epoch time)
+   * @param text the comment's text
+   * @param issue the issue to which the comment is attached
+   * @param session the user's session
+   * @since 0.9.0
+   */
+  XmlComment(String id, long creationDate, String text, Issue issue, Session session) {
+    this.id = id;
+    this.creationDate = creationDate;
+    this.text = text;
+    this.issue = issue;
+    this.session = session;
+  }
+
+  /**
+   * Extracts {@code id}, {@code creationDate}, and {@code text} from {@code jaxbComment}.
+   * 
    * @param issue the {@link Issue} to which this comment is attached
+   * @param session the user's session
    * @param jaxbComment the jaxb instance to be adapted into {@link Comment}
    * @since 0.2.0
    */
-  XmlComment(Issue issue, org.llorllale.youtrack.api.jaxb.Comment jaxbComment) {
-    this.issue = issue;
-    this.jaxbComment = jaxbComment;
+  XmlComment(Issue issue, Session session, org.llorllale.youtrack.api.jaxb.Comment jaxbComment) {
+    this(jaxbComment.getId(), jaxbComment.getCreated(), jaxbComment.getText(), issue, session);
   }
 
   @Override
   public Issue issue() {
-    return issue;
+    return this.issue;
   }
 
   @Override
   public String id() {
-    return jaxbComment.getId();
+    return this.id;
   }
 
   @Override
   public Instant creationDate() {
-    return Instant.ofEpochMilli(jaxbComment.getCreated());
+    return Instant.ofEpochMilli(this.creationDate);
   }
 
   @Override
   public String text() {
-    return jaxbComment.getText();
+    return this.text;
+  }
+
+  @Override
+  public Comment update(String text) throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        HttpClients.createDefault().execute(
+            new HttpRequestWithSession(
+                this.session, 
+                new HttpRequestWithEntity(
+                    new StringEntity(
+                        String.format("{\"text\": \"%s\"}", text), 
+                        ContentType.APPLICATION_JSON
+                    ),
+                    new HttpPut(
+                        new UncheckedUriBuilder(
+                            this.session.baseUrl().toString()
+                                .concat("/issue/")
+                                .concat(this.issue().id())
+                                .concat("/comment/")
+                                .concat(this.id())
+                        ).build()
+                    )
+                )
+            )
+        )
+    ).asHttpResponse();
+
+    return new XmlComment(this.id, this.creationDate, text, this.issue(), this.session);
+  }
+
+  @Override
+  public Issue delete() throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        HttpClients.createDefault().execute(
+            new HttpRequestWithSession(
+                this.session, 
+                new HttpDelete(
+                    this.session.baseUrl().toString()
+                        .concat("/issue/")
+                        .concat(this.issue.id())
+                        .concat("/comment/")
+                        .concat(this.id())
+                )
+            )
+        )
+    ).asHttpResponse();
+
+    return this.issue();
   }
 }
