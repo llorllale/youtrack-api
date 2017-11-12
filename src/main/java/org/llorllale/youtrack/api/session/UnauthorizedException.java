@@ -18,18 +18,22 @@ package org.llorllale.youtrack.api.session;
 
 import org.apache.http.HttpResponse;
 
+import java.io.IOException;
+
 /**
  * Signals that the attempted action is forbidden for the current user {@link Session session}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class UnauthorizedException extends Exception {
+public class UnauthorizedException extends IOException {
   private static final long serialVersionUID = -2245180199390157205L;
 
   private final HttpResponse httpResponse;
   
   /**
    * Ctor.
+   * 
    * @param message the exception message
    * @param httpResponse the {@link HttpResponse response} received
    * @since 0.1.0
@@ -41,10 +45,11 @@ public class UnauthorizedException extends Exception {
 
   /**
    * The {@link HttpResponse response} received.
+   * 
    * @return the {@link HttpResponse response} received
    * @since 0.1.0
    */
   public HttpResponse httpResponse() {
-    return httpResponse;
+    return this.httpResponse;
   }
 }

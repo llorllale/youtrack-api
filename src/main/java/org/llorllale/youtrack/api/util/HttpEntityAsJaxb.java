@@ -23,6 +23,7 @@ import java.io.IOException;
 /**
  * Utility class to read the text content received from YouTrack in this 
  * {@link HttpEntity} and convert it to its JAXB representation.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the JAXB root element type class
  * @since 0.1.0
@@ -32,6 +33,7 @@ public class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, I
 
   /**
    * Ctor.
+   * 
    * @param rootType the type for the XML's root element
    * @since 0.1.0
    */
@@ -41,7 +43,8 @@ public class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, I
 
   @Override
   public T apply(HttpEntity entity) throws IOException {
-    return new XmlStringAsJaxb<>(rootType)
-        .apply(new InputStreamAsString(entity.getContent()).string());
+    return new XmlStringAsJaxb<>(this.rootType).apply(
+        new InputStreamAsString().apply(entity.getContent())
+    );
   }
 }

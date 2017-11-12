@@ -50,38 +50,38 @@ class XmlProject implements Project {
 
   @Override
   public String id() {
-    return Optional.ofNullable(jaxbProject.getShortName())
-        .orElse(jaxbProject.getId());
+    return Optional.ofNullable(this.jaxbProject.getShortName())
+        .orElse(this.jaxbProject.getId());
   }
 
   @Override
   public String name() {
-    return jaxbProject.getName();
+    return this.jaxbProject.getName();
   }
 
   @Override
   public Optional<String> description() {
-    return Optional.ofNullable(jaxbProject.getDescription());
+    return Optional.ofNullable(this.jaxbProject.getDescription());
   }
 
   @Override
   public Issues issues() {
-    return new DefaultIssues(this, session);
+    return new DefaultIssues(this, this.session);
   }
 
   @Override
   public YouTrack youtrack() {
-    return youtrack;
+    return this.youtrack;
   }
 
   @Override
   public Fields fields() {
-    return new DefaultFields(session, this);
+    return new DefaultFields(this.session, this);
   }
 
   @Override
   public TimeTracking timetracking() {
-    return new DefaultTimeTracking(this, session);
+    return new DefaultTimeTracking(this, this.session);
   }
 
   @Override
@@ -106,5 +106,10 @@ class XmlProject implements Project {
     final Project other = (Project) obj;
 
     return Objects.equals(this.id(), other.id());
+  }
+
+  @Override
+  public UsersOfProject users() {
+    return new DefaultUsersOfProject(this, this.session, this.jaxbProject);
   }
 }

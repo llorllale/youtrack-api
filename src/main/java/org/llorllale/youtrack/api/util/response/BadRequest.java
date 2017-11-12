@@ -26,6 +26,7 @@ import java.io.IOException;
  * Throws an {@link IOException} if the server responds with {@code 400 Bad Request}.
  * 
  * <p>Note: 'Bad Request' should never happen :-)</p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
@@ -34,6 +35,7 @@ public class BadRequest implements Response {
 
   /**
    * Ctor.
+   * 
    * @param response the next link in the chain
    * @since 0.7.0
    */
@@ -43,19 +45,19 @@ public class BadRequest implements Response {
 
   @Override
   public HttpResponse asHttpResponse() throws IOException, UnauthorizedException {
-    if (response.asHttpResponse().getStatusLine().getStatusCode() == 400) {
+    if (this.response.asHttpResponse().getStatusLine().getStatusCode() == 400) {
       throw new IOException(
           String.format(
               "Server returned 400 Bad Request. Payload: %s",
-              response.asHttpResponse().getEntity() != null 
-                  ? new InputStreamAsString(
-                      response.asHttpResponse().getEntity().getContent()
-                  ).string()
+              this.response.asHttpResponse().getEntity() != null 
+                  ? new InputStreamAsString().apply(
+                        this.response.asHttpResponse().getEntity().getContent()
+                    )
                   : ""
           )
       );
     }
 
-    return response.asHttpResponse();
+    return this.response.asHttpResponse();
   }
 }

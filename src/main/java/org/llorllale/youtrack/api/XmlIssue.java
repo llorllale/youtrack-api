@@ -67,12 +67,12 @@ class XmlIssue implements Issue {
 
   @Override
   public String id() {
-    return jaxbIssue.getId();
+    return this.jaxbIssue.getId();
   }
 
   @Override
   public Instant creationDate() {
-    return Instant.ofEpochMilli(jaxbIssue.getField()
+    return Instant.ofEpochMilli(this.jaxbIssue.getField()
             .stream()
             .filter(f -> "created".equals(f.getName()))
             .map(f -> f.getValue().getValue())
@@ -84,7 +84,7 @@ class XmlIssue implements Issue {
 
   @Override
   public String summary() {
-    return jaxbIssue.getField()
+    return this.jaxbIssue.getField()
             .stream()
             .filter(f -> "summary".equals(f.getName()))
             .map(f -> f.getValue().getValue())
@@ -94,7 +94,7 @@ class XmlIssue implements Issue {
 
   @Override
   public Optional<String> description() {
-    return jaxbIssue.getField()
+    return this.jaxbIssue.getField()
             .stream()
             .filter(f -> "description".equals(f.getName()))
             .map(f -> f.getValue().getValue())
@@ -103,43 +103,43 @@ class XmlIssue implements Issue {
 
   @Override
   public Project project() {
-    return project;
+    return this.project;
   }
 
   @Override
   public Comments comments() {
-    return new DefaultComments(session, this);
+    return new DefaultComments(this.session, this);
   }
 
   @Override
   public IssueTimeTracking timetracking() {
-    return new DefaultIssueTimeTracking(session, this);
+    return new DefaultIssueTimeTracking(this.session, this);
   }
 
   @Override
   public UsersOfIssue users() {
-    return new DefaultUsersOfIssue(session, this, jaxbIssue);
+    return new DefaultUsersOfIssue(this, this.jaxbIssue);
   }
 
   @Override
   public Issue refresh() throws IOException, UnauthorizedException {
     return this.project().issues()
-        .get(id())
+        .get(this.id())
         .get();
   }
 
   @Override
   public UpdateIssue update() {
-    return new DefaultUpdateIssue(this, session);
+    return new DefaultUpdateIssue(this, this.session);
   }
 
   @Override
   public List<AssignedField> fields() {
-    return jaxbIssue.getField().stream()
+    return this.jaxbIssue.getField().stream()
         .filter(f -> nonNull(f.getValueId()))
         .map(f -> 
             new DefaultAssignedField(
-                new BasicField(f.getName(), project),
+                new BasicField(f.getName(), this.project),
                 this, 
                 f
             )

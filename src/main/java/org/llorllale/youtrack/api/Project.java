@@ -80,4 +80,12 @@ public interface Project {
    * @since 0.8.0
    */
   public TimeTracking timetracking();
+
+  /**
+   * Access the {@link UsersOfProject} API for this {@link Project}.
+   * 
+   * @return the {@link UsersOfProject} API for this {@link Project}
+   * @since 0.9.0
+   */
+  public UsersOfProject users();
 }

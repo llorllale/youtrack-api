@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api.util.response;
 
+import java.io.IOException;
+
 /**
  * <p>
  * Signals an error with parsing the payload received from YouTrack.
@@ -25,14 +27,16 @@ package org.llorllale.youtrack.api.util.response;
  * This is a runtime exception due to the assumption that this kind of error
  * should not be expected.
  * </p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class ParseException extends RuntimeException {
+public class ParseException extends IOException {
   private static final long serialVersionUID = -8989519985743709400L;
 
   /**
    * Ctor.
+   * 
    * @param message exception message
    * @since 0.1.0
    */
@@ -42,6 +46,7 @@ public class ParseException extends RuntimeException {
 
   /**
    * Ctor.
+   * 
    * @param message exception message
    * @param cause cause of exception
    * @since 0.1.0

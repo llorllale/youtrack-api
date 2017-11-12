@@ -33,6 +33,13 @@ public class ApplyIf<T,R,E extends Exception> implements ExceptionalFunction<T,O
   private final Predicate<T> condition;
   private final ExceptionalFunction<T,R,E> function;
 
+  /**
+   * Ctor.
+   * 
+   * @param condition the condition that needs to be met
+   * @param function the function to apply if {@code condition} is met
+   * @since 0.6.0
+   */
   public ApplyIf(Predicate<T> condition, ExceptionalFunction<T, R, E> function) {
     this.condition = condition;
     this.function = function;
@@ -42,8 +49,8 @@ public class ApplyIf<T,R,E extends Exception> implements ExceptionalFunction<T,O
   public Optional<R> apply(T input) throws E {
     final Optional<R> result;
 
-    if (condition.test(input)) {
-      result = Optional.of(function.apply(input));
+    if (this.condition.test(input)) {
+      result = Optional.of(this.function.apply(input));
     } else {
       result = Optional.empty();
     }
