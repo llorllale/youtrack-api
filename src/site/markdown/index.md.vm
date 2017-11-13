@@ -39,6 +39,8 @@ The goals of this project include:
 * High quality by providing extensive test coverage and documentation.
 * Give back to the community by open-sourcing this project (we use [Apache License v2.0](LICENSE)).
 
+It is worth noting that **performance is not a goal** of this project.
+
 $h4 Why another Java YouTrack API?
 Of the few other Java API projects for YouTrack that seem anywhere remotely "complete", all are lacking several of the following aspects:
 

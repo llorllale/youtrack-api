@@ -39,7 +39,7 @@ public class MappedCollection<I,O, E extends Exception> extends AbstractCollecti
   private final Collection<O> output;
 
   /**
-   * Eagerly applies {@code function} on each element of {@link collection} in order to implement
+   * Eagerly applies {@code function} on each element of {@code collection} in order to implement
    * the {@link Collection} contract. 
    * 
    * <p>The behaviour is like this:<br>
