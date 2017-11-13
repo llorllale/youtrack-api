@@ -8,13 +8,13 @@
 $h3 About
 `${project.artifactId}` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/), tested against version `${youtrackVersion}`.
 
-The API is currently unstable as we approach our [first milestone](https://github.com/llorllale/youtrack-api/milestone/1).
+**Note:** the API is currently unstable as we approach our [first milestone](https://github.com/llorllale/youtrack-api/milestone/1).
 
 <br/>
 
 $h4 Snippet
 
-    final YouTrack youtrack = new YouTrack(
+    final YouTrack youtrack = new DefaultYouTrack(
         new PermanentTokenLogin("your_token").login()   //login
     );
     
@@ -29,11 +29,22 @@ $h4 Snippet
 
 <br/>
 
+$h4 Goals
+The goals of this project include:
+
+* Provide a complete API in Java centered on the **user** (eg. the developer). This means that admin features are out of scope.
+* Faithfully follow YouTrack's model and paradigms.
+* Provide a fluent interface to access YouTrack's features.
+* Implement the best OOP design practices.
+* High quality by providing extensive test coverage and documentation.
+* Give back to the community by open-sourcing this project (we use [Apache License v2.0](LICENSE)).
+
 $h4 Why another Java YouTrack API?
-Of the few other Java API projects for YouTrack that seem anywhere remotely "complete", all are lacking in several of the following aspects:
+Of the few other Java API projects for YouTrack that seem anywhere remotely "complete", all are lacking several of the following aspects:
 
 * Fluency
-* OOP (they require "imperative-style" programming for clients)
+* OOP (`DTO` is the backbone of their design philosophy)
+* Incorrect modeling
 * Immutability
 * Documentation (including licensing)
 * Tests (unit + integration)
