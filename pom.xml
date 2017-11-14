@@ -190,6 +190,10 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <excludePackageNames>org.llorllale.youtrack.api.jaxb,org.llorllale.youtrack.api.util</excludePackageNames>
+              <level>protected</level>
+            </configuration>
             <reportSets>
               <reportSet>
                 <reports>
