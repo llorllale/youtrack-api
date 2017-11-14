@@ -56,7 +56,7 @@ limitations under the License.
   <body>
     <links>
       <item name="About" href="./index.html"/>
-      <item name="GitHub" href="https://github.com/llorllale/youtrack-api"/>
+      <item name="GitHub" href="http://github.com/llorllale/youtrack-api"/>
     </links>
 
     <menu name="Documentation">
@@ -65,8 +65,8 @@ limitations under the License.
     </menu>
 
     <menu name="Project">
-      <item name="Releases" href="https://github.com/llorllale/youtrack-api/releases"/>
-      <item name="Issue Tracking" href="https://github.com/llorllale/youtrack-api/issues"/>
+      <item name="Releases" href="http://github.com/llorllale/youtrack-api/releases"/>
+      <item name="Issue Tracking" href="http://github.com/llorllale/youtrack-api/issues"/>
       <item name="License" href="./license.html"/>
       <item name="Members" href="./team-list.html"/>
       <item name="CheckStyle Report" href="./checkstyle.html"/>

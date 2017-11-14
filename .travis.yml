@@ -21,7 +21,7 @@ jobs:
       -in release/codesigning.asc.enc -out release/codesigning.asc -d
     - gpg --fast-import release/codesigning.asc
     - mvn --settings release/mvnsettings.xml -P deploy -DskipTests=true clean deploy
-    - mvn -P site clean site
+    - mvn -P site clean compile site
     deploy:
       provider: pages
       skip_cleanup: true
