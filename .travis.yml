@@ -30,6 +30,14 @@ jobs:
       on:
         tags: true
         branch: master
+  - if: type = push AND tag IS NOT present AND branch = master
+    script:
+    - openssl aes-256-cbc -K $encrypted_af28e35ab9a0_key -iv $encrypted_af28e35ab9a0_iv
+      -in release/codesigning.asc.enc -out release/codesigning.asc -d
+    - gpg --fast-import release/codesigning.asc
+    - export VERSION=$(mvn help:evaluate -Dexpression=project.version | grep -v '^\[' | sed "s/SNAPSHOT/rc$TRAVIS_BUILD_ID/")
+    - mvn versions:set -DnewVersion=$VERSION
+    - mvn --settings release/mvnsettings.xml -P deploy -DskipTests=true clean deploy
 env:
   global:
   - secure: Ly/cSCAsrpP7wqbJU67zG/rqcJIIE/KqAVlGK84+zHi/jY9x9FeXecccmnLuPzWL60rlEYI93drnTHf1lVOiz4P6Hvhkfg4zarGljtzKUeE7BnZlreHtbGUWV8IgDlaK/ovoFC4/wsU/Od2WZGA19hJN6iFxV/3cJljxC0AlUQ7GGjpbZUX/4k29CKTWO4NF4EmQJqViWBeSuLeo+F8hTq/pcmtkSFFbzRqu4GAmcC4MxKojhZ8QHY5VeLRTPtvwAdDm8mTifS8cguGk6JoHEsHGiJhcJe8gkDwFix+vaC/9WZ5KgBDs9PP46lBM5RdnP7b4iOsPRfnigz5W/70p6lbe5gJcgByIO/sVfcSDK1UHITzpg2GCvSoc8QUV2f6l8z4mYBaiq0JkSAWxu84ukZLPVKqbZ0+RbgvVGFeYpRt9Xw/OAv13ZMdAa3a3h+4pYeaviNIbu9y0O9wnGo5dc0qK7HwuaxVY8XdTW+Vu81OGbeGWMu1MBzSzTKYuHNJfY62KD+f1x4Snrtqa2D9LeQEt2nqffynOuB7Eka/+nI9mYZ3wz6FTJ7HRZJa4Na4W9RfO1jndxlJdfJqXyUgppb5wFC+WXgwjAmN0sBdCw+O0Gv95UXPX3XaxQlI0YTHkwlxKanxjRJ/uyqxl9OJFz+kB9TysyYOk4fa5pRfLq1U=
