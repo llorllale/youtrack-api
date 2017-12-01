@@ -30,12 +30,13 @@ jobs:
       on:
         tags: true
         branch: master
-  - if: type = push AND tag IS NOT present AND branch = master AND env(TRAVIS_PULL_REQUEST) = false
+  - if: type = push AND NOT tag IS present AND branch = master
     script:
     - openssl aes-256-cbc -K $encrypted_af28e35ab9a0_key -iv $encrypted_af28e35ab9a0_iv
       -in release/codesigning.asc.enc -out release/codesigning.asc -d
     - gpg --fast-import release/codesigning.asc
     - export VERSION=$(mvn help:evaluate -Dexpression=project.version | grep -v '^\[' | sed "s/SNAPSHOT/rc$TRAVIS_BUILD_ID/")
+    - echo "Candidate Version is $VERSION"
     - mvn versions:set -DnewVersion=$VERSION
     - mvn --settings release/mvnsettings.xml -P deploy -DskipTests=true clean deploy
 env:
