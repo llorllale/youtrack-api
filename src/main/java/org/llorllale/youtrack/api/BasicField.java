@@ -42,12 +42,12 @@ class BasicField implements Field {
 
   @Override
   public Project project() {
-    return project;
+    return this.project;
   }
 
   @Override
   public String name() {
-    return name;
+    return this.name;
   }
 
   @Override
@@ -64,16 +64,11 @@ class BasicField implements Field {
       return true;
     }
 
-    if (obj == null) {
-      return false;
-    }
-
-    if (!Field.class.isAssignableFrom(obj.getClass())) {
+    if (!(obj instanceof Field)) {
       return false;
     }
 
     final Field other = (Field) obj;
-
     return this.isSameField(other);
   }
 }

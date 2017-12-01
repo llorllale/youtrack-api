@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 /**
  * A JAXB implementation of {@link User}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
@@ -26,6 +27,7 @@ class XmlUser implements User {
 
   /**
    * Primary ctor.
+   * 
    * @param jaxbUser the jaxb instance
    * @since 0.5.0
    */
@@ -35,16 +37,16 @@ class XmlUser implements User {
 
   @Override
   public String name() {
-    return jaxbUser.getFullName();
+    return this.jaxbUser.getFullName();
   }
 
   @Override
   public String email() {
-    return jaxbUser.getEmail();
+    return this.jaxbUser.getEmail();
   }
 
   @Override
   public String loginName() {
-    return jaxbUser.getLogin();
+    return this.jaxbUser.getLogin();
   }
 }

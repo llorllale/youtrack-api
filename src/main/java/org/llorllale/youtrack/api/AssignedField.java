@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * A {@link Field} that is attached to an {@link Issue}.
@@ -35,7 +35,7 @@ public interface AssignedField extends Field {
    * @return the {@link Issue} to which this {@link AssignedField} is attached to
    * @since 0.8.0
    */
-  public Issue issue();
+  Issue issue();
 
   /**
    * This field's {@link FieldValue value}.
@@ -43,7 +43,7 @@ public interface AssignedField extends Field {
    * @return this field's {@link FieldValue value}
    * @since 0.8.0
    */
-  public FieldValue value();
+  FieldValue value();
 
   /**
    * Returns a stream of values that can be selected for this {@link AssignedField}.
@@ -54,5 +54,5 @@ public interface AssignedField extends Field {
    *     this operation
    * @since 0.8.0
    */
-  public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException;
+  Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException;
 }

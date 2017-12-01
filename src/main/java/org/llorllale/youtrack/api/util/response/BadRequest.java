@@ -16,11 +16,13 @@
 
 package org.llorllale.youtrack.api.util.response;
 
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.InputStreamAsString;
-
-import java.io.IOException;
 
 /**
  * Throws an {@link IOException} if the server responds with {@code 400 Bad Request}.
@@ -30,7 +32,7 @@ import java.io.IOException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
-public class BadRequest implements Response {
+public final class BadRequest implements Response {
   private final Response response;
 
   /**
@@ -44,20 +46,17 @@ public class BadRequest implements Response {
   }
 
   @Override
-  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException {
-    if (this.response.asHttpResponse().getStatusLine().getStatusCode() == 400) {
+  public HttpResponse httpResponse() throws IOException, UnauthorizedException {
+    if (this.response.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
       throw new IOException(
-          String.format(
-              "Server returned 400 Bad Request. Payload: %s",
-              this.response.asHttpResponse().getEntity() != null 
-                  ? new InputStreamAsString().apply(
-                        this.response.asHttpResponse().getEntity().getContent()
-                    )
-                  : ""
+          String.format("Server returned 400 Bad Request. Payload: %s",
+              new InputStreamAsString().apply(
+                  this.response.httpResponse().getEntity().getContent()
+              )
           )
       );
     }
 
-    return this.response.asHttpResponse();
+    return this.response.httpResponse();
   }
 }

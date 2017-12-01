@@ -23,7 +23,7 @@ import org.llorllale.youtrack.api.session.Session;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class DefaultYouTrack implements YouTrack {
+public final class DefaultYouTrack implements YouTrack {
   private final Session session;
 
   /**
@@ -37,6 +37,6 @@ public class DefaultYouTrack implements YouTrack {
 
   @Override
   public Projects projects() {
-    return new DefaultProjects(this, session);
+    return new DefaultProjects(this, this.session);
   }
 }

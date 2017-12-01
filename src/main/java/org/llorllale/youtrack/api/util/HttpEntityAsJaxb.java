@@ -16,9 +16,9 @@
 
 package org.llorllale.youtrack.api.util;
 
-import org.apache.http.HttpEntity;
-
 import java.io.IOException;
+
+import org.apache.http.HttpEntity;
 
 /**
  * Utility class to read the text content received from YouTrack in this 
@@ -28,7 +28,7 @@ import java.io.IOException;
  * @param <T> the JAXB root element type class
  * @since 0.1.0
  */
-public class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, IOException> {
+public final class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, IOException> {
   private final Class<T> rootType;
 
   /**

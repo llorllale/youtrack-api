@@ -30,14 +30,16 @@ import java.util.Collections;
  * Calling {@link #login() login()} on an {@code AnonymousLogin} is 
  * guaranteed to always succeed.
  * </p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class AnonymousLogin implements Login {
+public final class AnonymousLogin implements Login {
   private final URL youtrackUrl;
 
   /**
    * Ctor.
+   * 
    * @param youtrackUrl the YouTrack API's url.
    * @since 0.1.0
    */
@@ -47,6 +49,6 @@ public class AnonymousLogin implements Login {
   
   @Override
   public Session login() throws AuthenticationException, IOException {
-    return new DefaultSession(youtrackUrl, Collections.emptyList());
+    return new DefaultSession(this.youtrackUrl, Collections.emptyList());
   }
 }

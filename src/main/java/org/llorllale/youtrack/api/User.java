@@ -18,28 +18,32 @@ package org.llorllale.youtrack.api;
 
 /**
  * A registered user in YouTrack.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
 public interface User {
   /**
    * The user's full name.
+   * 
    * @return the user's full name
    * @since 0.5.0
    */
-  public String name();
+  String name();
 
   /**
    * The user's email.
+   * 
    * @return the user's email
    * @since 0.5.0
    */
-  public String email();
+  String email();
 
   /**
    * The user's login name.
+   * 
    * @return the user's login name
    * @since 0.5.0
    */
-  public String loginName();
+  String loginName();
 }

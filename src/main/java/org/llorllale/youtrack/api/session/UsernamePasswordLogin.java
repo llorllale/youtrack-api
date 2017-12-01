@@ -16,20 +16,21 @@
 
 package org.llorllale.youtrack.api.session;
 
-import static java.util.Objects.isNull;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
-import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Objects;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+
+import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 
 /**
  * <p>A login for the simple username/password use case.</p>
@@ -43,11 +44,12 @@ import java.util.Arrays;
  * retried. Further calls to the {@link #login() login()} method will result in an
  * {@code IllegalStateException} being thrown.
  * </p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @see Login
  * @since 0.1.0
  */
-public class UsernamePasswordLogin implements Login {
+public final class UsernamePasswordLogin implements Login {
   private final URL youtrackUrl;
   private final HttpClient httpClient;
   private String username;
@@ -55,13 +57,14 @@ public class UsernamePasswordLogin implements Login {
 
   /**
    * Primary constructor.
+   * 
    * @param youtrackUrl the URL of the YouTrack API endpoint
    * @param username the principal
    * @param password the credentials
    * @param httpClient http client to use to call the remote API
    * @since 0.1.0
    */
-  public UsernamePasswordLogin(
+  UsernamePasswordLogin(
           final URL youtrackUrl, 
           String username, 
           char[] password, 
@@ -76,11 +79,12 @@ public class UsernamePasswordLogin implements Login {
   /**
    * Assumes the {@link HttpClients#createDefault() default http client} as the 
    * http client to use.
+   * 
    * @param youtrackUrl the URL of the YouTrack API endpoint
    * @param username the principal
    * @param password the credentials
-   * @since 0.1.0
    * @see #UsernamePasswordLogin(URL, String, char[], HttpClient) 
+   * @since 0.1.0
    */
   public UsernamePasswordLogin(
           final URL youtrackUrl,
@@ -91,8 +95,8 @@ public class UsernamePasswordLogin implements Login {
   }
   
   @Override
-  public final Session login() throws AuthenticationException, IOException {
-    if (isNull(username)) {
+  public Session login() throws AuthenticationException, IOException {
+    if (Objects.isNull(this.username)) {
       throw new IllegalStateException(
           this.getClass()
               .getSimpleName()
@@ -101,34 +105,36 @@ public class UsernamePasswordLogin implements Login {
     }
 
     final URI uri = new UncheckedUriBuilder(
-        youtrackUrl.toString().concat("/user/login")
-    ).setParameter("login", username)
-        .setParameter("password", new String(password))
+        this.youtrackUrl.toString().concat("/user/login")
+    ).setParameter("login", this.username)
+        .setParameter("password", new String(this.password))
         .build();
 
     this.username = null;
     this.password = null;
 
     final HttpPost post = new HttpPost(uri);
-    final HttpResponse response = httpClient.execute(post);
+    final HttpResponse response = this.httpClient.execute(post);
 
-    if (response.getStatusLine().getStatusCode() != 200) {    //TODO there is more branching here
+    //@checkstyle todo there is more branching here
+    if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
       throw new AuthenticationException("Invalid credentials.");
     }
 
+    final String cookieHeader = "Cookie";
     final Header cookie = Arrays.asList(response.getAllHeaders())
         .stream()
-        .filter(h -> "Set-Cookie".equals(h.getName()))
-        .map(h -> new BasicHeader("Cookie", h.getValue().split(";")[0]))
+        .filter(header -> "Set-Cookie".equals(header.getName()))
+        .map(header -> new BasicHeader(cookieHeader, header.getValue().split(";")[0]))
         .reduce(
-            (h1, h2) -> new BasicHeader(
-                "Cookie", 
-                h1.getValue()
+            (headerA, headerB) -> new BasicHeader(
+                cookieHeader, 
+                headerA.getValue()
                     .concat("; ")
-                    .concat(h2.getValue())
+                    .concat(headerB.getValue())
             )
-        ).get();    //expected
+        ).get();
 
-    return new DefaultSession(youtrackUrl, cookie);
+    return new DefaultSession(this.youtrackUrl, cookie);
   }
 }

@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.ApplyIf;
-
 import java.io.IOException;
 import java.util.Optional;
+
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.ApplyIf;
 
 /**
  * Default implementation of {@link UsersOfIssue}.
@@ -57,13 +57,13 @@ class DefaultUsersOfIssue implements UsersOfIssue {
            .filter(f -> "reporterName".equals(f.getName()))
            .map(f -> f.getValue().getValue())
            .findFirst()
-           .get()  //expected
+           .get()
     );
   }
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
-    final Optional<String> updaterLoginName = this.jaxbIssue.getField()
+    final Optional<String> updaterLogin = this.jaxbIssue.getField()
         .stream()
         .filter(f -> "updaterName".equals(f.getName()))
         .map(f -> f.getValue().getValue())
@@ -72,12 +72,12 @@ class DefaultUsersOfIssue implements UsersOfIssue {
     return new ApplyIf<Optional<String>, User, IOException>(
         login -> login.isPresent(),
         login -> this.issue().project().users().user(login.get())
-    ).apply(updaterLoginName);
+    ).apply(updaterLogin);
   }
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
-    final Optional<String> assigneeLoginName = this.jaxbIssue.getField()
+    final Optional<String> assigneeLogin = this.jaxbIssue.getField()
         .stream()
         .filter(f -> this.field.name().equals(f.getName()))
         .map(f -> f.getValue().getValue())
@@ -86,7 +86,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
     return new ApplyIf<Optional<String>, User, IOException>(
         login -> login.isPresent(),
         login -> this.issue().project().users().user(login.get())
-    ).apply(assigneeLoginName);
+    ).apply(assigneeLogin);
   }
 
   @Override

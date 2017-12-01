@@ -25,12 +25,13 @@ import java.util.function.Supplier;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
-public class Counter implements Supplier<Integer> {
+public final class Counter implements Supplier<Integer> {
   private final AtomicInteger start;
   private final int increment;
 
   /**
    * Ctor.
+   * 
    * @param start the starting value
    * @param increment the amount to increment with each call to {@link #get()}
    * @since 0.7.0
@@ -42,6 +43,6 @@ public class Counter implements Supplier<Integer> {
 
   @Override
   public Integer get() {
-    return start.getAndAdd(increment);
+    return this.start.getAndAdd(this.increment);
   }
 }

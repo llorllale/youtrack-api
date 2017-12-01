@@ -16,12 +16,12 @@
 
 package org.llorllale.youtrack.api.util;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
 
 /**
  * <p>Hides all {@link URISyntaxException}s.</p>
@@ -36,7 +36,7 @@ import java.util.List;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class UncheckedUriBuilder {
+public final class UncheckedUriBuilder {
   private final URIBuilder builder;
 
   /**
@@ -88,7 +88,7 @@ public class UncheckedUriBuilder {
    */
   public URI build() {
     try {
-      return builder.build();
+      return this.builder.build();
     } catch (URISyntaxException e) {
       throw new RuntimeException("This should not have happened: syntax issue with a URL", e);     
     }

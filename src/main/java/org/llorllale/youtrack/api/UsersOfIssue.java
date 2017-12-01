@@ -16,64 +16,70 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.Optional;
 
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+
 /**
  * Access the {@link User users} of an {@link Issue issue}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
 public interface UsersOfIssue {
   /**
    * The {@link Issue issue's} creator.
+   * 
    * @return the {@link Issue issue's} creator
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.5.0
    */
-  public User creator() throws IOException, UnauthorizedException;
+  User creator() throws IOException, UnauthorizedException;
 
   /**
    * The {@link User user} that updated the {@link Issue issue}, if any.
+   * 
    * @return the {@link User user} that updated the {@link Issue issue}, if any
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.5.0
    */
-  public Optional<User> updater() throws IOException, UnauthorizedException;
+  Optional<User> updater() throws IOException, UnauthorizedException;
 
   /**
    * The {@link User user} assigned to the {@link Issue issue}, if any.
+   * 
    * @return the {@link User user} assigned to the {@link Issue issue}, if any
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
    * @since 0.5.0
    */
-  public Optional<User> assignee() throws IOException, UnauthorizedException;
+  Optional<User> assignee() throws IOException, UnauthorizedException;
 
   /**
    * Assigns the {@link Issue} to the given {@link User}.
+   * 
    * @param user the {@link User} to assign the issue to
    * @return this object
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
-   * @since 0.5.0
    * @see #assignee() 
+   * @since 0.5.0
    */
-  public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException;
+  UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException;
 
   /**
    * The enclosing {@link Issue}.
+   * 
    * @return the enclosing {@link Issue}
    * @since 0.5.0
    */
-  public Issue issue();
+  Issue issue();
 }

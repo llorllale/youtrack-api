@@ -16,10 +16,10 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-
-import java.io.IOException;
 
 /**
  * A {@link FieldValue} that has sprung from a {@link AssignedField#change() change operation} that 
@@ -36,8 +36,8 @@ public interface SelectableFieldValue extends FieldValue {
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
    *     this operation
-   * @since 0.8.0
    * @see UpdateIssue#field(Field, FieldValue)
+   * @since 0.8.0
    */
-  public Issue apply() throws IOException, UnauthorizedException;
+  Issue apply() throws IOException, UnauthorizedException;
 }

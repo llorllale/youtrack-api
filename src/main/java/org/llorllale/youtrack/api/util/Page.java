@@ -16,17 +16,18 @@
 
 package org.llorllale.youtrack.api.util;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.HttpClients;
+
+import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
  * An {@link Iterator} that holds the contents of a single page of results from the YouTrack server.
@@ -36,10 +37,10 @@ import java.util.NoSuchElementException;
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the type of the contents of this page
- * @since 0.7.0
  * @see Pagination
+ * @since 0.7.0
  */
-public class Page<T> implements Iterator<T> {
+public final class Page<T> implements Iterator<T> {
   private final HttpUriRequest request;
   private final ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper;
   private final Deque<T> contents;
@@ -68,7 +69,7 @@ public class Page<T> implements Iterator<T> {
             this.mapper.apply(
                 new HttpResponseAsResponse(
                     HttpClients.createDefault().execute(this.request)
-                ).asHttpResponse().getEntity()
+                ).httpResponse().getEntity()
             )
         );
       } catch (IOException e) {
@@ -95,16 +96,7 @@ public class Page<T> implements Iterator<T> {
    * @param <T> the type parameter for the results enclosed
    * @since 0.7.0
    */
-  public static final class Empty<T> extends Page<T> {
-    /**
-     * Ctor.
-     * 
-     * @since 0.7.0
-     */
-    public Empty() {
-      super(null, null);
-    }
-
+  public static final class Empty<T> implements Iterator<T> {
     @Override
     public boolean hasNext() {
       return false;

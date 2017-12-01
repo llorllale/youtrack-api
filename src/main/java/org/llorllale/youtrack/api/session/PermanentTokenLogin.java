@@ -16,23 +16,25 @@
 
 package org.llorllale.youtrack.api.session;
 
-import org.apache.http.message.BasicHeader;
-
 import java.io.IOException;
 import java.net.URL;
+
+import org.apache.http.message.BasicHeader;
 
 /**
  * A {@link Login} that makes use of YouTrack's <em>permanent tokens</em> feature to authorize 
  * 3rd party application integrations.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
-public class PermanentTokenLogin implements Login {
+public final class PermanentTokenLogin implements Login {
   private final URL youtrackUrl;
   private final String token;
 
   /**
    * Ctor.
+   * 
    * @param youtrackUrl the YouTrack API's url
    * @param token the YouTrack user's permanent token
    * @since 0.3.0
@@ -45,10 +47,10 @@ public class PermanentTokenLogin implements Login {
   @Override
   public Session login() throws AuthenticationException, IOException {
     return new DefaultSession(
-        youtrackUrl, 
+        this.youtrackUrl, 
         new BasicHeader(
             "Authorization", 
-            "Bearer ".concat(token)
+            "Bearer ".concat(this.token)
         )
     );
   }

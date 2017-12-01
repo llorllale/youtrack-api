@@ -16,13 +16,20 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.substringAfterLast;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.Counter;
@@ -35,15 +42,9 @@ import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 /**
  * Default implementation of {@link Issues}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
@@ -54,6 +55,7 @@ class DefaultIssues implements Issues {
 
   /**
    * Primary ctor.
+   * 
    * @param project the parent {@link Project}
    * @param session the user {@link Session}
    * @param httpClient the {@link HttpClient} to use
@@ -67,11 +69,12 @@ class DefaultIssues implements Issues {
 
   /**
    * Uses the {@link HttpClients#createDefault() default} httpClient.
+   * 
    * @param project the parent {@link Project}
    * @param session the user {@link Session}
-   * @since 0.4.0
    * @see #DefaultIssues(org.llorllale.youtrack.api.v2.Project, 
-   *     org.llorllale.youtrack.api.session.Session, org.apache.http.client.HttpClient) 
+   *   org.llorllale.youtrack.api.session.Session, org.apache.http.client.HttpClient) 
+   * @since 0.4.0
    */
   DefaultIssues(Project project, Session session) {
     this(project, session, HttpClients.createDefault());
@@ -79,35 +82,35 @@ class DefaultIssues implements Issues {
 
   @Override
   public Project project() {
-    return project;
+    return this.project;
   }
 
   @Override
   public Stream<Issue> stream() throws IOException, UnauthorizedException {
+    final int pageSize = 10;
     return StreamSupport.stream(
         Spliterators.spliteratorUnknownSize(
             new Pagination<>(
                 new PageUri(
-                    new Counter(0, 10),
+                    new Counter(0, pageSize),
                     n -> new HttpRequestWithSession(
-                        session, 
+                        this.session, 
                         new HttpGet(
                             new UncheckedUriBuilder(
-                                session.baseUrl().toString()
+                                this.session.baseUrl().toString()
                                     .concat("/issue/byproject/")
-                                    .concat(project().id())
+                                    .concat(this.project().id())
                             ).setParameter("after", String.valueOf(n))
                                 .build()
                         )
                     )
                 ),
-                new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class)
-                    .andThen(
-                        issues -> 
-                            issues.getIssue().stream()
-                                .map(issue -> new XmlIssue(project, session, issue))
-                                .collect(toList())
-                    )
+                new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).andThen(
+                    issues -> 
+                        issues.getIssue().stream()
+                            .map(issue -> new XmlIssue(this.project(), this.session, issue))
+                            .collect(Collectors.toList())
+                )
             ), 
             Spliterator.DISTINCT
         ), 
@@ -118,11 +121,11 @@ class DefaultIssues implements Issues {
   @Override
   public Optional<Issue> get(String id) throws IOException, UnauthorizedException {
     return new HttpResponseAsResponse(
-        httpClient.execute(
+        this.httpClient.execute(
             new HttpRequestWithSession(
-                session, 
+                this.session, 
                 new HttpGet(
-                    session.baseUrl()
+                    this.session.baseUrl()
                         .toString()
                         .concat("/issue/")
                         .concat(id)
@@ -132,31 +135,31 @@ class DefaultIssues implements Issues {
     ).applyOnEntity(
         new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class), 
         new StandardErrorCheck()
-    ).map(i -> new XmlIssue(project, session, i));
+    ).map(i -> new XmlIssue(this.project(), this.session, i));
   }
 
   @Override
   public Issue create(IssueSpec spec) throws IOException, UnauthorizedException {
     return this.get(
-        substringAfterLast(
+        StringUtils.substringAfterLast(
             new HttpResponseAsResponse(
-                httpClient.execute(
+                this.httpClient.execute(
                     new HttpRequestWithSession(
-                        session, 
+                        this.session, 
                         new HttpPut(
                             new UncheckedUriBuilder(
-                                session.baseUrl()
+                                this.session.baseUrl()
                                     .toString()
                                     .concat("/issue")
-                            ).setParameter("project", project().id())
-                                .addParameters(spec.asNameValuePairs())
+                            ).setParameter("project", this.project().id())
+                                .addParameters(spec.nameValuePairs())
                                 .build()
                         )
                     )
                 )
-            ).asHttpResponse().getFirstHeader("Location").getValue(),
+            ).httpResponse().getFirstHeader("Location").getValue(),
             "/"
         )
-    ).get().update().fields(spec.asFields());
+    ).get().update().fields(spec.fields());
   }
 }

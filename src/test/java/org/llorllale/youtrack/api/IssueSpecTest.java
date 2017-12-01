@@ -34,7 +34,7 @@ public class IssueSpecTest {
   @Test
   public void asNameValuePairs() {
     assertThat(
-        new IssueSpec("summary", "description").asNameValuePairs(),
+        new IssueSpec("summary", "description").nameValuePairs(),
         containsInAnyOrder(
             new BasicNameValuePair("summary", "summary"),
             new BasicNameValuePair("description", "description")
@@ -43,7 +43,7 @@ public class IssueSpecTest {
   }
 
   /**
-   * Test {@link IssueSpec#asFields()}.
+   * Test {@link IssueSpec#fields()}.
    * 
    * @since 0.8.0
    */
@@ -54,8 +54,7 @@ public class IssueSpecTest {
     final Field f2 = new TestField("field2");
     final FieldValue v2 = new TestFieldValue("value2");
 
-    assertThat(
-      new IssueSpec("", "").with(f1, v1).with(f2, v2).asFields().entrySet(),
+    assertThat(new IssueSpec("", "").with(f1, v1).with(f2, v2).fields().entrySet(),
         containsInAnyOrder(
             new MapEntry(f1, v1),
             new MapEntry(f2, v2)

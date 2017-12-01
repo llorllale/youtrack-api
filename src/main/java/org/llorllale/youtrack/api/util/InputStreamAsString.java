@@ -29,13 +29,14 @@ import java.nio.charset.Charset;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class InputStreamAsString implements ExceptionalFunction<InputStream, String, IOException> {
+public final class InputStreamAsString 
+    implements ExceptionalFunction<InputStream, String, IOException> {
   @Override
   public String apply(InputStream input) throws IOException {
     final String newLine = System.getProperty("line.separator");
     return new BufferedReader(new InputStreamReader(input, Charset.defaultCharset()))
         .lines()
-        .reduce((line1,line2) -> line1.concat(newLine).concat(line2))
+        .reduce((lineA, lineB) -> lineA.concat(newLine).concat(lineB))
         .get()
         .trim();
   }

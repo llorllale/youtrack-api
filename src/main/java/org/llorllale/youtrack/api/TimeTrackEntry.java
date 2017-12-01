@@ -33,7 +33,7 @@ public interface TimeTrackEntry {
    * @return the parent {@link Issue}
    * @since 0.8.0
    */
-  public Issue issue();
+  Issue issue();
 
   /**
    * The date when the item was entered into the {@link Issue issue}'s time-tracking.
@@ -41,7 +41,7 @@ public interface TimeTrackEntry {
    * @return the date when the item was entered into the {@link Issue issue}'s time-tracking
    * @since 0.4.0
    */
-  public LocalDate date();
+  LocalDate date();
 
   /**
    * The duration during which the work-item was worked on.
@@ -49,7 +49,7 @@ public interface TimeTrackEntry {
    * @return the duration during which the work-item was worked on
    * @since 0.4.0
    */
-  public Duration duration();
+  Duration duration();
 
   /**
    * The item's description.
@@ -57,7 +57,7 @@ public interface TimeTrackEntry {
    * @return the item's description (if any was entered)
    * @since 0.4.0
    */
-  public Optional<String> description();
+  Optional<String> description();
 
   /**
    * The entry's {@link TimeTrackEntryType type}.
@@ -65,5 +65,5 @@ public interface TimeTrackEntry {
    * @return the entry's {@link TimeTrackEntryType type}
    * @since 0.8.0
    */
-  public Optional<TimeTrackEntryType> type();
+  Optional<TimeTrackEntryType> type();
 }

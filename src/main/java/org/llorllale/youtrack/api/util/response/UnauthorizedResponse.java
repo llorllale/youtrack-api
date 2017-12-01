@@ -16,21 +16,25 @@
 
 package org.llorllale.youtrack.api.util.response;
 
-import org.apache.http.HttpResponse;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Handles the case when the HTTP status code is {@code 401}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class UnauthorizedResponse implements Response {
+public final class UnauthorizedResponse implements Response {
   private final Response base;
 
   /**
    * Ctor.
+   * 
    * @param base the next link in the chain
    * @since 0.1.0
    */
@@ -39,14 +43,14 @@ public class UnauthorizedResponse implements Response {
   }
   
   @Override
-  public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
-    if (base.asHttpResponse().getStatusLine().getStatusCode() == 401) {
+  public HttpResponse httpResponse() throws UnauthorizedException, IOException {
+    if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
       throw new UnauthorizedException(
           "401: Unauthorized", 
-          base.asHttpResponse()
+          this.base.httpResponse()
       );
     } else {
-      return base.asHttpResponse();
+      return this.base.httpResponse();
     }
   }
 }

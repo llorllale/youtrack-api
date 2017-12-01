@@ -18,14 +18,16 @@ package org.llorllale.youtrack.api;
 
 /**
  * Entry point for the YouTrack API.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public interface YouTrack {
   /**
    * Access to the {@link Project projects} API.
+   * 
    * @return Access to the {@link Project projects} API.
    * @since 0.4.0
    */
-  public Projects projects();
+  Projects projects();
 }

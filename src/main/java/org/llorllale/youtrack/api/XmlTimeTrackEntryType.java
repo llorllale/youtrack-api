@@ -39,6 +39,6 @@ class XmlTimeTrackEntryType implements TimeTrackEntryType {
 
   @Override
   public String asString() {
-    return jaxb.getName();
+    return this.jaxb.getName();
   }
 }

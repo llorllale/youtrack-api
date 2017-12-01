@@ -16,10 +16,10 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Combines and adapts a given {@link Field} and a given 
@@ -49,12 +49,12 @@ class DefaultAssignedField implements AssignedField {
 
   @Override
   public Issue issue() {
-    return issue;
+    return this.issue;
   }
 
   @Override
   public FieldValue value() {
-    return new XmlFieldValue(jaxb.getValue(), this);
+    return new XmlFieldValue(this.jaxb.getValue(), this);
   }
 
   @Override
@@ -64,17 +64,17 @@ class DefaultAssignedField implements AssignedField {
         .findAny()
         .get()
         .values()
-        .map(v -> new DefaultSelectableFieldValue(v, issue));
+        .map(v -> new DefaultSelectableFieldValue(v, this.issue));
   }
 
   @Override
   public Project project() {
-    return field.project();
+    return this.field.project();
   }
 
   @Override
   public String name() {
-    return field.name();
+    return this.field.name();
   }
 
   @Override

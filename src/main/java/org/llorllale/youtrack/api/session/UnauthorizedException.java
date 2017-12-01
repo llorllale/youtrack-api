@@ -16,9 +16,9 @@
 
 package org.llorllale.youtrack.api.session;
 
-import org.apache.http.HttpResponse;
-
 import java.io.IOException;
+
+import org.apache.http.HttpResponse;
 
 /**
  * Signals that the attempted action is forbidden for the current user {@link Session session}.

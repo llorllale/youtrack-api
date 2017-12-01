@@ -16,12 +16,15 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.time.Instant;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
@@ -29,17 +32,14 @@ import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
-import java.io.IOException;
-import java.time.Instant;
-
-
 /**
  * JAXB implementation of {@link Comment}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.2.0
  */
-class XmlComment implements Comment {
+final class XmlComment implements Comment {
+  private static final String PATH_TEMPLATE = "/issue/%s/comment/%s";
   private final String id;
   private final long creationDate;
   private final String text;
@@ -56,6 +56,7 @@ class XmlComment implements Comment {
    * @param session the user's session
    * @since 0.9.0
    */
+  @SuppressWarnings("checkstyle:ParameterNumber")
   XmlComment(String id, long creationDate, String text, Issue issue, Session session) {
     this.id = id;
     this.creationDate = creationDate;
@@ -97,31 +98,30 @@ class XmlComment implements Comment {
   }
 
   @Override
-  public Comment update(String text) throws IOException, UnauthorizedException {
+  public Comment update(String txt) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         HttpClients.createDefault().execute(
             new HttpRequestWithSession(
                 this.session, 
                 new HttpRequestWithEntity(
                     new StringEntity(
-                        String.format("{\"text\": \"%s\"}", text), 
+                        String.format("{\"text\": \"%s\"}", txt), 
                         ContentType.APPLICATION_JSON
                     ),
                     new HttpPut(
                         new UncheckedUriBuilder(
                             this.session.baseUrl().toString()
-                                .concat("/issue/")
-                                .concat(this.issue().id())
-                                .concat("/comment/")
-                                .concat(this.id())
+                                .concat(
+                                    String.format(PATH_TEMPLATE, this.issue().id(), this.id())
+                                )
                         ).build()
                     )
                 )
             )
         )
-    ).asHttpResponse();
+    ).httpResponse();
 
-    return new XmlComment(this.id, this.creationDate, text, this.issue(), this.session);
+    return new XmlComment(this.id, this.creationDate, txt, this.issue(), this.session);
   }
 
   @Override
@@ -132,14 +132,13 @@ class XmlComment implements Comment {
                 this.session, 
                 new HttpDelete(
                     this.session.baseUrl().toString()
-                        .concat("/issue/")
-                        .concat(this.issue.id())
-                        .concat("/comment/")
-                        .concat(this.id())
+                        .concat(
+                            String.format(PATH_TEMPLATE, this.issue().id(), this.id())
+                        )
                 )
             )
         )
-    ).asHttpResponse();
+    ).httpResponse();
 
     return this.issue();
   }

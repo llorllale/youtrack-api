@@ -16,13 +16,13 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * A {@link YouTrack} issue.
@@ -37,7 +37,7 @@ public interface Issue {
    * @return the ID of the project that the issue was created in
    * @since 0.4.0
    */
-  public Project project();
+  Project project();
 
   /**
    * The issue's id.
@@ -45,7 +45,7 @@ public interface Issue {
    * @return the issue's id
    * @since 0.1.0
    */
-  public String id();
+  String id();
 
   /**
    * The date the issue was created.
@@ -53,7 +53,7 @@ public interface Issue {
    * @return The date the issue was created.
    * @since 0.1.0
    */
-  public Instant creationDate();
+  Instant creationDate();
 
   /**
    * The issue's summary.
@@ -61,7 +61,7 @@ public interface Issue {
    * @return The issue's summary.
    * @since 0.1.0
    */
-  public String summary();
+  String summary();
 
   /**
    * The issue's description.
@@ -69,7 +69,7 @@ public interface Issue {
    * @return the issue's description
    * @since 0.1.0
    */
-  public Optional<String> description();
+  Optional<String> description();
 
   /**
    * Access to the issue's {@link User users}.
@@ -77,7 +77,7 @@ public interface Issue {
    * @return access to the issue's {@link User users}
    * @since 0.5.0
    */
-  public UsersOfIssue users();
+  UsersOfIssue users();
 
   /**
    * Access to the issue's {@link Comment comments}.
@@ -85,7 +85,7 @@ public interface Issue {
    * @return Access to the issue's {@link Comment comments}.
    * @since 0.4.0
    */
-  public Comments comments();
+  Comments comments();
 
   /**
    * Access to the issue's {@link TimeTrackEntry timetracking}.
@@ -94,10 +94,10 @@ public interface Issue {
    * {@link TimeTracking#enabled() enabled} for the {@link Project}.</p>
    * 
    * @return access to the issue's {@link TimeTrackEntry timetracking}.
-   * @since 0.4.0
    * @see TimeTracking#enabled() 
+   * @since 0.4.0
    */
-  public IssueTimeTracking timetracking();
+  IssueTimeTracking timetracking();
 
   /**
    * Returns the same {@link Issue} after refreshing its data from the server.
@@ -112,7 +112,7 @@ public interface Issue {
    *     operation
    * @since 0.5.0
    */
-  public Issue refresh() throws IOException, UnauthorizedException;
+  Issue refresh() throws IOException, UnauthorizedException;
 
   /**
    * The {@link UpdateIssue} API for this {@link Issue}.
@@ -120,14 +120,14 @@ public interface Issue {
    * @return the {@link UpdateIssue} API for this {@link Issue}
    * @since 0.9.0
    */
-  public UpdateIssue update();
+  UpdateIssue update();
 
   /**
    * All {@link AssignedField fields} of this {@link Issue}.
    * 
    * @return all {@link AssignedField fields} of this {@link Issue}
-   * @since 0.8.0
    * @see UpdateIssue#fields(java.util.Map) 
+   * @since 0.8.0
    */
-  public List<AssignedField> fields();
+  List<AssignedField> fields();
 }

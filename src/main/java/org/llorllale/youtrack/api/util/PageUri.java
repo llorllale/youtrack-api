@@ -16,10 +16,10 @@
 
 package org.llorllale.youtrack.api.util;
 
-import org.apache.http.client.methods.HttpUriRequest;
-
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.apache.http.client.methods.HttpUriRequest;
 
 /**
  * Combines a supplier of page numbers and a mapper of these numbers to working 
@@ -27,10 +27,10 @@ import java.util.function.Supplier;
  * of results.
  *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.7.0
  * @see Pagination
+ * @since 0.7.0
  */
-public class PageUri implements Supplier<HttpUriRequest> {
+public final class PageUri implements Supplier<HttpUriRequest> {
   private final Supplier<Integer> pageNum;
   private final Function<Integer, HttpUriRequest> combiner;
 
@@ -49,6 +49,6 @@ public class PageUri implements Supplier<HttpUriRequest> {
 
   @Override
   public HttpUriRequest get() {
-    return combiner.apply(pageNum.get());
+    return this.combiner.apply(this.pageNum.get());
   }
 }

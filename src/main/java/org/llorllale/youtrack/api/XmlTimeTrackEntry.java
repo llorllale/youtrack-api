@@ -38,6 +38,7 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
   /**
    * Ctor.
    * 
+   * @param issue the parent issue
    * @param jaxbWorkItem the JAXB class 
    * @since 0.3.0
    */
@@ -48,29 +49,29 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
 
   @Override
   public Issue issue() {
-    return issue;
+    return this.issue;
   }
 
   @Override
   public LocalDate date() {
-    return Instant.ofEpochMilli(jaxbWorkItem.getDate())
+    return Instant.ofEpochMilli(this.jaxbWorkItem.getDate())
         .atZone(ZoneId.systemDefault())
         .toLocalDate();
   }
 
   @Override
   public Duration duration() {
-    return Duration.ofMinutes(jaxbWorkItem.getDuration());
+    return Duration.ofMinutes(this.jaxbWorkItem.getDuration());
   }
 
   @Override
   public Optional<String> description() {
-    return Optional.ofNullable(jaxbWorkItem.getDescription());
+    return Optional.ofNullable(this.jaxbWorkItem.getDescription());
   }
 
   @Override
   public Optional<TimeTrackEntryType> type() {
-    return Optional.ofNullable(jaxbWorkItem.getWorkType())
+    return Optional.ofNullable(this.jaxbWorkItem.getWorkType())
         .map(XmlTimeTrackEntryType::new);
   }
 }

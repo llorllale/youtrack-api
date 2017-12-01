@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * API for {@link Comment comments} on an {@link Issue}.
@@ -38,7 +38,7 @@ public interface Comments {
    *     resource
    * @since 0.4.0
    */
-  public Stream<Comment> stream() throws IOException, UnauthorizedException;
+  Stream<Comment> stream() throws IOException, UnauthorizedException;
 
   /**
    * Creates a new {@link Comment} for this {@link Issue}.
@@ -50,7 +50,7 @@ public interface Comments {
    *     operation
    * @since 0.4.0
    */
-  public Comments post(String text) throws IOException, UnauthorizedException;
+  Comments post(String text) throws IOException, UnauthorizedException;
 
   /**
    * The parent {@link Issue}.
@@ -58,5 +58,5 @@ public interface Comments {
    * @return the parent {@link Issue}
    * @since 0.9.0
    */
-  public Issue issue();
+  Issue issue();
 }
