@@ -176,5 +176,32 @@ public interface Issues {
     public Map<Field, FieldValue> fields() {
       return Collections.unmodifiableMap(this.fields);
     }
+
+    @Override
+    @SuppressWarnings("checkstyle:NPathComplexity")
+    public boolean equals(Object object) {
+      if (!(object instanceof IssueSpec)) {
+        return false;
+      }
+
+      final IssueSpec other = (IssueSpec) object;
+
+      if (this.nameValuePairs().size() != other.nameValuePairs().size()) {
+        return false;
+      }
+
+      for (NameValuePair pair : this.nameValuePairs()) {
+        if (!other.nameValuePairs().contains(pair)) {
+          return false;
+        }
+      }
+
+      return this.fields().equals(other.fields());
+    }
+
+    @Override
+    public int hashCode() {
+      return this.nameValuePairs().hashCode() + this.fields().hashCode();
+    }
   }
 }
