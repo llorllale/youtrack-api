@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.http.client.methods.HttpGet;
@@ -75,8 +76,8 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
     );
 
     return settings.isEnabled() 
-        && nonNull(settings.getEstimation()) 
-        && nonNull(settings.getSpentTime());
+        && Objects.nonNull(settings.getEstimation()) 
+        && Objects.nonNull(settings.getSpentTime());
   }
 
   @Override

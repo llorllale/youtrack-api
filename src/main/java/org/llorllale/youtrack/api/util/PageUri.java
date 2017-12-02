@@ -35,7 +35,7 @@ public final class PageUri implements Supplier<HttpUriRequest> {
   private final Function<Integer, HttpUriRequest> combiner;
 
   /**
-   * Ctor.
+   * Primary ctor.
    * 
    * @param pageNum the page number supplier
    * @param combiner accepts a value from {@code pageNum} and produces a working 
@@ -45,6 +45,19 @@ public final class PageUri implements Supplier<HttpUriRequest> {
   public PageUri(Supplier<Integer> pageNum, Function<Integer, HttpUriRequest> combiner) {
     this.pageNum = pageNum;
     this.combiner = combiner;
+  }
+
+  /**
+   * Constructs a new {@link Counter} with {@code 0} as the starting value, and {@code pageSize}
+   * as increment.
+   * 
+   * @param pageSize the page size
+   * @param combiner the combiner function
+   * @see #PageUri(Supplier, Function) 
+   * @since 1.0.0
+   */
+  public PageUri(int pageSize, Function<Integer, HttpUriRequest> combiner) {
+    this(new Counter(0, pageSize), combiner);
   }
 
   @Override

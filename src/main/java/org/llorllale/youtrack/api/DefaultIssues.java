@@ -32,7 +32,6 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.Counter;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.PageUri;
@@ -48,6 +47,8 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
+//suppressed with: Class Data Abstraction Coupling is 11 (max allowed is 7)
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultIssues implements Issues {
   private final Project project;
   private final Session session;
@@ -92,7 +93,7 @@ class DefaultIssues implements Issues {
         Spliterators.spliteratorUnknownSize(
             new Pagination<>(
                 new PageUri(
-                    new Counter(0, pageSize),
+                    pageSize,
                     n -> new HttpRequestWithSession(
                         this.session, 
                         new HttpGet(

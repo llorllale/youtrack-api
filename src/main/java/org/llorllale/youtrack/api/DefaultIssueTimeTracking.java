@@ -38,7 +38,7 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @since 0.4.0
  */
 class DefaultIssueTimeTracking implements IssueTimeTracking {
-  private static final String PATH_TEMPLATE = "/issue/timetracking/%s/workitem";
+  private static final String PATH_TEMPLATE = "/issue/%s/timetracking/workitem";
   private final Session session;
   private final Issue issue;
   private final HttpClient httpClient;

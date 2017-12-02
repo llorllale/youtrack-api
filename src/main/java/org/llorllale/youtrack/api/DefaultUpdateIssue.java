@@ -41,8 +41,10 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.9.0
  */
+//suppressed with: Class Data Abstraction Coupling is 8 (max allowed is 7)
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultUpdateIssue implements UpdateIssue {
-  private static final String PATH_TEMPLATE = "/issue/";
+  private static final String PATH_TEMPLATE = "/issue/%s";
   private final Issue issue;
   private final Session session;
 

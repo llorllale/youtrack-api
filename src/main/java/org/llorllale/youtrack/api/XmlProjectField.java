@@ -19,7 +19,6 @@ package org.llorllale.youtrack.api;
 import com.google.common.net.UrlEscapers;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -28,6 +27,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 
+import org.llorllale.youtrack.api.jaxb.Enumeration;
 import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;

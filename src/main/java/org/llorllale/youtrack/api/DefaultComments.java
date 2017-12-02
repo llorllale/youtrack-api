@@ -39,6 +39,8 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
+//suppressed with: Class Data Abstraction Coupling is 8 (max allowed is 7)
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultComments implements Comments {
   private static final String BASE_PATH = "/issue/";
 
