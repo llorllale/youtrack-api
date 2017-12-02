@@ -31,7 +31,7 @@ public interface Field {
    * @return the parent {@link Project}
    * @since 0.8.0
    */
-  public Project project();
+  Project project();
 
   /**
    * Returns the name of this {@link Field}.
@@ -39,7 +39,7 @@ public interface Field {
    * @return the name of this {@link Field}
    * @since 0.8.0
    */
-  public String name();
+  String name();
 
   /**
    * Whether this and {@code other} both represent the same field.
@@ -49,7 +49,7 @@ public interface Field {
    *     {@code false} otherwise
    * @since 0.8.0
    */
-  public default boolean isSameField(Field other) {
+  default boolean isSameField(Field other) {
     return this.name().equals(other.name()) && this.project().equals(other.project());
   }
 }

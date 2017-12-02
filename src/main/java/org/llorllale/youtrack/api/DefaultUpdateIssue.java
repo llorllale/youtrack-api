@@ -16,12 +16,17 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.joining;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -30,18 +35,16 @@ import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
-
 /**
  * Default impl of {@link UpdateIssue}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.9.0
  */
+//suppressed with: Class Data Abstraction Coupling is 8 (max allowed is 7)
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultUpdateIssue implements UpdateIssue {
+  private static final String PATH_TEMPLATE = "/issue/%s";
   private final Issue issue;
   private final Session session;
 
@@ -59,97 +62,106 @@ class DefaultUpdateIssue implements UpdateIssue {
 
   @Override
   public Issue summary(String summary) throws IOException, UnauthorizedException {
-    return this.updateSummaryDesc(new IssueSpec(summary));
+    return this.updateSmmryDesc(new IssueSpec(summary));
   }
 
   @Override
   public Issue description(String description) throws IOException, UnauthorizedException {
-    return this.updateSummaryDesc(new IssueSpec(issue.summary(), description));
+    return this.updateSmmryDesc(new IssueSpec(this.issue.summary(), description));
   }
 
   @Override
   public Issue summaryAndDesc(String summary, String description) 
       throws IOException, UnauthorizedException {
-    return this.updateSummaryDesc(new IssueSpec(summary, description));
+    return this.updateSmmryDesc(new IssueSpec(summary, description));
   }
 
   @Override
   public Issue field(Field field, FieldValue value) throws IOException, UnauthorizedException {
     return this.updateFields(
         new IssueSpec(
-            issue.summary(), 
-            issue.description()
+            this.issue.summary(), 
+            this.issue.description()
         ).with(field, value)
     );
   }
 
   @Override
   public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
-    final IssueSpec spec = new IssueSpec(issue.summary(), issue.description());
+    final IssueSpec spec = new IssueSpec(this.issue.summary(), this.issue.description());
     fields.forEach(spec::with);
     return this.updateFields(spec);
   }
 
-  /*
-    Updates just the summary and description of the issue based on the spec.
-  */
-  private Issue updateSummaryDesc(IssueSpec spec) throws IOException, UnauthorizedException {
+  /**
+   * Updates just the summary and description of the issue based on the spec.
+   * 
+   * @param spec the issue's spec
+   * @return a new instance of the same issue after being refreshed
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's is unauthorized
+   */
+  private Issue updateSmmryDesc(IssueSpec spec) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         HttpClients.createDefault().execute(
             new HttpRequestWithSession(
-                session, 
+                this.session, 
                 new HttpPost(
                     new UncheckedUriBuilder(
-                        session.baseUrl().toString()
-                            .concat("/issue/")
-                            .concat(issue.id())
-                    ).addParameters(spec.asNameValuePairs())
+                        this.session.baseUrl().toString()
+                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
+                    ).addParameters(spec.nameValuePairs())
                         .build()
                 )
             )
         )
-    ).asHttpResponse();
+    ).httpResponse();
 
-    return issue.refresh();
+    return this.issue.refresh();
   }
 
-  /*
-    Updates the issue's fields based on the spec.
-  */
+  /**
+   * Updates the issue's fields based on the spec.
+   * 
+   * @param spec the issue's spec
+   * @return a new instance of the same issue after being refreshed
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's is unauthorized
+   */
   private Issue updateFields(IssueSpec spec) 
       throws IOException, UnauthorizedException {
+    final String separator = " ";
     new HttpResponseAsResponse(
         HttpClients.createDefault().execute(
             new HttpRequestWithSession(
-                session, 
+                this.session, 
                 new HttpRequestWithEntity(
                     new UrlEncodedFormEntity(
                         Arrays.asList(
                             new BasicNameValuePair(
                                 "command", 
-                                spec.asFields().entrySet().stream()
+                                spec.fields().entrySet().stream()
                                     .map(
                                         e -> String.join(
-                                            " ", 
+                                            separator, 
                                             e.getKey().name(), 
                                             e.getValue().asString()
                                         )
-                                    ).collect(joining(" "))
+                                    ).collect(Collectors.joining(separator))
                             )
                         ),
                         StandardCharsets.UTF_8
                     ),
                     new HttpPost(
-                        session.baseUrl().toString()
-                            .concat("/issue/")
-                            .concat(issue.id())
+                        this.session.baseUrl().toString()
+                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
                             .concat("/execute")
                     )
                 )
             )
         )
-    ).asHttpResponse();
+    ).httpResponse();
 
-    return issue.refresh();
+    return this.issue.refresh();
   }
 }

@@ -16,10 +16,13 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.Objects.nonNull;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.jaxb.Settings;
 import org.llorllale.youtrack.api.jaxb.WorkItemTypes;
 import org.llorllale.youtrack.api.session.Session;
@@ -28,16 +31,14 @@ import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
-import java.io.IOException;
-import java.util.stream.Stream;
-
 /**
- * Default impl of {@link TimeTracking}.
+ * Default impl of {@link ProjectTimeTracking}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class DefaultTimeTracking implements TimeTracking {
+class DefaultProjectTimeTracking implements ProjectTimeTracking {
+  private static final String PATH_TEMPLATE = "/admin/project/%s/timetracking";
   private final Project project;
   private final Session session;
 
@@ -48,14 +49,14 @@ class DefaultTimeTracking implements TimeTracking {
    * @param session the user's {@link Session}
    * @since 0.8.0
    */
-  DefaultTimeTracking(Project project, Session session) {
+  DefaultProjectTimeTracking(Project project, Session session) {
     this.project = project;
     this.session = session;
   }
   
   @Override
   public Project project() {
-    return project;
+    return this.project;
   }
 
   @Override
@@ -64,21 +65,19 @@ class DefaultTimeTracking implements TimeTracking {
         new HttpResponseAsResponse(
             HttpClients.createDefault().execute(
                 new HttpRequestWithSession(
-                    session, 
+                    this.session, 
                     new HttpGet(
-                        session.baseUrl().toString()
-                            .concat("/admin/project/")
-                            .concat(project().id())
-                            .concat("/timetracking")
+                        this.session.baseUrl().toString()
+                            .concat(String.format(PATH_TEMPLATE, this.project().id()))
                     )
                 )
             )
-        ).asHttpResponse().getEntity()
+        ).httpResponse().getEntity()
     );
 
     return settings.isEnabled() 
-        && nonNull(settings.getEstimation()) 
-        && nonNull(settings.getSpentTime());
+        && Objects.nonNull(settings.getEstimation()) 
+        && Objects.nonNull(settings.getSpentTime());
   }
 
   @Override
@@ -87,16 +86,15 @@ class DefaultTimeTracking implements TimeTracking {
         new HttpResponseAsResponse(
             HttpClients.createDefault().execute(
                 new HttpRequestWithSession(
-                    session, 
+                    this.session, 
                     new HttpGet(
-                        session.baseUrl().toString()
-                            .concat("/admin/project/")
-                            .concat(project().id())
-                            .concat("/timetracking/worktype")
+                        this.session.baseUrl().toString()
+                            .concat(String.format(PATH_TEMPLATE, this.project().id()))
+                            .concat("/worktype")
                     )
                 )
             )
-        ).asHttpResponse().getEntity()
+        ).httpResponse().getEntity()
     ).getWorkType().stream().map(XmlTimeTrackEntryType::new);
   }
 }

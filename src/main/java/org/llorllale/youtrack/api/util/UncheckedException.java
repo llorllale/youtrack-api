@@ -22,9 +22,15 @@ package org.llorllale.youtrack.api.util;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
-class UncheckedException extends RuntimeException {
+final class UncheckedException extends RuntimeException {
   private static final long serialVersionUID = -9216739746684341214L;
 
+  /**
+   * Ctor.
+   * 
+   * @param cause the exception's cause
+   * @since 0.7.0
+   */
   UncheckedException(Throwable cause) {
     super(cause);
   }

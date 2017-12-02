@@ -16,24 +16,27 @@
 
 package org.llorllale.youtrack.api.util.response;
 
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.InputStreamAsString;
-
-import java.io.IOException;
 
 /**
  * A {@link Response} that throws an {@link IOException} if the server responds with code
  * 500.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class InternalServerErrorResponse implements Response {
+public final class InternalServerErrorResponse implements Response {
   private final Response base;
 
   /**
    * Ctor.
+   * 
    * @param base the next link in the chain
    * @since 0.4.0
    */
@@ -42,19 +45,17 @@ public class InternalServerErrorResponse implements Response {
   }
 
   @Override
-  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException {
-    if (this.base.asHttpResponse().getStatusLine().getStatusCode() 
+  public HttpResponse httpResponse() throws IOException, UnauthorizedException {
+    if (this.base.httpResponse().getStatusLine().getStatusCode() 
         == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
       throw new IOException(
-          String.format(
-              "500 Internal Server error. Payload: %s", 
-              new InputStreamAsString().apply(
-                  this.base.asHttpResponse().getEntity().getContent()
+          String.format("500 Internal Server error. Payload: %s", 
+              new InputStreamAsString().apply(this.base.httpResponse().getEntity().getContent()
               )
           )
       );
     }
 
-    return this.base.asHttpResponse();
+    return this.base.httpResponse();
   }
 }

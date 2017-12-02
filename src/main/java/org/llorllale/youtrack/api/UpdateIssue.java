@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.Map;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * API to update an {@link Issue}.
@@ -39,7 +39,7 @@ public interface UpdateIssue {
    *     operation
    * @since 0.9.0
    */
-  public Issue summary(String summary) throws IOException, UnauthorizedException;
+  Issue summary(String summary) throws IOException, UnauthorizedException;
 
   /**
    * Updates the issue's {@link Issue#description() description}.
@@ -51,7 +51,7 @@ public interface UpdateIssue {
    *     operation
    * @since 0.9.0
    */
-  public Issue description(String description) throws IOException, UnauthorizedException;
+  Issue description(String description) throws IOException, UnauthorizedException;
 
   /**
    * Updates the issue's {@link Issue#summary() summary} and 
@@ -65,7 +65,7 @@ public interface UpdateIssue {
    *     operation
    * @since 0.9.0
    */
-  public Issue summaryAndDesc(String summary, String description) 
+  Issue summaryAndDesc(String summary, String description) 
       throws IOException, UnauthorizedException;
 
   /**
@@ -78,10 +78,10 @@ public interface UpdateIssue {
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
-   * @since 0.9.0
    * @see Issue#fields() 
+   * @since 0.9.0
    */
-  public Issue field(Field field, FieldValue value) throws IOException, UnauthorizedException;
+  Issue field(Field field, FieldValue value) throws IOException, UnauthorizedException;
 
   /**
    * Updates this issue with the {@code fields} provided, returning a new {@link Issue} reflecting
@@ -94,5 +94,5 @@ public interface UpdateIssue {
    *     operation
    * @since 0.9.0
    */
-  public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException;
+  Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException;
 }

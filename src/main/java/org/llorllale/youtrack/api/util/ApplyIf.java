@@ -29,9 +29,10 @@ import java.util.function.Predicate;
  * @param <E> the type parameter for the exception thrown
  * @since 0.6.0
  */
-public class ApplyIf<T,R,E extends Exception> implements ExceptionalFunction<T,Optional<R>,E> {
+public final class ApplyIf<T, R, E extends Exception> 
+    implements ExceptionalFunction<T, Optional<R>, E> {
   private final Predicate<T> condition;
-  private final ExceptionalFunction<T,R,E> function;
+  private final ExceptionalFunction<T, R, E> function;
 
   /**
    * Ctor.

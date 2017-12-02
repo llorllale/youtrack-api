@@ -16,11 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,31 +25,41 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
+
 /**
  * Issues API.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public interface Issues {
   /**
    * This {@link Issues}' {@link Project}.
+   * 
    * @return this {@link Issues}' {@link Project}
    * @since 0.4.0
    */
-  public Project project();
+  Project project();
 
   /**
    * A {@link Stream} with all {@link Issue issues} created for this {@link Project}.
+   * 
    * @return a {@link Stream} with all {@link Issue issues} for this {@link #project() project}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to access this
    *     resource
    * @since 0.4.0
    */
-  public Stream<Issue> stream() throws IOException, UnauthorizedException;
+  Stream<Issue> stream() throws IOException, UnauthorizedException;
 
   /**
    * The {@link Issue} with the given {@code id}, if it exists.
+   * 
    * @param id the {@link Issue#id() issue's id}
    * @return The {@link Issue} with the given {@code id}, if it exists.
    * @throws IOException if the server is unavailable
@@ -62,10 +67,11 @@ public interface Issues {
    *     operation
    * @since 0.4.0
    */
-  public Optional<Issue> get(String id) throws IOException, UnauthorizedException;
+  Optional<Issue> get(String id) throws IOException, UnauthorizedException;
 
   /**
    * Creates an issue according to the {@link IssueSpec spec}.
+   * 
    * @param spec the specifications for creating the issue
    * @return the newly-created {@link Issue}
    * @throws IOException if the server is unavailable
@@ -73,14 +79,14 @@ public interface Issues {
    *     operation
    * @since 0.4.0
    */
-  public Issue create(IssueSpec spec) throws IOException, UnauthorizedException;
+  Issue create(IssueSpec spec) throws IOException, UnauthorizedException;
 
   /**
    * Specifications for an {@link Issue}.
    * 
    * @since 0.4.0
    */
-  public static class IssueSpec {
+  class IssueSpec {
     private final String summary;
     private final Optional<String> description;
     private final Map<Field, FieldValue> fields;
@@ -139,9 +145,9 @@ public interface Issues {
      * @param field the field to set
      * @param value the field's value
      * @return a new instance of this spec with the summary, description, and all fields
-     * @since 0.8.0
      * @see UpdateIssue#field(org.llorllale.youtrack.api.Field, 
      *     org.llorllale.youtrack.api.FieldValue) 
+     * @since 0.8.0
      */
     public IssueSpec with(Field field, FieldValue value) {
       this.fields.put(field, value);
@@ -154,10 +160,10 @@ public interface Issues {
      * @return this spec as name-value pairs
      * @since 0.4.0
      */
-    public List<NameValuePair> asNameValuePairs() {
+    public List<NameValuePair> nameValuePairs() {
       final List<NameValuePair> pairs = new ArrayList<>();
-      pairs.add(new BasicNameValuePair("summary", summary));
-      description.ifPresent(d -> pairs.add(new BasicNameValuePair("description", d)));
+      pairs.add(new BasicNameValuePair("summary", this.summary));
+      this.description.ifPresent(d -> pairs.add(new BasicNameValuePair("description", d)));
       return pairs;
     }
 
@@ -167,8 +173,8 @@ public interface Issues {
      * @return this spec as Issue {@link Field fields} and {@link FieldValue values}
      * @since 0.8.0
      */
-    public Map<Field, FieldValue> asFields() {
-      return Collections.unmodifiableMap(fields);
+    public Map<Field, FieldValue> fields() {
+      return Collections.unmodifiableMap(this.fields);
     }
   }
 }

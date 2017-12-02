@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Access the {@link User users} of a {@link Project project}.
@@ -35,7 +35,7 @@ public interface UsersOfProject {
    * @return the {@link Project}
    * @since 0.9.0
    */
-  public Project project();
+  Project project();
 
   /**
    * The {@link User} with the given {@code login}.
@@ -52,7 +52,7 @@ public interface UsersOfProject {
    *     this operation <strong>or if the given {@code login} does not exist</strong>
    * @since 0.9.0
    */
-  public User user(String login) throws IOException, UnauthorizedException;
+  User user(String login) throws IOException, UnauthorizedException;
 
   /**
    * A stream of all {@link User users} to which {@link Issue issues} can be assigned in this
@@ -64,5 +64,5 @@ public interface UsersOfProject {
    *     this operation
    * @since 0.9.0
    */
-  public Stream<User> assignees() throws IOException, UnauthorizedException;
+  Stream<User> assignees() throws IOException, UnauthorizedException;
 }

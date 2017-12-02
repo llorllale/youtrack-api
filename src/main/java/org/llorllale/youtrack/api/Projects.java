@@ -16,12 +16,12 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Fetches {@link Project projects} from the YouTrack server.
@@ -39,7 +39,7 @@ public interface Projects {
    *     resource
    * @since 0.4.0
    */
-  public Stream<Project> stream() throws IOException, UnauthorizedException;
+  Stream<Project> stream() throws IOException, UnauthorizedException;
 
   /**
    * Returns the {@link Project} with the given {@code id}, if any.
@@ -50,5 +50,5 @@ public interface Projects {
    *     operation
    * @since 0.6.0
    */
-  public Optional<Project> get(String id) throws IOException, UnauthorizedException;
+  Optional<Project> get(String id) throws IOException, UnauthorizedException;
 }

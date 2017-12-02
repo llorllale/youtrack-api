@@ -16,16 +16,17 @@
 
 package org.llorllale.youtrack.api.session;
 
-import org.apache.http.Header;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.http.Header;
+
 /**
  * Basic implementation of {@link Session}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
@@ -35,32 +36,34 @@ class DefaultSession implements Session {
 
   /**
    * Base constructor.
+   * 
    * @param youtrackUrl the remote API url
    * @param headers the session's state
    * @since 0.1.0
    */
-  public DefaultSession(URL youtrackUrl, List<Header> headers) {
+  DefaultSession(URL youtrackUrl, List<Header> headers) {
     this.youtrackUrl = youtrackUrl;
     this.cookies = new ArrayList<>(headers);
   }
 
   /**
    * Same as {@code BasicSession(youtrackUrl, Arrays.asList(headers))}.
+   * 
    * @param youtrackUrl the remote API url
    * @param headers the session's state
    * @since 0.3.0
    */
-  public DefaultSession(URL youtrackUrl, Header... headers) {
+  DefaultSession(URL youtrackUrl, Header... headers) {
     this(youtrackUrl, Arrays.asList(headers));
   }
 
   @Override
   public URL baseUrl() {
-    return youtrackUrl;
+    return this.youtrackUrl;
   }
 
   @Override
   public List<Header> cookies() {
-    return Collections.unmodifiableList(cookies);
+    return Collections.unmodifiableList(this.cookies);
   }
 }

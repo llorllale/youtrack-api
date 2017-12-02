@@ -16,20 +16,20 @@
 
 package org.llorllale.youtrack.api.util.response;
 
-import static java.util.Objects.nonNull;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.ApplyIf;
 import org.llorllale.youtrack.api.util.ExceptionalFunction;
 import org.llorllale.youtrack.api.util.InputStreamAsString;
 import org.llorllale.youtrack.api.util.StandardErrorCheck;
-
-import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 /**
  * <p>
@@ -43,7 +43,7 @@ import java.util.function.Predicate;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class HttpResponseAsResponse implements Response {
+public final class HttpResponseAsResponse implements Response {
   private final Response base;
 
   /**
@@ -67,8 +67,8 @@ public class HttpResponseAsResponse implements Response {
   }
 
   @Override
-  public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
-    return this.base.asHttpResponse();
+  public HttpResponse httpResponse() throws UnauthorizedException, IOException {
+    return this.base.httpResponse();
   }
 
   /**
@@ -76,7 +76,7 @@ public class HttpResponseAsResponse implements Response {
    * {@link HttpResponse}, then applies the {@code function} on the result if it matches 
    * the {@code condition}.
    * 
-   * <p>Note: the underlying {@link HttpEntity} is retrieved by calling {@link #asHttpResponse()}
+   * <p>Note: the underlying {@link HttpEntity} is retrieved by calling {@link #httpResponse()}
    * on this object, therefore all validations are carried through to this method.</p>
    * 
    * @param <R> the resulting type parameter of the {@code function}
@@ -90,21 +90,19 @@ public class HttpResponseAsResponse implements Response {
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
    *     some operation
    * @throws E the exception declared by {@code function}
-   * @since 0.6.0
-   * @see #asHttpResponse() 
+   * @see #httpResponse() 
    * @see StandardErrorCheck
+   * @since 0.6.0
    */
-  public <R,E extends Exception> Optional<R> applyOnEntity(
-      ExceptionalFunction<String,R,E> function,
+  public <R, E extends Exception> Optional<R> applyOnEntity(
+      ExceptionalFunction<String, R, E> function,
       Predicate<String> condition
   ) throws IOException, UnauthorizedException, E {
     final Optional<R> result;
 
-    if (nonNull(this.asHttpResponse().getEntity())) {
-      result = new ApplyIf<>(condition,function)
-          .apply(
-              new InputStreamAsString().apply(
-                  this.asHttpResponse().getEntity().getContent()
+    if (Objects.nonNull(this.httpResponse().getEntity())) {
+      result = new ApplyIf<>(condition, function)
+          .apply(new InputStreamAsString().apply(this.httpResponse().getEntity().getContent()
               )
           );
     } else {

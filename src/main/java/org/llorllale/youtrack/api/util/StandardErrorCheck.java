@@ -23,16 +23,14 @@ import java.util.function.Predicate;
  * 
  * <p>YouTrack sends error messages in the response using this format:</p>
  * <pre>
- * {@code
- *     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
- *     <error>SOME_MESSAGE</error>
- * }
+ *     &lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+ *     &lt;error>SOME_MESSAGE&lt;/error>
  * </pre>
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.6.0
  */
-public class StandardErrorCheck implements Predicate<String> {
+public final class StandardErrorCheck implements Predicate<String> {
   @Override
   public boolean test(String xml) {
     return !xml.contains("<error>");

@@ -16,22 +16,21 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.StandardErrorCheck;
-import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-
-import java.io.IOException;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link Projects}.
@@ -60,9 +59,9 @@ class DefaultProjects implements Projects {
    * Uses the {@link HttpClients#createDefault() default} http client.
    * @param youtrack the parent {@link YouTrack}
    * @param session the user's {@link Session}
-   * @since 0.4.0
    * @see #DefaultProjects(org.llorllale.youtrack.api.session.Session, 
    *     org.apache.http.client.HttpClient) 
+   * @since 0.4.0
    */
   DefaultProjects(YouTrack youtrack, Session session) {
     this(youtrack, session, HttpClients.createDefault());
@@ -73,40 +72,36 @@ class DefaultProjects implements Projects {
     return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Projects.class)
         .apply(
             new HttpResponseAsResponse(
-                httpClient.execute(
+                this.httpClient.execute(
                     new HttpRequestWithSession(
-                        session, 
+                        this.session, 
                         new HttpGet(
-                            new UncheckedUriBuilder(
-                                session.baseUrl().toString().concat("/project/all")
-                            ).build()
+                            this.session.baseUrl().toString().concat("/project/all")
                         )
                     )
                 )
-            ).asHttpResponse().getEntity()
+            ).httpResponse().getEntity()
         ).getProject()
             .stream()
-            .map(p -> new XmlProject(youtrack, session, p));
+            .map(p -> new XmlProject(this.youtrack, this.session, p));
   }
 
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
     return new HttpResponseAsResponse(
-        httpClient.execute(
+        this.httpClient.execute(
             new HttpRequestWithSession(
-                session, 
+                this.session, 
                 new HttpGet(
-                    new UncheckedUriBuilder(
-                        session.baseUrl().toString()
-                            .concat("/admin/project/")
-                            .concat(id)
-                    ).build()
+                    this.session.baseUrl().toString()
+                        .concat("/admin/project/")
+                        .concat(id)
                 )
             )
         )
     ).applyOnEntity(
         new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class), 
         new StandardErrorCheck()
-    ).map(p -> new XmlProject(youtrack, session, p));
+    ).map(p -> new XmlProject(this.youtrack, this.session, p));
   }
 }

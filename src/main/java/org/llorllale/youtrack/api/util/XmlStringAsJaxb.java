@@ -16,13 +16,12 @@
 
 package org.llorllale.youtrack.api.util;
 
-import org.llorllale.youtrack.api.util.response.ParseException;
-
 import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+
+import org.llorllale.youtrack.api.util.response.ParseException;
 
 /**
  * Utility class to unmarshal an XML document in string form to its JAXB 
@@ -32,7 +31,7 @@ import javax.xml.transform.stream.StreamSource;
  * @param <T> the type class of the XML root element
  * @since 0.1.0
  */
-public class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, ParseException> {
+public final class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, ParseException> {
   private final Class<T> rootType;
 
   /**
@@ -48,16 +47,14 @@ public class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, ParseE
   @Override
   public T apply(String xml) throws ParseException {
     try {
-      final JAXBContext ctx = JAXBContext.newInstance(rootType);
-      final Unmarshaller um = ctx.createUnmarshaller();
-      return um.unmarshal(
-          new StreamSource(
-              new StringReader(xml)
-          ), rootType
+      final JAXBContext ctx = JAXBContext.newInstance(this.rootType);
+      return ctx.createUnmarshaller().unmarshal(
+          new StreamSource(new StringReader(xml)), 
+          this.rootType
       ).getValue();
     } catch (JAXBException e) {
       throw new ParseException(
-          String.format("Error parsing xml: rootType=%s xml=%s", rootType, xml), 
+          String.format("Error parsing xml: rootType=%s xml=%s", this.rootType, xml), 
           e
       );
     }

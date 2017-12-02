@@ -36,7 +36,7 @@ public interface ExceptionalFunction<T, R, E extends Exception> {
    * @throws E an exception 
    * @since 0.6.0
    */
-  public R apply(T input) throws E;
+  R apply(T input) throws E;
 
   /**
    * Returns a composed {@link ExceptionalFunction} that first applies itself to the input, then
@@ -48,7 +48,7 @@ public interface ExceptionalFunction<T, R, E extends Exception> {
    *     applies {@code after} to the result
    * @since 0.7.0
    */
-  public default <V> ExceptionalFunction<T, V, E> andThen(Function<R, V> after) {
-    return (T input) -> after.apply(apply(input));
+  default <V> ExceptionalFunction<T, V, E> andThen(Function<R, V> after) {
+    return (T input) -> after.apply(this.apply(input));
   }
 }

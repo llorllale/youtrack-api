@@ -16,18 +16,19 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.util.stream.Stream;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.jaxb.ProjectCustomFieldRefs;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-
-import java.io.IOException;
-import java.util.stream.Stream;
 
 /**
  * Default impl of {@link Fields}.
@@ -55,25 +56,26 @@ class DefaultFields implements Fields {
 
   @Override
   public Project project() {
-    return project;
+    return this.project;
   }
 
   @Override
   public Stream<ProjectField> stream() throws IOException, UnauthorizedException {
     return new HttpEntityAsJaxb<>(ProjectCustomFieldRefs.class).apply(
         new HttpResponseAsResponse(
-            httpClient.execute(
+            this.httpClient.execute(
                 new HttpRequestWithSession(
-                    session,
+                    this.session,
                     new HttpGet(
-                        session.baseUrl().toString()
+                        this.session.baseUrl().toString()
                             .concat("/admin/project/")
-                            .concat(project().id())
+                            .concat(this.project().id())
                             .concat("/customfield")
                     )
                 )
             )
-        ).asHttpResponse().getEntity()
-    ).getProjectCustomField().stream().map(f -> new XmlProjectField(f, project, session));
+        ).httpResponse().getEntity()
+    ).getProjectCustomField().stream()
+        .map(f -> new XmlProjectField(f, this.project(), this.session));
   }
 }

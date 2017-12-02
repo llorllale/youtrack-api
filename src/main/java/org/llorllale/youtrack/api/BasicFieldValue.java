@@ -42,12 +42,12 @@ class BasicFieldValue implements FieldValue {
 
   @Override
   public Field field() {
-    return field;
+    return this.field;
   }
 
   @Override
   public String asString() {
-    return value;
+    return this.value;
   }
 
   @Override
@@ -60,15 +60,7 @@ class BasicFieldValue implements FieldValue {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-
-    if (obj == null) {
-      return false;
-    }
-
-    if (!FieldValue.class.isAssignableFrom(obj.getClass())) {
+    if (!(obj instanceof FieldValue)) {
       return false;
     }
 

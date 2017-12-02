@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Access to a {@link Project project's} timetracking settings.
@@ -29,17 +29,17 @@ import java.util.stream.Stream;
  * {@link #enabled() enabled} for the {@link Project}.</p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
  * @see Issue#timetracking() 
+ * @since 0.8.0
  */
-public interface TimeTracking {
+public interface ProjectTimeTracking {
   /**
    * The parent {@link Project}.
    * 
    * @return the parent {@link Project}
    * @since 0.8.0
    */
-  public Project project();
+  Project project();
 
   /**
    * Whether timetracking is enabled for the {@link Project} or not.
@@ -51,7 +51,7 @@ public interface TimeTracking {
    *     operation
    * @since 0.8.0
    */
-  public boolean enabled() throws IOException, UnauthorizedException;
+  boolean enabled() throws IOException, UnauthorizedException;
 
   /**
    * A stream of all {@link TimeTrackEntryType timetracking entry types}, if 
@@ -64,5 +64,5 @@ public interface TimeTracking {
    *     operation
    * @since 0.8.0
    */
-  public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException;
+  Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException;
 }

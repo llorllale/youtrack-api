@@ -16,10 +16,10 @@
 
 package org.llorllale.youtrack.api.session;
 
-import org.apache.http.Header;
-
 import java.net.URL;
 import java.util.List;
+
+import org.apache.http.Header;
 
 /**
  * <p>
@@ -31,22 +31,25 @@ import java.util.List;
  * Instances of {@code Session} are obtained by {@link Login#login() login} in
  * to YouTrack.
  * </p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.1.0
  * @see Login
+ * @since 0.1.0
  */
 public interface Session {
   /**
    * The base endpoint URL of the remote YouTrack API.
+   * 
    * @return The base endpoint URL of the remote YouTrack API.
    * @since 0.1.0
    */
-  public URL baseUrl();
+  URL baseUrl();
 
   /**
    * Session state.
+   * 
    * @return The session's state.
    * @since 0.1.0
    */
-  public List<Header> cookies();
+  List<Header> cookies();
 }

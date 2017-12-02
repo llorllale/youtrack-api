@@ -16,19 +16,19 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.stream.Collectors.toList;
+import java.io.IOException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.MappedCollection;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-
-import java.io.IOException;
-import java.util.stream.Stream;
 
 /**
  * Default impl of {@link UsersOfProject}.
@@ -45,6 +45,7 @@ class DefaultUsersOfProject implements UsersOfProject {
    * Primary ctor.
    * 
    * @param project the {@link Project} in scope
+   * @param session the users's {@link Session}
    * @param jaxb the jaxb object
    * @since 0.9.0
    */
@@ -76,7 +77,7 @@ class DefaultUsersOfProject implements UsersOfProject {
                         )
                     )
                 )
-            ).asHttpResponse().getEntity()
+            ).httpResponse().getEntity()
         )
     );
   }
@@ -87,7 +88,7 @@ class DefaultUsersOfProject implements UsersOfProject {
         this.jaxb.getAssigneesLogin().getSub()
             .stream()
             .map(s -> s.getValue())
-            .collect(toList()),
+            .collect(Collectors.toList()),
         this::user
     ).stream();
   }

@@ -16,16 +16,15 @@
 
 package org.llorllale.youtrack.api;
 
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * JAXB implementation of {@link Issue}.
@@ -42,6 +41,7 @@ class XmlIssue implements Issue {
    * Primary ctor.
    * 
    * @param project this {@link Issue issue's} {@link Project}
+   * @param session the user's {@link Session}
    * @param jaxbIssue the JAXB issue to be adapted
    * @since 0.1.0
    */
@@ -136,13 +136,13 @@ class XmlIssue implements Issue {
   @Override
   public List<AssignedField> fields() {
     return this.jaxbIssue.getField().stream()
-        .filter(f -> nonNull(f.getValueId()))
+        .filter(f -> Objects.nonNull(f.getValueId()))
         .map(f -> 
             new DefaultAssignedField(
                 new BasicField(f.getName(), this.project),
                 this, 
                 f
             )
-        ).collect(toList());
+        ).collect(Collectors.toList());
   }
 }

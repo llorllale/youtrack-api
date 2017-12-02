@@ -16,10 +16,10 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-
 import java.util.Objects;
 import java.util.Optional;
+
+import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Adapter {@link org.llorllale.youtrack.api.issues.jaxb.Project} -> {@link Project}.
@@ -35,6 +35,7 @@ class XmlProject implements Project {
   /**
    * Ctor.
    * @param youtrack the parent {@link YouTrack}
+   * @param session the user's {@link Session}
    * @param jaxbProject the JAXB instance to be adapted into {@link Project}
    * @since 0.2.0
    */
@@ -80,8 +81,8 @@ class XmlProject implements Project {
   }
 
   @Override
-  public TimeTracking timetracking() {
-    return new DefaultTimeTracking(this, this.session);
+  public ProjectTimeTracking timetracking() {
+    return new DefaultProjectTimeTracking(this, this.session);
   }
 
   @Override
@@ -91,20 +92,11 @@ class XmlProject implements Project {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-
-    if (obj == null) {
-      return false;
-    }
-
-    if (!Project.class.isAssignableFrom(obj.getClass())) {
+    if (!(obj instanceof Project)) {
       return false;
     }
 
     final Project other = (Project) obj;
-
     return Objects.equals(this.id(), other.id());
   }
 

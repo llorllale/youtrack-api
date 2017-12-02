@@ -16,21 +16,20 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.util.stream.Stream;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-
-import java.io.IOException;
-import java.util.stream.Stream;
-
 
 /**
  * Default implementation of {@link IssueTimeTracking}.
@@ -39,6 +38,7 @@ import java.util.stream.Stream;
  * @since 0.4.0
  */
 class DefaultIssueTimeTracking implements IssueTimeTracking {
+  private static final String PATH_TEMPLATE = "/issue/%s/timetracking/workitem";
   private final Session session;
   private final Issue issue;
   private final HttpClient httpClient;
@@ -62,9 +62,9 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
    * 
    * @param session the user's {@link Session}
    * @param issue the {@link Issue} to which this {@link IssueTimeTracking} is attached to
-   * @since 0.4.0
    * @see #DefaultTimeTracking(org.llorllale.youtrack.api.session.Session, 
    *     org.llorllale.youtrack.api.Issue, org.apache.http.client.HttpClient) 
+   * @since 0.4.0
    */
   DefaultIssueTimeTracking(Session session, Issue issue) {
     this(session, issue, HttpClients.createDefault());
@@ -72,47 +72,38 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
 
   @Override
   public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItems.class)
-        .apply(
-            new HttpResponseAsResponse(
-                httpClient.execute(
-                    new HttpRequestWithSession(
-                        session, 
-                        new HttpGet(
-                            new UncheckedUriBuilder(
-                                session.baseUrl().toString()
-                                    .concat("/issue/")
-                                    .concat(issue.id())
-                                    .concat("/timetracking/workitem")
-                            ).build()
-                        )
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItems.class).apply(
+        new HttpResponseAsResponse(
+            this.httpClient.execute(
+                new HttpRequestWithSession(
+                    this.session, 
+                    new HttpGet(
+                        this.session.baseUrl().toString()
+                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
                     )
                 )
-            ).asHttpResponse().getEntity()
-        ).getWorkItem().stream().map(e -> new XmlTimeTrackEntry(issue, e));
+            )
+        ).httpResponse().getEntity()
+    ).getWorkItem().stream().map(e -> new XmlTimeTrackEntry(this.issue, e));
   }
 
   @Override
   public IssueTimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-        httpClient.execute(
+        this.httpClient.execute(
             new HttpRequestWithSession(
-                session, 
+                this.session, 
                 new HttpRequestWithEntity(
                     spec.asHttpEntity(),
                     new HttpPost(
-                        new UncheckedUriBuilder(
-                            session.baseUrl().toString()
-                                .concat("/issue/")
-                                .concat(issue.id())
-                                .concat("/timetracking/workitem")
-                        ).build()
+                        this.session.baseUrl().toString()
+                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
                     )
                 )
             )
         )
-    ).asHttpResponse();
+    ).httpResponse();
 
-    return new DefaultIssueTimeTracking(session, issue);
+    return new DefaultIssueTimeTracking(this.session, this.issue);
   }
 }

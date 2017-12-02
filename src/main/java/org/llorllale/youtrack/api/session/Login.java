@@ -28,20 +28,22 @@ import java.io.IOException;
  * etc.), hence it's up to implementations to know what to do with 
  * {@link #login() login()}.
  * </p>
+ * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.1.0
  * @see UsernamePasswordLogin
  * @see AnonymousLogin
+ * @since 0.1.0
  */
 public interface Login {
   /**
    * Performs the login function and returns a {@link Session} with sufficient
    * state to allow further transactions with YouTrack.
+   * 
    * @return a session object with state usable for further transactions.
    * @throws AuthenticationException if the login process fails due to invalid
    *     credentials
    * @throws IOException if the YouTrack endpoint is unreachable
    * @since 0.1.0
    */
-  public Session login() throws AuthenticationException, IOException;
+  Session login() throws AuthenticationException, IOException;
 }

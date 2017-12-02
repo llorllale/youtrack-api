@@ -17,11 +17,6 @@
 package org.llorllale.youtrack.api;
 
 import com.jamesmurty.utils.XMLBuilder2;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -29,6 +24,12 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * <p>API for {@link Issue} timetracking.</p>
@@ -51,7 +52,7 @@ public interface IssueTimeTracking {
    *     operation
    * @since 0.4.0
    */
-  public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException;
+  Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException;
 
   /**
    * Creates a new {@link TimeTrackEntry entry}.
@@ -63,7 +64,7 @@ public interface IssueTimeTracking {
    *     operation
    * @since 0.4.0
    */
-  public IssueTimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException;
+  IssueTimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException;
 
   /**
    * <p>Specifications for creating a {@link TimeTrackEntry} on an {@link Issue}.</p>
@@ -73,7 +74,7 @@ public interface IssueTimeTracking {
    * 
    * @since 0.4.0
    */
-  public static final class EntrySpec {
+  class EntrySpec {
     private final LocalDate date;
     private final Duration duration;
     private final Optional<String> description;
@@ -101,7 +102,8 @@ public interface IssueTimeTracking {
     }
 
     /**
-     * Shorthand constructor that assumes the following:
+     * Shorthand constructor. The following assumptions are made:
+     * 
      * <ul>
      *   <li>date is <em>now</em></li>
      *   <li>description is empty</li>
@@ -109,8 +111,8 @@ public interface IssueTimeTracking {
      * </ul>
      * 
      * @param duration the work's duration
-     * @since 0.4.0
      * @see #EntrySpec(LocalDate, Duration, Optional, Optional) 
+     * @since 0.4.0
      */
     public EntrySpec(Duration duration) {
       this(
@@ -124,13 +126,13 @@ public interface IssueTimeTracking {
     /**
      * Returns a new spec with {@code date} and using {@code this} as a prototype.
      * 
-     * @param date the entry's date
+     * @param entryDate the entry's date
      * @return a new spec with {@code date} and using {@code this} as a prototype
      * @since 0.4.0
      */
-    public EntrySpec withDate(LocalDate date) {
+    public EntrySpec withDate(LocalDate entryDate) {
       return new EntrySpec(
-          date, 
+          entryDate, 
           this.duration, 
           this.description, 
           this.type
@@ -140,15 +142,15 @@ public interface IssueTimeTracking {
     /**
      * Returns a new spec with {@code description} and using {@code this} as a prototype.
      * 
-     * @param description the entry's description
+     * @param desc the entry's description
      * @return a new spec with {@code description} and using {@code this} as a prototype
      * @since 0.4.0
      */
-    public EntrySpec withDescription(String description) {
+    public EntrySpec withDesc(String desc) {
       return new EntrySpec(
           this.date, 
           this.duration, 
-          Optional.of(description), 
+          Optional.of(desc), 
           this.type
       );
     }
@@ -156,16 +158,16 @@ public interface IssueTimeTracking {
     /**
      * Returns a new spec with {@code type} and using {@code this} as a prototype.
      * 
-     * @param type the entry's type
+     * @param entryType the entry's type
      * @return a new spec with {@code type} and using {@code this} as a prototype
      * @since 0.4.0
      */
-    public EntrySpec withType(TimeTrackEntryType type) {
+    public EntrySpec withType(TimeTrackEntryType entryType) {
       return new EntrySpec(
           this.date, 
           this.duration, 
           this.description, 
-          Optional.of(type)
+          Optional.of(entryType)
       );
     }
 
@@ -179,7 +181,7 @@ public interface IssueTimeTracking {
           .elem("date")
               .text(
                   String.valueOf(
-                      date.atStartOfDay()
+                      this.date.atStartOfDay()
                           .atZone(ZoneId.systemDefault())
                           .toInstant()
                           .toEpochMilli()
@@ -187,17 +189,17 @@ public interface IssueTimeTracking {
               )
               .up()
           .elem("duration")
-              .text(String.valueOf(duration.toMinutes()))
+              .text(String.valueOf(this.duration.toMinutes()))
               .up()
           .elem("description")
-              .text(description.orElse(""))
+              .text(this.description.orElse(""))
               .up();
 
-      type.ifPresent(type -> 
+      this.type.ifPresent(t -> 
           builder
               .elem("worktype")
                 .elem("name")
-                  .text(type.asString())
+                  .text(t.asString())
                   .up()
                 .up()
       );

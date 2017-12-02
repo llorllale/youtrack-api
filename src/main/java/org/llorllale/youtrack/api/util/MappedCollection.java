@@ -35,7 +35,7 @@ import java.util.List;
  * @param <E> checked exception declared by the mapping function
  * @since 0.9.0
  */
-public class MappedCollection<I,O, E extends Exception> extends AbstractCollection<O> {
+public final class MappedCollection<I, O, E extends Exception> extends AbstractCollection<O> {
   private final Collection<O> output;
 
   /**

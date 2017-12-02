@@ -16,39 +16,43 @@
 
 package org.llorllale.youtrack.api.util.response;
 
-import org.apache.http.HttpResponse;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Throws an {@link UnauthorizedException} if status error code {@code 403} is received from 
  * YouTrack.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class ForbiddenResponse implements Response {
+public final class ForbiddenResponse implements Response {
   private final Response base;
 
   /**
    * Ctor.
+   * 
    * @param base the next link in the chain
-   * @since 0.1.0
    * @see HttpResponseAsResponse
+   * @since 0.1.0
    */
   public ForbiddenResponse(Response base) {
     this.base = base;
   }
 
   @Override
-  public HttpResponse asHttpResponse() throws UnauthorizedException, IOException {
-    if (base.asHttpResponse().getStatusLine().getStatusCode() == 403) {
+  public HttpResponse httpResponse() throws UnauthorizedException, IOException {
+    if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_FORBIDDEN) {
       throw new UnauthorizedException(
           "403: Forbidden", 
-          base.asHttpResponse()
+          this.base.httpResponse()
       );
     } else {
-      return base.asHttpResponse();
+      return this.base.httpResponse();
     }
   }
 }

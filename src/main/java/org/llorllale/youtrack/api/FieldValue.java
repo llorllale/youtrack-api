@@ -29,7 +29,7 @@ public interface FieldValue {
    * @return the owner {@link Field}
    * @since 0.8.0
    */
-  public Field field();
+  Field field();
 
   /**
    * Returns a string representation of this {@link FieldValue}.
@@ -37,7 +37,7 @@ public interface FieldValue {
    * @return a string representation of this {@link FieldValue}
    * @since 0.8.0
    */
-  public String asString();
+  String asString();
 
   /**
    * Whether this value is equal to {@code other} and both share the same parent {@link Field}.
@@ -47,7 +47,7 @@ public interface FieldValue {
    *     the same parent {@link Field}; otherwise {@code false}
    * @since 0.8.0
    */
-  public default boolean isEqualTo(FieldValue other) {
+  default boolean isEqualTo(FieldValue other) {
     return this.field().isSameField(other.field()) && this.asString().equals(other.asString());
   }
 }

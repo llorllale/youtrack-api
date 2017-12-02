@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -23,16 +25,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-
-import java.io.IOException;
-import java.util.stream.Stream;
 
 /**
  * Default implementation of {@link Comments}.
@@ -40,7 +39,11 @@ import java.util.stream.Stream;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
+//suppressed with: Class Data Abstraction Coupling is 8 (max allowed is 7)
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultComments implements Comments {
+  private static final String BASE_PATH = "/issue/";
+
   private final Session session;
   private final Issue issue;
   private final HttpClient httpClient;
@@ -64,9 +67,9 @@ class DefaultComments implements Comments {
    * 
    * @param session the user's {@link Session}
    * @param issue the {@link Issue} on which the comments are attached to
-   * @since 0.4.0
    * @see #DefaultComments(org.llorllale.youtrack.api.session.Session, 
    *     org.llorllale.youtrack.api.Issue, org.apache.http.client.HttpClient) 
+   * @since 0.4.0
    */
   DefaultComments(Session session, Issue issue) {
     this(session, issue, HttpClients.createDefault());
@@ -74,26 +77,23 @@ class DefaultComments implements Comments {
 
   @Override
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class)
-        .apply(
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        session, 
-                        new HttpGet(
-                            new UncheckedUriBuilder(
-                                this.session.baseUrl().toString()
-                                    .concat("/issue/")
-                                    .concat(this.issue().id())
-                                    .concat("/comment")
-                            ).build()
-                        )
+    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class).apply(
+        new HttpResponseAsResponse(
+            this.httpClient.execute(
+                new HttpRequestWithSession(
+                    this.session, 
+                    new HttpGet(
+                        this.session.baseUrl().toString()
+                            .concat(BASE_PATH)
+                            .concat(this.issue().id())
+                            .concat("/comment")
                     )
                 )
-            ).asHttpResponse().getEntity()
-        ).getComment()
-            .stream()
-            .map(c -> new XmlComment(this.issue(), this.session, c));
+            )
+        ).httpResponse().getEntity()
+    ).getComment()
+        .stream()
+        .map(c -> new XmlComment(this.issue(), this.session, c));
   }
 
   @Override
@@ -108,17 +108,15 @@ class DefaultComments implements Comments {
                         ContentType.APPLICATION_FORM_URLENCODED
                     ),
                     new HttpPost(
-                        new UncheckedUriBuilder(
-                            this.session.baseUrl().toString()
-                                .concat("/issue/")
-                                .concat(this.issue().id())
-                                .concat("/execute")
-                        ).build()
+                        this.session.baseUrl().toString()
+                            .concat(BASE_PATH)
+                            .concat(this.issue().id())
+                            .concat("/execute")
                     )
                 )
             )
         )
-    ).asHttpResponse();
+    ).httpResponse();
 
     return new DefaultComments(this.session, this.issue());
   }

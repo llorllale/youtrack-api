@@ -16,21 +16,23 @@
 
 package org.llorllale.youtrack.api.util.response;
 
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
-import java.io.IOException;
-
 /**
  * Special {@link Response} that does no validation and just returns the {@link HttpResponse}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class IdentityResponse implements Response {
+public final class IdentityResponse implements Response {
   private final HttpResponse httpResponse;
 
   /**
    * Ctor.
+   * 
    * @param httpResponse the http response
    * @since 0.4.0
    */
@@ -39,7 +41,7 @@ public class IdentityResponse implements Response {
   }
 
   @Override
-  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException {
-    return httpResponse;
+  public HttpResponse httpResponse() throws IOException, UnauthorizedException {
+    return this.httpResponse;
   }
 }

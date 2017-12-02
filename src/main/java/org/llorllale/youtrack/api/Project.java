@@ -31,7 +31,7 @@ public interface Project {
    * @return the project's id
    * @since 0.2.0
    */
-  public String id();
+  String id();
 
   /**
    * The project's name.
@@ -39,7 +39,7 @@ public interface Project {
    * @return the project's name
    * @since 0.2.0
    */
-  public String name();
+  String name();
 
   /**
    * The project's description.
@@ -47,7 +47,7 @@ public interface Project {
    * @return the project's optional description
    * @since 0.2.0
    */
-  public Optional<String> description();
+  Optional<String> description();
 
   /**
    * This {@link Project}'s {@link Issue issues}.
@@ -55,7 +55,7 @@ public interface Project {
    * @return this {@link Project}'s {@link Issue issues}
    * @since 0.4.0
    */
-  public Issues issues();
+  Issues issues();
 
   /**
    * Returns the parent {@link YouTrack} instance.
@@ -63,7 +63,7 @@ public interface Project {
    * @return the parent {@link YouTrack} instance
    * @since 0.6.0
    */
-  public YouTrack youtrack();
+  YouTrack youtrack();
 
   /**
    * Returns the {@link Fields} API.
@@ -71,15 +71,15 @@ public interface Project {
    * @return the {@link Fields} API
    * @since 0.8.0
    */
-  public Fields fields();
+  Fields fields();
 
   /**
-   * Access the project's {@link TimeTracking timetracking} settings.
+   * Access the project's {@link ProjectTimeTracking timetracking} settings.
    * 
-   * @return the project's {@link TimeTracking timetracking} settings
+   * @return the project's {@link ProjectTimeTracking timetracking} settings
    * @since 0.8.0
    */
-  public TimeTracking timetracking();
+  ProjectTimeTracking timetracking();
 
   /**
    * Access the {@link UsersOfProject} API for this {@link Project}.
@@ -87,5 +87,5 @@ public interface Project {
    * @return the {@link UsersOfProject} API for this {@link Project}
    * @since 0.9.0
    */
-  public UsersOfProject users();
+  UsersOfProject users();
 }

@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.time.Instant;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * A comment created on a YouTrack {@link Issue}.
@@ -35,7 +35,7 @@ public interface Comment {
    * @return the comment's ID
    * @since 0.2.0
    */
-  public String id();
+  String id();
 
   /**
    * The instant when the comment was created.
@@ -43,7 +43,7 @@ public interface Comment {
    * @return the instant when the comment was created
    * @since 0.2.0
    */
-  public Instant creationDate();
+  Instant creationDate();
 
   /**
    * The text content of the comment.
@@ -51,7 +51,7 @@ public interface Comment {
    * @return the text content of the comment
    * @since 0.2.0
    */
-  public String text();
+  String text();
 
   /**
    * The {@link Issue issue} on which this comment was created.
@@ -59,7 +59,7 @@ public interface Comment {
    * @return the {@link Issue issue} on which this comment was created
    * @since 0.2.0
    */
-  public Issue issue();
+  Issue issue();
 
   /**
    * Updates the text content of this {@link Comment}.
@@ -71,7 +71,7 @@ public interface Comment {
    *     operation
    * @since 0.9.0
    */
-  public Comment update(String text) throws IOException, UnauthorizedException;
+  Comment update(String text) throws IOException, UnauthorizedException;
 
   /**
    * Deletes this {@link Comment} from the {@link Issue}.
@@ -85,5 +85,5 @@ public interface Comment {
    *     operation
    * @since 0.9.0
    */
-  public Issue delete() throws IOException, UnauthorizedException;
+  Issue delete() throws IOException, UnauthorizedException;
 }

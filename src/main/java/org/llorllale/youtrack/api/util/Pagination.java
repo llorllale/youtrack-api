@@ -16,12 +16,12 @@
 
 package org.llorllale.youtrack.api.util;
 
-import org.apache.http.HttpEntity;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import org.apache.http.HttpEntity;
 
 /**
  * An {@link Iterator} that encapsulates a paginated resource from the YouTrack server.
@@ -31,14 +31,14 @@ import java.util.NoSuchElementException;
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the resource's type
- * @since 0.7.0
  * @see Page
+ * @since 0.7.0
  */
-public class Pagination<T> implements Iterator<T> {
+public final class Pagination<T> implements Iterator<T> {
   private final PageUri pageRequest;
   private final ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper;
 
-  private Page<T> page;
+  private Iterator<T> page;
 
   /**
    * Ctor.
@@ -58,17 +58,17 @@ public class Pagination<T> implements Iterator<T> {
 
   @Override
   public boolean hasNext() {
-    if (!page.hasNext()) {
-      page = new Page<>(pageRequest.get(), mapper);
+    if (!this.page.hasNext()) {
+      this.page = new Page<>(this.pageRequest.get(), this.mapper);
     }
 
-    return page.hasNext();
+    return this.page.hasNext();
   }
 
   @Override
   public T next() {
-    if (hasNext()) {
-      return page.next();
+    if (this.hasNext()) {
+      return this.page.next();
     }
 
     throw new NoSuchElementException();

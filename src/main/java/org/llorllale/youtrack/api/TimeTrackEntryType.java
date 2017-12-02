@@ -20,8 +20,8 @@ package org.llorllale.youtrack.api;
  * The {@link TimeTrackEntry}'s type.
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
  * @see TimeTrackEntry#type() 
+ * @since 0.8.0
  */
 public interface TimeTrackEntryType {
   /**
@@ -30,5 +30,5 @@ public interface TimeTrackEntryType {
    * @return a string representation of this {@link TimeTrackEntryType}
    * @since 0.8.0
    */
-  public String asString();
+  String asString();
 }

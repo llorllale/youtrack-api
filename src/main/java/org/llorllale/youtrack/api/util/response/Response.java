@@ -16,25 +16,28 @@
 
 package org.llorllale.youtrack.api.util.response;
 
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
+
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
-import java.io.IOException;
-
 /**
  * Handles HTTP response status codes received from the YouTrack server.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
 public interface Response {
   /**
    * The {@link HttpResponse} received in the API's response.
-   * @return The asHttpResponse received in the API's response.
+   * 
+   * @return The httpResponse received in the API's response.
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform some
    *     operation
    * @since 0.1.0
    */
-  public HttpResponse asHttpResponse() throws IOException, UnauthorizedException;
+  HttpResponse httpResponse() throws IOException, UnauthorizedException;
 }

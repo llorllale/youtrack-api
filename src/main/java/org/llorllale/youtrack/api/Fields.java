@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 import java.io.IOException;
 import java.util.stream.Stream;
+
+import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Access to all the {@link Field fields} of a {@link Project project} that are configured for
@@ -36,7 +36,7 @@ public interface Fields {
    * @return the {@link Project} to which this {@link Fields} belongs
    * @since 0.8.0
    */
-  public Project project();
+  Project project();
 
   /**
    * Returns a stream of all configured {@link ProjectField fields} for this {@link Project}.
@@ -47,5 +47,5 @@ public interface Fields {
    *     this operation
    * @since 0.8.0
    */
-  public Stream<ProjectField> stream() throws IOException, UnauthorizedException;
+  Stream<ProjectField> stream() throws IOException, UnauthorizedException;
 }

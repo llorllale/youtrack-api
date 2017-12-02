@@ -26,7 +26,7 @@ import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultTimeTracking}.
+ * Integration tests for {@link DefaultProjectTimeTracking}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
@@ -44,15 +44,13 @@ public class DefaultTimeTrackingIT {
 
   @Test
   public void testEnabled() throws Exception {
-    assertTrue(
-        new DefaultTimeTracking(project, session).enabled()
+    assertTrue(new DefaultProjectTimeTracking(project, session).enabled()
     );
   }
 
   @Test
   public void testTypes() throws Exception {
-    assertThat(
-        new DefaultTimeTracking(project, session).types().count(),
+    assertThat(new DefaultProjectTimeTracking(project, session).types().count(),
         is(greaterThan(0L))
     );
   }

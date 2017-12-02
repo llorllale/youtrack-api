@@ -16,10 +16,10 @@
 
 package org.llorllale.youtrack.api.util;
 
-import org.apache.http.client.methods.HttpUriRequest;
-
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import org.apache.http.client.methods.HttpUriRequest;
 
 /**
  * Combines a supplier of page numbers and a mapper of these numbers to working 
@@ -27,15 +27,15 @@ import java.util.function.Supplier;
  * of results.
  *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.7.0
  * @see Pagination
+ * @since 0.7.0
  */
-public class PageUri implements Supplier<HttpUriRequest> {
+public final class PageUri implements Supplier<HttpUriRequest> {
   private final Supplier<Integer> pageNum;
   private final Function<Integer, HttpUriRequest> combiner;
 
   /**
-   * Ctor.
+   * Primary ctor.
    * 
    * @param pageNum the page number supplier
    * @param combiner accepts a value from {@code pageNum} and produces a working 
@@ -47,8 +47,21 @@ public class PageUri implements Supplier<HttpUriRequest> {
     this.combiner = combiner;
   }
 
+  /**
+   * Constructs a new {@link Counter} with {@code 0} as the starting value, and {@code pageSize}
+   * as increment.
+   * 
+   * @param pageSize the page size
+   * @param combiner the combiner function
+   * @see #PageUri(Supplier, Function) 
+   * @since 1.0.0
+   */
+  public PageUri(int pageSize, Function<Integer, HttpUriRequest> combiner) {
+    this(new Counter(0, pageSize), combiner);
+  }
+
   @Override
   public HttpUriRequest get() {
-    return combiner.apply(pageNum.get());
+    return this.combiner.apply(this.pageNum.get());
   }
 }
