@@ -82,10 +82,24 @@ public interface Issues {
   Issue create(IssueSpec spec) throws IOException, UnauthorizedException;
 
   /**
-   * Specifications for an {@link Issue}.
+   * Specifications for building an {@link Issue}.
+   * 
+   * <p><strong>None</strong> of the transformations <em>spec -> issue -> spec</em> are reversible.
+   * The following truisms hold:
+   * 
+   * <ul>
+   *   <li>Users <strong>cannot</strong> expect two Issues derived from the same spec to be 
+   * equal</li>
+   *   <li>Two specs derived from the same issue <strong>can</strong> be expected to be equal</li>
+   * </ul>
+   * 
+   * <p>An {@link IssueSpec} is just a <em>blueprint</em> to create {@link Issue issues} and nothing
+   * more. The final {@link Issue#id() id} of the issue is determined by the YouTrack backend.
    * 
    * @since 0.4.0
    */
+  //suppressed warnings on fields() and nameValuePairs()
+  @SuppressWarnings("checkstyle:MethodCount")
   class IssueSpec {
     private final String summary;
     private final Optional<String> description;
@@ -155,12 +169,12 @@ public interface Issues {
     }
 
     /**
-     * Represents this spec as name-value pairs.
+     * A view of this spec as name-value pairs.
      * 
      * @return this spec as name-value pairs
      * @since 0.4.0
      */
-    public List<NameValuePair> nameValuePairs() {
+    List<NameValuePair> nameValuePairs() {
       final List<NameValuePair> pairs = new ArrayList<>();
       pairs.add(new BasicNameValuePair("summary", this.summary));
       this.description.ifPresent(d -> pairs.add(new BasicNameValuePair("description", d)));
@@ -168,12 +182,12 @@ public interface Issues {
     }
 
     /**
-     * Represents this spec as Issue {@link Field fields} and {@link FieldValue values}.
+     * A view of this spec as {@link Field fields} and {@link FieldValue values}.
      * 
      * @return this spec as Issue {@link Field fields} and {@link FieldValue values}
      * @since 0.8.0
      */
-    public Map<Field, FieldValue> fields() {
+    Map<Field, FieldValue> fields() {
       return Collections.unmodifiableMap(this.fields);
     }
 
