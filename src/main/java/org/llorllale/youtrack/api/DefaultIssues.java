@@ -34,11 +34,11 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.OptionalMapping;
 import org.llorllale.youtrack.api.util.PageUri;
 import org.llorllale.youtrack.api.util.Pagination;
-import org.llorllale.youtrack.api.util.StandardErrorCheck;
+import org.llorllale.youtrack.api.util.ResponseAs;
 import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
-import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -47,8 +47,6 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-//suppressed with: Class Data Abstraction Coupling is 11 (max allowed is 7)
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultIssues implements Issues {
   private final Project project;
   private final Session session;
@@ -120,23 +118,26 @@ class DefaultIssues implements Issues {
   }
 
   @Override
-  public Optional<Issue> get(String id) throws IOException, UnauthorizedException {
-    return new HttpResponseAsResponse(
-        this.httpClient.execute(
-            new HttpRequestWithSession(
-                this.session, 
-                new HttpGet(
-                    this.session.baseUrl()
-                        .toString()
-                        .concat("/issue/")
-                        .concat(id)
+  public Optional<Issue> get(String issueId) throws IOException, UnauthorizedException {
+    return new OptionalMapping<org.llorllale.youtrack.api.jaxb.Issue, Issue>(
+        () -> new ResponseAs<>(
+            org.llorllale.youtrack.api.jaxb.Issue.class,
+            new HttpResponseAsResponse(
+                this.httpClient.execute(
+                    new HttpRequestWithSession(
+                        this.session, 
+                        new HttpGet(
+                            this.session.baseUrl() 
+                                .toString()
+                                .concat("/issue/")
+                                .concat(issueId)
+                        )
+                    )
                 )
             )
-        )
-    ).applyOnEntity(
-        new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class), 
-        new StandardErrorCheck()
-    ).map(i -> new XmlIssue(this.project(), this.session, i));
+        ).get(),
+        jaxb -> new XmlIssue(this.project(), this.session, jaxb)
+    ).get();
   }
 
   @Override

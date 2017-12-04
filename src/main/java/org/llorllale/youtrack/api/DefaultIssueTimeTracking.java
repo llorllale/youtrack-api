@@ -23,12 +23,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.jaxb.WorkItems;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.OptionalMapping;
+import org.llorllale.youtrack.api.util.ResponseAs;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -72,19 +74,23 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
 
   @Override
   public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItems.class).apply(
-        new HttpResponseAsResponse(
-            this.httpClient.execute(
-                new HttpRequestWithSession(
-                    this.session, 
-                    new HttpGet(
-                        this.session.baseUrl().toString()
-                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
+    return new OptionalMapping<WorkItems, Stream<TimeTrackEntry>>(
+        () -> new ResponseAs<>(
+            WorkItems.class,
+            new HttpResponseAsResponse(
+                this.httpClient.execute(
+                    new HttpRequestWithSession(
+                        this.session, 
+                        new HttpGet(
+                            this.session.baseUrl().toString()
+                                .concat(String.format(PATH_TEMPLATE, this.issue.id()))
+                        )
                     )
                 )
             )
-        ).httpResponse().getEntity()
-    ).getWorkItem().stream().map(e -> new XmlTimeTrackEntry(this.issue, e));
+        ).get(),
+        item -> item.getWorkItem().stream().map(i -> new XmlTimeTrackEntry(this.issue, i))
+    ).get().get();
   }
 
   @Override

@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.ApplyIf;
+import org.llorllale.youtrack.api.util.OptionalMapping;
 
 /**
  * Default implementation of {@link UsersOfIssue}.
@@ -63,30 +63,22 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
-    final Optional<String> updaterLogin = this.jaxbIssue.getField()
-        .stream()
-        .filter(f -> "updaterName".equals(f.getName()))
-        .map(f -> f.getValue().getValue())
-        .findFirst();
-
-    return new ApplyIf<Optional<String>, User, IOException>(
-        login -> login.isPresent(),
-        login -> this.issue().project().users().user(login.get())
-    ).apply(updaterLogin);
+    return new OptionalMapping<>(
+        () -> this.jaxbIssue.getField().stream()
+            .filter(f -> "updaterName".equals(f.getName()))
+            .findAny(),
+        f -> this.issue().project().users().user(f.getValue().getValue())
+    ).get();
   }
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
-    final Optional<String> assigneeLogin = this.jaxbIssue.getField()
-        .stream()
-        .filter(f -> this.field.name().equals(f.getName()))
-        .map(f -> f.getValue().getValue())
-        .findFirst();
-
-    return new ApplyIf<Optional<String>, User, IOException>(
-        login -> login.isPresent(),
-        login -> this.issue().project().users().user(login.get())
-    ).apply(assigneeLogin);
+    return new OptionalMapping<>(
+        () -> this.jaxbIssue.getField().stream()
+            .filter(f -> this.field.name().equals(f.getName()))
+            .findAny(),
+        f -> this.issue().project().users().user(f.getValue().getValue())
+    ).get();
   }
 
   @Override

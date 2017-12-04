@@ -27,8 +27,9 @@ import org.llorllale.youtrack.api.jaxb.Settings;
 import org.llorllale.youtrack.api.jaxb.WorkItemTypes;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.OptionalMapping;
+import org.llorllale.youtrack.api.util.ResponseAs;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -61,7 +62,8 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public boolean enabled() throws IOException, UnauthorizedException {
-    final Settings settings = new HttpEntityAsJaxb<>(Settings.class).apply(
+    final Settings settings = new ResponseAs<>(
+        Settings.class,
         new HttpResponseAsResponse(
             HttpClients.createDefault().execute(
                 new HttpRequestWithSession(
@@ -72,8 +74,8 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
                     )
                 )
             )
-        ).httpResponse().getEntity()
-    );
+        )
+    ).get().get();
 
     return settings.isEnabled() 
         && Objects.nonNull(settings.getEstimation()) 
@@ -82,19 +84,23 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(WorkItemTypes.class).apply(
-        new HttpResponseAsResponse(
-            HttpClients.createDefault().execute(
-                new HttpRequestWithSession(
-                    this.session, 
-                    new HttpGet(
-                        this.session.baseUrl().toString()
-                            .concat(String.format(PATH_TEMPLATE, this.project().id()))
-                            .concat("/worktype")
+    return new OptionalMapping<WorkItemTypes, Stream<TimeTrackEntryType>>(
+        () -> new ResponseAs<>(
+            WorkItemTypes.class,
+            new HttpResponseAsResponse(
+                HttpClients.createDefault().execute(
+                    new HttpRequestWithSession(
+                        this.session, 
+                        new HttpGet(
+                            this.session.baseUrl().toString()
+                                .concat(String.format(PATH_TEMPLATE, this.project().id()))
+                                .concat("/worktype")
+                        )
                     )
                 )
             )
-        ).httpResponse().getEntity()
-    ).getWorkType().stream().map(XmlTimeTrackEntryType::new);
+        ).get(),
+        jaxb -> jaxb.getWorkType().stream().map(XmlTimeTrackEntryType::new)
+    ).get().get();
   }
 }

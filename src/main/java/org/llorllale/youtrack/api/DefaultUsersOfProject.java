@@ -25,9 +25,9 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.MappedCollection;
+import org.llorllale.youtrack.api.util.ResponseAs;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -67,7 +67,8 @@ class DefaultUsersOfProject implements UsersOfProject {
   @Override
   public User user(String login) throws IOException, UnauthorizedException {
     return new XmlUser(
-        new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class).apply(
+        new ResponseAs<>(
+            org.llorllale.youtrack.api.jaxb.User.class,
             new HttpResponseAsResponse(
                 HttpClients.createDefault().execute(
                     new HttpRequestWithSession(
@@ -77,8 +78,8 @@ class DefaultUsersOfProject implements UsersOfProject {
                         )
                     )
                 )
-            ).httpResponse().getEntity()
-        )
+            )
+        ).get().get()
     );
   }
 

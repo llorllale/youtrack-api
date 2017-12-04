@@ -28,9 +28,10 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.OptionalMapping;
+import org.llorllale.youtrack.api.util.ResponseAs;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -77,23 +78,26 @@ class DefaultComments implements Comments {
 
   @Override
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
-    return new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class).apply(
-        new HttpResponseAsResponse(
-            this.httpClient.execute(
-                new HttpRequestWithSession(
-                    this.session, 
-                    new HttpGet(
-                        this.session.baseUrl().toString()
-                            .concat(BASE_PATH)
-                            .concat(this.issue().id())
-                            .concat("/comment")
+    return new OptionalMapping<org.llorllale.youtrack.api.jaxb.Comments, Stream<Comment>>(
+        () -> new ResponseAs<>(
+            org.llorllale.youtrack.api.jaxb.Comments.class,
+            new HttpResponseAsResponse(
+                this.httpClient.execute(
+                    new HttpRequestWithSession(
+                        this.session, 
+                        new HttpGet(
+                            this.session.baseUrl().toString()
+                                .concat(BASE_PATH)
+                                .concat(this.issue().id())
+                                .concat("/comment")
+                        )
                     )
                 )
             )
-        ).httpResponse().getEntity()
-    ).getComment()
-        .stream()
-        .map(c -> new XmlComment(this.issue(), this.session, c));
+        ).get(),
+        comments -> 
+            comments.getComment().stream().map(c -> new XmlComment(this.issue(), this.session, c))
+    ).get().get();
   }
 
   @Override

@@ -17,19 +17,9 @@
 package org.llorllale.youtrack.api.util.response;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.ApplyIf;
-import org.llorllale.youtrack.api.util.ExceptionalFunction;
-import org.llorllale.youtrack.api.util.InputStreamAsString;
-import org.llorllale.youtrack.api.util.StandardErrorCheck;
 
 /**
  * <p>
@@ -69,46 +59,5 @@ public final class HttpResponseAsResponse implements Response {
   @Override
   public HttpResponse httpResponse() throws UnauthorizedException, IOException {
     return this.base.httpResponse();
-  }
-
-  /**
-   * Extracts the text contents of the {@link HttpEntity} if present on the underlying 
-   * {@link HttpResponse}, then applies the {@code function} on the result if it matches 
-   * the {@code condition}.
-   * 
-   * <p>Note: the underlying {@link HttpEntity} is retrieved by calling {@link #httpResponse()}
-   * on this object, therefore all validations are carried through to this method.</p>
-   * 
-   * @param <R> the resulting type parameter of the {@code function}
-   * @param <E> the type of the exception thrown by {@code function}
-   * @param function transforms the text contents of the {@link HttpEntity} into something useful
-   * @param condition if an {@link HttpEntity} is present, {@code function} is applied only if 
-   *     the contents of the entity do not match this condition
-   * @return the result of applying {@code function} on the text contents of the {@link HttpEntity}
-   * @throws IOException if the server is unavailable or if there's an error while buffering the
-   *     contents of the underlying {@link HttpEntity}
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform
-   *     some operation
-   * @throws E the exception declared by {@code function}
-   * @see #httpResponse() 
-   * @see StandardErrorCheck
-   * @since 0.6.0
-   */
-  public <R, E extends Exception> Optional<R> applyOnEntity(
-      ExceptionalFunction<String, R, E> function,
-      Predicate<String> condition
-  ) throws IOException, UnauthorizedException, E {
-    final Optional<R> result;
-
-    if (Objects.nonNull(this.httpResponse().getEntity())) {
-      result = new ApplyIf<>(condition, function)
-          .apply(new InputStreamAsString().apply(this.httpResponse().getEntity().getContent()
-              )
-          );
-    } else {
-      result = Optional.empty();
-    }
-
-    return result;
   }
 }
