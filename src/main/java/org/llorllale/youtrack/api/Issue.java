@@ -92,10 +92,10 @@ public interface Issue {
    * Access to the issue's {@link TimeTrackEntry timetracking}.
    * 
    * <p><strong>Note:</strong> it is important that you first check whether timetracking is 
-   * {@link TimeTracking#enabled() enabled} for the {@link Project}.</p>
+   * {@link ProjectTimeTracking#enabled() enabled} for the {@link Project}.</p>
    * 
    * @return access to the issue's {@link TimeTrackEntry timetracking}.
-   * @see TimeTracking#enabled() 
+   * @see ProjectTimeTracking#enabled() 
    * @since 0.4.0
    */
   IssueTimeTracking timetracking();

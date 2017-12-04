@@ -84,7 +84,8 @@ public interface Issues {
   /**
    * Specifications for building an {@link Issue}.
    * 
-   * <p><strong>None</strong> of the transformations <em>spec -> issue -> spec</em> are reversible.
+   * <p><strong>None</strong> of the transformations <em>spec -&gt; issue -&gt; spec</em> are 
+   * reversible.
    * The following truisms hold:
    * 
    * <ul>
@@ -98,7 +99,7 @@ public interface Issues {
    * 
    * @since 0.4.0
    */
-  //suppressed warnings on fields() and nameValuePairs()
+  //suppressed warnings on package methods: fields(), nameValuePairs()
   @SuppressWarnings("checkstyle:MethodCount")
   class IssueSpec {
     private final String summary;
