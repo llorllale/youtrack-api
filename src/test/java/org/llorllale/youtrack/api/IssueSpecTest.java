@@ -132,17 +132,15 @@ public class IssueSpecTest {
    * @since 1.0.0
    */
   @Test
-  public void equalsIfFalseWithDiffFieldLength() {
+  public void equalsIfFalseWithDiffNameValuePairs() {
     final Field f1 = new TestField("field1");
     final FieldValue v1 = new TestFieldValue("value1");
     final Field f2 = new TestField("field2");
     final FieldValue v2 = new TestFieldValue("value2");
-    final Field f3 = new TestField("field3");
-    final FieldValue v3 = new TestFieldValue("value3");
 
     assertFalse(
         new IssueSpec("summary").with(f1, v1).with(f2, v2).equals(
-            new IssueSpec("summary").with(f1, v1).with(f2, v2).with(f3, v3)
+            new IssueSpec("summary", "description").with(f1, v1).with(f2, v2)
         )
     );
   }
