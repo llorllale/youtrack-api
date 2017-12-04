@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.llorllale.youtrack.api.Issues.IssueSpec;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -144,5 +145,12 @@ class XmlIssue implements Issue {
                 f
             )
         ).collect(Collectors.toList());
+  }
+
+  @Override
+  public IssueSpec spec() {
+    final IssueSpec spec = new IssueSpec(this.summary(), this.description());
+    this.fields().forEach(f -> spec.with(f, f.value()));
+    return spec;
   }
 }

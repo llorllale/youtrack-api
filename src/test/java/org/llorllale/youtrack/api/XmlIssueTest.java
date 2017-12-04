@@ -17,10 +17,12 @@
 package org.llorllale.youtrack.api;
 
 import java.time.Instant;
+import java.util.Objects;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.session.Session;
@@ -79,13 +81,7 @@ public class XmlIssueTest {
             session(),
             jaxbIssue
         ).summary(),
-        is(jaxbIssue.getField()
-            .stream()
-            .filter(f -> "summary".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findAny()
-            .get()
-        )
+        is(summaryOf(jaxbIssue))
     );
   }
 
@@ -97,14 +93,55 @@ public class XmlIssueTest {
             session(),
             jaxbIssue
         ).description().get(),
-        is(jaxbIssue.getField()
-            .stream()
-            .filter(f -> "description".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findAny()
-            .get()
-        )
+        is(descriptionOf(jaxbIssue))
     );
+  }
+
+  /**
+   * {@link XmlIssue#spec()} should describe issue accurately.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void spec() {
+    final String summary = summaryOf(jaxbIssue);
+    final String description = descriptionOf(jaxbIssue);
+    final Issue test = new XmlIssue(
+        project(),
+        session(),
+        jaxbIssue
+    );
+    final IssueSpec expected = new IssueSpec(summary, description);
+    jaxbIssue.getField().stream()
+        .filter(f -> Objects.nonNull(f.getValueId()))
+        .map(f -> 
+            new DefaultAssignedField(
+                new BasicField(f.getName(), this.project()),
+                test,
+                f
+            )
+        ).forEach(field -> expected.with(field, field.value()));
+
+    assertThat(
+        test.spec(),
+        is(expected)
+    );
+  }
+
+  private String summaryOf(org.llorllale.youtrack.api.jaxb.Issue jaxbIssue) {
+    return jaxbIssue.getField().stream()
+        .filter(f -> "summary".equals(f.getName()))
+        .map(f -> f.getValue().getValue())
+        .findAny()
+        .get();
+  }
+
+  private String descriptionOf(org.llorllale.youtrack.api.jaxb.Issue jaxbIssue) {
+    return jaxbIssue.getField().stream()
+        .filter(f -> "description".equals(f.getName()))
+        .map(f -> f.getValue().getValue())
+        .findAny()
+        .get();
   }
 
   private Project project() {

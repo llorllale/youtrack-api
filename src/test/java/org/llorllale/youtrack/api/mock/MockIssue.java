@@ -28,6 +28,7 @@ import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.UsersOfIssue;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.IssueTimeTracking;
+import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.UpdateIssue;
 
 /**
@@ -204,5 +205,10 @@ public class MockIssue implements Issue {
   @Override
   public UpdateIssue update() {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  }
+
+  @Override
+  public Issues.IssueSpec spec() {
+    throw new UnsupportedOperationException("Not supported yet."); //TODO
   }
 }
