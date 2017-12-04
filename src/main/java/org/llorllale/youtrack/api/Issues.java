@@ -84,7 +84,8 @@ public interface Issues {
   /**
    * Specifications for building an {@link Issue}.
    * 
-   * <p><strong>None</strong> of the transformations <em>spec -> issue -> spec</em> are reversible.
+   * <p><strong>None</strong> of the transformations <em>spec -&gt; issue -&gt; spec</em> are 
+   * reversible.
    * The following truisms hold:
    * 
    * <ul>
@@ -98,7 +99,7 @@ public interface Issues {
    * 
    * @since 0.4.0
    */
-  //suppressed warnings on fields() and nameValuePairs()
+  //suppressed warnings on package methods: fields(), nameValuePairs()
   @SuppressWarnings("checkstyle:MethodCount")
   class IssueSpec {
     private final String summary;
@@ -189,6 +190,33 @@ public interface Issues {
      */
     Map<Field, FieldValue> fields() {
       return Collections.unmodifiableMap(this.fields);
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:NPathComplexity")
+    public boolean equals(Object object) {
+      if (!(object instanceof IssueSpec)) {
+        return false;
+      }
+
+      final IssueSpec other = (IssueSpec) object;
+
+      if (this.nameValuePairs().size() != other.nameValuePairs().size()) {
+        return false;
+      }
+
+      for (NameValuePair pair : this.nameValuePairs()) {
+        if (!other.nameValuePairs().contains(pair)) {
+          return false;
+        }
+      }
+
+      return this.fields().equals(other.fields());
+    }
+
+    @Override
+    public int hashCode() {
+      return this.nameValuePairs().hashCode() + this.fields().hashCode();
     }
   }
 }
