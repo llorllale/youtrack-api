@@ -34,7 +34,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 /**
  * <p>API for {@link Issue} timetracking.</p>
  * 
- * <p>Note: timetracking needs to be {@link TimeTracking#enabled() enabled} for the 
+ * <p>Note: timetracking needs to be {@link ProjectTimeTracking#enabled() enabled} for the 
  * {@link Project} in YouTrack, otherwise these operations will throw {@link IOException}.</p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
