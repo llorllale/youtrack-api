@@ -47,19 +47,6 @@ public final class PageUri implements Supplier<HttpUriRequest> {
     this.combiner = combiner;
   }
 
-  /**
-   * Constructs a new {@link Counter} with {@code 0} as the starting value, and {@code pageSize}
-   * as increment.
-   * 
-   * @param pageSize the page size
-   * @param combiner the combiner function
-   * @see #PageUri(Supplier, Function) 
-   * @since 1.0.0
-   */
-  public PageUri(int pageSize, Function<Integer, HttpUriRequest> combiner) {
-    this(new Counter(0, pageSize), combiner);
-  }
-
   @Override
   public HttpUriRequest get() {
     return this.combiner.apply(this.pageNum.get());

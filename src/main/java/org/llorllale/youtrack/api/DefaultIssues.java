@@ -18,11 +18,8 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
@@ -34,9 +31,10 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.PageUri;
+import org.llorllale.youtrack.api.util.MapIfNoError;
+import org.llorllale.youtrack.api.util.MapIfPresent;
 import org.llorllale.youtrack.api.util.Pagination;
-import org.llorllale.youtrack.api.util.StandardErrorCheck;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
@@ -47,8 +45,6 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-//suppressed with: Class Data Abstraction Coupling is 11 (max allowed is 7)
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultIssues implements Issues {
   private final Project project;
   private final Session session;
@@ -89,54 +85,55 @@ class DefaultIssues implements Issues {
   @Override
   public Stream<Issue> stream() throws IOException, UnauthorizedException {
     final int pageSize = 10;
-    return StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(
-            new Pagination<>(
-                new PageUri(
-                    pageSize,
-                    n -> new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            new UncheckedUriBuilder(
-                                this.session.baseUrl().toString()
-                                    .concat("/issue/byproject/")
-                                    .concat(this.project().id())
-                            ).setParameter("after", String.valueOf(n))
-                                .build()
-                        )
-                    )
-                ),
-                new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).andThen(
-                    issues -> 
-                        issues.getIssue().stream()
-                            .map(issue -> new XmlIssue(this.project(), this.session, issue))
-                            .collect(Collectors.toList())
+    return new StreamOf<>(
+        new Pagination<>(
+            pageSize,
+            n -> new HttpRequestWithSession(
+                this.session, 
+                new HttpGet(
+                    new UncheckedUriBuilder(
+                        this.session.baseUrl().toString()
+                            .concat("/issue/byproject/")
+                            .concat(this.project().id())
+                    ).setParameter("after", String.valueOf(n))
+                        .build()
                 )
-            ), 
-            Spliterator.DISTINCT
-        ), 
-        false
+            ),
+            new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).andThen(
+                issues -> 
+                    issues.getIssue().stream()
+                        .map(issue -> new XmlIssue(this.project(), this.session, issue))
+                        .collect(Collectors.toList())
+            )
+        )
     );
   }
 
   @Override
-  public Optional<Issue> get(String id) throws IOException, UnauthorizedException {
-    return new HttpResponseAsResponse(
-        this.httpClient.execute(
-            new HttpRequestWithSession(
-                this.session, 
-                new HttpGet(
-                    this.session.baseUrl()
-                        .toString()
-                        .concat("/issue/")
-                        .concat(id)
-                )
-            )
-        )
-    ).applyOnEntity(
-        new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class), 
-        new StandardErrorCheck()
-    ).map(i -> new XmlIssue(this.project(), this.session, i));
+  public Optional<Issue> get(String issueId) throws IOException, UnauthorizedException {
+    return new MapIfPresent<org.llorllale.youtrack.api.jaxb.Issue, Issue>(
+        new MapIfNoError<>(
+            new MapIfPresent<>(
+                () -> Optional.ofNullable(
+                    new HttpResponseAsResponse(
+                        this.httpClient.execute(
+                            new HttpRequestWithSession(
+                                this.session, 
+                                new HttpGet(
+                                    this.session.baseUrl().toString()
+                                        .concat("/issue/")
+                                        .concat(issueId)
+                                )
+                            )
+                        )
+                    ).httpResponse().getEntity()
+                ),
+                e -> e
+            ),
+            s -> new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class).apply(s)
+        ),
+        issue -> new XmlIssue(this.project(), this.session, issue)
+    ).get();
   }
 
   @Override

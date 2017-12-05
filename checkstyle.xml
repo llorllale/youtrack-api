@@ -196,8 +196,12 @@
 
     <!-- Metrics -->
     <module name="BooleanExpressionComplexity"/>
-    <module name="ClassDataAbstractionCoupling"/>
-    <module name="ClassFanOutComplexity"/>
+    <module name="ClassDataAbstractionCoupling">
+      <property name="max" value="12"/>
+    </module>
+    <module name="ClassFanOutComplexity">
+      <property name="max" value="30"/>
+    </module>
     <module name="CyclomaticComplexity">
       <property name="max" value="5"/>
       <property name="switchBlockAsSingleDecisionPoint" value="true"/>

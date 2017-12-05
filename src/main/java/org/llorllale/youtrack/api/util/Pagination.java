@@ -20,8 +20,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpUriRequest;
 
 /**
  * An {@link Iterator} that encapsulates a paginated resource from the YouTrack server.
@@ -54,6 +56,25 @@ public final class Pagination<T> implements Iterator<T> {
     this.pageRequest = pageRequest;
     this.mapper = mapper;
     this.page = new Page.Empty<>();
+  }
+
+  /**
+   * Constructs a {@link PageUri} by providing: a) a {@link Counter} with values 0 and 
+   * {@code pageSize}, and the {@code combiner}.
+   * 
+   * @param pageSize the page size
+   * @param combiner the function that maps page numbers to http requests
+   * @param mapper the function that maps the resources to collections
+   * @see #Pagination(PageUri, ExceptionalFunction) 
+   * @see PageUri
+   * @since 1.0.0
+   */
+  public Pagination(
+      int pageSize,
+      Function<Integer, HttpUriRequest> combiner, 
+      ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper
+  ) {
+    this(new PageUri(new Counter(0, pageSize), combiner), mapper);
   }
 
   @Override
