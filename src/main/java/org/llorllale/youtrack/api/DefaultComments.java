@@ -28,10 +28,12 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.OptionalMapping;
-import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.MappedCollection;
+import org.llorllale.youtrack.api.util.Mapping;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -41,7 +43,7 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @since 0.4.0
  */
 //suppressed with: Class Data Abstraction Coupling is 8 (max allowed is 7)
-@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
+//@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultComments implements Comments {
   private static final String BASE_PATH = "/issue/";
 
@@ -78,26 +80,28 @@ class DefaultComments implements Comments {
 
   @Override
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
-    return new OptionalMapping<org.llorllale.youtrack.api.jaxb.Comments, Stream<Comment>>(
-        () -> new ResponseAs<>(
-            org.llorllale.youtrack.api.jaxb.Comments.class,
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString()
-                                .concat(BASE_PATH)
-                                .concat(this.issue().id())
-                                .concat("/comment")
+    return new StreamOf<>(
+        new MappedCollection<>(
+            new Mapping<>(
+                () -> new HttpResponseAsResponse(
+                    this.httpClient.execute(
+                        new HttpRequestWithSession(
+                            this.session, 
+                            new HttpGet(
+                                this.session.baseUrl().toString()
+                                    .concat(BASE_PATH)
+                                    .concat(this.issue().id())
+                                    .concat("/comment")
+                            )
                         )
                     )
-                )
-            )
-        ).get(),
-        comments -> 
-            comments.getComment().stream().map(c -> new XmlComment(this.issue(), this.session, c))
-    ).get().get();
+                ),
+                resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class)
+                    .apply(resp.httpResponse().getEntity()).getComment()
+            ).get(),
+            c -> new XmlComment(this.issue(), this.session, c)
+        )
+    );
   }
 
   @Override

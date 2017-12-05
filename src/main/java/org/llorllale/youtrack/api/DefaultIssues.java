@@ -18,13 +18,10 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import org.apache.commons.lang3.StringUtils;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -32,13 +29,16 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.EmptyIfError;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.Mapping;
 import org.llorllale.youtrack.api.util.OptionalMapping;
 import org.llorllale.youtrack.api.util.PageUri;
 import org.llorllale.youtrack.api.util.Pagination;
-import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -87,56 +87,56 @@ class DefaultIssues implements Issues {
   @Override
   public Stream<Issue> stream() throws IOException, UnauthorizedException {
     final int pageSize = 10;
-    return StreamSupport.stream(
-        Spliterators.spliteratorUnknownSize(
-            new Pagination<>(
-                new PageUri(
-                    pageSize,
-                    n -> new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            new UncheckedUriBuilder(
-                                this.session.baseUrl().toString()
-                                    .concat("/issue/byproject/")
-                                    .concat(this.project().id())
-                            ).setParameter("after", String.valueOf(n))
-                                .build()
-                        )
+    return new StreamOf<>(
+        new Pagination<>(
+            new PageUri(
+                pageSize,
+                n -> new HttpRequestWithSession(
+                    this.session, 
+                    new HttpGet(
+                        new UncheckedUriBuilder(
+                            this.session.baseUrl().toString()
+                                .concat("/issue/byproject/")
+                                .concat(this.project().id())
+                        ).setParameter("after", String.valueOf(n))
+                            .build()
                     )
-                ),
-                new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).andThen(
-                    issues -> 
-                        issues.getIssue().stream()
-                            .map(issue -> new XmlIssue(this.project(), this.session, issue))
-                            .collect(Collectors.toList())
                 )
-            ), 
-            Spliterator.DISTINCT
-        ), 
-        false
+            ),
+            new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).andThen(
+                issues -> 
+                    issues.getIssue().stream()
+                        .map(issue -> new XmlIssue(this.project(), this.session, issue))
+                        .collect(Collectors.toList())
+            )
+        )
     );
   }
 
   @Override
   public Optional<Issue> get(String issueId) throws IOException, UnauthorizedException {
-    return new OptionalMapping<org.llorllale.youtrack.api.jaxb.Issue, Issue>(
-        () -> new ResponseAs<>(
-            org.llorllale.youtrack.api.jaxb.Issue.class,
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl() 
-                                .toString()
-                                .concat("/issue/")
-                                .concat(issueId)
+    return new Mapping<Optional<org.llorllale.youtrack.api.jaxb.Issue>, Optional<Issue>>(
+        () -> new OptionalMapping<>(
+            () -> Optional.ofNullable(
+                new HttpResponseAsResponse(
+                    this.httpClient.execute(
+                        new HttpRequestWithSession(
+                            this.session, 
+                            new HttpGet(
+                                this.session.baseUrl() 
+                                    .toString()
+                                    .concat("/issue/")
+                                    .concat(issueId)
+                            )
                         )
                     )
-                )
-            )
-        ).get(),
-        jaxb -> new XmlIssue(this.project(), this.session, jaxb)
+                ).httpResponse().getEntity()
+            ),
+            entity -> new EmptyIfError<>(
+                new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class)
+            ).apply(entity)
+        ).get().get(),
+        optional -> optional.map(i -> new XmlIssue(this.project(), this.session, i))
     ).get();
   }
 

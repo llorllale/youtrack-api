@@ -20,7 +20,6 @@ import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Handy class that maps a collection of type {@code I} to one of type {@code O} by applying 
@@ -55,7 +54,8 @@ public final class MappedCollection<I, O, E extends Exception> extends AbstractC
    * @throws E the checked exception declared by {@code function}
    * @since 0.9.0
    */
-  public MappedCollection(List<I> collection, ExceptionalFunction<I, O, E> function) throws E {
+  public MappedCollection(Collection<I> collection, ExceptionalFunction<I, O, E> function) 
+      throws E {
     this.output = new ArrayList<>();
     for (I i : collection) {
       this.output.add(function.apply(i));

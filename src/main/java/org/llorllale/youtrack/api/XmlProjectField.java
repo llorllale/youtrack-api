@@ -33,6 +33,8 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.OptionalMapping;
+import org.llorllale.youtrack.api.util.ResponseAs;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -93,26 +95,30 @@ class XmlProjectField implements ProjectField {
         ).getParam().getValue()
     );
 
-    return new HttpEntityAsJaxb<>(Enumeration.class).apply(
-        new HttpResponseAsResponse(
-            this.httpClient.execute(
-                new HttpRequestWithSession(
-                    this.session, 
-                    new HttpGet(
-                        this.session.baseUrl().toString()
-                            .concat("/admin/customfield/bundle/")
-                            .concat(bundleName)
+    return new OptionalMapping<Enumeration, Stream<FieldValue>>(
+        () -> new ResponseAs<>(
+            Enumeration.class,
+            new HttpResponseAsResponse(
+                this.httpClient.execute(
+                    new HttpRequestWithSession(
+                        this.session, 
+                        new HttpGet(
+                            this.session.baseUrl().toString()
+                                .concat("/admin/customfield/bundle/")
+                                .concat(bundleName)
+                        )
                     )
                 )
             )
-        ).httpResponse().getEntity()
-    ).getValue().stream()
-        .map(v -> 
-            new XmlFieldValue(
-                v, 
-                new XmlProjectField(this.jaxb, this.project(), this.session)
+        ).get(),
+        e -> e.getValue().stream()
+            .map(v -> 
+                new XmlFieldValue(
+                    v, 
+                    new XmlProjectField(this.jaxb, this.project(), this.session)
+                )
             )
-        );
+    ).get().get();
   }
 
   @Override

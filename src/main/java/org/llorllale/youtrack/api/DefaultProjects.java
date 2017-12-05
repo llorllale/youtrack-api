@@ -26,9 +26,12 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.MappedCollection;
+import org.llorllale.youtrack.api.util.Mapping;
 import org.llorllale.youtrack.api.util.OptionalMapping;
-import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -71,43 +74,48 @@ class DefaultProjects implements Projects {
 
   @Override
   public Stream<Project> stream() throws IOException, UnauthorizedException {
-    return new OptionalMapping<org.llorllale.youtrack.api.jaxb.Projects, Stream<Project>>(
-        () -> new ResponseAs<>(
-            org.llorllale.youtrack.api.jaxb.Projects.class,
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString().concat("/project/all")
+    return new StreamOf<>(
+        new MappedCollection<>(
+            new Mapping<>(
+                () -> new HttpResponseAsResponse(
+                    this.httpClient.execute(
+                        new HttpRequestWithSession(
+                            this.session, 
+                            new HttpGet(
+                                this.session.baseUrl().toString().concat("/project/all")
+                            )
                         )
                     )
-                )
-            )
-        ).get(),
-        jaxb -> jaxb.getProject().stream().map(p -> new XmlProject(this.youtrack, this.session, p))
-    ).get().get();
+                ),
+                resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Projects.class)
+                    .apply(resp.httpResponse().getEntity()).getProject()
+            ).get(),
+            p -> new XmlProject(this.youtrack, this.session, p)
+        )
+    );
   }
 
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
-    return new OptionalMapping<org.llorllale.youtrack.api.jaxb.Project, Project>(
-        () -> new ResponseAs<>(
-            org.llorllale.youtrack.api.jaxb.Project.class,
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString()
-                                .concat("/admin/project/")
-                                .concat(id)
+    return new Mapping<Optional<org.llorllale.youtrack.api.jaxb.Project>, Optional<Project>>(
+        () -> new OptionalMapping<>(
+            () -> Optional.ofNullable(
+                new HttpResponseAsResponse(
+                    this.httpClient.execute(
+                        new HttpRequestWithSession(
+                            this.session, 
+                            new HttpGet(
+                                this.session.baseUrl().toString()
+                                    .concat("/admin/project/")
+                                    .concat(id)
+                            )
                         )
                     )
-                )
-            )
+                ).httpResponse().getEntity()
+            ),
+            entity -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class).apply(entity)
         ).get(),
-        jaxb -> new XmlProject(this.youtrack, this.session, jaxb)
+        optional -> optional.map(p -> new XmlProject(this.youtrack, this.session, p))
     ).get();
   }
 }

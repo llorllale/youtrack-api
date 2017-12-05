@@ -27,10 +27,12 @@ import org.llorllale.youtrack.api.jaxb.WorkItems;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.OptionalMapping;
-import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.MappedCollection;
+import org.llorllale.youtrack.api.util.Mapping;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -74,10 +76,9 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
 
   @Override
   public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException {
-    return new OptionalMapping<WorkItems, Stream<TimeTrackEntry>>(
-        () -> new ResponseAs<>(
-            WorkItems.class,
-            new HttpResponseAsResponse(
+    return new Mapping<WorkItems, Stream<TimeTrackEntry>>(
+        () -> new Mapping<>(
+            () -> new HttpResponseAsResponse(
                 this.httpClient.execute(
                     new HttpRequestWithSession(
                         this.session, 
@@ -87,10 +88,16 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
                         )
                     )
                 )
-            )
+            ),
+            resp -> new HttpEntityAsJaxb<>(WorkItems.class).apply(resp.httpResponse().getEntity())
         ).get(),
-        item -> item.getWorkItem().stream().map(i -> new XmlTimeTrackEntry(this.issue, i))
-    ).get().get();
+        items -> new StreamOf<>(
+            new MappedCollection<>(
+                items.getWorkItem(), 
+                i -> new XmlTimeTrackEntry(this.issue, i)
+            )
+        )
+    ).get();
   }
 
   @Override

@@ -27,10 +27,14 @@ import org.llorllale.youtrack.api.jaxb.Settings;
 import org.llorllale.youtrack.api.jaxb.WorkItemTypes;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.OptionalMapping;
+import org.llorllale.youtrack.api.util.MappedCollection;
+import org.llorllale.youtrack.api.util.Mapping;
 import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
+import org.llorllale.youtrack.api.util.response.Response;
 
 /**
  * Default impl of {@link ProjectTimeTracking}.
@@ -84,10 +88,9 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException {
-    return new OptionalMapping<WorkItemTypes, Stream<TimeTrackEntryType>>(
-        () -> new ResponseAs<>(
-            WorkItemTypes.class,
-            new HttpResponseAsResponse(
+    return new Mapping<Mapping<Response, WorkItemTypes>, Stream<TimeTrackEntryType>>(
+        () -> new Mapping<>(
+            () -> new HttpResponseAsResponse(
                 HttpClients.createDefault().execute(
                     new HttpRequestWithSession(
                         this.session, 
@@ -98,9 +101,16 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
                         )
                     )
                 )
+            ),
+            resp -> new HttpEntityAsJaxb<>(WorkItemTypes.class)
+                .apply(resp.httpResponse().getEntity())
+        ),
+        m -> new StreamOf<>(
+            new MappedCollection<>(
+                m.get().getWorkType(),
+                XmlTimeTrackEntryType::new
             )
-        ).get(),
-        jaxb -> jaxb.getWorkType().stream().map(XmlTimeTrackEntryType::new)
-    ).get().get();
+        )
+    ).get();
   }
 }

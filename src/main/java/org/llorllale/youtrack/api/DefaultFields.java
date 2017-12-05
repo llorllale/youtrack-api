@@ -26,9 +26,11 @@ import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.jaxb.ProjectCustomFieldRefs;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.OptionalMapping;
-import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.MappedCollection;
+import org.llorllale.youtrack.api.util.Mapping;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -62,25 +64,27 @@ class DefaultFields implements Fields {
 
   @Override
   public Stream<ProjectField> stream() throws IOException, UnauthorizedException {
-    return new OptionalMapping<ProjectCustomFieldRefs, Stream<ProjectField>>(
-        () -> new ResponseAs<>(
-            ProjectCustomFieldRefs.class,
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session,
-                        new HttpGet(
-                            this.session.baseUrl().toString()
-                                .concat("/admin/project/")
-                                .concat(this.project().id())
-                                .concat("/customfield")
+    return new StreamOf<>(
+        new MappedCollection<>(
+            new Mapping<>(
+                () -> new HttpResponseAsResponse(
+                    this.httpClient.execute(
+                        new HttpRequestWithSession(
+                            this.session,
+                            new HttpGet(
+                                this.session.baseUrl().toString()
+                                    .concat("/admin/project/")
+                                    .concat(this.project().id())
+                                    .concat("/customfield")
+                            )
                         )
                     )
-                )
-            )
-        ).get(),
-        ref -> ref.getProjectCustomField().stream()
-            .map(f -> new XmlProjectField(f, this.project(), this.session))
-    ).get().get();
+                 ),
+                r -> new HttpEntityAsJaxb<>(ProjectCustomFieldRefs.class)
+                    .apply(r.httpResponse().getEntity()).getProjectCustomField()
+            ).get(),
+            f -> new XmlProjectField(f, this.project(), this.session)
+        )
+    );
   }
 }
