@@ -25,9 +25,11 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.MappedCollection;
-import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.Mapping;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -67,9 +69,8 @@ class DefaultUsersOfProject implements UsersOfProject {
   @Override
   public User user(String login) throws IOException, UnauthorizedException {
     return new XmlUser(
-        new ResponseAs<>(
-            org.llorllale.youtrack.api.jaxb.User.class,
-            new HttpResponseAsResponse(
+        new Mapping<>(
+            () -> new HttpResponseAsResponse(
                 HttpClients.createDefault().execute(
                     new HttpRequestWithSession(
                         this.session, 
@@ -78,19 +79,22 @@ class DefaultUsersOfProject implements UsersOfProject {
                         )
                     )
                 )
-            )
-        ).get().get()
+            ),
+            resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class)
+                .apply(resp.httpResponse().getEntity())
+        ).get()
     );
   }
 
   @Override
   public Stream<User> assignees() throws IOException, UnauthorizedException {
-    return new MappedCollection<>(
-        this.jaxb.getAssigneesLogin().getSub()
-            .stream()
-            .map(s -> s.getValue())
-            .collect(Collectors.toList()),
-        this::user
-    ).stream();
+    return new StreamOf<>(
+        new MappedCollection<>(
+            this.jaxb.getAssigneesLogin().getSub().stream()
+                .map(s -> s.getValue())
+                .collect(Collectors.toList()),
+            this::user
+        )
+    );
   }
 }

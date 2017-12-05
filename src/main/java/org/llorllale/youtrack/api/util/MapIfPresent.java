@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Handy class that conditionally maps an object of type {@code T} into one of type {@code R}.
+ * Handy class, similar to {@link Mapping}, but that conditionally maps an object of type 
+ * {@code T} into one of type {@code R}.
  * 
  * <p>Users must provide an {@link ExceptionalSupplier supplier} that produces an optional 
  * describing some type {@code T}. If the optional is not empty then the {@code mappingFunction} 
@@ -42,9 +43,10 @@ import java.util.Optional;
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the supplier's type
  * @param <R> the final output type
+ * @see Mapping
  * @since 1.0.0
  */
-public final class OptionalMapping<T, R> {
+public final class MapIfPresent<T, R> implements ExceptionalSupplier<Optional<R>, IOException> {
   private final ExceptionalSupplier<Optional<T>, IOException> supplier;
   private final ExceptionalFunction<T, R, IOException> mappingFunction;
 
@@ -55,7 +57,7 @@ public final class OptionalMapping<T, R> {
    * @param mappingFunction the final mapping function
    * @since 1.0.0
    */
-  public OptionalMapping(
+  public MapIfPresent(
       ExceptionalSupplier<Optional<T>, IOException> supplier, 
       ExceptionalFunction<T, R, IOException> mappingFunction
   ) {
@@ -70,6 +72,7 @@ public final class OptionalMapping<T, R> {
    * @throws java.io.IOException from the {@code mappingFunction}
    * @since 1.0.0
    */
+  @Override
   public Optional<R> get() throws IOException {
     final Optional<R> result;
     final Optional<T> tmp = this.supplier.get();

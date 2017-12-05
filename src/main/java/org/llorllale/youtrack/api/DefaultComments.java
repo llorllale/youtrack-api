@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -35,6 +36,7 @@ import org.llorllale.youtrack.api.util.MappedCollection;
 import org.llorllale.youtrack.api.util.Mapping;
 import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
+import org.llorllale.youtrack.api.util.response.Response;
 
 /**
  * Default implementation of {@link Comments}.
@@ -42,8 +44,6 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-//suppressed with: Class Data Abstraction Coupling is 8 (max allowed is 7)
-//@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 class DefaultComments implements Comments {
   private static final String BASE_PATH = "/issue/";
 
@@ -82,7 +82,7 @@ class DefaultComments implements Comments {
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            new Mapping<>(
+            new Mapping<Response, Collection<org.llorllale.youtrack.api.jaxb.Comment>>(
                 () -> new HttpResponseAsResponse(
                     this.httpClient.execute(
                         new HttpRequestWithSession(
@@ -98,7 +98,7 @@ class DefaultComments implements Comments {
                 ),
                 resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class)
                     .apply(resp.httpResponse().getEntity()).getComment()
-            ).get(),
+            ),
             c -> new XmlComment(this.issue(), this.session, c)
         )
     );

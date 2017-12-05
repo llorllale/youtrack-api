@@ -29,12 +29,14 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.jaxb.Enumeration;
 import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
+import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.OptionalMapping;
-import org.llorllale.youtrack.api.util.ResponseAs;
+import org.llorllale.youtrack.api.util.MappedCollection;
+import org.llorllale.youtrack.api.util.Mapping;
+import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -77,8 +79,8 @@ class XmlProjectField implements ProjectField {
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
     final String bundleName = UrlEscapers.urlPathSegmentEscaper().escape(
-        new HttpEntityAsJaxb<>(ProjectCustomField.class).apply(
-            new HttpResponseAsResponse(
+        new Mapping<>(
+            () -> new HttpResponseAsResponse(
                 this.httpClient.execute(
                     new HttpRequestWithSession(
                         this.session, 
@@ -91,34 +93,33 @@ class XmlProjectField implements ProjectField {
                         )
                     )
                 )
-            ).httpResponse().getEntity()
-        ).getParam().getValue()
+            ),
+            resp -> new HttpEntityAsJaxb<>(ProjectCustomField.class)
+                .apply(resp.httpResponse().getEntity()).getParam().getValue()
+        ).get()
     );
 
-    return new OptionalMapping<Enumeration, Stream<FieldValue>>(
-        () -> new ResponseAs<>(
-            Enumeration.class,
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString()
-                                .concat("/admin/customfield/bundle/")
-                                .concat(bundleName)
+    return new StreamOf<>(
+        new MappedCollection<Value, FieldValue>(
+            new Mapping<>(
+                () -> new HttpResponseAsResponse(
+                    this.httpClient.execute(
+                        new HttpRequestWithSession(
+                            this.session, 
+                            new HttpGet(
+                                this.session.baseUrl().toString()
+                                    .concat("/admin/customfield/bundle/")
+                                    .concat(bundleName)
+                            )
                         )
                     )
-                )
-            )
-        ).get(),
-        e -> e.getValue().stream()
-            .map(v -> 
-                new XmlFieldValue(
-                    v, 
-                    new XmlProjectField(this.jaxb, this.project(), this.session)
-                )
-            )
-    ).get().get();
+                ),
+                resp -> new HttpEntityAsJaxb<>(Enumeration.class)
+                    .apply(resp.httpResponse().getEntity()).getValue()
+            ),
+            v -> new XmlFieldValue(v, new XmlProjectField(this.jaxb, this.project, this.session))
+        )
+    );
   }
 
   @Override

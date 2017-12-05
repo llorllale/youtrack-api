@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.OptionalMapping;
+import org.llorllale.youtrack.api.util.MapIfPresent;
 
 /**
  * Default implementation of {@link UsersOfIssue}.
@@ -63,7 +63,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
-    return new OptionalMapping<>(
+    return new MapIfPresent<>(
         () -> this.jaxbIssue.getField().stream()
             .filter(f -> "updaterName".equals(f.getName()))
             .findAny(),
@@ -73,7 +73,7 @@ class DefaultUsersOfIssue implements UsersOfIssue {
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
-    return new OptionalMapping<>(
+    return new MapIfPresent<>(
         () -> this.jaxbIssue.getField().stream()
             .filter(f -> this.field.name().equals(f.getName()))
             .findAny(),

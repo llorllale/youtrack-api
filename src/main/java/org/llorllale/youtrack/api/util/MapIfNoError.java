@@ -22,36 +22,51 @@ import java.util.function.Predicate;
 import org.apache.http.HttpEntity;
 
 /**
- * Applies a {@code mappingFunction} on an {@link HttpEntity} if the 
- * {@link HttpEntity#getContent() contents} do not correspond to an error from the YouTrack server.
+ * Applies a {@code mappingFunction} on an {@link HttpEntity} if the latter is present.
+ * 
+ * <p>Handy to filter "OK" responses from YouTrack that contain an "error" message in the payload
+ * (like when you request an Issue by its ID and the server returns an OK response with an
+ * error xml in the payload).
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @param <R> the resulting output type of the mapping function
  * @see StandardErrorCheck
  * @since 1.0.0
  */
-public final class EmptyIfError<R> implements ExceptionalFunction<HttpEntity, Optional<R>, IOException> {
-  private final ExceptionalFunction<String, R, ? extends IOException> mappingFunction;
+public final class MapIfNoError<R> implements ExceptionalSupplier<Optional<R>, IOException> {
+  private final ExceptionalSupplier<Optional<HttpEntity>, IOException> supplier;
+  private final ExceptionalFunction<String, R, IOException> mappingFunction;
   private final Predicate<String> condition;
 
   /**
    * Ctor.
    * 
+   * @param supplier supplies the input HttpEntity
    * @param mappingFunction the function that will map the entity's contents to an object
    * @since 1.0.0
    */
-  public EmptyIfError(ExceptionalFunction<String, R, ? extends IOException> mappingFunction) {
+  public MapIfNoError(
+      ExceptionalSupplier<Optional<HttpEntity>, IOException> supplier, 
+      ExceptionalFunction<String, R, IOException> mappingFunction
+  ) {
+    this.supplier = supplier;
     this.mappingFunction = mappingFunction;
     this.condition = new StandardErrorCheck();
   }
 
   @Override
-  public Optional<R> apply(HttpEntity input) throws IOException {
+  public Optional<R> get() throws IOException {
     final Optional<R> result;
-    final String xml = new InputStreamAsString().apply(input.getContent());
+    final Optional<HttpEntity> entity = this.supplier.get();
 
-    if (this.condition.test(xml)) {
-      result = Optional.of(this.mappingFunction.apply(xml));
+    if (entity.isPresent()) {
+      final String xml = new InputStreamAsString().apply(entity.get().getContent());
+
+      if (this.condition.test(xml)) {
+        result = Optional.of(this.mappingFunction.apply(xml));
+      } else {
+        result = Optional.empty();
+      }
     } else {
       result = Optional.empty();
     }

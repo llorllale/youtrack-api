@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.util;
 
+import java.io.IOException;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,10 +32,9 @@ import java.util.Iterator;
  * @author George Aristy (george.aristy@gmail.com)
  * @param <I> input collection's generic type
  * @param <O> this collection's generic type
- * @param <E> checked exception declared by the mapping function
  * @since 0.9.0
  */
-public final class MappedCollection<I, O, E extends Exception> extends AbstractCollection<O> {
+public final class MappedCollection<I, O> extends AbstractCollection<O> {
   private final Collection<O> output;
 
   /**
@@ -50,16 +50,34 @@ public final class MappedCollection<I, O, E extends Exception> extends AbstractC
    * back to the caller.
    * 
    * @param collection input collection to map
-   * @param function the {@link ExceptionalFunction mapping function}
-   * @throws E the checked exception declared by {@code function}
+   * @param mappingFunction the {@link ExceptionalFunction mapping function}
+   * @throws IOException from the {@code mappingFunction}
    * @since 0.9.0
    */
-  public MappedCollection(Collection<I> collection, ExceptionalFunction<I, O, E> function) 
-      throws E {
+  public MappedCollection(
+      Collection<I> collection, 
+      ExceptionalFunction<I, O, IOException> mappingFunction
+  ) throws IOException {
     this.output = new ArrayList<>();
     for (I i : collection) {
-      this.output.add(function.apply(i));
+      this.output.add(mappingFunction.apply(i));
     }
+  }
+
+  /**
+   * Uses the collection supplied by the {@code supplier}.
+   * 
+   * @param supplier supplies the collection to map
+   * @param function the mapping function
+   * @throws IOException from the {@code supplier}
+   * @see #MappedCollection(Collection, ExceptionalFunction) 
+   * @since 1.0.0
+   */
+  public MappedCollection(
+      ExceptionalSupplier<Collection<I>, IOException> supplier, 
+      ExceptionalFunction<I, O, IOException> function
+  ) throws IOException {
+    this(supplier.get(), function);
   }
 
   @Override

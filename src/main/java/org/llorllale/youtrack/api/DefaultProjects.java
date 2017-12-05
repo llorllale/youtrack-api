@@ -28,10 +28,11 @@ import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
+import org.llorllale.youtrack.api.util.MapIfNoError;
 import org.llorllale.youtrack.api.util.MappedCollection;
 import org.llorllale.youtrack.api.util.Mapping;
-import org.llorllale.youtrack.api.util.OptionalMapping;
 import org.llorllale.youtrack.api.util.StreamOf;
+import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
@@ -75,7 +76,7 @@ class DefaultProjects implements Projects {
   @Override
   public Stream<Project> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<>(
+        new MappedCollection<org.llorllale.youtrack.api.jaxb.Project, Project>(
             new Mapping<>(
                 () -> new HttpResponseAsResponse(
                     this.httpClient.execute(
@@ -89,7 +90,7 @@ class DefaultProjects implements Projects {
                 ),
                 resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Projects.class)
                     .apply(resp.httpResponse().getEntity()).getProject()
-            ).get(),
+            ),
             p -> new XmlProject(this.youtrack, this.session, p)
         )
     );
@@ -97,25 +98,27 @@ class DefaultProjects implements Projects {
 
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
-    return new Mapping<Optional<org.llorllale.youtrack.api.jaxb.Project>, Optional<Project>>(
-        () -> new OptionalMapping<>(
-            () -> Optional.ofNullable(
-                new HttpResponseAsResponse(
-                    this.httpClient.execute(
-                        new HttpRequestWithSession(
-                            this.session, 
-                            new HttpGet(
-                                this.session.baseUrl().toString()
-                                    .concat("/admin/project/")
-                                    .concat(id)
-                            )
+    return new MapIfNoError<Project>(
+        () -> Optional.ofNullable(
+            new HttpResponseAsResponse(
+                this.httpClient.execute(
+                    new HttpRequestWithSession(
+                        this.session, 
+                        new HttpGet(
+                            this.session.baseUrl().toString()
+                                .concat("/admin/project/")
+                                .concat(id)
                         )
                     )
-                ).httpResponse().getEntity()
-            ),
-            entity -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class).apply(entity)
-        ).get(),
-        optional -> optional.map(p -> new XmlProject(this.youtrack, this.session, p))
+                )
+            ).httpResponse().getEntity()
+        ),
+        xml -> 
+            new XmlProject(
+                this.youtrack, 
+                this.session, 
+                new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class).apply(xml)
+            )
     ).get();
   }
 }

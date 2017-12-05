@@ -24,17 +24,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.jaxb.Settings;
-import org.llorllale.youtrack.api.jaxb.WorkItemTypes;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
 import org.llorllale.youtrack.api.util.HttpRequestWithSession;
 import org.llorllale.youtrack.api.util.MappedCollection;
 import org.llorllale.youtrack.api.util.Mapping;
-import org.llorllale.youtrack.api.util.ResponseAs;
 import org.llorllale.youtrack.api.util.StreamOf;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-import org.llorllale.youtrack.api.util.response.Response;
 
 /**
  * Default impl of {@link ProjectTimeTracking}.
@@ -66,9 +63,8 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public boolean enabled() throws IOException, UnauthorizedException {
-    final Settings settings = new ResponseAs<>(
-        Settings.class,
-        new HttpResponseAsResponse(
+    final Settings settings = new Mapping<>(
+        () -> new HttpResponseAsResponse(
             HttpClients.createDefault().execute(
                 new HttpRequestWithSession(
                     this.session, 
@@ -78,8 +74,9 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
                     )
                 )
             )
-        )
-    ).get().get();
+        ),
+        resp -> new HttpEntityAsJaxb<>(Settings.class).apply(resp.httpResponse().getEntity())
+    ).get();
 
     return settings.isEnabled() 
         && Objects.nonNull(settings.getEstimation()) 
@@ -88,29 +85,26 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException {
-    return new Mapping<Mapping<Response, WorkItemTypes>, Stream<TimeTrackEntryType>>(
-        () -> new Mapping<>(
-            () -> new HttpResponseAsResponse(
-                HttpClients.createDefault().execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString()
-                                .concat(String.format(PATH_TEMPLATE, this.project().id()))
-                                .concat("/worktype")
+    return new StreamOf<>(
+        new MappedCollection<>(
+            new Mapping<>(
+                () -> new HttpResponseAsResponse(
+                    HttpClients.createDefault().execute(
+                        new HttpRequestWithSession(
+                            this.session, 
+                            new HttpGet(
+                                this.session.baseUrl().toString()
+                                    .concat(String.format(PATH_TEMPLATE, this.project().id()))
+                                    .concat("/worktype")
+                            )
                         )
                     )
-                )
+                ),
+                resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItemTypes.class)
+                    .apply(resp.httpResponse().getEntity()).getWorkType()
             ),
-            resp -> new HttpEntityAsJaxb<>(WorkItemTypes.class)
-                .apply(resp.httpResponse().getEntity())
-        ),
-        m -> new StreamOf<>(
-            new MappedCollection<>(
-                m.get().getWorkType(),
-                XmlTimeTrackEntryType::new
-            )
+            XmlTimeTrackEntryType::new
         )
-    ).get();
+    );
   }
 }

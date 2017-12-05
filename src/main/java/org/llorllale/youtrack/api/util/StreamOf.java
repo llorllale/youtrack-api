@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.util;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -41,22 +42,42 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
+ * Handy class to encapsulate several inputs as a {@link Stream}.
  *
  * @author George Aristy (george.aristy@gmail.com)
- * @param <T>
+ * @param <T> the stream's type
  * @since 1.0.0
  */
-public class StreamOf<T> implements Stream<T> {
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:ClassFanOutComplexity"})
+public final class StreamOf<T> implements Stream<T> {
   private final Stream<T> stream;
 
+  /**
+   * Primary ctor.
+   * 
+   * @param stream the actual stream implementation 
+   * @since 1.0.0
+   */
   private StreamOf(Stream<T> stream) {
     this.stream = stream;
   }
 
+  /**
+   * Encapsulates the collection as a stream.
+   * 
+   * @param coll collection to encapsulate
+   * @since 1.0.0
+   */
   public StreamOf(Collection<T> coll) {
     this(coll.stream());
   }
 
+  /**
+   * Encapsulates the given iterator as a stream.
+   * 
+   * @param iter the iterator to encapsulate
+   * @since 1.0.0
+   */
   public StreamOf(Iterator<T> iter) {
     this(
         StreamSupport.stream(
@@ -64,6 +85,17 @@ public class StreamOf<T> implements Stream<T> {
             false
         )
     );
+  }
+
+  /**
+   * Encapsulates the given supplier as a stream.
+   * 
+   * @param supplier the supplier to encapsulate
+   * @throws IOException from the {@link ExceptionalSupplier supplier}
+   * @since 1.0.0
+   */
+  public StreamOf(ExceptionalSupplier<Collection<T>, IOException> supplier) throws IOException {
+    this(supplier.get());
   }
 
   @Override
@@ -172,12 +204,19 @@ public class StreamOf<T> implements Stream<T> {
   }
 
   @Override
-  public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
+  public <U> U reduce(
+      U identity, BiFunction<U, ? super T, U> accumulator, 
+      BinaryOperator<U> combiner
+  ) {
     return this.stream.reduce(identity, accumulator, combiner);
   }
 
   @Override
-  public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+  public <R> R collect(
+      Supplier<R> supplier, 
+      BiConsumer<R, ? super T> accumulator, 
+      BiConsumer<R, R> combiner
+  ) {
     return this.stream.collect(supplier, accumulator, combiner);
   }
 
