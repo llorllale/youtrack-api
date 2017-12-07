@@ -14,43 +14,30 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 
+import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- * Handles the case when the HTTP status code is {@code 401}.
+ * Handles HTTP response status codes received from the YouTrack server.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public final class UnauthorizedResponse implements Response {
-  private final Response base;
-
+interface Response {
   /**
-   * Ctor.
+   * The {@link HttpResponse} received in the API's response.
    * 
-   * @param base the next link in the chain
+   * @return The httpResponse received in the API's response.
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform some
+   *     operation
    * @since 0.1.0
    */
-  public UnauthorizedResponse(Response base) {
-    this.base = base;
-  }
-  
-  @Override
-  public HttpResponse httpResponse() throws UnauthorizedException, IOException {
-    if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-      throw new UnauthorizedException(
-          "401: Unauthorized", 
-          this.base.httpResponse()
-      );
-    } else {
-      return this.base.httpResponse();
-    }
-  }
+  HttpResponse httpResponse() throws IOException, UnauthorizedException;
 }

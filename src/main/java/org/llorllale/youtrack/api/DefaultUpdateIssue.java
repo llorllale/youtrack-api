@@ -30,7 +30,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
  * Default impl of {@link UpdateIssue}.

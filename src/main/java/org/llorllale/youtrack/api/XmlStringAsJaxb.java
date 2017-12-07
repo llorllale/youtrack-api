@@ -21,7 +21,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 
-import org.llorllale.youtrack.api.util.response.ParseException;
 
 /**
  * Utility class to unmarshal an XML document in string form to its JAXB 

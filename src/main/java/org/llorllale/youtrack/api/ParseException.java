@@ -14,30 +14,44 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
-import org.apache.http.HttpResponse;
-
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 /**
- * Handles HTTP response status codes received from the YouTrack server.
+ * <p>
+ * Signals an error with parsing the payload received from YouTrack.
+ * </p>
+ * 
+ * <p>
+ * This is a runtime exception due to the assumption that this kind of error
+ * should not be expected.
+ * </p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public interface Response {
+class ParseException extends IOException {
+  private static final long serialVersionUID = -8989519985743709400L;
+
   /**
-   * The {@link HttpResponse} received in the API's response.
+   * Ctor.
    * 
-   * @return The httpResponse received in the API's response.
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform some
-   *     operation
+   * @param message exception message
    * @since 0.1.0
    */
-  HttpResponse httpResponse() throws IOException, UnauthorizedException;
+  ParseException(String message) {
+    super(message);
+  }
+
+  /**
+   * Ctor.
+   * 
+   * @param message exception message
+   * @param cause cause of exception
+   * @since 0.1.0
+   */
+  ParseException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

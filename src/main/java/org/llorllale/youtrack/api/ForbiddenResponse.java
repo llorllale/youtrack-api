@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public final class ForbiddenResponse implements Response {
+final class ForbiddenResponse implements Response {
   private final Response base;
 
   /**
@@ -40,7 +40,7 @@ public final class ForbiddenResponse implements Response {
    * @see HttpResponseAsResponse
    * @since 0.1.0
    */
-  public ForbiddenResponse(Response base) {
+  ForbiddenResponse(Response base) {
     this.base = base;
   }
 

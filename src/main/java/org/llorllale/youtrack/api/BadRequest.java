@@ -14,34 +14,49 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+
 import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.llorllale.youtrack.api.InputStreamAsString;
 
 /**
- * Special {@link Response} that does no validation and just returns the {@link HttpResponse}.
+ * Throws an {@link IOException} if the server responds with {@code 400 Bad Request}.
+ * 
+ * <p>Note: 'Bad Request' should never happen :-)</p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 0.7.0
  */
-public final class IdentityResponse implements Response {
-  private final HttpResponse httpResponse;
+final class BadRequest implements Response {
+  private final Response response;
 
   /**
    * Ctor.
    * 
-   * @param httpResponse the http response
-   * @since 0.4.0
+   * @param response the next link in the chain
+   * @since 0.7.0
    */
-  public IdentityResponse(HttpResponse httpResponse) {
-    this.httpResponse = httpResponse;
+  BadRequest(Response response) {
+    this.response = response;
   }
 
   @Override
   public HttpResponse httpResponse() throws IOException, UnauthorizedException {
-    return this.httpResponse;
+    if (this.response.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+      throw new IOException(
+          String.format("Server returned 400 Bad Request. Payload: %s",
+              new InputStreamAsString().apply(
+                  this.response.httpResponse().getEntity().getContent()
+              )
+          )
+      );
+    }
+
+    return this.response.httpResponse();
   }
 }

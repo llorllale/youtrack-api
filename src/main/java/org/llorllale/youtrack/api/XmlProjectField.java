@@ -32,7 +32,6 @@ import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
 import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
  * JAXB adapter for {@link Field}.
