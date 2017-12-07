@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.nio.charset.Charset;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public final class InputStreamAsString 
+final class InputStreamAsString 
     implements ExceptionalFunction<InputStream, String, IOException> {
   @Override
   public String apply(InputStream input) throws IOException {

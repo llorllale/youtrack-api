@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
  * Unit tests for {@link XmlUser}.

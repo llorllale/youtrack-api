@@ -1,5 +1,5 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,50 +14,45 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- * <p>
- * {@link HttpResponse} -&gt; {@link Response} adapter class.
- * </p>
+ * Throws an {@link UnauthorizedException} if status error code {@code 403} is received from 
+ * YouTrack.
  * 
- * <p>
- * Client code should only have to rely on this implementation of 
- * {@link Response}.
- * </p>
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public final class HttpResponseAsResponse implements Response {
+final class ForbiddenResponse implements Response {
   private final Response base;
 
   /**
-   * Adapts the given {@code httpResponse} into a {@link Response}.
-   * @param httpResponse the {@link HttpResponse} to be adapted
+   * Ctor.
+   * 
+   * @param base the next link in the chain
+   * @see HttpResponseAsResponse
    * @since 0.1.0
    */
-  public HttpResponseAsResponse(HttpResponse httpResponse) {
-    this.base = 
-        new UnauthorizedResponse(
-            new ForbiddenResponse(
-                new InternalServerErrorResponse(
-                    new BadRequest(
-                        new IdentityResponse(
-                            httpResponse
-                        )
-                    )
-                )
-            )
-        );
+  ForbiddenResponse(Response base) {
+    this.base = base;
   }
 
   @Override
   public HttpResponse httpResponse() throws UnauthorizedException, IOException {
-    return this.base.httpResponse();
+    if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_FORBIDDEN) {
+      throw new UnauthorizedException(
+          "403: Forbidden", 
+          this.base.httpResponse()
+      );
+    } else {
+      return this.base.httpResponse();
+    }
   }
 }

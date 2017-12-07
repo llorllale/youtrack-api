@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public final class IdentityResponse implements Response {
+final class IdentityResponse implements Response {
   private final HttpResponse httpResponse;
 
   /**
@@ -36,7 +36,7 @@ public final class IdentityResponse implements Response {
    * @param httpResponse the http response
    * @since 0.4.0
    */
-  public IdentityResponse(HttpResponse httpResponse) {
+  IdentityResponse(HttpResponse httpResponse) {
     this.httpResponse = httpResponse;
   }
 

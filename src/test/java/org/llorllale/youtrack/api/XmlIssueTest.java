@@ -26,7 +26,6 @@ import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
  * Unit tests for {@link XmlIssue}.

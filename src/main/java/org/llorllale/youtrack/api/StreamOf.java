@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -49,7 +49,7 @@ import java.util.stream.StreamSupport;
  * @since 1.0.0
  */
 @SuppressWarnings({"checkstyle:MethodCount", "checkstyle:ClassFanOutComplexity"})
-public final class StreamOf<T> implements Stream<T> {
+final class StreamOf<T> implements Stream<T> {
   private final Stream<T> stream;
 
   /**
@@ -68,7 +68,7 @@ public final class StreamOf<T> implements Stream<T> {
    * @param coll collection to encapsulate
    * @since 1.0.0
    */
-  public StreamOf(Collection<T> coll) {
+  StreamOf(Collection<T> coll) {
     this(coll.stream());
   }
 
@@ -78,7 +78,7 @@ public final class StreamOf<T> implements Stream<T> {
    * @param iter the iterator to encapsulate
    * @since 1.0.0
    */
-  public StreamOf(Iterator<T> iter) {
+  StreamOf(Iterator<T> iter) {
     this(
         StreamSupport.stream(
             Spliterators.spliteratorUnknownSize(iter, Spliterator.DISTINCT), 
@@ -94,7 +94,7 @@ public final class StreamOf<T> implements Stream<T> {
    * @throws IOException from the {@link ExceptionalSupplier supplier}
    * @since 1.0.0
    */
-  public StreamOf(ExceptionalSupplier<Collection<T>, IOException> supplier) throws IOException {
+  StreamOf(ExceptionalSupplier<Collection<T>, IOException> supplier) throws IOException {
     this(supplier.get());
   }
 

@@ -14,30 +14,37 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
-import org.apache.http.HttpResponse;
-
-import org.llorllale.youtrack.api.session.Session;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
+import org.apache.http.HttpEntity;
 
 /**
- * Handles HTTP response status codes received from the YouTrack server.
+ * Utility class to read the text content received from YouTrack in this 
+ * {@link HttpEntity} and convert it to its JAXB representation.
  * 
  * @author George Aristy (george.aristy@gmail.com)
+ * @param <T> the JAXB root element type class
  * @since 0.1.0
  */
-public interface Response {
+final class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, IOException> {
+  private final Class<T> rootType;
+
   /**
-   * The {@link HttpResponse} received in the API's response.
+   * Ctor.
    * 
-   * @return The httpResponse received in the API's response.
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform some
-   *     operation
+   * @param rootType the type for the XML's root element
    * @since 0.1.0
    */
-  HttpResponse httpResponse() throws IOException, UnauthorizedException;
+  HttpEntityAsJaxb(Class<T> rootType) {
+    this.rootType = rootType;
+  }
+
+  @Override
+  public T apply(HttpEntity entity) throws IOException {
+    return new XmlStringAsJaxb<>(this.rootType).apply(
+        new InputStreamAsString().apply(entity.getContent())
+    );
+  }
 }

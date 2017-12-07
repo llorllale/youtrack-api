@@ -1,5 +1,5 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package org.llorllale.youtrack.api;
+
 /**
- * <p>
- * The APIs in this package are reserved for internal use by this library.
- * </p>
+ * Generic supplier that can throw an exception.
  *
- * <p>
- * This is a collection of utility classes.
- * </p>
- * @since 0.1.0
+ * @author George Aristy (george.aristy@gmail.com)
+ * @param <T> the type of objects produced by this supplier
+ * @param <E> the exception's type
+ * @since 1.0.0
  */
-package org.llorllale.youtrack.api.util;
+interface ExceptionalSupplier<T, E extends Exception> {
+  /**
+   * Returns an instance of {@code T}.
+   * 
+   * @return an instance of {@code T}
+   * @throws E if there's an error
+   * @since 1.0.0
+   */
+  T get() throws E;
+}

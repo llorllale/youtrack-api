@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -33,7 +33,7 @@ import org.apache.http.HttpEntity;
  * @see StandardErrorCheck
  * @since 1.0.0
  */
-public final class MapIfNoError<R> implements ExceptionalSupplier<Optional<R>, IOException> {
+final class MapIfNoError<R> implements ExceptionalSupplier<Optional<R>, IOException> {
   private final ExceptionalSupplier<Optional<HttpEntity>, IOException> supplier;
   private final ExceptionalFunction<String, R, IOException> mappingFunction;
   private final Predicate<String> condition;
@@ -45,7 +45,7 @@ public final class MapIfNoError<R> implements ExceptionalSupplier<Optional<R>, I
    * @param mappingFunction the function that will map the entity's contents to an object
    * @since 1.0.0
    */
-  public MapIfNoError(
+  MapIfNoError(
       ExceptionalSupplier<Optional<HttpEntity>, IOException> supplier, 
       ExceptionalFunction<String, R, IOException> mappingFunction
   ) {

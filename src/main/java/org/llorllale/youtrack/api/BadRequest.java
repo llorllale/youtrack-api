@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util.response;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
@@ -24,35 +24,38 @@ import org.apache.http.HttpStatus;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- * Throws an {@link UnauthorizedException} if status error code {@code 403} is received from 
- * YouTrack.
+ * Throws an {@link IOException} if the server responds with {@code 400 Bad Request}.
+ * 
+ * <p>Note: 'Bad Request' should never happen :-)</p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.1.0
+ * @since 0.7.0
  */
-public final class ForbiddenResponse implements Response {
-  private final Response base;
+final class BadRequest implements Response {
+  private final Response response;
 
   /**
    * Ctor.
    * 
-   * @param base the next link in the chain
-   * @see HttpResponseAsResponse
-   * @since 0.1.0
+   * @param response the next link in the chain
+   * @since 0.7.0
    */
-  public ForbiddenResponse(Response base) {
-    this.base = base;
+  BadRequest(Response response) {
+    this.response = response;
   }
 
   @Override
-  public HttpResponse httpResponse() throws UnauthorizedException, IOException {
-    if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_FORBIDDEN) {
-      throw new UnauthorizedException(
-          "403: Forbidden", 
-          this.base.httpResponse()
+  public HttpResponse httpResponse() throws IOException, UnauthorizedException {
+    if (this.response.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
+      throw new IOException(
+          String.format("Server returned 400 Bad Request. Payload: %s",
+              new InputStreamAsString().apply(
+                  this.response.httpResponse().getEntity().getContent()
+              )
+          )
       );
-    } else {
-      return this.base.httpResponse();
     }
+
+    return this.response.httpResponse();
   }
 }

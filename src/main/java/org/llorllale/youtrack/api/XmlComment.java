@@ -27,10 +27,6 @@ import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
-import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**
  * JAXB implementation of {@link Comment}.

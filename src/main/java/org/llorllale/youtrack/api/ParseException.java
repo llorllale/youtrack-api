@@ -14,37 +14,44 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
-import org.apache.http.HttpEntity;
-
 /**
- * Utility class to read the text content received from YouTrack in this 
- * {@link HttpEntity} and convert it to its JAXB representation.
+ * <p>
+ * Signals an error with parsing the payload received from YouTrack.
+ * </p>
+ * 
+ * <p>
+ * This is a runtime exception due to the assumption that this kind of error
+ * should not be expected.
+ * </p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @param <T> the JAXB root element type class
  * @since 0.1.0
  */
-public final class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, IOException> {
-  private final Class<T> rootType;
+class ParseException extends IOException {
+  private static final long serialVersionUID = -8989519985743709400L;
 
   /**
    * Ctor.
    * 
-   * @param rootType the type for the XML's root element
+   * @param message exception message
    * @since 0.1.0
    */
-  public HttpEntityAsJaxb(Class<T> rootType) {
-    this.rootType = rootType;
+  ParseException(String message) {
+    super(message);
   }
 
-  @Override
-  public T apply(HttpEntity entity) throws IOException {
-    return new XmlStringAsJaxb<>(this.rootType).apply(
-        new InputStreamAsString().apply(entity.getContent())
-    );
+  /**
+   * Ctor.
+   * 
+   * @param message exception message
+   * @param cause cause of exception
+   * @since 0.1.0
+   */
+  ParseException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

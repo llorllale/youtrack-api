@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,7 +36,7 @@ import org.apache.http.client.utils.URIBuilder;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public final class UncheckedUriBuilder {
+final class UncheckedUriBuilder {
   private final URIBuilder builder;
 
   /**
@@ -46,7 +46,7 @@ public final class UncheckedUriBuilder {
    * @throws RuntimeException wrapping any internal {@link URISyntaxException}
    * @since 0.1.0
    */
-  public UncheckedUriBuilder(String baseUrl) {
+  UncheckedUriBuilder(String baseUrl) {
     try {
       this.builder = new URIBuilder(baseUrl);
     } catch (URISyntaxException e) {

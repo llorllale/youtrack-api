@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.net.URI;
 
@@ -37,7 +37,7 @@ import org.llorllale.youtrack.api.session.Session;
  * @since 0.4.0
  */
 @SuppressWarnings("checkstyle:MethodCount")
-public final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase {
+final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase {
   private final HttpRequestBase base;
   private final boolean expectContinue;
   private HttpEntity httpEntity;
@@ -49,7 +49,7 @@ public final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase
    * @param request the http request to execute
    * @since 0.4.0
    */
-  public HttpRequestWithSession(Session session, HttpEntityEnclosingRequestBase request) {
+  HttpRequestWithSession(Session session, HttpEntityEnclosingRequestBase request) {
     this.base = request;
     this.expectContinue = request.expectContinue();
     this.httpEntity = request.getEntity();
@@ -63,7 +63,7 @@ public final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase
    * @param request the http request to execute
    * @since 0.4.0
    */
-  public HttpRequestWithSession(Session session, HttpRequestBase request) {
+  HttpRequestWithSession(Session session, HttpRequestBase request) {
     this.base = request;
     session.cookies().forEach(this::addHeader);
     this.expectContinue = false;

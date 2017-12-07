@@ -29,14 +29,6 @@ import org.llorllale.youtrack.api.jaxb.WorkItems;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpEntityAsJaxb;
-import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
-import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.MappedCollection;
-import org.llorllale.youtrack.api.util.Mapping;
-import org.llorllale.youtrack.api.util.StreamOf;
-import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
-import org.llorllale.youtrack.api.util.response.Response;
 
 /**
  * Default implementation of {@link IssueTimeTracking}.
