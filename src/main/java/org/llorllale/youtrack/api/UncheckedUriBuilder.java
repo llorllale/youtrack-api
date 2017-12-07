@@ -62,7 +62,7 @@ final class UncheckedUriBuilder {
    * @return this object
    * @since 0.1.0
    */
-  UncheckedUriBuilder setParameter(String name, String value) {
+  public UncheckedUriBuilder setParameter(String name, String value) {
     this.builder.setParameter(name, value);
     return this;
   }
@@ -74,7 +74,7 @@ final class UncheckedUriBuilder {
    * @return this object
    * @since 0.4.0
    */
-  UncheckedUriBuilder addParameters(List<NameValuePair> params) {
+  public UncheckedUriBuilder addParameters(List<NameValuePair> params) {
     this.builder.addParameters(params);
     return this;
   }
@@ -86,7 +86,7 @@ final class UncheckedUriBuilder {
    * @throws RuntimeException wrapping any internal {@link URISyntaxException}
    * @since 0.1.0
    */
-  URI build() {
+  public URI build() {
     try {
       return this.builder.build();
     } catch (URISyntaxException e) {

@@ -72,29 +72,6 @@ public class UsernamePasswordLoginTest {
   }
 
   /**
-   * IllegalStateException if login() called more than once.
-   *
-   * @throws Exception
-   * @since 0.1.0
-   */
-  @Test(expected = IllegalStateException.class)
-  public void errorWhenLoginCalledMoreThanOnce() throws Exception {
-    final Login login = new UsernamePasswordLogin(
-        new URL("http://some.url"),
-        "test",
-        "123".toCharArray(),
-        new MockHttpClient(
-            new MockOkResponse(
-                new BasicHeader("Set-Cookie", "123")
-            )
-        )
-    );
-
-    login.login();
-    login.login();  //exception thrown here
-  }
-
-  /**
    * Fix for issue 13: Incorrect handling of session cookies
    *
    * @since 0.1.0

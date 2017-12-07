@@ -27,7 +27,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClients;
 
-
 /**
  * An {@link Iterator} that holds the contents of a single page of results from the YouTrack server.
  * 

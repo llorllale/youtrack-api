@@ -21,7 +21,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.stream.StreamSource;
 
-
 /**
  * Utility class to unmarshal an XML document in string form to its JAXB 
  * representation.
