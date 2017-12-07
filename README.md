@@ -5,9 +5,9 @@
 [![Build Status](https://travis-ci.org/llorllale/youtrack-api.svg?branch=master)](https://travis-ci.org/llorllale/youtrack-api)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.llorllale/youtrack-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.llorllale/youtrack-api)
 
-`youtrack-api` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/). Visit the [project's site](https://llorllale.github.io/youtrack-api) for more info.
+`youtrack-api` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/). Visit the [project's site](https://llorllale.github.io/youtrack-api) for more info. It has just one dependency: Apache's [HttpClient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) version `4.5.x`.
 
-Java 8 or above is required to run `youtrack-api`.
+Java 8 or above is required.
 
 Here's a snippet of its usage:
 
@@ -15,7 +15,7 @@ Here's a snippet of its usage:
 final YouTrack youtrack = new DefaultYouTrack(
     new PermanentTokenLogin("token").login()
 );
-youtrack.projects().get("project_id")
+youtrack.projects().get("project_id").get()
     .issues()
     .create(new IssueSpec("summary", "description"))    //creates issue
     .comments()
