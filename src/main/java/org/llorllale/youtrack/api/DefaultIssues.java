@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -130,16 +129,14 @@ class DefaultIssues implements Issues {
   @Override
   public Issue create(IssueSpec spec) throws IOException, UnauthorizedException {
     return this.get(
-        StringUtils.substringAfterLast(
+        new SubstringAfterLast(
             new HttpResponseAsResponse(
                 this.httpClient.execute(
                     new HttpRequestWithSession(
                         this.session, 
                         new HttpPut(
                             new UncheckedUriBuilder(
-                                this.session.baseUrl()
-                                    .toString()
-                                    .concat("/issue")
+                                this.session.baseUrl().toString().concat("/issue")
                             ).setParameter("project", this.project().id())
                                 .addParameters(spec.nameValuePairs())
                                 .build()
@@ -148,7 +145,7 @@ class DefaultIssues implements Issues {
                 )
             ).httpResponse().getFirstHeader("Location").getValue(),
             "/"
-        )
+        ).get()
     ).get().update().fields(spec.fields());
   }
 }

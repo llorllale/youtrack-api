@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -83,7 +82,7 @@ class XmlProjectField implements ProjectField {
                                 .concat("/admin/project/")
                                 .concat(this.project().id())
                                 .concat("/customfield/")
-                                .concat(StringUtils.substringAfterLast(this.jaxb.getUrl(), "/"))
+                                .concat(new SubstringAfterLast(this.jaxb.getUrl(), "/").get())
                         )
                     )
                 )
