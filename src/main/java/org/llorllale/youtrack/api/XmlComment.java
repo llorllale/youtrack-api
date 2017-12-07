@@ -67,12 +67,13 @@ final class XmlComment implements Comment {
    * @param issue the {@link Issue} to which this comment is attached
    * @param session the user's session
    * @param xml comment's XML object received from YouTrack
+   * @throws ParseException from {@link XmlObject#value(java.lang.String)}
    * @since 1.0.0
    */
   XmlComment(Issue issue, Session session, XmlObject xml) throws ParseException {
     this(
         xml.value("//@id"), 
-        Long.valueOf(xml.value("//@created")), 
+        Long.parseLong(xml.value("//@created")), 
         xml.value("//@text"), 
         issue, 
         session

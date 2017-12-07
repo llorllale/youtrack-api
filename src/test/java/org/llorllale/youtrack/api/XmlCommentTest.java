@@ -33,34 +33,34 @@ import org.llorllale.youtrack.api.session.Session;
  * @since 0.4.0
  */
 public class XmlCommentTest {
-  private static org.llorllale.youtrack.api.jaxb.Comment jaxbComment;
+  private static XmlObject xmlObject;
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbComment = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comment.class).apply(XML);
+    xmlObject = new XmlObject(new StringAsDocument(XML));
   }
 
   @Test
-  public void testId() {
+  public void testId() throws Exception {
     assertThat(
-        new XmlComment(issue(), session(), jaxbComment).id(),
-        is(jaxbComment.getId())
+        new XmlComment(issue(), session(), xmlObject).id(),
+        is(xmlObject.value("//@id"))
     );
   }
 
   @Test
-  public void testCreationDate() {
+  public void testCreationDate() throws Exception {
     assertThat(
-        new XmlComment(issue(), session(), jaxbComment).creationDate(),
-        is(Instant.ofEpochMilli(jaxbComment.getCreated()))
+        new XmlComment(issue(), session(), xmlObject).creationDate(),
+        is(Instant.ofEpochMilli(Long.valueOf(xmlObject.value("//@created"))))
     );
   }
 
   @Test
-  public void testText() {
+  public void testText() throws Exception {
     assertThat(
-        new XmlComment(issue(), session(), jaxbComment).text(),
-        is(jaxbComment.getText())
+        new XmlComment(issue(), session(), xmlObject).text(),
+        is(xmlObject.value("//@text"))
     );
   }
 

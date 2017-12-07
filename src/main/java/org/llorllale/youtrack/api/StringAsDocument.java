@@ -55,6 +55,7 @@ import org.xml.sax.SAXException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
+@SuppressWarnings("checkstyle:MethodCount")
 final class StringAsDocument implements Document {
   private final Document base;
 
@@ -68,9 +69,9 @@ final class StringAsDocument implements Document {
    */
   StringAsDocument(String xml) throws ParseException {
     try {
-        this.base = DocumentBuilderFactory.newInstance()
-            .newDocumentBuilder()
-            .parse(new InputSource(new StringReader(xml)));
+      this.base = DocumentBuilderFactory.newInstance()
+          .newDocumentBuilder()
+          .parse(new InputSource(new StringReader(xml)));
     } catch(ParserConfigurationException | SAXException | IOException e) {
       throw new ParseException(e.getMessage(), e);
     }
@@ -145,18 +146,18 @@ final class StringAsDocument implements Document {
   }
 
   @Override
-  public Element createElementNS(String namespaceURI, String qualifiedName) throws DOMException {
-    return this.base.createElementNS(namespaceURI, qualifiedName);
+  public Element createElementNS(String namespaceUri, String qualifiedName) throws DOMException {
+    return this.base.createElementNS(namespaceUri, qualifiedName);
   }
 
   @Override
-  public Attr createAttributeNS(String namespaceURI, String qualifiedName) throws DOMException {
-    return this.base.createAttributeNS(namespaceURI, qualifiedName);
+  public Attr createAttributeNS(String namespaceUri, String qualifiedName) throws DOMException {
+    return this.base.createAttributeNS(namespaceUri, qualifiedName);
   }
 
   @Override
-  public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
-    return this.base.getElementsByTagNameNS(namespaceURI, localName);
+  public NodeList getElementsByTagNameNS(String namespaceUri, String localName) {
+    return this.base.getElementsByTagNameNS(namespaceUri, localName);
   }
 
   @Override
@@ -210,8 +211,8 @@ final class StringAsDocument implements Document {
   }
 
   @Override
-  public void setDocumentURI(String documentURI) {
-    this.base.setDocumentURI(documentURI);
+  public void setDocumentURI(String documentUri) {
+    this.base.setDocumentURI(documentUri);
   }
 
   @Override
@@ -230,8 +231,8 @@ final class StringAsDocument implements Document {
   }
 
   @Override
-  public Node renameNode(Node node, String namespaceURI, String qualifiedName) throws DOMException {
-    return this.base.renameNode(node, namespaceURI, qualifiedName);
+  public Node renameNode(Node node, String namespaceUri, String qualifiedName) throws DOMException {
+    return this.base.renameNode(node, namespaceUri, qualifiedName);
   }
 
   @Override
@@ -385,13 +386,13 @@ final class StringAsDocument implements Document {
   }
 
   @Override
-  public String lookupPrefix(String namespaceURI) {
-    return this.base.lookupPrefix(namespaceURI);
+  public String lookupPrefix(String namespaceUri) {
+    return this.base.lookupPrefix(namespaceUri);
   }
 
   @Override
-  public boolean isDefaultNamespace(String namespaceURI) {
-    return this.base.isDefaultNamespace(namespaceURI);
+  public boolean isDefaultNamespace(String namespaceUri) {
+    return this.base.isDefaultNamespace(namespaceUri);
   }
 
   @Override
