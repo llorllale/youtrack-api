@@ -98,7 +98,7 @@ public class UsernamePasswordLoginTest {
         ).login()
             .cookies()
             .stream()
-            .allMatch(h -> "Cookie".equals(h.getName()))
+            .allMatch(c -> "Cookie".equals(c.name()))
     );
   }
 
@@ -130,7 +130,7 @@ public class UsernamePasswordLoginTest {
             .cookies()
             .stream()
             .allMatch(
-                h -> "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61; jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290".equals(h.getValue())
+                c -> "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61; jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290".equals(c.value())
             )
     );
   }

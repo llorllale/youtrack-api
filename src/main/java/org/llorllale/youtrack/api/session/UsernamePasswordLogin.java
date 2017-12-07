@@ -22,14 +22,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
 
 /**
  * <p>A login for the simple username/password use case.</p>
@@ -102,16 +100,16 @@ public final class UsernamePasswordLogin implements Login {
       }
   
       final String cookieHeader = "Cookie";
-      final Header cookie = Arrays.asList(response.getAllHeaders())
+      final Cookie cookie = Arrays.asList(response.getAllHeaders())
           .stream()
           .filter(header -> "Set-Cookie".equals(header.getName()))
-          .map(header -> new BasicHeader(cookieHeader, header.getValue().split(";")[0]))
+          .map(header -> new DefaultCookie(cookieHeader, header.getValue().split(";")[0]))
           .reduce(
-              (headerA, headerB) -> new BasicHeader(
+              (cookieA, cookieB) -> new DefaultCookie(
                   cookieHeader, 
-                  headerA.getValue()
+                  cookieA.value()
                       .concat("; ")
-                      .concat(headerB.getValue())
+                      .concat(cookieB.value())
               )
           ).get();
   

@@ -16,43 +16,42 @@
 
 package org.llorllale.youtrack.api.session;
 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@link DefaultSession}.
+ * Unit tests for {@link DefaultCookie}
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 1.0.0
  */
-public class DefaultSessionTest {
+public class DefaultCookieTest {
+  /**
+   * {@link DefaultCookie#name()} should return the name passed through constructor.
+   * 
+   * @since 1.0.0
+   */
   @Test
-  public void testBaseUrl() throws Exception {
-    final URL url = new URL("http://some.url");
-
+  public void testName() {
+    final String name = "SomeName";
     assertThat(
-        new DefaultSession(url).baseUrl(),
-        is(url)
+        new DefaultCookie(name, "").name(),
+        is(name)
     );
   }
 
+  /**
+   * {@link DefaultCookie#value()} must return the value passed through the constructor.
+   * 
+   * @since 1.0.0
+   */
   @Test
-  public void testCookies() throws Exception {
-    final List<Cookie> cookies = Arrays.asList(
-        new DefaultCookie("H1", "V1"),
-        new DefaultCookie("H2", "V2")
-    );
-
+  public void testValue() {
+    final String value = "SomeValue";
     assertThat(
-        new DefaultSession(
-            new URL("http://some.url"), 
-            cookies
-        ).cookies(),
-        containsInAnyOrder(cookies.toArray(new Cookie[]{}))
+        new DefaultCookie("", value).value(),
+        is(value)
     );
   }
 }
