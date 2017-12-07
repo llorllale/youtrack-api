@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import com.google.common.net.UrlEscapers;
-
 import java.io.IOException;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -71,26 +69,24 @@ class XmlProjectField implements ProjectField {
 
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
-    final String bundleName = UrlEscapers.urlPathSegmentEscaper().escape(
-        new Mapping<>(
-            () -> new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString()
-                                .concat("/admin/project/")
-                                .concat(this.project().id())
-                                .concat("/customfield/")
-                                .concat(new SubstringAfterLast(this.jaxb.getUrl(), "/").get())
-                        )
+    final String bundleName = new Mapping<>(
+        () -> new HttpResponseAsResponse(
+            this.httpClient.execute(
+                new HttpRequestWithSession(
+                    this.session, 
+                    new HttpGet(
+                        this.session.baseUrl().toString()
+                            .concat("/admin/project/")
+                            .concat(this.project().id())
+                            .concat("/customfield/")
+                            .concat(new SubstringAfterLast(this.jaxb.getUrl(), "/").get())
                     )
                 )
-            ),
-            resp -> new HttpEntityAsJaxb<>(ProjectCustomField.class)
-                .apply(resp.httpResponse().getEntity()).getParam().getValue()
-        ).get()
-    );
+            )
+        ),
+        resp -> new HttpEntityAsJaxb<>(ProjectCustomField.class)
+            .apply(resp.httpResponse().getEntity()).getParam().getValue()
+    ).get();
 
     return new StreamOf<>(
         new MappedCollection<Value, FieldValue>(
@@ -100,9 +96,10 @@ class XmlProjectField implements ProjectField {
                         new HttpRequestWithSession(
                             this.session, 
                             new HttpGet(
-                                this.session.baseUrl().toString()
-                                    .concat("/admin/customfield/bundle/")
-                                    .concat(bundleName)
+                                new UncheckedUriBuilder(
+                                    this.session.baseUrl(),
+                                    "/admin/customfield/bundle/".concat(bundleName)
+                                ).build()
                             )
                         )
                     )

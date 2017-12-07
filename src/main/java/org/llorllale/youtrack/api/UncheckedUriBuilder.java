@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -50,7 +51,42 @@ final class UncheckedUriBuilder {
     try {
       this.builder = new URIBuilder(baseUrl);
     } catch (URISyntaxException e) {
-      throw new RuntimeException("This should not have happened: syntax issue with URL", e);
+      throw new RuntimeException(
+          String.format("This should not have happened: syntax issue with URL: %s", baseUrl),
+          e
+      );
+    }
+  }
+
+  /**
+   * Forms a new URI by joining {@code baseUrl} and {@code path}.
+   * 
+   * @param baseUrl the URL for the YouTrack RESTful endpoint API
+   * @param path the resource's sub-path
+   * @see <a href="https://stackoverflow.com/a/724764/1623885">StackOverflow</a>
+   * @since 1.0.0
+   */
+  UncheckedUriBuilder(URL baseUrl, String path) {
+    try {
+      this.builder = new URIBuilder(
+          new URI(
+              baseUrl.getProtocol(),
+              null,
+              baseUrl.getHost(),
+              baseUrl.getPort(),
+              baseUrl.getPath().concat(path),
+              null,
+              null
+          )
+      );
+    } catch (URISyntaxException e) {
+      throw new RuntimeException(
+          String.format(
+              "This should not have happened: syntax issue baseUrl=%s path=%s", 
+              baseUrl.toString(), path
+          ),
+          e
+      );
     }
   }
 
