@@ -99,8 +99,6 @@ public interface Issues {
    * 
    * @since 0.4.0
    */
-  //suppressed warnings on package methods: fields(), nameValuePairs()
-  @SuppressWarnings("checkstyle:MethodCount")
   class IssueSpec {
     private final String summary;
     private final Optional<String> description;

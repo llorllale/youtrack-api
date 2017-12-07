@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import com.jamesmurty.utils.XMLBuilder2;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -176,35 +174,41 @@ public interface IssueTimeTracking {
      * 
      * @return a {@link HttpEntity} representing this spec
      */
-    public HttpEntity asHttpEntity() {
-      final XMLBuilder2 builder = XMLBuilder2.create("workItem")
-          .elem("date")
-              .text(
-                  String.valueOf(
+    HttpEntity asHttpEntity() {
+      final StringBuilder xmlBuilder = new StringBuilder("<workItem>")
+          .append("<date>")
+          .append(String.valueOf(
                       this.date.atStartOfDay()
                           .atZone(ZoneId.systemDefault())
                           .toInstant()
                           .toEpochMilli()
                   )
-              )
-              .up()
-          .elem("duration")
-              .text(String.valueOf(this.duration.toMinutes()))
-              .up()
-          .elem("description")
-              .text(this.description.orElse(""))
-              .up();
+          ).append("</date>")
+          .append("<duration>")
+          .append(String.valueOf(
+                      this.date.atStartOfDay()
+                          .atZone(ZoneId.systemDefault())
+                          .toInstant()
+                          .toEpochMilli()
+                  )
+          ).append("</duration>")
+          .append("<description>")
+          .append(this.description.orElse(""))
+          .append("</description>");
 
       this.type.ifPresent(t -> 
-          builder
-              .elem("worktype")
-                .elem("name")
-                  .text(t.asString())
-                  .up()
-                .up()
+          xmlBuilder
+              .append("<workType>")
+                  .append("<name>")
+                      .append(t.asString())
+                  .append("</name>")
+              .append("</worktype>")
       );
 
-      return new StringEntity(builder.asString(), ContentType.APPLICATION_XML);
+      return new StringEntity(
+          xmlBuilder.append("</workItem>").toString(), 
+          ContentType.APPLICATION_XML
+      );
     }
   }
 }
