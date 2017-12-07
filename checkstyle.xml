@@ -197,7 +197,7 @@
     <!-- Metrics -->
     <module name="BooleanExpressionComplexity"/>
     <module name="ClassDataAbstractionCoupling">
-      <property name="max" value="12"/>
+      <property name="max" value="15"/>
     </module>
     <module name="ClassFanOutComplexity">
       <property name="max" value="30"/>

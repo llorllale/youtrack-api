@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 import org.junit.BeforeClass;
@@ -52,7 +51,7 @@ public class DefaultUpdateIssueIT {
   }
   @Test
   public void testSummary() throws Exception {
-    final String newSummary = RandomStringUtils.randomAlphanumeric(200);
+    final String newSummary = DefaultUpdateIssueIT.class.getSimpleName().concat(".testSummary");
     assertNotEquals(
         new DefaultUpdateIssue(issue, session).summary(newSummary).summary(),
         issue.summary()
@@ -61,7 +60,7 @@ public class DefaultUpdateIssueIT {
 
   @Test
   public void testDescription() throws Exception {
-    final String newDescription = RandomStringUtils.randomAlphanumeric(200);
+    final String newDescription = DefaultUpdateIssueIT.class.getSimpleName().concat("testDescription");
     assertNotEquals(
         new DefaultUpdateIssue(issue, session).description(newDescription).description(),
         issue.description()
@@ -70,8 +69,8 @@ public class DefaultUpdateIssueIT {
 
   @Test
   public void testSummaryAndDesc() throws Exception {
-    final String newSummary = RandomStringUtils.randomAlphanumeric(20);
-    final String newDescription = RandomStringUtils.randomAlphanumeric(20);
+    final String newSummary = DefaultUpdateIssueIT.class.getSimpleName().concat("testSummaryAndDesc_summ");
+    final String newDescription = DefaultUpdateIssueIT.class.getSimpleName().concat("testSummaryAndDesc_desc");
     final Issue newIssue = new DefaultUpdateIssue(issue, session).summaryAndDesc(newSummary, newDescription);
 
     assertNotEquals(issue.summary(), newIssue.summary());
