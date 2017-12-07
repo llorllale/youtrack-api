@@ -6,9 +6,13 @@
 #set($h6 = '######')
 
 $h3 About
-`${project.artifactId}` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/), tested against version `${youtrackVersion}`.
+`${project.artifactId}` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/), tested against version `${youtrackVersion}`. It has just one dependency: Apache's [HttpClient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) version `4.5.x`.
 
 **Note:** the API is currently unstable as we approach our [first milestone](https://github.com/llorllale/youtrack-api/milestone/1).
+
+View the [usage](./usage.html) and the [javadoc](./apidocs/index.html) resources for additional details.
+
+For bugs or enhancements, please use our [issue tracker](${project.url}/issues).
 
 <br/>
 
@@ -41,6 +45,8 @@ The goals of this project include:
 
 It is worth noting that **performance is not a goal** of this project.
 
+<br/>
+
 $h4 Why another Java YouTrack API?
 Of the few other Java API projects for YouTrack that seem anywhere remotely "complete", all are lacking several of the following aspects:
 
@@ -61,8 +67,3 @@ $h4 Include in maven projects
       <artifactId>${project.artifactId}</artifactId>
       <version>${project.version}</version>
     </dependency>
-
-View the [usage](./usage.html) and the [javadoc](./apidocs/index.html) resources for additional details.
-
-For bugs or enhancements, please use our [issue tracker](${project.url}/issues).
- 
