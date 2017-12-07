@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.util.function.Function;
 
@@ -27,7 +27,7 @@ import java.util.function.Function;
  * @param <E> the exception type
  * @since 0.6.0
  */
-public interface ExceptionalFunction<T, R, E extends Exception> {
+interface ExceptionalFunction<T, R, E extends Exception> {
   /**
    * Applies this function to {@code input}, producing an output {@code R}.
    * 

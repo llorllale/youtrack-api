@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -46,7 +46,7 @@ import java.util.Optional;
  * @see Mapping
  * @since 1.0.0
  */
-public final class MapIfPresent<T, R> implements ExceptionalSupplier<Optional<R>, IOException> {
+final class MapIfPresent<T, R> implements ExceptionalSupplier<Optional<R>, IOException> {
   private final ExceptionalSupplier<Optional<T>, IOException> supplier;
   private final ExceptionalFunction<T, R, IOException> mappingFunction;
 
@@ -57,7 +57,7 @@ public final class MapIfPresent<T, R> implements ExceptionalSupplier<Optional<R>
    * @param mappingFunction the final mapping function
    * @since 1.0.0
    */
-  public MapIfPresent(
+  MapIfPresent(
       ExceptionalSupplier<Optional<T>, IOException> supplier, 
       ExceptionalFunction<T, R, IOException> mappingFunction
   ) {

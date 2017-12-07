@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.net.URI;
 
@@ -34,7 +34,7 @@ import org.apache.http.params.HttpParams;
  * @since 0.4.0
  */
 @SuppressWarnings("checkstyle:MethodCount")
-public final class HttpRequestWithEntity extends HttpEntityEnclosingRequestBase {
+final class HttpRequestWithEntity extends HttpEntityEnclosingRequestBase {
   private final HttpEntityEnclosingRequestBase base;
 
   /**
@@ -43,7 +43,7 @@ public final class HttpRequestWithEntity extends HttpEntityEnclosingRequestBase 
    * @param base the base request
    * @since 0.4.0
    */
-  public HttpRequestWithEntity(HttpEntity entity, HttpEntityEnclosingRequestBase base) {
+  HttpRequestWithEntity(HttpEntity entity, HttpEntityEnclosingRequestBase base) {
     this.base = base;
     this.setEntity(entity);
   }

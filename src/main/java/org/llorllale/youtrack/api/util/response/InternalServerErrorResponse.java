@@ -22,7 +22,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.InputStreamAsString;
+import org.llorllale.youtrack.api.InputStreamAsString;
 
 /**
  * A {@link Response} that throws an {@link IOException} if the server responds with code

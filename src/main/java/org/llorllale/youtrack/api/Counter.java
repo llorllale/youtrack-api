@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
-public final class Counter implements Supplier<Integer> {
+final class Counter implements Supplier<Integer> {
   private final AtomicInteger start;
   private final int increment;
 
@@ -36,7 +36,7 @@ public final class Counter implements Supplier<Integer> {
    * @param increment the amount to increment with each call to {@link #get()}
    * @since 0.7.0
    */
-  public Counter(int start, int increment) {
+  Counter(int start, int increment) {
     this.start = new AtomicInteger(start);
     this.increment = increment;
   }

@@ -30,7 +30,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 
-import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
+import org.llorllale.youtrack.api.UncheckedUriBuilder;
 
 /**
  * <p>A login for the simple username/password use case.</p>

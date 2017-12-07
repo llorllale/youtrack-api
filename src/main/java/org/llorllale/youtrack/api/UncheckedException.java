@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 /**
- * Generic supplier that can throw an exception.
+ * A runtime exception used to wrap checked exceptions.
  *
  * @author George Aristy (george.aristy@gmail.com)
- * @param <T> the type of objects produced by this supplier
- * @param <E> the exception's type
- * @since 1.0.0
+ * @since 0.7.0
  */
-public interface ExceptionalSupplier<T, E extends Exception> {
+final class UncheckedException extends RuntimeException {
+  private static final long serialVersionUID = -9216739746684341214L;
+
   /**
-   * Returns an instance of {@code T}.
+   * Ctor.
    * 
-   * @return an instance of {@code T}
-   * @throws E if there's an error
-   * @since 1.0.0
+   * @param cause the exception's cause
+   * @since 0.7.0
    */
-  T get() throws E;
+  UncheckedException(Throwable cause) {
+    super(cause);
+  }
 }

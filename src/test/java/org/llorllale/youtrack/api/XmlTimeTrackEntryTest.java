@@ -25,7 +25,6 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockProject;
-import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
  * Unit tests for {@link XmlTimeTrackEntry}.

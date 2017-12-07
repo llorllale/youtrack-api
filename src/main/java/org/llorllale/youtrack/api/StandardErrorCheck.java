@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.util.function.Predicate;
 
@@ -30,7 +30,7 @@ import java.util.function.Predicate;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.6.0
  */
-public final class StandardErrorCheck implements Predicate<String> {
+final class StandardErrorCheck implements Predicate<String> {
   @Override
   public boolean test(String xml) {
     return !xml.contains("<error>");

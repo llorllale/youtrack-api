@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.MapIfPresent;
 
 /**
  * Default implementation of {@link UsersOfIssue}.

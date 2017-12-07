@@ -21,7 +21,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.llorllale.youtrack.api.jaxb.WorkType;
-import org.llorllale.youtrack.api.util.XmlStringAsJaxb;
 
 /**
  * Unit tests for {@link XmlTimeTrackEntryType}.

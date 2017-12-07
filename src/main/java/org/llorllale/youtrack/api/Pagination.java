@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -36,7 +36,7 @@ import org.apache.http.client.methods.HttpUriRequest;
  * @see Page
  * @since 0.7.0
  */
-public final class Pagination<T> implements Iterator<T> {
+final class Pagination<T> implements Iterator<T> {
   private final PageUri pageRequest;
   private final ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper;
 
@@ -49,7 +49,7 @@ public final class Pagination<T> implements Iterator<T> {
    * @param mapper maps each page's URI into its corresponding contents
    * @since 0.7.0
    */
-  public Pagination(
+  Pagination(
       PageUri pageRequest,
       ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper
   ) {
@@ -69,7 +69,7 @@ public final class Pagination<T> implements Iterator<T> {
    * @see PageUri
    * @since 1.0.0
    */
-  public Pagination(
+  Pagination(
       int pageSize,
       Function<Integer, HttpUriRequest> combiner, 
       ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper

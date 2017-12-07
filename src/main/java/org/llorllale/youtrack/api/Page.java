@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -40,7 +40,7 @@ import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
  * @see Pagination
  * @since 0.7.0
  */
-public final class Page<T> implements Iterator<T> {
+final class Page<T> implements Iterator<T> {
   private final HttpUriRequest request;
   private final ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper;
   private final Deque<T> contents;
@@ -52,7 +52,7 @@ public final class Page<T> implements Iterator<T> {
    * @param mapper the mapping function to transform the results from YouTrack into types T
    * @since 0.7.0
    */
-  public Page(
+  Page(
       HttpUriRequest request, 
       ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper
   ) {

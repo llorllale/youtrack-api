@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ import java.io.IOException;
  * @param <R> the output type
  * @since 1.0.0
  */
-public final class Mapping<T, R> implements ExceptionalSupplier<R, IOException> {
+final class Mapping<T, R> implements ExceptionalSupplier<R, IOException> {
   private final ExceptionalSupplier<T, IOException> input;
   private final ExceptionalFunction<T, R, IOException> mappingFunction;
 
@@ -37,7 +37,7 @@ public final class Mapping<T, R> implements ExceptionalSupplier<R, IOException> 
    * @param mappingFunction the function to map {@code input} into the output
    * @since 1.0.0
    */
-  public Mapping(
+  Mapping(
       ExceptionalSupplier<T, IOException> input, 
       ExceptionalFunction<T, R, IOException> mappingFunction
   ) {

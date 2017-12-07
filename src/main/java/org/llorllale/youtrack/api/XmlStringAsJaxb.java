@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
@@ -31,7 +31,7 @@ import org.llorllale.youtrack.api.util.response.ParseException;
  * @param <T> the type class of the XML root element
  * @since 0.1.0
  */
-public final class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, ParseException> {
+final class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, ParseException> {
   private final Class<T> rootType;
 
   /**
@@ -40,7 +40,7 @@ public final class XmlStringAsJaxb<T> implements ExceptionalFunction<String, T, 
    * @param rootType the type class of the XML root element
    * @since 0.1.0
    */
-  public XmlStringAsJaxb(Class<T> rootType) {
+  XmlStringAsJaxb(Class<T> rootType) {
     this.rootType = rootType;
   }
 

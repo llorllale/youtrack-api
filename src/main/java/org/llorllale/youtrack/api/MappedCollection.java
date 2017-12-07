@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.AbstractCollection;
@@ -34,7 +34,7 @@ import java.util.Iterator;
  * @param <O> this collection's generic type
  * @since 0.9.0
  */
-public final class MappedCollection<I, O> extends AbstractCollection<O> {
+final class MappedCollection<I, O> extends AbstractCollection<O> {
   private final Collection<O> output;
 
   /**
@@ -54,7 +54,7 @@ public final class MappedCollection<I, O> extends AbstractCollection<O> {
    * @throws IOException from the {@code mappingFunction}
    * @since 0.9.0
    */
-  public MappedCollection(
+  MappedCollection(
       Collection<I> collection, 
       ExceptionalFunction<I, O, IOException> mappingFunction
   ) throws IOException {
@@ -73,7 +73,7 @@ public final class MappedCollection<I, O> extends AbstractCollection<O> {
    * @see #MappedCollection(Collection, ExceptionalFunction) 
    * @since 1.0.0
    */
-  public MappedCollection(
+  MappedCollection(
       ExceptionalSupplier<Collection<I>, IOException> supplier, 
       ExceptionalFunction<I, O, IOException> function
   ) throws IOException {

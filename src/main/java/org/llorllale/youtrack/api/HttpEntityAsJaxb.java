@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.apache.http.HttpEntity;
  * @param <T> the JAXB root element type class
  * @since 0.1.0
  */
-public final class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, IOException> {
+final class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity, T, IOException> {
   private final Class<T> rootType;
 
   /**
@@ -37,7 +37,7 @@ public final class HttpEntityAsJaxb<T> implements ExceptionalFunction<HttpEntity
    * @param rootType the type for the XML's root element
    * @since 0.1.0
    */
-  public HttpEntityAsJaxb(Class<T> rootType) {
+  HttpEntityAsJaxb(Class<T> rootType) {
     this.rootType = rootType;
   }
 

@@ -30,9 +30,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.util.HttpRequestWithEntity;
-import org.llorllale.youtrack.api.util.HttpRequestWithSession;
-import org.llorllale.youtrack.api.util.UncheckedUriBuilder;
 import org.llorllale.youtrack.api.util.response.HttpResponseAsResponse;
 
 /**

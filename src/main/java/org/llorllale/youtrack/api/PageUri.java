@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.util;
+package org.llorllale.youtrack.api;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -30,7 +30,7 @@ import org.apache.http.client.methods.HttpUriRequest;
  * @see Pagination
  * @since 0.7.0
  */
-public final class PageUri implements Supplier<HttpUriRequest> {
+final class PageUri implements Supplier<HttpUriRequest> {
   private final Supplier<Integer> pageNum;
   private final Function<Integer, HttpUriRequest> combiner;
 
@@ -42,7 +42,7 @@ public final class PageUri implements Supplier<HttpUriRequest> {
    *     {@link HttpUriRequest} for a {@link Page}
    * @since 0.7.0
    */
-  public PageUri(Supplier<Integer> pageNum, Function<Integer, HttpUriRequest> combiner) {
+  PageUri(Supplier<Integer> pageNum, Function<Integer, HttpUriRequest> combiner) {
     this.pageNum = pageNum;
     this.combiner = combiner;
   }
