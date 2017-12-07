@@ -1,5 +1,5 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,38 +16,27 @@
 
 package org.llorllale.youtrack.api.session;
 
-import java.net.URL;
-import java.util.List;
-
 /**
- * <p>
- * A {@code Session} object encapsulates all the state required for conducting
- * further transactions with the remote YouTrack API.
- * </p>
- * 
- * <p>
- * Instances of {@code Session} are obtained by {@link Login#login() login} in
- * to YouTrack.
- * </p>
+ * An HTTP cookie held by the user's {@link Session}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @see Login
- * @since 0.1.0
+ * @see Session#cookies() 
+ * @since 1.0.0
  */
-public interface Session {
+public interface Cookie {
   /**
-   * The base endpoint URL of the remote YouTrack API.
+   * The cookie's name.
    * 
-   * @return The base endpoint URL of the remote YouTrack API.
-   * @since 0.1.0
+   * @return the cookie's name
+   * @since 1.0.0
    */
-  URL baseUrl();
+  String name();
 
   /**
-   * Session state.
+   * The cookie's value.
    * 
-   * @return The session's state.
-   * @since 0.1.0
+   * @return the cookie's value
+   * @since 1.0.0
    */
-  List<Cookie> cookies();
+  String value();
 }

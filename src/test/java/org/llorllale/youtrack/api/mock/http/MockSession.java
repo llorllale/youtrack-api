@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import org.apache.http.Header;
+import org.llorllale.youtrack.api.session.Cookie;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
@@ -41,7 +41,7 @@ public class MockSession implements Session {
   }
 
   @Override
-  public List<Header> cookies() {
+  public List<Cookie> cookies() {
     return Collections.emptyList();
   }
 }

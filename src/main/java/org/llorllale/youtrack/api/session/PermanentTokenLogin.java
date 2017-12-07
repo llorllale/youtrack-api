@@ -19,8 +19,6 @@ package org.llorllale.youtrack.api.session;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.http.message.BasicHeader;
-
 /**
  * A {@link Login} that makes use of YouTrack's <em>permanent tokens</em> feature to authorize 
  * 3rd party application integrations.
@@ -48,7 +46,7 @@ public final class PermanentTokenLogin implements Login {
   public Session login() throws AuthenticationException, IOException {
     return new DefaultSession(
         this.youtrackUrl, 
-        new BasicHeader(
+        new DefaultCookie(
             "Authorization", 
             "Bearer ".concat(this.token)
         )

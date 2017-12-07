@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.http.Header;
-
 /**
  * Basic implementation of {@link Session}.
  * 
@@ -32,29 +30,29 @@ import org.apache.http.Header;
  */
 class DefaultSession implements Session {
   private final URL youtrackUrl;
-  private final List<Header> cookies;
+  private final List<Cookie> cookies;
 
   /**
    * Base constructor.
    * 
    * @param youtrackUrl the remote API url
-   * @param headers the session's state
+   * @param cookies the session's state
    * @since 0.1.0
    */
-  DefaultSession(URL youtrackUrl, List<Header> headers) {
+  DefaultSession(URL youtrackUrl, List<Cookie> cookies) {
     this.youtrackUrl = youtrackUrl;
-    this.cookies = new ArrayList<>(headers);
+    this.cookies = new ArrayList<>(cookies);
   }
 
   /**
    * Same as {@code BasicSession(youtrackUrl, Arrays.asList(headers))}.
    * 
    * @param youtrackUrl the remote API url
-   * @param headers the session's state
+   * @param cookies the session's state
    * @since 0.3.0
    */
-  DefaultSession(URL youtrackUrl, Header... headers) {
-    this(youtrackUrl, Arrays.asList(headers));
+  DefaultSession(URL youtrackUrl, Cookie... cookies) {
+    this(youtrackUrl, Arrays.asList(cookies));
   }
 
   @Override
@@ -63,7 +61,7 @@ class DefaultSession implements Session {
   }
 
   @Override
-  public List<Header> cookies() {
+  public List<Cookie> cookies() {
     return Collections.unmodifiableList(this.cookies);
   }
 }

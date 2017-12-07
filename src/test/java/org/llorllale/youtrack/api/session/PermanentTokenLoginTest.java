@@ -50,8 +50,8 @@ public class PermanentTokenLoginTest {
             .cookies()
             .stream()
             .allMatch(
-                h -> "Authorization".equals(h.getName()) && 
-                     "Bearer ".concat(token).equals(h.getValue())
+                c -> "Authorization".equals(c.name()) && 
+                     "Bearer ".concat(token).equals(c.value())
             )
     );
   }

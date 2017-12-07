@@ -25,6 +25,7 @@ import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpParams;
 
 import org.llorllale.youtrack.api.session.Session;
@@ -53,7 +54,9 @@ final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase {
     this.base = request;
     this.expectContinue = request.expectContinue();
     this.httpEntity = request.getEntity();
-    session.cookies().forEach(this::addHeader);
+    session.cookies().stream()
+        .map(c -> new BasicHeader(c.name(), c.value()))
+        .forEach(this::addHeader);
   }
 
   /**
@@ -65,7 +68,9 @@ final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase {
    */
   HttpRequestWithSession(Session session, HttpRequestBase request) {
     this.base = request;
-    session.cookies().forEach(this::addHeader);
+    session.cookies().stream()
+        .map(c -> new BasicHeader(c.name(), c.value()))
+        .forEach(this::addHeader);
     this.expectContinue = false;
     this.httpEntity = null;
   }
