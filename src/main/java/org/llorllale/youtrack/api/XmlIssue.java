@@ -36,24 +36,24 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
-  private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
+  private final XmlObject xml;
 
   /**
    * Primary ctor.
    * 
    * @param project this {@link Issue issue's} {@link Project}
    * @param session the user's {@link Session}
-   * @param jaxbIssue the JAXB issue to be adapted
+   * @param xml the xml object received from YouTrack
    * @since 0.1.0
    */
   XmlIssue(
       Project project, 
       Session session, 
-      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
+      XmlObject xml
   ) {
     this.project = project;
     this.session = session;
-    this.jaxbIssue = jaxbIssue;
+    this.xml = xml;
   }
 
   /**
@@ -63,34 +63,26 @@ class XmlIssue implements Issue {
    * @since 0.8.0
    */
   XmlIssue(XmlIssue prototype) {
-    this(prototype.project(), prototype.session, prototype.jaxbIssue);
+    this(prototype.project(), prototype.session, prototype.xml);
   }
 
   @Override
   public String id() {
-    return this.jaxbIssue.getId();
+    return this.xml.value("/issue/@id");
   }
 
   @Override
   public Instant creationDate() {
-    return Instant.ofEpochMilli(this.jaxbIssue.getField()
-            .stream()
-            .filter(f -> "created".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .map(Long::valueOf)
-            .findFirst()
-            .get()
+    return Instant.ofEpochMilli(
+        Long.parseLong(
+            this.xml.value("//field[@name = 'created']/value")
+        )
     );
   }
 
   @Override
   public String summary() {
-    return this.jaxbIssue.getField()
-            .stream()
-            .filter(f -> "summary".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findFirst()
-            .get();
+    return this.xml.value("//field[@name = 'summary']/value");
   }
 
   @Override
@@ -139,7 +131,7 @@ class XmlIssue implements Issue {
     return this.jaxbIssue.getField().stream()
         .filter(f -> Objects.nonNull(f.getValueId()))
         .map(f -> 
-            new DefaultAssignedField(
+            new XmlAssignedField(
                 new BasicField(f.getName(), this.project),
                 this, 
                 f

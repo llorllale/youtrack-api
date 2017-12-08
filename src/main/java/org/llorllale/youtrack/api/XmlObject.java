@@ -47,16 +47,16 @@ final class XmlObject {
    * 
    * @param xpath the xpath expression
    * @return the string value obtained by applying {@code xpath} on the node
-   * @throws ParseException wrapping any {@link XPathExpressionException} thrown by java's xpath
+   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
    * @since 1.0.0
    */
-  String value(String xpath) throws ParseException {
+  String value(String xpath) throws UncheckedException {
     try {
       return XPathFactory.newInstance()
           .newXPath()
           .evaluate(xpath, this.xml);
     } catch(XPathExpressionException e) {
-      throw new ParseException(e.getMessage(), e);
+      throw new UncheckedException(e.getMessage(), e);
     }
   }
 
@@ -65,10 +65,10 @@ final class XmlObject {
    * 
    * @param xpath the xpath expression that identifies the child nodes desired
    * @return a collection of descendant nodes selected with {@code xpath}
-   * @throws ParseException wrapping any {@link XPathExpressionException} thrown by java's xpath
+   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
    * @since 1.0.0
    */
-  Collection<Node> children(String xpath) throws ParseException {
+  Collection<Node> children(String xpath) throws UncheckedException {
     try {
       return new NodeListAsCollection(
           (NodeList) XPathFactory.newInstance()
@@ -76,7 +76,7 @@ final class XmlObject {
               .evaluate(xpath, this.xml, XPathConstants.NODESET)
       );
     } catch(XPathExpressionException e) {
-      throw new ParseException(e.getMessage(), e);
+      throw new UncheckedException(e.getMessage(), e);
     }
   }
 }

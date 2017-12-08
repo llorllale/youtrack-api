@@ -114,7 +114,7 @@ public class XmlIssueTest {
     jaxbIssue.getField().stream()
         .filter(f -> Objects.nonNull(f.getValueId()))
         .map(f -> 
-            new DefaultAssignedField(
+            new XmlAssignedField(
                 new BasicField(f.getName(), this.project()),
                 test,
                 f

@@ -21,32 +21,35 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
 import org.apache.http.HttpEntity;
-import org.w3c.dom.Node;
 
 /**
- * Handy class that encapsulates a given {@link Response} into a collection of {@link Node nodes}.
+ * Handy class that encapsulates a given {@link Response} into a collection of 
+ * {@link XmlObject xml objects}.
  * 
- * <p>The nodes are added by applying a given xpath expression on the response's entity's 
+ * <p>The xml objects are added by applying a given xpath expression on the response's entity's 
  * {@link HttpEntity#getContent() contents}.
  * 
  * <p>This class hides tedious code:
  * <pre>
  * {@code 
- * new XmlObject(
- *     new StringAsDocument(
- *         new InputStreamAsString().apply(
- *             response.httpResponse().getEntity().getContent()
- *         )
- *     )
- * ).children(xpath);
+ * new MappedCollection<>(
+ *    new XmlObject(
+ *        new StringAsDocument(
+ *            new InputStreamAsString().apply(
+ *                response.httpResponse().getEntity().getContent()
+ *            )
+ *        )
+ *    ).children(xpath),
+ *    XmlObject::new
+ * );
  * }
  * </pre>
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-final class ResponseAsNodes extends AbstractCollection<Node> {
-  private final Collection<Node> coll;
+final class ResponseAsXmlObjects extends AbstractCollection<XmlObject> {
+  private final Collection<XmlObject> coll;
 
   /**
    * Ctor.
@@ -60,19 +63,22 @@ final class ResponseAsNodes extends AbstractCollection<Node> {
    * @see XmlObject
    * @since 1.0.0
    */
-  ResponseAsNodes(Response response, String xpath) throws ParseException, IOException {
+  ResponseAsXmlObjects(Response response, String xpath) throws ParseException, IOException {
     this.coll = 
-        new XmlObject(
-            new StringAsDocument(
-                new InputStreamAsString().apply(
-                    response.httpResponse().getEntity().getContent()
+        new MappedCollection<>(
+            new XmlObject(
+                new StringAsDocument(
+                    new InputStreamAsString().apply(
+                        response.httpResponse().getEntity().getContent()
+                    )
                 )
-            )
-        ).children(xpath);
+            ).children(xpath),
+            XmlObject::new
+        );
   }
 
   @Override
-  public Iterator<Node> iterator() {
+  public Iterator<XmlObject> iterator() {
     return this.coll.iterator();
   }
 

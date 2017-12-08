@@ -18,8 +18,6 @@ package org.llorllale.youtrack.api;
 
 import java.util.Objects;
 
-import org.llorllale.youtrack.api.jaxb.Value;
-
 /**
  * JAXB impl of {@link FieldValue}.
  * 
@@ -27,17 +25,18 @@ import org.llorllale.youtrack.api.jaxb.Value;
  * @since 0.8.0
  */
 class XmlFieldValue implements FieldValue {
-  private final Value jaxb;
+  private final XmlObject xml;
   private final Field field;
 
   /**
    * Primary ctor.
-   * @param jaxb the jaxb instance to adapt
+   * 
+   * @param xml the xml recieved from YouTrack
    * @param field the parent {@link Field}
    * @since 0.8.0
    */
-  XmlFieldValue(Value jaxb, Field field) {
-    this.jaxb = jaxb;
+  XmlFieldValue(XmlObject xml, Field field) {
+    this.xml = xml;
     this.field = field;
   }
 
@@ -48,7 +47,7 @@ class XmlFieldValue implements FieldValue {
 
   @Override
   public String asString() {
-    return this.jaxb.getValue();
+    return this.xml.value("//text()");
   }
 
   @Override
