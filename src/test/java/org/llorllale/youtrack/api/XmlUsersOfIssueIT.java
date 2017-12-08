@@ -26,11 +26,11 @@ import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultUsersOfIssue}.
+ * Integration tests for {@link XmlUsersOfIssue}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class DefaultUsersOfIssueIT {
+public class XmlUsersOfIssueIT {
   private static IntegrationTestsConfig config;
   private static Session session;
 
@@ -46,8 +46,8 @@ public class DefaultUsersOfIssueIT {
 
   @Test
   public void testCreator() throws Exception {
-    final DefaultUsersOfIssue test = 
-        (DefaultUsersOfIssue) issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testCreator")).users();
+    final XmlUsersOfIssue test = 
+        (XmlUsersOfIssue) issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testCreator")).users();
 
     assertThat(
         test.creator().loginName(),
@@ -58,7 +58,7 @@ public class DefaultUsersOfIssueIT {
   @Test
   public void testAssignToAndUpdater() throws Exception {
     final Issue issue = 
-        ((DefaultUsersOfIssue) issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndUpdater"))
+        ((XmlUsersOfIssue) issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndUpdater"))
             .users())
                 .assignTo(
                     new MockUser(
@@ -68,8 +68,7 @@ public class DefaultUsersOfIssueIT {
                     )
                 ).issue();
 
-    assertThat(
-        ((DefaultUsersOfIssue) issue.users()).updater().get().name(),
+    assertThat(((XmlUsersOfIssue) issue.users()).updater().get().name(),
         is(config.youtrackUser())
     );
   }
@@ -77,7 +76,7 @@ public class DefaultUsersOfIssueIT {
   @Test
   public void testAssignToAndAssignee() throws Exception {
     final Issue issue = 
-        ((DefaultUsersOfIssue) issue(DefaultUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndAssignee")).users())
+        ((XmlUsersOfIssue) issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndAssignee")).users())
             .assignTo(
                 new MockUser(
                     config.youtrackUser(),
@@ -86,8 +85,7 @@ public class DefaultUsersOfIssueIT {
                 )
             ).issue();
 
-    assertThat(
-        ((DefaultUsersOfIssue) issue.users()).assignee().get().name(),
+    assertThat(((XmlUsersOfIssue) issue.users()).assignee().get().name(),
         is(config.youtrackUser())
     );
   }

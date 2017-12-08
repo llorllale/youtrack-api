@@ -17,13 +17,11 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 
-import org.llorllale.youtrack.api.jaxb.Settings;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -57,8 +55,9 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public boolean enabled() throws IOException, UnauthorizedException {
-    final Settings settings = new Mapping<>(
-        () -> new HttpResponseAsResponse(
+    final XmlObject settings = new XmlObjects(
+        "/settings",
+        new HttpResponseAsResponse(
             HttpClients.createDefault().execute(
                 new HttpRequestWithSession(
                     this.session, 
@@ -68,21 +67,22 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
                     )
                 )
             )
-        ),
-        resp -> new HttpEntityAsJaxb<>(Settings.class).apply(resp.httpResponse().getEntity())
-    ).get();
+        )
+    ).stream().findAny().get();
 
-    return settings.isEnabled() 
-        && Objects.nonNull(settings.getEstimation()) 
-        && Objects.nonNull(settings.getSpentTime());
+    return Boolean.parseBoolean(settings.textOf("settings/@enabled").get())
+        && settings.child("estimation").isPresent()
+        && settings.child("spentTime").isPresent();
   }
 
   @Override
   public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            new Mapping<>(
-                () -> new HttpResponseAsResponse(
+            XmlTimeTrackEntryType::new,
+            new XmlObjects(
+                "/workItemTypes/workType",
+                new HttpResponseAsResponse(
                     HttpClients.createDefault().execute(
                         new HttpRequestWithSession(
                             this.session, 
@@ -93,11 +93,8 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
                             )
                         )
                     )
-                ),
-                resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItemTypes.class)
-                    .apply(resp.httpResponse().getEntity()).getWorkType()
-            ),
-            XmlTimeTrackEntryType::new
+                )
+            )
         )
     );
   }

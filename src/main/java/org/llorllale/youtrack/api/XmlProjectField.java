@@ -24,9 +24,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 
-import org.llorllale.youtrack.api.jaxb.Enumeration;
-import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
-import org.llorllale.youtrack.api.jaxb.Value;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -37,7 +34,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @since 0.8.0
  */
 class XmlProjectField implements ProjectField {
-  private final ProjectCustomField jaxb;
+  private final XmlObject xml;
   private final Project project;
   private final Session session;
   private final HttpClient httpClient;
@@ -45,13 +42,13 @@ class XmlProjectField implements ProjectField {
   /**
    * Ctor.
    * 
-   * @param jaxb the jaxb object to adapt to {@link Field}
+   * @param xml the XML object received for this field from YouTrack
    * @param project the owner {@link Project}
    * @param session the user's {@link Session}
    * @since 0.8.0
    */
-  XmlProjectField(ProjectCustomField jaxb, Project project, Session session) {
-    this.jaxb = jaxb;
+  XmlProjectField(XmlObject xml, Project project, Session session) {
+    this.xml = xml;
     this.project = project;
     this.session = session;
     this.httpClient = HttpClients.createDefault();
@@ -64,34 +61,38 @@ class XmlProjectField implements ProjectField {
 
   @Override
   public String name() {
-    return this.jaxb.getName();
+    return this.xml.textOf("/projectCustomField/@name").get();
   }
 
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
-    final String bundleName = new Mapping<>(
-        () -> new HttpResponseAsResponse(
-            this.httpClient.execute(
-                new HttpRequestWithSession(
+    final String bundleName = new XmlObjects(
+        "/projectCustomField/param/value",
+        new HttpResponseAsResponse(
+            this.httpClient.execute(new HttpRequestWithSession(
                     this.session, 
                     new HttpGet(
                         this.session.baseUrl().toString()
                             .concat("/admin/project/")
                             .concat(this.project().id())
                             .concat("/customfield/")
-                            .concat(new SubstringAfterLast(this.jaxb.getUrl(), "/").get())
+                            .concat(new SubstringAfterLast(
+                                    this.xml.textOf("/projectCustomField/@url").get(), 
+                                    "/"
+                                ).get()
+                            )
                     )
                 )
             )
-        ),
-        resp -> new HttpEntityAsJaxb<>(ProjectCustomField.class)
-            .apply(resp.httpResponse().getEntity()).getParam().getValue()
-    ).get();
+        )
+    ).stream().findAny().get().textOf(".").get();
 
     return new StreamOf<>(
-        new MappedCollection<Value, FieldValue>(
-            new Mapping<>(
-                () -> new HttpResponseAsResponse(
+        new MappedCollection<>(
+            x -> new XmlFieldValue(x, new XmlProjectField(this.xml, this.project, this.session)),
+            new XmlObjects(
+                "/enumeration/value",
+                new HttpResponseAsResponse(
                     this.httpClient.execute(
                         new HttpRequestWithSession(
                             this.session, 
@@ -103,11 +104,8 @@ class XmlProjectField implements ProjectField {
                             )
                         )
                     )
-                ),
-                resp -> new HttpEntityAsJaxb<>(Enumeration.class)
-                    .apply(resp.httpResponse().getEntity()).getValue()
-            ),
-            v -> new XmlFieldValue(v, new XmlProjectField(this.jaxb, this.project, this.session))
+                )
+            )
         )
     );
   }

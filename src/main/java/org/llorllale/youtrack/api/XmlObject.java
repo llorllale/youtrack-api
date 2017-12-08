@@ -16,7 +16,9 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Optional;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -42,41 +44,67 @@ final class XmlObject {
     this.xml = xml;
   }
 
+  XmlObject(Response response) throws IOException {
+    this.xml = 
+        new StringAsDocument(
+            new InputStreamAsString().apply(
+                response.httpResponse().getEntity().getContent()
+            )
+        );
+  }
+
   /**
-   * Returns the string value resulting from applying {@code xpath} to the node.
+   * Returns the string textOf resulting from applying {@code xpath} to the node if the xpath 
+   * "exists", otherwise an empty optional.
    * 
    * @param xpath the xpath expression
-   * @return the string value obtained by applying {@code xpath} on the node
+   * @return the string textOf obtained by applying {@code xpath} on the node
    * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
    * @since 1.0.0
    */
-  String value(String xpath) throws UncheckedException {
+  Optional<String> textOf(String xpath) throws UncheckedException {
+    return this.child(xpath).map(x -> x.node().getTextContent());
+  }
+
+  /**
+   * Returns the first {@link XmlObject} node selected with {@code xpath}
+   * 
+   * @param xpath the xpath expression that identifies the child node desired
+   * @return the first {@link XmlObject} node selected with {@code xpath}
+   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
+   * @since 1.0.0
+   */
+  Optional<XmlObject> child(String xpath) throws UncheckedException {
+    return this.children(xpath).stream().findFirst();
+  }
+
+  /**
+   * Returns all descendant {@link XmlObject} nodes selected with {@code xpath}.
+   * 
+   * @param xpath the xpath expression that identifies the child nodes desired
+   * @return a collection of descendant {@link XmlObject} nodes selected with {@code xpath}
+   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
+   * @since 1.0.0
+   */
+  Collection<XmlObject> children(String xpath) throws UncheckedException {
     try {
-      return XPathFactory.newInstance()
-          .newXPath()
-          .evaluate(xpath, this.xml);
+      return new XmlObjects(
+          (NodeList) XPathFactory.newInstance()
+              .newXPath()
+              .evaluate(xpath, this.node(), XPathConstants.NODESET)
+      );
     } catch(XPathExpressionException e) {
       throw new UncheckedException(e.getMessage(), e);
     }
   }
 
   /**
-   * Returns all descendant nodes selected with {@code xpath}.
+   * Used internally to pass the encapsulated {@link Node} object.
    * 
-   * @param xpath the xpath expression that identifies the child nodes desired
-   * @return a collection of descendant nodes selected with {@code xpath}
-   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
+   * @return the {@link Node} encapsulated by this {@link XmlObject}
    * @since 1.0.0
    */
-  Collection<Node> children(String xpath) throws UncheckedException {
-    try {
-      return new NodeListAsCollection(
-          (NodeList) XPathFactory.newInstance()
-              .newXPath()
-              .evaluate(xpath, this.xml, XPathConstants.NODESET)
-      );
-    } catch(XPathExpressionException e) {
-      throw new UncheckedException(e.getMessage(), e);
-    }
+  private Node node() {
+    return this.xml;
   }
 }

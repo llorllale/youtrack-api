@@ -19,7 +19,7 @@ package org.llorllale.youtrack.api;
 import java.util.Objects;
 
 /**
- * JAXB impl of {@link FieldValue}.
+ * XML impl of {@link FieldValue}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
@@ -47,7 +47,7 @@ class XmlFieldValue implements FieldValue {
 
   @Override
   public String asString() {
-    return this.xml.value("//text()");
+    return this.xml.textOf(".").get();
   }
 
   @Override

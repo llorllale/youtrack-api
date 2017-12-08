@@ -26,12 +26,12 @@ import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultUsersOfProject}.
+ * Integration tests for {@link XmlUsersOfProject}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-public class DefaultUsersOfProjectIT {
+public class XmlUsersOfProjectIT {
   private static IntegrationTestsConfig config;
   private static Session session;
   private static Project project;
@@ -45,8 +45,7 @@ public class DefaultUsersOfProjectIT {
 
   @Test
   public void testUser() throws Exception {
-    assertThat(
-        new DefaultUsersOfProject(project, session, jaxb("random"))
+    assertThat(new XmlUsersOfProject(project, session, jaxb("random"))
             .user(config.youtrackUser())
             .loginName(),
         is(config.youtrackUser())
@@ -55,8 +54,7 @@ public class DefaultUsersOfProjectIT {
 
   @Test
   public void testAssignees() throws Exception {
-    assertTrue(
-        new DefaultUsersOfProject(project, session, jaxb(config.youtrackUser()))
+    assertTrue(new XmlUsersOfProject(project, session, jaxb(config.youtrackUser()))
             .assignees()
             .anyMatch(a -> config.youtrackUser().equals(a.loginName()))
     );

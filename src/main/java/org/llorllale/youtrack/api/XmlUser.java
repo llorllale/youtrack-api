@@ -23,30 +23,30 @@ package org.llorllale.youtrack.api;
  * @since 0.5.0
  */
 class XmlUser implements User {
-  private final org.llorllale.youtrack.api.jaxb.User jaxbUser;
+  private final XmlObject xml;
 
   /**
    * Primary ctor.
    * 
-   * @param jaxbUser the jaxb instance
-   * @since 0.5.0
+   * @param xml the XML user received from YouTrack
+   * @since 1.0.0
    */
-  XmlUser(org.llorllale.youtrack.api.jaxb.User jaxbUser) {
-    this.jaxbUser = jaxbUser;
+  XmlUser(XmlObject xml) {
+    this.xml = xml;
   }
 
   @Override
   public String name() {
-    return this.jaxbUser.getFullName();
+    return this.xml.textOf("//@fullName").get();
   }
 
   @Override
   public String email() {
-    return this.jaxbUser.getEmail();
+    return this.xml.textOf("//@email").get();
   }
 
   @Override
   public String loginName() {
-    return this.jaxbUser.getLogin();
+    return this.xml.textOf("//@login").get();
   }
 }

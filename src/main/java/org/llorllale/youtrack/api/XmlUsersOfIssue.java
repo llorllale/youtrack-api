@@ -27,10 +27,9 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
-class DefaultUsersOfIssue implements UsersOfIssue {
+class XmlUsersOfIssue implements UsersOfIssue {
   private final Issue issue;
-  private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
-  private final Field field;
+  private final XmlObject xml;
 
   /**
    * Primary ctor.
@@ -39,57 +38,67 @@ class DefaultUsersOfIssue implements UsersOfIssue {
    * @param jaxbIssue the jaxb instance of an Issue
    * @since 0.5.0
    */
-  DefaultUsersOfIssue(
+  XmlUsersOfIssue(
       Issue issue,
-      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
+      XmlObject xml
   ) {
     this.issue = issue;
-    this.jaxbIssue = jaxbIssue;
-    this.field = new BasicField("Assignee", issue.project());
+    this.xml = xml;
   }
 
   @Override
   public User creator() throws IOException, UnauthorizedException {
     return this.issue().project().users().user(
-        this.jaxbIssue.getField()
-           .stream()
-           .filter(f -> "reporterName".equals(f.getName()))
-           .map(f -> f.getValue().getValue())
-           .findFirst()
-           .get()
+        this.xml.textOf("//field[@name = 'reporterName']/value").get()
     );
   }
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
-    return new MapIfPresent<>(
-        () -> this.jaxbIssue.getField().stream()
-            .filter(f -> "updaterName".equals(f.getName()))
-            .findAny(),
-        f -> this.issue().project().users().user(f.getValue().getValue())
-    ).get();
+    return this.user(
+        this.xml.textOf("//field[@name = 'updaterName']/value")
+    );
   }
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
-    return new MapIfPresent<>(
-        () -> this.jaxbIssue.getField().stream()
-            .filter(f -> this.field.name().equals(f.getName()))
-            .findAny(),
-        f -> this.issue().project().users().user(f.getValue().getValue())
-    ).get();
+    return this.user(
+        this.xml.textOf("//field[@name = 'Assignee']/value")
+    );
   }
 
   @Override
   public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException {
+    final Field field = new BasicField("Assignee", this.issue().project());
     return this.issue().update().field(
-        this.field,
-        new BasicFieldValue(user.loginName(), this.field)
+        field,
+        new BasicFieldValue(user.loginName(), field)
     ).users();
   }
 
   @Override
   public Issue issue() {
     return this.issue;
+  }
+
+  /**
+   * A little common code to fetch a user whose login is optional.
+   * 
+   * @param login the user's login
+   * @return an optional describing the user
+   * @throws UnauthorizedException thrown by {@link UsersOfProject#user(java.lang.String)}
+   * @throws IOException thrown by {@link UsersOfProject#user(java.lang.String)}
+   * @since 1.0.0
+   */
+  private Optional<User> user(Optional<String> login) throws UnauthorizedException, IOException {
+    final Optional<User> user;
+
+    if (login.isPresent()) {
+      user = Optional.of(this.issue().project().users().user(login.get()));
+    } else {
+      user = Optional.empty();
+    }
+
+    return user;
   }
 }

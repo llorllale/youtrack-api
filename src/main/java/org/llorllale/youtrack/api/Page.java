@@ -23,7 +23,6 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClients;
 
@@ -40,7 +39,7 @@ import org.apache.http.impl.client.HttpClients;
  */
 final class Page<T> implements Iterator<T> {
   private final HttpUriRequest request;
-  private final ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper;
+  private final ExceptionalFunction<Response, Collection<T>, IOException> mapper;
   private final Deque<T> contents;
 
   /**
@@ -52,7 +51,7 @@ final class Page<T> implements Iterator<T> {
    */
   Page(
       HttpUriRequest request, 
-      ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper
+      ExceptionalFunction<Response, Collection<T>, IOException> mapper
   ) {
     this.request = request;
     this.mapper = mapper;
@@ -67,7 +66,7 @@ final class Page<T> implements Iterator<T> {
             this.mapper.apply(
                 new HttpResponseAsResponse(
                     HttpClients.createDefault().execute(this.request)
-                ).httpResponse().getEntity()
+                )
             )
         );
       } catch (IOException e) {

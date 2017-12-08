@@ -30,39 +30,41 @@ import org.llorllale.youtrack.api.session.Session;
 class XmlProject implements Project {
   private final YouTrack youtrack;
   private final Session session;
-  private final org.llorllale.youtrack.api.jaxb.Project jaxbProject;
+  private final XmlObject xml;
 
   /**
    * Ctor.
+   * 
    * @param youtrack the parent {@link YouTrack}
    * @param session the user's {@link Session}
-   * @param jaxbProject the JAXB instance to be adapted into {@link Project}
+   * @param xml the XML object received from YouTrack to be adapted into {@link Project}
    * @since 0.2.0
    */
   XmlProject(
       YouTrack youtrack, 
       Session session, 
-      org.llorllale.youtrack.api.jaxb.Project jaxbProject
+      XmlObject xml
   ) {
     this.youtrack = youtrack;
     this.session = session;
-    this.jaxbProject = jaxbProject;
+    this.xml = xml;
   }
 
   @Override
   public String id() {
-    return Optional.ofNullable(this.jaxbProject.getShortName())
-        .orElse(this.jaxbProject.getId());
+    return this.xml.textOf(
+        "(project/@id | project/@shortName)[last()]"
+    ).get();
   }
 
   @Override
   public String name() {
-    return this.jaxbProject.getName();
+    return this.xml.textOf("project/@name").get();
   }
 
   @Override
   public Optional<String> description() {
-    return Optional.ofNullable(this.jaxbProject.getDescription());
+    return this.xml.textOf("project/@description");
   }
 
   @Override
@@ -102,6 +104,6 @@ class XmlProject implements Project {
 
   @Override
   public UsersOfProject users() {
-    return new DefaultUsersOfProject(this, this.session, this.jaxbProject);
+    return new XmlUsersOfProject(this, this.session, this.xml);
   }
 }

@@ -54,7 +54,7 @@ class XmlAssignedField implements AssignedField {
 
   @Override
   public FieldValue value() {
-    return new XmlFieldValue(this.xml.value(""), this);
+    return new XmlFieldValue(this.xml.child("//value").get(), this);
   }
 
   @Override

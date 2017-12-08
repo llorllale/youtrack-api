@@ -18,7 +18,6 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -89,41 +88,42 @@ class DefaultIssues implements Issues {
                         .build()
                 )
             ),
-            new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issues.class).andThen(
-                issues -> 
-                    issues.getIssue().stream()
-                        .map(issue -> new XmlIssue(this.project(), this.session, issue))
-                        .collect(Collectors.toList())
-            )
+            resp -> 
+                new MappedCollection<>(
+                    x -> new XmlIssue(this.project(), this.session, x),
+                    new XmlObjects("/issues/issue", resp)
+                )
         )
     );
   }
 
   @Override
   public Optional<Issue> get(String issueId) throws IOException, UnauthorizedException {
-    return new MapIfPresent<org.llorllale.youtrack.api.jaxb.Issue, Issue>(
-        new MapIfNoError<>(
-            new MapIfPresent<>(
-                () -> Optional.ofNullable(
-                    new HttpResponseAsResponse(
-                        this.httpClient.execute(
-                            new HttpRequestWithSession(
-                                this.session, 
-                                new HttpGet(
-                                    this.session.baseUrl().toString()
-                                        .concat("/issue/")
-                                        .concat(issueId)
-                                )
-                            )
-                        )
-                    ).httpResponse().getEntity()
-                ),
-                e -> e
-            ),
-            s -> new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class).apply(s)
-        ),
-        issue -> new XmlIssue(this.project(), this.session, issue)
-    ).get();
+    final Optional<Issue> issue;
+    final XmlObject xml = new XmlObject(
+        new HttpResponseAsResponse(
+            this.httpClient.execute(
+                new HttpRequestWithSession(
+                    this.session, 
+                    new HttpGet(
+                        this.session.baseUrl().toString()
+                            .concat("/issue/")
+                            .concat(issueId)
+                    )
+                )
+            )
+        )
+    );
+    
+    //when the issueId does not exist, YouTrack returns an OK response but with an error in the 
+    //payload
+    if (xml.child("//error").isPresent()) {
+      issue = Optional.empty();
+    } else {
+      issue = Optional.of(new XmlIssue(this.project(), this.session, xml));
+    }
+
+    return issue;
   }
 
   @Override

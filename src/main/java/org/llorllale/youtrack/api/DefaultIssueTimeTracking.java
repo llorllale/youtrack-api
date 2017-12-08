@@ -17,15 +17,12 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.jaxb.WorkItem;
-import org.llorllale.youtrack.api.jaxb.WorkItems;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -73,8 +70,10 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
   public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            new Mapping<Response, Collection<WorkItem>>(
-                () -> new HttpResponseAsResponse(
+            xml -> new XmlTimeTrackEntry(this.issue, xml),
+            new XmlObjects(
+                "/workItems/workItem",
+                new HttpResponseAsResponse(
                     this.httpClient.execute(
                         new HttpRequestWithSession(
                             this.session, 
@@ -84,12 +83,8 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
                             )
                         )
                     )
-                ),
-                resp -> new HttpEntityAsJaxb<>(WorkItems.class)
-                    .apply(resp.httpResponse().getEntity())
-                    .getWorkItem()
-            ),
-            w -> new XmlTimeTrackEntry(this.issue, w)
+                )
+            )
         )
     );
   }

@@ -44,7 +44,7 @@ public class XmlCommentTest {
   public void testId() throws Exception {
     assertThat(
         new XmlComment(issue(), session(), xmlObject).id(),
-        is(xmlObject.value("//@id"))
+        is(xmlObject.textOf("//@id"))
     );
   }
 
@@ -52,7 +52,7 @@ public class XmlCommentTest {
   public void testCreationDate() throws Exception {
     assertThat(
         new XmlComment(issue(), session(), xmlObject).creationDate(),
-        is(Instant.ofEpochMilli(Long.valueOf(xmlObject.value("//@created"))))
+        is(Instant.ofEpochMilli(Long.valueOf(xmlObject.textOf("//@created"))))
     );
   }
 
@@ -60,7 +60,7 @@ public class XmlCommentTest {
   public void testText() throws Exception {
     assertThat(
         new XmlComment(issue(), session(), xmlObject).text(),
-        is(xmlObject.value("//@text"))
+        is(xmlObject.textOf("//@text"))
     );
   }
 

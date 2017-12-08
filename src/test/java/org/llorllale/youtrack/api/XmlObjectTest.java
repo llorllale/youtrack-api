@@ -17,146 +17,109 @@
 package org.llorllale.youtrack.api;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.mock.MockProject;
-import org.llorllale.youtrack.api.mock.http.MockHttpClient;
-import org.llorllale.youtrack.api.mock.http.MockSession;
-import org.llorllale.youtrack.api.mock.http.response.MockNotFoundResponse;
-import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
- * Unit tests for {@link DefaultIssues}.
+ * Unit tests for {@link XmlObject}.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 1.0.0
  */
-public class DefaultIssuesTest {
+public class XmlObjectTest {
+  private static XmlObject xml;
+
+  @BeforeClass
+  public static void setup() throws ParseException {
+    xml = new XmlObject(new StringAsDocument(XML));
+  }
 
   /**
-   * {@link DefaultIssues} must return all issues.
+   * {@link XmlObject#textOf(java.lang.String)} must return the string value if given an 
+   * valid xpath.
    * 
-   * <p>Note: ignored because there is no way yet to control the url called in the pagination
-   * 
-   * @throws Exception 
+   * @since 1.0.0
    */
-  @Ignore
   @Test
-  public void testStream() throws Exception {
+  public void textAtWithValidXpath() {
     assertThat(
-        new DefaultIssues(
-            new MockProject("PR-1", "Mock Name", "Mock Description"), 
-            new MockSession(), 
-            new MockHttpClient(
-                new MockOkResponse(ALL_ISSUES)
-            )
-        ).stream().count(),
-        is(1L)
+        xml.textOf("/issue/@id").get(),
+        is("HBR-63")
     );
   }
 
   /**
-   * DefaultIssues must return the Issue if present.
-   * @throws Exception 
+   * Result of {@link XmlObject#textOf(java.lang.String)} with an invalid xpath must be an empty
+   * optional.
+   * 
+   * @since 1.0.0
    */
   @Test
-  public void testGetExistingIssue() throws Exception {
-    assertTrue(
-        new DefaultIssues(
-            new MockProject("ID1", "Name", "Desc"),
-            new MockSession(),
-            new MockHttpClient(
-                new MockOkResponse(ONE_ISSUE)
-            )
-        ).get("ID").isPresent()
-    );
-  }
-
-  /**
-   * DefaultIssues must return an empty optional if the Issue is not found.
-   */
-  @Test
-  public void testGetNonExistingIssue() throws Exception {
+  public void textAtWithInvalidXpath() {
     assertFalse(
-        new DefaultIssues(
-            new MockProject("ID1", "Name", "Desc"),
-            new MockSession(),
-            new MockHttpClient(
-                new MockNotFoundResponse(
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
-                    "<error>Issue not found.</error>"
-                )
-            )
-        ).get("ID").isPresent()
+        xml.textOf("//asdf").isPresent()
     );
   }
 
-  private static String ALL_ISSUES =
-"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-"<issues>\n" +
-"  <issue id=\"TST-2\">\n" +
-"    <field name=\"attachments\">\n" +
-"      <value url=\"/_persistent/user.properties?file=45-83&amp;v=0&amp;c=true\">user.properties</value>\n" +
-"      <value url=\"/_persistent/foo1.properties?file=45-84&amp;v=0&amp;c=true\">foo1.properties</value>\n" +
-"      <value url=\"/_persistent/foo2.properties?file=45-85&amp;v=0&amp;c=true\">foo2.properties</value>\n" +
-"    </field>\n" +
-"    <field name=\"Priority\">\n" +
-"      <value>Show-stopper</value>\n" +
-"    </field>\n" +
-"    <field name=\"Type\">\n" +
-"      <value>Feature</value>\n" +
-"    </field>\n" +
-"    <field name=\"State\">\n" +
-"      <value>Reopened</value>\n" +
-"    </field>\n" +
-"    <field name=\"Assignee\">\n" +
-"      <value>beto</value>\n" +
-"    </field>\n" +
-"    <field name=\"Subsystem\">\n" +
-"      <value>UI</value>\n" +
-"    </field>\n" +
-"    <field name=\"Affected versions\">\n" +
-"      <value>2.0.1</value>\n" +
-"    </field>\n" +
-"    <field name=\"Fix versions\">\n" +
-"      <value>2.0.1</value>\n" +
-"    </field>\n" +
-"    <field name=\"projectShortName\">\n" +
-"      <value>TST</value>\n" +
-"    </field>\n" +
-"    <field name=\"numberInProject\">\n" +
-"      <value>2</value>\n" +
-"    </field>\n" +
-"    <field name=\"summary\">\n" +
-"      <value>new issue</value>\n" +
-"    </field>\n" +
-"    <field name=\"description\">\n" +
-"      <value>description of new issue</value>\n" +
-"    </field>\n" +
-"    <field name=\"created\">\n" +
-"      <value>1320664502969</value>\n" +
-"    </field>\n" +
-"    <field name=\"updated\">\n" +
-"      <value>1320664503229</value>\n" +
-"    </field>\n" +
-"    <field name=\"updaterName\">\n" +
-"      <value>app_exception</value>\n" +
-"    </field>\n" +
-"    <field name=\"reporterName\">\n" +
-"      <value>app_exception</value>\n" +
-"    </field>\n" +
-"    <field name=\"commentsCount\">\n" +
-"      <value>0</value>\n" +
-"    </field>\n" +
-"    <field name=\"votes\">\n" +
-"      <value>0</value>\n" +
-"    </field>\n" +
-"  </issue>\n" +
-"</issues>";
+  /**
+   * Result of {@link XmlObject#child(java.lang.String)} with an invalid xpath must be an empty
+   * optional.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void childWithInvalidXpath() {
+    assertFalse(
+        xml.child("//asdfd").isPresent()
+    );
+  }
 
-  private static final String ONE_ISSUE =
+  /**
+   * {@link XmlObject#child(java.lang.String)} with a valid xpath must return the correct 
+   * {@link XmlObject}
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void childWithValidXpath() {
+    assertThat(
+        xml.child("//field[@name='attachments']").get().textOf("value").get(),
+        is("uploadFile.html")
+    );
+  }
+
+  /**
+   * Result of {@link XmlObject#children(java.lang.String)} with valid xpath should consist of a 
+   * collection of the expected size.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void testChildrenWithValidXpath() {
+    assertThat(
+        xml.children("//comment").size(),
+        is(2)
+    );
+  }
+
+  /**
+   * Result of {@link XmlObject#children(java.lang.String)} with an invalid xpath should be an 
+   * empty collection.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void testChildrenWithInvalidXpath() {
+    assertThat(
+        xml.children("//asdfb"),
+        is(empty())
+    );
+  }
+
+  private static final String XML =
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 "<issue id=\"HBR-63\">\n" +
 "    <field name=\"attachments\">\n" +

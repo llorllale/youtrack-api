@@ -87,17 +87,6 @@ final class StreamOf<T> implements Stream<T> {
     );
   }
 
-  /**
-   * Encapsulates the given supplier as a stream.
-   * 
-   * @param supplier the supplier to encapsulate
-   * @throws IOException from the {@link ExceptionalSupplier supplier}
-   * @since 1.0.0
-   */
-  StreamOf(ExceptionalSupplier<Collection<T>, IOException> supplier) throws IOException {
-    this(supplier.get());
-  }
-
   @Override
   public Stream<T> filter(Predicate<? super T> predicate) {
     return this.stream.filter(predicate);

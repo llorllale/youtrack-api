@@ -17,15 +17,11 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
-
-import org.llorllale.youtrack.api.jaxb.ProjectCustomFieldRefs;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -62,8 +58,10 @@ class DefaultFields implements Fields {
   public Stream<ProjectField> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            new Mapping<Response, Collection<ProjectCustomField>>(
-                () -> new HttpResponseAsResponse(
+            x -> new XmlProjectField(x, this.project(), this.session),
+            new XmlObjects(
+                "//projectCustomField",
+                new HttpResponseAsResponse(
                     this.httpClient.execute(
                         new HttpRequestWithSession(
                             this.session,
@@ -75,11 +73,8 @@ class DefaultFields implements Fields {
                             )
                         )
                     )
-                 ),
-                r -> new HttpEntityAsJaxb<>(ProjectCustomFieldRefs.class)
-                    .apply(r.httpResponse().getEntity()).getProjectCustomField()
-            ),
-            f -> new XmlProjectField(f, this.project(), this.session)
+                 )
+            )
         )
     );
   }

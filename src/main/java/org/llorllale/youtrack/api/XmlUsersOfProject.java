@@ -17,7 +17,6 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.http.client.methods.HttpGet;
@@ -32,27 +31,23 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.9.0
  */
-class DefaultUsersOfProject implements UsersOfProject {
+class XmlUsersOfProject implements UsersOfProject {
   private final Project project;
   private final Session session;
-  private final org.llorllale.youtrack.api.jaxb.Project jaxb;
+  private final XmlObject xml;
 
   /**
    * Primary ctor.
    * 
    * @param project the {@link Project} in scope
    * @param session the users's {@link Session}
-   * @param jaxb the jaxb object
+   * @param xml the xml object received from YouTrack for this {@link #project() project}
    * @since 0.9.0
    */
-  DefaultUsersOfProject(
-      Project project, 
-      Session session, 
-      org.llorllale.youtrack.api.jaxb.Project jaxb
-  ) {
+  XmlUsersOfProject(Project project, Session session, XmlObject xml) {
     this.project = project;
     this.session = session;
-    this.jaxb = jaxb;
+    this.xml = xml;
   }
 
   @Override
@@ -63,8 +58,9 @@ class DefaultUsersOfProject implements UsersOfProject {
   @Override
   public User user(String login) throws IOException, UnauthorizedException {
     return new XmlUser(
-        new Mapping<>(
-            () -> new HttpResponseAsResponse(
+        new XmlObjects(
+            "/user",
+            new HttpResponseAsResponse(
                 HttpClients.createDefault().execute(
                     new HttpRequestWithSession(
                         this.session, 
@@ -73,10 +69,8 @@ class DefaultUsersOfProject implements UsersOfProject {
                         )
                     )
                 )
-            ),
-            resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class)
-                .apply(resp.httpResponse().getEntity())
-        ).get()
+            )
+        ).stream().findAny().get()
     );
   }
 
@@ -84,10 +78,8 @@ class DefaultUsersOfProject implements UsersOfProject {
   public Stream<User> assignees() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            this.jaxb.getAssigneesLogin().getSub().stream()
-                .map(s -> s.getValue())
-                .collect(Collectors.toList()),
-            this::user
+            () -> x -> this.user(x.textOf("//@value")),
+            this.xml.children("//assigneesLogin/sub")
         )
     );
   }

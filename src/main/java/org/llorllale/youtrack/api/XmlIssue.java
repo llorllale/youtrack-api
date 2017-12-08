@@ -18,10 +18,8 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 
 import org.llorllale.youtrack.api.session.Session;
@@ -68,30 +66,26 @@ class XmlIssue implements Issue {
 
   @Override
   public String id() {
-    return this.xml.value("/issue/@id");
+    return this.xml.textOf("/issue/@id").get();
   }
 
   @Override
   public Instant creationDate() {
     return Instant.ofEpochMilli(
         Long.parseLong(
-            this.xml.value("//field[@name = 'created']/value")
+            this.xml.textOf("//field[@name = 'created']/value").get()
         )
     );
   }
 
   @Override
   public String summary() {
-    return this.xml.value("//field[@name = 'summary']/value");
+    return this.xml.textOf("//field[@name = 'summary']/value").get();
   }
 
   @Override
   public Optional<String> description() {
-    return this.jaxbIssue.getField()
-            .stream()
-            .filter(f -> "description".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findAny();
+    return this.xml.textOf("//field[@name = 'description']/value");
   }
 
   @Override
@@ -111,7 +105,7 @@ class XmlIssue implements Issue {
 
   @Override
   public UsersOfIssue users() {
-    return new DefaultUsersOfIssue(this, this.jaxbIssue);
+    return new XmlUsersOfIssue(this, this.xml);
   }
 
   @Override
@@ -127,16 +121,16 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public List<AssignedField> fields() {
-    return this.jaxbIssue.getField().stream()
-        .filter(f -> Objects.nonNull(f.getValueId()))
-        .map(f -> 
+  public Collection<AssignedField> fields() {
+    return new MappedCollection<>(
+        x -> 
             new XmlAssignedField(
-                new BasicField(f.getName(), this.project),
-                this, 
-                f
-            )
-        ).collect(Collectors.toList());
+                new BasicField(x.textOf("//@name").get(), this.project()),
+                this,
+                x
+            ),
+        this.xml.children("//field[count(valueId) > 0]")
+    );
   }
 
   @Override

@@ -452,31 +452,6 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>jaxb2-maven-plugin</artifactId>
-          <version>2.3</version>
-          <executions>
-            <execution>
-              <id>xjc</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>xjc</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <packageName>org.llorllale.youtrack.api.jaxb</packageName>
-            <createJavaDocAnnotations>false</createJavaDocAnnotations>
-            <generateEpisode>false</generateEpisode>
-            <addGeneratedAnnotation>false</addGeneratedAnnotation>
-            <clearOutputDir>true</clearOutputDir>
-            <outputDirectory>${project.build.directory}/generated-sources/jaxb</outputDirectory>
-            <sources>
-              <source>src/main/resources/schema</source>
-            </sources>
-          </configuration>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
           <version>2.2.1</version>
@@ -499,10 +474,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jaxb2-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

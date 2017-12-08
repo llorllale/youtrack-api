@@ -73,7 +73,9 @@ class DefaultComments implements Comments {
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            new ResponseAsXmlObjects(
+            xml -> new XmlComment(this.issue(), this.session, xml),
+            new XmlObjects(
+                "//comment",
                 new HttpResponseAsResponse(
                     this.httpClient.execute(
                         new HttpRequestWithSession(
@@ -86,10 +88,8 @@ class DefaultComments implements Comments {
                             )
                         )
                     )
-                ),
-                "//comment"
-            ),
-            xml -> new XmlComment(this.issue(), this.session, xml)
+                )
+            )
         )
     );
   }
