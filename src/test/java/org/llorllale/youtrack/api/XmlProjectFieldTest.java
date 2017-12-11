@@ -22,34 +22,34 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.jaxb.ProjectCustomField;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 
 /**
  * Unit tests for {@link XmlProjectField}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
 public class XmlProjectFieldTest {
-  private static ProjectCustomField jaxb;
+  private static XmlObject xml;
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxb = new XmlStringAsJaxb<>(ProjectCustomField.class).apply(XML);
+    xml = new XmlObject(new StringAsDocument(XML));
   }
 
   @Test
   public void testName() {
     assertThat(
-        new XmlProjectField(jaxb, new MockProject(), new MockSession()).name(),
-        is(jaxb.getName())
+        new XmlProjectField(xml, new MockProject(), new MockSession()).name(),
+        is("Priority")
     );
   }
 
   @Test
   public void equalsItself() {
-    final Field f = new XmlProjectField(jaxb, new MockProject(), new MockSession());
+    final Field f = new XmlProjectField(xml, new MockProject(), new MockSession());
 
     assertTrue(
         f.equals(f)
@@ -59,29 +59,43 @@ public class XmlProjectFieldTest {
   @Test
   public void equalsOtherField() {
     assertTrue(
-        new XmlProjectField(jaxb, new MockProject(), new MockSession()).equals(field(jaxb.getName(), new MockProject()))
+        new XmlProjectField(
+            xml, 
+            new MockProject(), 
+            new MockSession()
+        ).equals(field("Priority", new MockProject()))
     );
   }
 
   @Test
   public void notEqualsNull() {
     assertFalse(
-        new XmlProjectField(jaxb, new MockProject(), new MockSession()).equals(null)
+        new XmlProjectField(
+            xml, 
+            new MockProject(), 
+            new MockSession()
+        ).equals(null)
     );
   }
 
   @Test
   public void notEqualsObject() {
     assertFalse(
-        new XmlProjectField(jaxb, new MockProject(), new MockSession()).equals(new Object())
+        new XmlProjectField(
+            xml, 
+            new MockProject(), 
+            new MockSession()
+        ).equals(new Object())
     );
   }
 
   @Test
-  public void notEqualsFieldWithDiffName() {
+  public void notEqualsFieldWithDiffName() throws Exception {
     assertFalse(
         new XmlProjectField(
-            new ProjectCustomField(){{setName("name1");}}, 
+            new XmlObject(new StringAsDocument(
+                "<projectCustomField name=\"name1\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"
+            )), 
             new MockProject(), 
             new MockSession()
         ).equals(field("name2", new MockProject()))
@@ -89,10 +103,12 @@ public class XmlProjectFieldTest {
   }
 
   @Test
-  public void notEqualsFieldFromDiffProject() {
+  public void notEqualsFieldFromDiffProject() throws Exception {
     assertFalse(
         new XmlProjectField(
-            new ProjectCustomField(){{setName("name");}}, 
+            new XmlObject(new StringAsDocument(
+                "<projectCustomField name=\"name\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"
+            )), 
             new MockProject("p1", "p1", ""), 
             new MockSession()
         ).equals(field("name", new MockProject("p2", "p2", "")))

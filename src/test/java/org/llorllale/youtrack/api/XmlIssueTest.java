@@ -17,7 +17,6 @@
 package org.llorllale.youtrack.api;
 
 import java.time.Instant;
-import java.util.Objects;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
@@ -34,11 +33,11 @@ import org.llorllale.youtrack.api.session.Session;
  * @since 0.4.0
  */
 public class XmlIssueTest {
-  private static org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
+  private static XmlObject xml;
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbIssue = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Issue.class).apply(XML_ISSUE);
+    xml = new XmlObject(new StringAsDocument(XML_ISSUE));
   }
 
   @Test
@@ -47,9 +46,9 @@ public class XmlIssueTest {
         new XmlIssue(
             project(),
             session(),
-            jaxbIssue
+            xml
         ).id(),
-        is(jaxbIssue.getId())
+        is("HBR-63")
     );
   }
 
@@ -59,16 +58,9 @@ public class XmlIssueTest {
         new XmlIssue(
             project(),
             session(),
-            jaxbIssue
+            xml
         ).creationDate(),
-        is(jaxbIssue.getField()
-            .stream()
-            .filter(f -> "created".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .map(v -> Instant.ofEpochMilli(Long.parseLong(v)))
-            .findAny()
-            .get()
-        )
+        is(Instant.ofEpochMilli(1262171005630L))
     );
   }
 
@@ -78,9 +70,9 @@ public class XmlIssueTest {
         new XmlIssue(
             project(),
             session(),
-            jaxbIssue
+            xml
         ).summary(),
-        is(summaryOf(jaxbIssue))
+        is("summary")
     );
   }
 
@@ -90,9 +82,9 @@ public class XmlIssueTest {
         new XmlIssue(
             project(),
             session(),
-            jaxbIssue
+            xml
         ).description().get(),
-        is(descriptionOf(jaxbIssue))
+        is("description")
     );
   }
 
@@ -103,21 +95,20 @@ public class XmlIssueTest {
    */
   @Test
   public void spec() {
-    final String summary = summaryOf(jaxbIssue);
-    final String description = descriptionOf(jaxbIssue);
+    final String summary = "summary";
+    final String description = "description";
     final Issue test = new XmlIssue(
         project(),
         session(),
-        jaxbIssue
+        xml
     );
     final IssueSpec expected = new IssueSpec(summary, description);
-    jaxbIssue.getField().stream()
-        .filter(f -> Objects.nonNull(f.getValueId()))
-        .map(f -> 
+    xml.children("//field[count(valueId) > 0]").stream()
+        .map(x -> 
             new XmlAssignedField(
-                new BasicField(f.getName(), this.project()),
+                new BasicField(x.textOf("name").get(), this.project()),
                 test,
-                f
+                x
             )
         ).forEach(field -> expected.with(field, field.value()));
 
@@ -125,22 +116,6 @@ public class XmlIssueTest {
         test.spec(),
         is(expected)
     );
-  }
-
-  private String summaryOf(org.llorllale.youtrack.api.jaxb.Issue jaxbIssue) {
-    return jaxbIssue.getField().stream()
-        .filter(f -> "summary".equals(f.getName()))
-        .map(f -> f.getValue().getValue())
-        .findAny()
-        .get();
-  }
-
-  private String descriptionOf(org.llorllale.youtrack.api.jaxb.Issue jaxbIssue) {
-    return jaxbIssue.getField().stream()
-        .filter(f -> "description".equals(f.getName()))
-        .map(f -> f.getValue().getValue())
-        .findAny()
-        .get();
   }
 
   private Project project() {

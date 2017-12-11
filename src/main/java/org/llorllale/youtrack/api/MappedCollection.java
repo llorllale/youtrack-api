@@ -49,8 +49,8 @@ final class MappedCollection<I, O> extends AbstractCollection<O> {
    */
   MappedCollection(Function<I, O> mappingFunction, Collection<I> collection) {
     this.output = new ArrayList<>();
-    collection.forEach((i) -> {
-      this.output.add(mappingFunction.apply(i));
+    collection.forEach(item -> {
+      this.output.add(mappingFunction.apply(item));
     });
   }
 
@@ -58,7 +58,7 @@ final class MappedCollection<I, O> extends AbstractCollection<O> {
    * Uses the collection supplied by the {@code supplier}.
    * 
    * @param function the mapping function
-   * @param supplier supplies the collection to map
+   * @param collection the collection to map
    * @throws IOException from the {@code supplier}
    * @see #MappedCollection(Collection, ExceptionalFunction) 
    * @since 1.0.0

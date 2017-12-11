@@ -35,7 +35,7 @@ class XmlUsersOfIssue implements UsersOfIssue {
    * Primary ctor.
    * 
    * @param issue the parent {@link Issue}
-   * @param jaxbIssue the jaxb instance of an Issue
+   * @param xml the XML received from YouTrack for the relevant issue
    * @since 0.5.0
    */
   XmlUsersOfIssue(

@@ -49,7 +49,7 @@ public class DefaultAssignedFieldIT {
 
   @Test
   public void testChange() throws Exception {
-    final XmlAssignedField field = (XmlAssignedField) issue.fields().get(0);
+    final XmlAssignedField field = (XmlAssignedField) issue.fields().stream().findFirst().get();
     final FieldValue other = issue.project().fields().stream()
         .filter(f -> field.isSameField(f))
         .findAny()

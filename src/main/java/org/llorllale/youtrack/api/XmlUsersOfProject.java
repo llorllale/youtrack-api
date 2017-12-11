@@ -78,7 +78,7 @@ class XmlUsersOfProject implements UsersOfProject {
   public Stream<User> assignees() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            () -> x -> this.user(x.textOf("//@value")),
+            () -> x -> this.user(x.textOf("//@value").get()),
             this.xml.children("//assigneesLogin/sub")
         )
     );

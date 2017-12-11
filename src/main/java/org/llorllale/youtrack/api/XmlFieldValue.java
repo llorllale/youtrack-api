@@ -47,7 +47,7 @@ class XmlFieldValue implements FieldValue {
 
   @Override
   public String asString() {
-    return this.xml.textOf(".").get();
+    return this.xml.textOf("//text()").get();
   }
 
   @Override

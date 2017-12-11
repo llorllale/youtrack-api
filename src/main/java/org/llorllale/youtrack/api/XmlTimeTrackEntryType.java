@@ -37,6 +37,6 @@ class XmlTimeTrackEntryType implements TimeTrackEntryType {
 
   @Override
   public String asString() {
-    return this.xml.textOf("name").get();
+    return this.xml.textOf("worktype/name").get();
   }
 }

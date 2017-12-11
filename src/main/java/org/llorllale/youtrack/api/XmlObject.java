@@ -44,7 +44,15 @@ final class XmlObject {
     this.xml = xml;
   }
 
-  XmlObject(Response response) throws IOException {
+  /**
+   * Encapsulates the given {@link Response} as a {@link XmlObject}.
+   * 
+   * @param response the response to encapsulate
+   * @throws IOException from {@link InputStreamAsString#apply(java.io.InputStream)}
+   * @throws ParseException from {@link StringAsDocument}
+   * @since 1.0.0
+   */
+  XmlObject(Response response) throws ParseException, IOException {
     this.xml = 
         new StringAsDocument(
             new InputStreamAsString().apply(
@@ -67,7 +75,7 @@ final class XmlObject {
   }
 
   /**
-   * Returns the first {@link XmlObject} node selected with {@code xpath}
+   * Returns the first {@link XmlObject} node selected with {@code xpath}.
    * 
    * @param xpath the xpath expression that identifies the child node desired
    * @return the first {@link XmlObject} node selected with {@code xpath}

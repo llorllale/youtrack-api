@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpUriRequest;
 
 /**
