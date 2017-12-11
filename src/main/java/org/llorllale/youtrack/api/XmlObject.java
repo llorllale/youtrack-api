@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -35,7 +36,7 @@ final class XmlObject {
   private final Node xml;
 
   /**
-   * Ctor.
+   * Primary ctor.
    * 
    * @param xml the node to operate against
    * @since 1.0.0
@@ -45,20 +46,32 @@ final class XmlObject {
   }
 
   /**
+   * Encapsulates the given {@link Document} as a {@link XmlObject}.
+   * 
+   * @param document the document to encapsulate
+   * @since 1.0.0
+   */
+  XmlObject(Document document) {
+    this(document.getDocumentElement());
+  }
+
+  /**
    * Encapsulates the given {@link Response} as a {@link XmlObject}.
    * 
    * @param response the response to encapsulate
    * @throws IOException from {@link InputStreamAsString#apply(java.io.InputStream)}
    * @throws ParseException from {@link StringAsDocument}
+   * @see #XmlObject(org.w3c.dom.Node) 
    * @since 1.0.0
    */
   XmlObject(Response response) throws ParseException, IOException {
-    this.xml = 
+    this(
         new StringAsDocument(
             new InputStreamAsString().apply(
                 response.httpResponse().getEntity().getContent()
             )
-        );
+        ).getDocumentElement()
+    );
   }
 
   /**

@@ -88,6 +88,14 @@ public class XmlIssueTest {
     );
   }
 
+  @Test
+  public void testFields() {
+    assertThat(
+        new XmlIssue(project(), session(), xml).fields().size(),
+        is(3)
+    );
+  }
+
   /**
    * {@link XmlIssue#spec()} should describe issue accurately.
    * 
@@ -106,7 +114,7 @@ public class XmlIssueTest {
     xml.children("//field[count(valueId) > 0]").stream()
         .map(x -> 
             new XmlAssignedField(
-                new BasicField(x.textOf("name").get(), this.project()),
+                new BasicField(x.textOf("@name").get(), this.project()),
                 test,
                 x
             )
@@ -208,5 +216,21 @@ public class XmlIssueTest {
 "    <field name=\"votes\">\n" +
 "        <value>0</value>\n" +
 "    </field>\n" +
+"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
+"      <value>Normal</value>\n" +
+"      <valueId>Normal</valueId>\n" +
+"      <color>\n" +
+"        <bg>#e6f6cf</bg>\n" +
+"        <fg>#4da400</fg>\n" +
+"      </color>\n" +
+"    </field>\n" +
+"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Type\">\n" +
+"      <value>Task</value>\n" +
+"      <valueId>Task</valueId>\n" +
+"    </field>\n" +
+"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"State\">\n" +
+"      <value>Open</value>\n" +
+"      <valueId>Open</valueId>\n" +
+"    </field>" +
 "</issue>";
 }

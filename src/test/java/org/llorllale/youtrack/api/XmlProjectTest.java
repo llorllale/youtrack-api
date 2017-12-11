@@ -45,7 +45,7 @@ public class XmlProjectTest {
   public void testIdFromShortName() {
     assertThat(
         new XmlProject(null, new MockSession(), xmlProjectWithShortName).id(),
-        is(xmlProjectWithShortName.textOf("project/@shortName").get())
+        is("HBR")
     );
   }
 
@@ -57,7 +57,7 @@ public class XmlProjectTest {
   public void testIdFromId() {
     assertThat(
         new XmlProject(null, new MockSession(), xmlProjectWithId).id(),
-        is(xmlProjectWithId.textOf("project/@id").get())
+        is("IT-TEST")
     );
   }
 
@@ -65,15 +65,15 @@ public class XmlProjectTest {
   public void testName() {
     assertThat(
         new XmlProject(null, new MockSession(), xmlProjectWithShortName).name(),
-        is(xmlProjectWithShortName.textOf("project/@name").get())
+        is("Hibero")
     );
   }
 
   @Test
   public void testDescription() {
     assertThat(
-        new XmlProject(null, new MockSession(), xmlProjectWithShortName).description(),
-        is(xmlProjectWithShortName.textOf("project/@description"))
+        new XmlProject(null, new MockSession(), xmlProjectWithShortName).description().get(),
+        is("Makes developing Hibernate applications a pleasure.")
     );
   }
 
@@ -103,14 +103,14 @@ public class XmlProjectTest {
   @Test
   public void equalsOtherProjectSameId() {
     assertTrue(
-        new XmlProject(null, null, xmlProjectWithShortName).equals(new MockProject(xmlProjectWithShortName.textOf("project/@shortName").get(), "", ""))
+        new XmlProject(null, null, xmlProjectWithShortName).equals(new MockProject("HBR", "", ""))
     );
   }
 
   @Test
   public void notEqualsOtherProjectWithDiffId() {
     assertFalse(
-        new XmlProject(null, null, xmlProjectWithShortName).equals(new MockProject(xmlProjectWithId.textOf("project/@id").get(), "", ""))
+        new XmlProject(null, null, xmlProjectWithShortName).equals(new MockProject("IT-TEST", "", ""))
     );
   }
 

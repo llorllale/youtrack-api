@@ -53,7 +53,7 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
   public LocalDate date() {
     return Instant.ofEpochMilli(
         Long.parseLong(
-            this.xml.textOf("workItem/date").get()
+            this.xml.textOf("date").get()
         )
     ).atZone(ZoneId.systemDefault())
         .toLocalDate();
@@ -61,12 +61,12 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
 
   @Override
   public Duration duration() {
-    return Duration.ofMinutes(Long.parseLong(this.xml.textOf("workItem/duration").get()));
+    return Duration.ofMinutes(Long.parseLong(this.xml.textOf("duration").get()));
   }
 
   @Override
   public Optional<String> description() {
-    return this.xml.textOf("workItem/description");
+    return this.xml.textOf("description");
   }
 
   @Override

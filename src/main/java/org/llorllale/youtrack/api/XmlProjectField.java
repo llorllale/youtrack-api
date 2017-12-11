@@ -61,15 +61,16 @@ class XmlProjectField implements ProjectField {
 
   @Override
   public String name() {
-    return this.xml.textOf("/projectCustomField/@name").get();
+    return this.xml.textOf("@name").get();
   }
 
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
     final String bundleName = new XmlObjects(
-        "/projectCustomField/param/value",
+        "/projectCustomField/param",
         new HttpResponseAsResponse(
-            this.httpClient.execute(new HttpRequestWithSession(
+            this.httpClient.execute(
+                new HttpRequestWithSession(
                     this.session, 
                     new HttpGet(
                         this.session.baseUrl().toString()
@@ -77,7 +78,7 @@ class XmlProjectField implements ProjectField {
                             .concat(this.project().id())
                             .concat("/customfield/")
                             .concat(new SubstringAfterLast(
-                                    this.xml.textOf("/projectCustomField/@url").get(), 
+                                    this.xml.textOf("@url").get(), 
                                     "/"
                                 ).get()
                             )
@@ -85,7 +86,7 @@ class XmlProjectField implements ProjectField {
                 )
             )
         )
-    ).stream().findAny().get().textOf(".").get();
+    ).stream().findAny().get().textOf("@value").get();
 
     return new StreamOf<>(
         new MappedCollection<>(

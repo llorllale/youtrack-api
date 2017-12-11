@@ -16,7 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
@@ -55,11 +55,13 @@ public class DefaultAssignedFieldIT {
         .findAny()
         .get()
         .values()
+        .filter(v -> !v.isEqualTo(field.value()))
         .findAny()
         .get();
 
-    assertTrue(
-        field.change().filter(v -> v.isEqualTo(other))
+    assertFalse(
+        field.change()
+            .filter(v -> v.isEqualTo(other))
             .findAny().get().apply().fields().stream()
             .filter(f -> f.isSameField(field))
             .findAny().get()

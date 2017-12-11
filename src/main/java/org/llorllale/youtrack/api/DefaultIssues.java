@@ -58,8 +58,7 @@ class DefaultIssues implements Issues {
    * 
    * @param project the parent {@link Project}
    * @param session the user {@link Session}
-   * @see #DefaultIssues(org.llorllale.youtrack.api.v2.Project, 
-   *   org.llorllale.youtrack.api.session.Session, org.apache.http.client.HttpClient) 
+   * @see #DefaultIssues(Project, Session, HttpClient) 
    * @since 0.4.0
    */
   DefaultIssues(Project project, Session session) {
@@ -90,7 +89,7 @@ class DefaultIssues implements Issues {
             ),
             resp -> 
                 new MappedCollection<>(
-                    x -> new XmlIssue(this.project(), this.session, x),
+                    xml -> new XmlIssue(this.project(), this.session, xml),
                     new XmlObjects("/issues/issue", resp)
                 )
         )
@@ -115,7 +114,7 @@ class DefaultIssues implements Issues {
         )
     );
     
-    //when the issueId does not exist, YouTrack returns an OK response but with an error in the 
+    //when the issueId does not exist, YouTrack returns a 404 response with an error in the 
     //payload
     if (xml.child("//error").isPresent()) {
       issue = Optional.empty();

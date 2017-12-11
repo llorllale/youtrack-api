@@ -65,11 +65,6 @@ class BasicFieldValue implements FieldValue {
     }
 
     final FieldValue other = (FieldValue) obj;
-
-    if (!Objects.equals(this.asString(), other.asString())) {
-      return false;
-    }
-
-    return Objects.equals(this.field(), other.field());
+    return this.isEqualTo(other);
   }
 }

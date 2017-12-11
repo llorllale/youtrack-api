@@ -53,18 +53,18 @@ class XmlProject implements Project {
   @Override
   public String id() {
     return this.xml.textOf(
-        "(project/@id | project/@shortName)[last()]"
+        "(@id | @shortName)[last()]"
     ).get();
   }
 
   @Override
   public String name() {
-    return this.xml.textOf("project/@name").get();
+    return this.xml.textOf("@name").get();
   }
 
   @Override
   public Optional<String> description() {
-    return this.xml.textOf("project/@description");
+    return this.xml.textOf("@description");
   }
 
   @Override

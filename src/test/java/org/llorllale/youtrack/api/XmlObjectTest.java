@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertFalse;
@@ -46,8 +47,8 @@ public class XmlObjectTest {
   @Test
   public void textAtWithValidXpath() {
     assertThat(
-        xml.textOf("/issue/@id").get(),
-        is("HBR-63")
+        xml.textOf("@id"),
+        is(Optional.of("HBR-63"))
     );
   }
 

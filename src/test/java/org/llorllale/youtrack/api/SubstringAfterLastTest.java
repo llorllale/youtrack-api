@@ -16,27 +16,22 @@
 
 package org.llorllale.youtrack.api;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
 /**
- * Adapts a JAXB DTO to {@link TimeTrackEntryType}.
- * 
+ * Unit tests for {@link SubstringAfterLast}.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
+ * @since 1.0.0
  */
-class XmlTimeTrackEntryType implements TimeTrackEntryType {
-  private final XmlObject xml;
-
-  /**
-   * Ctor.
-   * 
-   * @param xml the xml recieved from YouTrack
-   * @since 0.8.0
-   */
-  XmlTimeTrackEntryType(XmlObject xml) {
-    this.xml = xml;
-  }
-
-  @Override
-  public String asString() {
-    return this.xml.textOf("name").get();
+public class SubstringAfterLastTest {
+  @Test
+  public void testGet() {
+    assertThat(
+        new SubstringAfterLast("http://some.host.com:8080/some/path/to/some/resource", "/").get(),
+        is("resource")
+    );
   }
 }

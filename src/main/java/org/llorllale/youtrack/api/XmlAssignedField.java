@@ -54,13 +54,13 @@ class XmlAssignedField implements AssignedField {
 
   @Override
   public FieldValue value() {
-    return new XmlFieldValue(this.xml.child("//value").get(), this);
+    return new XmlFieldValue(this.xml.child("value").get(), this);
   }
 
   @Override
   public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException {
     return this.project().fields().stream()
-        .filter(f -> f.name().equals(this.name()))
+        .filter(f -> f.isSameField(this))
         .findAny()
         .get()
         .values()

@@ -54,19 +54,9 @@ class XmlIssue implements Issue {
     this.xml = xml;
   }
 
-  /**
-   * For testing purposes.
-   * 
-   * @param prototype the prototype
-   * @since 0.8.0
-   */
-  XmlIssue(XmlIssue prototype) {
-    this(prototype.project(), prototype.session, prototype.xml);
-  }
-
   @Override
   public String id() {
-    return this.xml.textOf("/issue/@id").get();
+    return this.xml.textOf("@id").get();
   }
 
   @Override
@@ -125,7 +115,7 @@ class XmlIssue implements Issue {
     return new MappedCollection<>(
         x -> 
             new XmlAssignedField(
-                new BasicField(x.textOf("//@name").get(), this.project()),
+                new BasicField(x.textOf("@name").get(), this.project()),
                 this,
                 x
             ),
