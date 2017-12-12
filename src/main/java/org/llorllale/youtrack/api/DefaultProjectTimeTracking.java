@@ -70,7 +70,7 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
         )
     ).stream().findAny().get();
 
-    return Boolean.parseBoolean(settings.textOf("settings/@enabled").get())
+    return Boolean.parseBoolean(settings.textOf("@enabled").get())
         && settings.child("estimation").isPresent()
         && settings.child("spentTime").isPresent();
   }

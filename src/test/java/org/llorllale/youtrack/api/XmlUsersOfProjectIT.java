@@ -62,7 +62,7 @@ public class XmlUsersOfProjectIT {
   private XmlObject xmlObject(String assigneeLogin) throws Exception {
     final String TEMPLATE = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<project\">\n" +
+        "<project>\n" +
         "  <assigneesLogin>\n" +
         "    <sub value=\"%s\"/>\n" +
         "  </assigneesLogin>\n" +
