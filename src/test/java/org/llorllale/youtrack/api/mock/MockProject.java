@@ -82,22 +82,15 @@ public class MockProject implements Project {
 
   @Override
   public int hashCode() {
-    int hash = 7;
-    hash = 29 * hash + Objects.hashCode(this.id);
-    return hash;
+    return this.id().hashCode();
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
-      return false;
-    }
     if (!(obj instanceof Project)) {
       return false;
     }
+
     final Project other = (Project) obj;
     return Objects.equals(this.id(), other.id());
   }

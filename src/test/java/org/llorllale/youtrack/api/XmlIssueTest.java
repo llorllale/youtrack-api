@@ -105,23 +105,23 @@ public class XmlIssueTest {
   public void spec() {
     final String summary = "summary";
     final String description = "description";
-    final Issue test = new XmlIssue(
-        project(),
-        session(),
+    final Issue issue = new XmlIssue(
+        this.project(),
+        this.session(),
         xml
     );
     final IssueSpec expected = new IssueSpec(summary, description);
-    xml.children("//field[count(valueId) > 0]").stream()
-        .map(x -> 
+    xml.children("//field[count(valueId) > 0]").stream().map(
+        x -> 
             new XmlAssignedField(
                 new BasicField(x.textOf("@name").get(), this.project()),
-                test,
+                issue,
                 x
             )
-        ).forEach(field -> expected.with(field, field.value()));
+    ).forEach(field -> expected.with(field, field.value()));
 
     assertThat(
-        test.spec(),
+        issue.spec(),
         is(expected)
     );
   }

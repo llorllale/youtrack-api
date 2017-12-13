@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
+
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.FieldValue;
 
 /**
- * XML impl of {@link FieldValue}.
- * 
+ * Mock implementation of {@link FieldValue} suitable for tests.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
+ * @since 1.0.0
  */
-class XmlFieldValue implements FieldValue {
-  private final XmlObject xml;
+public class MockFieldValue implements FieldValue {
   private final Field field;
+  private final String value;
 
   /**
    * Primary ctor.
    * 
-   * @param xml the xml recieved from YouTrack
-   * @param field the parent {@link Field}
-   * @since 0.8.0
+   * @param field the {@link #field() field}
+   * @param value the {@link #asString() value}
+   * @since 1.0.0
    */
-  XmlFieldValue(XmlObject xml, Field field) {
-    this.xml = xml;
+  public MockFieldValue(Field field, String value) {
     this.field = field;
+    this.value = value;
   }
 
   @Override
@@ -45,7 +48,7 @@ class XmlFieldValue implements FieldValue {
 
   @Override
   public String asString() {
-    return this.xml.textOf("text()").get();
+    return this.value;
   }
 
   @Override
@@ -54,12 +57,12 @@ class XmlFieldValue implements FieldValue {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FieldValue)) {
+  public boolean equals(Object object) {
+    if (!(object instanceof FieldValue)) {
       return false;
     }
 
-    final FieldValue other = (FieldValue) obj;
+    final FieldValue other = (FieldValue) object;
     return this.isEqualTo(other);
   }
 }

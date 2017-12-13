@@ -84,6 +84,6 @@ class XmlAssignedField implements AssignedField {
 
   @Override
   public boolean equals(Object other) {
-    return this.field.equals(other);
+    return this.field.equals(other) && this.value().equals(other);
   }
 }
