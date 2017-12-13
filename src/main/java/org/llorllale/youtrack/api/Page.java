@@ -22,9 +22,9 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClients;
 
 /**
  * An {@link Iterator} that holds the contents of a single page of results from the YouTrack server.
@@ -45,18 +45,20 @@ final class Page<T> implements Iterator<T> {
    * 
    * @param request the {@link HttpUriRequest} for the page
    * @param mapper the mapping function to transform the results from YouTrack into types T
+   * @param httpClient the {@link HttpClient} to use
    * @throws UncheckedException wrapping any IOException thrown when fetching this page's contents
    * @since 0.7.0
    */
   Page(
       HttpUriRequest request, 
-      ExceptionalFunction<Response, Collection<T>, IOException> mapper
+      ExceptionalFunction<Response, Collection<T>, IOException> mapper,
+      HttpClient httpClient
   ) throws UncheckedException {
     try {
       this.contents = new ArrayDeque<>(
           mapper.apply(
               new HttpResponseAsResponse(
-                  HttpClients.createDefault().execute(request)
+                  httpClient.execute(request)
               )
           )
       );

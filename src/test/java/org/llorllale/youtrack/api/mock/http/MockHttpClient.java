@@ -17,6 +17,9 @@
 package org.llorllale.youtrack.api.mock.http;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
@@ -30,19 +33,31 @@ import org.apache.http.protocol.HttpContext;
 
 /**
  * Mock implementation of {@link HttpClient} suitable for unit tests.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public class MockHttpClient implements HttpClient {
-  private final HttpResponse mockResponse;
+  private final HttpResponse finalResponse;
+  private final Deque<HttpResponse> intermediateResponses;
 
   /**
    * Primary ctor.
-   * @param mockResponse the mock {@link HttpResponse}
+   * 
+   * <p>Each call to {@link #execute(org.apache.http.client.methods.HttpUriRequest)} will return 
+   * one of the {@code intermediateResponses}, in the encountered order, after which 
+   * {@code finalResponse} will be consistently returned on all subsequent calls. 
+   * This is useful for testing the <em>streaming</em> functionalities.
+   * 
+   * @param finalResponse the response to return after all intermediate responses have been
+   *     exhausted
+   * @param intermediateResponses the mock {@link HttpResponse responses} to return before the
+   *     {@code finalResponse}
    * @since 0.4.0
    */
-  public MockHttpClient(HttpResponse mockResponse) {
-    this.mockResponse = mockResponse;
+  public MockHttpClient(HttpResponse finalResponse, HttpResponse... intermediateResponses) {
+    this.finalResponse = finalResponse;
+    this.intermediateResponses = new ArrayDeque<>(Arrays.asList(intermediateResponses));
   }
 
   @Override
@@ -57,7 +72,15 @@ public class MockHttpClient implements HttpClient {
 
   @Override
   public HttpResponse execute(HttpUriRequest request) throws IOException, ClientProtocolException {
-    return mockResponse;
+    final HttpResponse response;
+
+    if (!this.intermediateResponses.isEmpty()) {
+      response = this.intermediateResponses.pop();
+    } else {
+      response = this.finalResponse;
+    }
+
+    return response;
   }
 
   @Override
@@ -94,5 +117,4 @@ public class MockHttpClient implements HttpClient {
   public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException, ClientProtocolException {
     throw new UnsupportedOperationException("Not supported yet."); //TODO implement
   }
-
 }

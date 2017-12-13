@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import static org.hamcrest.CoreMatchers.is;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
@@ -36,24 +36,23 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 public class DefaultIssuesTest {
 
   /**
-   * {@link DefaultIssues} must return all issues.
-   * 
-   * <p>Note: ignored because there is no way yet to control the url called in the pagination
+   * {@link DefaultIssues} must return all issues (4 in this case, divided in 2 pages of results).
    * 
    * @throws Exception 
    */
-  @Ignore
   @Test
   public void testStream() throws Exception {
     assertThat(
         new DefaultIssues(
-            new MockProject("PR-1", "Mock Name", "Mock Description"), 
+            new MockProject(), 
             new MockSession(), 
             new MockHttpClient(
-                new MockOkResponse(ALL_ISSUES)
+                new MockOkResponse("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><issues></issues>"),
+                new MockOkResponse(ISSUES_PAGE1),
+                new MockOkResponse(ISSUES_PAGE2)
             )
-        ).stream().count(),
-        is(2L)
+        ).stream().map(Issue::id).collect(toList()),
+        containsInAnyOrder("TST-1", "TST-2", "TST-3", "TST-4")
     );
   }
 
@@ -93,7 +92,7 @@ public class DefaultIssuesTest {
     );
   }
 
-  private static String ALL_ISSUES =
+  private static String ISSUES_PAGE1 =
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 "<issues>\n" +
 "  <issue id=\"TST-1\">\n" +
@@ -155,6 +154,127 @@ public class DefaultIssuesTest {
 "    </field>\n" +
 "  </issue>\n" +
 "  <issue id=\"TST-2\">\n" +
+"    <field name=\"attachments\">\n" +
+"      <value url=\"/_persistent/user.properties?file=45-83&amp;v=0&amp;c=true\">user.properties</value>\n" +
+"      <value url=\"/_persistent/foo1.properties?file=45-84&amp;v=0&amp;c=true\">foo1.properties</value>\n" +
+"      <value url=\"/_persistent/foo2.properties?file=45-85&amp;v=0&amp;c=true\">foo2.properties</value>\n" +
+"    </field>\n" +
+"    <field name=\"Priority\">\n" +
+"      <value>Show-stopper</value>\n" +
+"    </field>\n" +
+"    <field name=\"Type\">\n" +
+"      <value>Feature</value>\n" +
+"    </field>\n" +
+"    <field name=\"State\">\n" +
+"      <value>Reopened</value>\n" +
+"    </field>\n" +
+"    <field name=\"Assignee\">\n" +
+"      <value>beto</value>\n" +
+"    </field>\n" +
+"    <field name=\"Subsystem\">\n" +
+"      <value>UI</value>\n" +
+"    </field>\n" +
+"    <field name=\"Affected versions\">\n" +
+"      <value>2.0.1</value>\n" +
+"    </field>\n" +
+"    <field name=\"Fix versions\">\n" +
+"      <value>2.0.1</value>\n" +
+"    </field>\n" +
+"    <field name=\"projectShortName\">\n" +
+"      <value>TST</value>\n" +
+"    </field>\n" +
+"    <field name=\"numberInProject\">\n" +
+"      <value>2</value>\n" +
+"    </field>\n" +
+"    <field name=\"summary\">\n" +
+"      <value>new issue</value>\n" +
+"    </field>\n" +
+"    <field name=\"description\">\n" +
+"      <value>description of new issue</value>\n" +
+"    </field>\n" +
+"    <field name=\"created\">\n" +
+"      <value>1320664502969</value>\n" +
+"    </field>\n" +
+"    <field name=\"updated\">\n" +
+"      <value>1320664503229</value>\n" +
+"    </field>\n" +
+"    <field name=\"updaterName\">\n" +
+"      <value>app_exception</value>\n" +
+"    </field>\n" +
+"    <field name=\"reporterName\">\n" +
+"      <value>app_exception</value>\n" +
+"    </field>\n" +
+"    <field name=\"commentsCount\">\n" +
+"      <value>0</value>\n" +
+"    </field>\n" +
+"    <field name=\"votes\">\n" +
+"      <value>0</value>\n" +
+"    </field>\n" +
+"  </issue>\n" +
+"</issues>";
+
+  private static String ISSUES_PAGE2 =
+"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+"<issues>\n" +
+"  <issue id=\"TST-3\">\n" +
+"    <field name=\"attachments\">\n" +
+"      <value url=\"/_persistent/user.properties?file=45-83&amp;v=0&amp;c=true\">user.properties</value>\n" +
+"      <value url=\"/_persistent/foo1.properties?file=45-84&amp;v=0&amp;c=true\">foo1.properties</value>\n" +
+"      <value url=\"/_persistent/foo2.properties?file=45-85&amp;v=0&amp;c=true\">foo2.properties</value>\n" +
+"    </field>\n" +
+"    <field name=\"Priority\">\n" +
+"      <value>Show-stopper</value>\n" +
+"    </field>\n" +
+"    <field name=\"Type\">\n" +
+"      <value>Feature</value>\n" +
+"    </field>\n" +
+"    <field name=\"State\">\n" +
+"      <value>Reopened</value>\n" +
+"    </field>\n" +
+"    <field name=\"Assignee\">\n" +
+"      <value>beto</value>\n" +
+"    </field>\n" +
+"    <field name=\"Subsystem\">\n" +
+"      <value>UI</value>\n" +
+"    </field>\n" +
+"    <field name=\"Affected versions\">\n" +
+"      <value>2.0.1</value>\n" +
+"    </field>\n" +
+"    <field name=\"Fix versions\">\n" +
+"      <value>2.0.1</value>\n" +
+"    </field>\n" +
+"    <field name=\"projectShortName\">\n" +
+"      <value>TST</value>\n" +
+"    </field>\n" +
+"    <field name=\"numberInProject\">\n" +
+"      <value>2</value>\n" +
+"    </field>\n" +
+"    <field name=\"summary\">\n" +
+"      <value>new issue</value>\n" +
+"    </field>\n" +
+"    <field name=\"description\">\n" +
+"      <value>description of new issue</value>\n" +
+"    </field>\n" +
+"    <field name=\"created\">\n" +
+"      <value>1320664502969</value>\n" +
+"    </field>\n" +
+"    <field name=\"updated\">\n" +
+"      <value>1320664503229</value>\n" +
+"    </field>\n" +
+"    <field name=\"updaterName\">\n" +
+"      <value>app_exception</value>\n" +
+"    </field>\n" +
+"    <field name=\"reporterName\">\n" +
+"      <value>app_exception</value>\n" +
+"    </field>\n" +
+"    <field name=\"commentsCount\">\n" +
+"      <value>0</value>\n" +
+"    </field>\n" +
+"    <field name=\"votes\">\n" +
+"      <value>0</value>\n" +
+"    </field>\n" +
+"  </issue>\n" +
+"  <issue id=\"TST-4\">\n" +
 "    <field name=\"attachments\">\n" +
 "      <value url=\"/_persistent/user.properties?file=45-83&amp;v=0&amp;c=true\">user.properties</value>\n" +
 "      <value url=\"/_persistent/foo1.properties?file=45-84&amp;v=0&amp;c=true\">foo1.properties</value>\n" +

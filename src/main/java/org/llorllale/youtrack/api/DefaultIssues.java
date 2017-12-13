@@ -91,7 +91,8 @@ class DefaultIssues implements Issues {
                 new MappedCollection<>(
                     xml -> new XmlIssue(this.project(), this.session, xml),
                     new XmlObjects("/issues/issue", resp)
-                )
+                ),
+            this.httpClient
         )
     );
   }

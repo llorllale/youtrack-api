@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpUriRequest;
 
@@ -38,6 +39,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 final class Pagination<T> implements Iterator<T> {
   private final PageUri pageRequest;
   private final ExceptionalFunction<Response, Collection<T>, IOException> mapper;
+  private final HttpClient httpClient;
 
   private Iterator<T> page;
 
@@ -46,15 +48,18 @@ final class Pagination<T> implements Iterator<T> {
    * 
    * @param pageRequest the supplier for each {@link Page page's} uri
    * @param mapper maps each page's URI into its corresponding contents
+   * @param httpClient the {@link HttpClient} to use to execute the requests
    * @since 0.7.0
    */
   Pagination(
       PageUri pageRequest,
-      ExceptionalFunction<Response, Collection<T>, IOException> mapper
+      ExceptionalFunction<Response, Collection<T>, IOException> mapper,
+      HttpClient httpClient
   ) {
     this.pageRequest = pageRequest;
     this.mapper = mapper;
     this.page = new Page.Empty<>();
+    this.httpClient = httpClient;
   }
 
   /**
@@ -64,6 +69,7 @@ final class Pagination<T> implements Iterator<T> {
    * @param pageSize the page size
    * @param combiner the function that maps page numbers to http requests
    * @param mapper the function that maps the resources to collections
+   * @param httpClient the {@link HttpClient} to use to execute the requests
    * @see #Pagination(PageUri, ExceptionalFunction) 
    * @see PageUri
    * @since 1.0.0
@@ -71,15 +77,16 @@ final class Pagination<T> implements Iterator<T> {
   Pagination(
       int pageSize,
       Function<Integer, HttpUriRequest> combiner, 
-      ExceptionalFunction<Response, Collection<T>, IOException> mapper
+      ExceptionalFunction<Response, Collection<T>, IOException> mapper,
+      HttpClient httpClient
   ) {
-    this(new PageUri(new Counter(0, pageSize), combiner), mapper);
+    this(new PageUri(new Counter(0, pageSize), combiner), mapper, httpClient);
   }
 
   @Override
   public boolean hasNext() {
     if (!this.page.hasNext()) {
-      this.page = new Page<>(this.pageRequest.get(), this.mapper);
+      this.page = new Page<>(this.pageRequest.get(), this.mapper, this.httpClient);
     }
 
     return this.page.hasNext();
