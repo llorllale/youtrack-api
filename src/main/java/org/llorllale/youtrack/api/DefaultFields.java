@@ -37,6 +37,19 @@ class DefaultFields implements Fields {
   private final HttpClient httpClient;
 
   /**
+   * Primary ctor.
+   * 
+   * @param session the user's {@link Session}
+   * @param project the parent {@link Project}
+   * @param httpClient the {@link HttpClient} to use
+   */
+  DefaultFields(Session session, Project project, HttpClient httpClient) {
+    this.session = session;
+    this.project = project;
+    this.httpClient = httpClient;
+  }
+
+  /**
    * Ctor.
    * 
    * @param session the user's {@link Session}
@@ -44,9 +57,7 @@ class DefaultFields implements Fields {
    * @since 0.8.0
    */
   DefaultFields(Session session, Project project) {
-    this.session = session;
-    this.project = project;
-    this.httpClient = HttpClients.createDefault();
+    this(session, project, HttpClients.createDefault());
   }
 
   @Override
