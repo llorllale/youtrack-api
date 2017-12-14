@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockField;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 
@@ -63,7 +64,9 @@ public class XmlProjectFieldTest {
             xml, 
             new MockProject(), 
             new MockSession()
-        ).equals(field("Priority", new MockProject()))
+        ).equals(
+            new MockField("Priority", new MockProject())
+        )
     );
   }
 
@@ -98,7 +101,9 @@ public class XmlProjectFieldTest {
             )), 
             new MockProject(), 
             new MockSession()
-        ).equals(field("name2", new MockProject()))
+        ).equals(
+            new MockField("name2", new MockProject())
+        )
     );
   }
 
@@ -111,34 +116,12 @@ public class XmlProjectFieldTest {
             )), 
             new MockProject("p1", "p1", ""), 
             new MockSession()
-        ).equals(field("name", new MockProject("p2", "p2", "")))
+        ).equals(
+            new MockField("name", new MockProject("p2", "p2", ""))
+        )
     );
   }
 
   private static final String XML =
 "<projectCustomField name=\"Priority\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"; 
-
-  private Field field(String name, Project project) {
-    return new Field() {
-      @Override
-      public Project project() {
-        return project;
-      }
-
-      @Override
-      public String name() {
-        return name;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-        if(!(obj instanceof Field)) {
-          return false;
-        }
-
-        final Field other = (Field) obj;
-        return this.isSameField(other);
-      }
-    };
-  }
 }

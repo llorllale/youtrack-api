@@ -22,9 +22,9 @@ import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
+import org.llorllale.youtrack.api.mock.MockAssignedField;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Unit tests for {@link XmlIssue}.
@@ -44,8 +44,8 @@ public class XmlIssueTest {
   public void testId() {
     assertThat(
         new XmlIssue(
-            project(),
-            session(),
+            new MockProject(),
+            new MockSession(),
             xml
         ).id(),
         is("HBR-63")
@@ -56,8 +56,8 @@ public class XmlIssueTest {
   public void testCreationDate() {
     assertThat(
         new XmlIssue(
-            project(),
-            session(),
+            new MockProject(),
+            new MockSession(),
             xml
         ).creationDate(),
         is(Instant.ofEpochMilli(1262171005630L))
@@ -68,8 +68,8 @@ public class XmlIssueTest {
   public void testSummary() {
     assertThat(
         new XmlIssue(
-            project(),
-            session(),
+            new MockProject(),
+            new MockSession(),
             xml
         ).summary(),
         is("summary")
@@ -80,8 +80,8 @@ public class XmlIssueTest {
   public void testDescription() {
     assertThat(
         new XmlIssue(
-            project(),
-            session(),
+            new MockProject(),
+            new MockSession(),
             xml
         ).description().get(),
         is("description")
@@ -91,7 +91,7 @@ public class XmlIssueTest {
   @Test
   public void testFields() {
     assertThat(
-        new XmlIssue(project(), session(), xml).fields().size(),
+        new XmlIssue(new MockProject(), new MockSession(), xml).fields().size(),
         is(3)
     );
   }
@@ -106,17 +106,18 @@ public class XmlIssueTest {
     final String summary = "summary";
     final String description = "description";
     final Issue issue = new XmlIssue(
-        this.project(),
-        this.session(),
+        new MockProject(),
+        new MockSession(),
         xml
     );
+
     final IssueSpec expected = new IssueSpec(summary, description);
     xml.children("//field[count(valueId) > 0]").stream().map(
         x -> 
-            new XmlAssignedField(
-                new BasicField(x.textOf("@name").get(), this.project()),
-                issue,
-                x
+            new MockAssignedField(
+                x.textOf("@name").get(), 
+                issue, 
+                x.textOf("value").get()
             )
     ).forEach(field -> expected.with(field, field.value()));
 
@@ -124,14 +125,6 @@ public class XmlIssueTest {
         issue.spec(),
         is(expected)
     );
-  }
-
-  private Project project() {
-    return new MockProject("", "", "");
-  }
-
-  private Session session() {
-    return new MockSession();
   }
 
   private static final String XML_ISSUE =

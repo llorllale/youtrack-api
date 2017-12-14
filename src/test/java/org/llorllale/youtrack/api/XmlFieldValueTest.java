@@ -21,6 +21,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockField;
+import org.llorllale.youtrack.api.mock.MockFieldValue;
 import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
@@ -45,7 +47,7 @@ public class XmlFieldValueTest {
   public void equalsItself() throws Exception {
     final FieldValue fv = new XmlFieldValue(
         new XmlObject(new StringAsDocument("<value>v</value>")), 
-        field("f")
+        new MockField("f", new MockProject())
     );
 
     assertTrue(
@@ -55,11 +57,12 @@ public class XmlFieldValueTest {
 
   @Test
   public void equalsOtherFieldValue() throws Exception {
+    final Field field = new MockField("field", new MockProject());
     assertTrue(
       new XmlFieldValue(
           new XmlObject(new StringAsDocument("<value>value</value>")), 
-          field("field")
-      ).equals(fieldValue("field", "value"))
+          field
+      ).equals(new MockFieldValue(field, "value"))
     );
   }
 
@@ -68,7 +71,7 @@ public class XmlFieldValueTest {
     assertFalse(
         new XmlFieldValue(
             new XmlObject(new StringAsDocument("<value>Bug</value>")), 
-            field("field")
+            new MockField("field", new MockProject())
         ).equals(null)
     );
   }
@@ -78,7 +81,7 @@ public class XmlFieldValueTest {
     assertFalse(
         new XmlFieldValue(
             new XmlObject(new StringAsDocument("<value>Test</value>")), 
-            field("field")
+            new MockField("field", new MockProject())
         ).equals(new Object())
     );
   }
@@ -88,50 +91,14 @@ public class XmlFieldValueTest {
     assertFalse(
         new XmlFieldValue(
             new XmlObject(new StringAsDocument("<value>test</value>")), 
-            field("field1")
-        ).equals(fieldValue("value", "field2"))
+            new MockField("field1", new MockProject())
+        ).equals(
+            new MockFieldValue(
+                new MockField("field2", new MockProject()
+                ), 
+                "value"
+            )
+        )
     );
-  }
-
-  private Field field(String name) {
-    return field(name, new MockProject());
-  }
-
-  private Field field(String name, Project project) {
-    return new Field() {
-      @Override
-      public Project project() {
-        return project;
-      }
-
-      @Override
-      public String name() {
-        return name;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-        if(!(obj instanceof Field)) {
-          return false;
-        }
-
-        final Field other = (Field) obj;
-        return this.isSameField(other);
-      }
-    };
-  }
-
-  private FieldValue fieldValue(String fieldName, String fieldValue) {
-    return new FieldValue() {
-      @Override
-      public Field field() {
-        return XmlFieldValueTest.this.field(fieldName);
-      }
-
-      @Override
-      public String asString() {
-        return fieldValue;
-      }
-    };
   }
 }

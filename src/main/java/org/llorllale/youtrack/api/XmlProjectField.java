@@ -17,7 +17,6 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -113,10 +112,7 @@ class XmlProjectField implements ProjectField {
 
   @Override
   public int hashCode() {
-    int hash = 5;
-    hash = 47 * hash + Objects.hashCode(this.name());
-    hash = 47 * hash + Objects.hashCode(this.project().id());
-    return hash;
+    return this.name().hashCode();
   }
 
   @Override

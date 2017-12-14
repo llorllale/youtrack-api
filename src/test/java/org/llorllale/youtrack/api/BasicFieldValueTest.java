@@ -19,6 +19,8 @@ package org.llorllale.youtrack.api;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.llorllale.youtrack.api.mock.MockField;
+import org.llorllale.youtrack.api.mock.MockFieldValue;
 import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
@@ -41,34 +43,46 @@ public class BasicFieldValueTest {
   @Test
   public void notEqualsWithObject() {
     assertFalse(
-        new BasicFieldValue("", field("test")).equals(new Object())
+        new BasicFieldValue("", new MockField("test", new MockProject())).equals(new Object())
     );
   }
 
   @Test
   public void notEqualsWithNull() {
     assertFalse(
-        new BasicFieldValue("", field("test")).equals(null)
+        new BasicFieldValue("", new MockField("test", new MockProject())).equals(null)
     );
   }
 
   @Test
   public void notEqualsWithDiffFieldValue() {
+    final Field field = new MockField("test", new MockProject());
     assertFalse(
-        new BasicFieldValue("value1", field("test")).equals(fieldValue("test", "value2"))
+        new BasicFieldValue(
+            "value1", 
+            field
+        ).equals(new MockFieldValue(field, "value2"))
     );
   }
 
   @Test
   public void notEqualsWithDiffFields() {
     assertFalse(
-        new BasicFieldValue("value", field("field1")).equals(fieldValue("field2", "value"))
+        new BasicFieldValue(
+            "value", 
+            new MockField("field1", new MockProject())
+        ).equals(
+            new MockFieldValue(
+                new MockField("field2", new MockProject()), 
+                "value"
+            )
+        )
     );
   }
 
   @Test
   public void equalsItself() {
-    final BasicFieldValue fv = new BasicFieldValue("value", field("field"));
+    final BasicFieldValue fv = new BasicFieldValue("value", new MockField("field", new MockProject()));
 
     assertTrue(
         fv.equals(fv)
@@ -77,50 +91,9 @@ public class BasicFieldValueTest {
 
   @Test
   public void equalsOtherFieldValue() {
+    final Field field = new MockField("field", new MockProject());
     assertTrue(
-      new BasicFieldValue("value", field("field")).equals(fieldValue("field", "value"))
+      new BasicFieldValue("value", field).equals(new MockFieldValue(field, "value"))
     );
-  }
-
-  private Field field(String name) {
-    return field(name, new MockProject());
-  }
-
-  private Field field(String name, Project project) {
-    return new Field() {
-      @Override
-      public Project project() {
-        return project;
-      }
-
-      @Override
-      public String name() {
-        return name;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-        if(!(obj instanceof Field)) {
-          return false;
-        }
-
-        final Field other = (Field) obj;
-        return this.isSameField(other);
-      }
-    };
-  }
-
-  private FieldValue fieldValue(String fieldName, String fieldValue) {
-    return new FieldValue() {
-      @Override
-      public Field field() {
-        return BasicFieldValueTest.this.field(fieldName);
-      }
-
-      @Override
-      public String asString() {
-        return fieldValue;
-      }
-    };
   }
 }

@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api.mock;
 
-import java.util.Objects;
 import java.util.Optional;
 import org.llorllale.youtrack.api.Fields;
 import org.llorllale.youtrack.api.Issues;
@@ -92,7 +91,7 @@ public class MockProject implements Project {
     }
 
     final Project other = (Project) obj;
-    return Objects.equals(this.id(), other.id());
+    return this.id().equals(other.id());
   }
 
   @Override

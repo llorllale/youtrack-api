@@ -14,37 +14,42 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
 import java.util.stream.Stream;
-
+import org.llorllale.youtrack.api.AssignedField;
+import org.llorllale.youtrack.api.FieldValue;
+import org.llorllale.youtrack.api.Issue;
+import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.SelectableFieldValue;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- * Combines and adapts a given {@link Field} and a given 
- * {@link org.llorllale.youtrack.api.jaxb.Field} into an {@link AssignedField}.
+ * Mock implementation of {@link AssignedField} suitable for tests.
+ * 
+ * <p>Note: the {@link #change()} operation is not supported.
  *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
+ * @since 1.0.0
  */
-class XmlAssignedField implements AssignedField {
-  private final Field field;
+public class MockAssignedField implements AssignedField {
+  private final String name;
   private final Issue issue;
-  private final XmlObject xml;
+  private final String value;
 
   /**
-   * Ctor.
+   * Primary ctor.
    * 
-   * @param field the {@link Field} to adapt
-   * @param issue the parent {@link Issue}
-   * @param xml the jaxb instance
-   * @since 0.8.0
+   * @param name this field's name
+   * @param issue the issue this field is assigned to
+   * @param value this field's {@link MockFieldValue value}
+   * @since 1.0.0
    */
-  XmlAssignedField(Field field, Issue issue, XmlObject xml) {
-    this.field = field;
+  public MockAssignedField(String name, Issue issue, String value) {
+    this.name = name;
     this.issue = issue;
-    this.xml = xml;
+    this.value = value;
   }
 
   @Override
@@ -54,41 +59,36 @@ class XmlAssignedField implements AssignedField {
 
   @Override
   public FieldValue value() {
-    return new XmlFieldValue(this.xml.child("value").get(), this);
+    return new MockFieldValue(this, this.value);
   }
 
   @Override
   public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException {
-    return this.project().fields().stream()
-        .filter(f -> f.isSameField(this))
-        .findAny()
-        .get()
-        .values()
-        .map(v -> new DefaultSelectableFieldValue(v, this.issue));
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public Project project() {
-    return this.field.project();
+    return this.issue().project();
   }
 
   @Override
   public String name() {
-    return this.field.name();
+    return this.name;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if(!(object instanceof AssignedField)) {
+      return false;
+    }
+
+    final AssignedField other = (AssignedField) object;
+    return this.isSameField(other) && this.value().equals(other.value());
   }
 
   @Override
   public int hashCode() {
     return this.name().hashCode();
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (!(object instanceof AssignedField)) {
-      return false;
-    }
-
-    final AssignedField other = (AssignedField) object;
-    return this.field.isSameField(other) && this.value().equals(other.value());
   }
 }

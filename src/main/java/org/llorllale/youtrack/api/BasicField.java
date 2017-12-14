@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import java.util.Objects;
-
 /**
  * Default impl of {@link Field}.
  * 
@@ -52,10 +50,7 @@ class BasicField implements Field {
 
   @Override
   public int hashCode() {
-    int hash = 5;
-    hash = 67 * hash + Objects.hashCode(this.name());
-    hash = 67 * hash + Objects.hashCode(this.project().id());
-    return hash;
+    return this.name().hashCode();
   }
 
   @Override

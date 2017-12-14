@@ -63,6 +63,6 @@ public class MockField implements Field {
 
   @Override
   public int hashCode() {
-    return this.name().hashCode() + this.project().hashCode();
+    return this.name().hashCode();
   }
 }

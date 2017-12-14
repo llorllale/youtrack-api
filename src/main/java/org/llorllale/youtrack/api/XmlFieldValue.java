@@ -50,7 +50,7 @@ class XmlFieldValue implements FieldValue {
 
   @Override
   public int hashCode() {
-    return this.field().hashCode() + this.asString().hashCode();
+    return this.asString().hashCode();
   }
 
   @Override

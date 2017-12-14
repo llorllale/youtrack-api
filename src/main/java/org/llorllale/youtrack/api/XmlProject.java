@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.llorllale.youtrack.api.session.Session;
@@ -99,7 +98,7 @@ class XmlProject implements Project {
     }
 
     final Project other = (Project) obj;
-    return Objects.equals(this.id(), other.id());
+    return this.id().equals(other.id());
   }
 
   @Override
