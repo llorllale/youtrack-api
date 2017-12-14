@@ -16,10 +16,18 @@
 
 package org.llorllale.youtrack.api.mock;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Fields;
 import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.ProjectField;
 import org.llorllale.youtrack.api.UsersOfProject;
 import org.llorllale.youtrack.api.YouTrack;
 import org.llorllale.youtrack.api.ProjectTimeTracking;
@@ -35,9 +43,10 @@ public class MockProject implements Project {
   private final String id;
   private final String name;
   private final Optional<String> description;
+  private final Map<Field, List<FieldValue>> fields;
 
   /**
-   * Ctor.
+   * Primary ctor.
    * 
    * @param id the mock project's id
    * @param name the mock project's name
@@ -48,30 +57,93 @@ public class MockProject implements Project {
     this.id = id;
     this.name = name;
     this.description = Optional.of(description);
+    this.fields = new HashMap<>();
   }
 
   /**
-   * Primary ctor.
+   * Ctor.
+   * 
+   * <p>Assumes default values:
+   * <ul>
+   *    <li>id -> ""</li>
+   *    <li>name -> ""</li>
+   *    <li>description -> ""</li> 
+   * </ul>
    * 
    * @since 0.4.0
    */
   public MockProject() {
     this("", "", "");
   }
+  
+  /**
+   * Add {@code field} to this project's collection of configured {@link ProjectField fields}.
+   * 
+   * @param field
+   * @return 
+   * @since 1.0.0
+   */
+  public MockProject withField(MockProjectField field) {
+    this.fields.merge(
+        field, 
+        field.values().collect(Collectors.toList()), 
+        (a, b) -> {a.addAll(b); return a;}
+    );
+    return this;
+  }
+
+  /**
+   * Shorthand for {@link #withField(org.llorllale.youtrack.api.ProjectField)}. Equivalent to
+   * doing:
+   * <pre>
+   * {@code 
+   * final MockProject project = ...;
+   * final String fieldName = ...;
+   * final String fieldValue = ...;
+   * project.withField(
+   *    new MockProjectField(
+   *        fieldName, 
+   *        project, 
+   *        new MockFieldValue(
+   *            new MockField(fieldName, project), 
+   *            fieldValue
+   *        )
+   *    )
+   * );
+   * }
+   * </pre>
+   * 
+   * @param name
+   * @param value
+   * @return 
+   * @since 1.0.0
+   */
+  public MockProject withFieldValue(String name, String value) {
+    return this.withField(
+        new MockProjectField(
+            name, 
+            this, 
+            new MockFieldValue(
+                new MockField(name, this), 
+                value
+            )
+        )
+    );
+  }
 
   @Override
   public String id() {
-    return id;
+    return this.id;
   }
 
   @Override
   public String name() {
-    return name;
+    return this.name;
   }
 
   @Override
   public Optional<String> description() {
-    return description;
+    return this.description;
   }
 
   @Override
@@ -101,7 +173,18 @@ public class MockProject implements Project {
 
   @Override
   public Fields fields() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    return new MockFields(
+        this, 
+        Collections.unmodifiableCollection(
+            this.fields.entrySet().stream().map(entry -> 
+                new MockProjectField(
+                    entry.getKey().name(), 
+                    entry.getKey().project(), 
+                    entry.getValue().toArray(new FieldValue[]{})
+                )
+            ).collect(Collectors.toList())
+        )
+    );
   }
 
   @Override

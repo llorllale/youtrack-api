@@ -16,9 +16,14 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockAssignedField;
 import org.llorllale.youtrack.api.mock.MockField;
 import org.llorllale.youtrack.api.mock.MockFieldValue;
 import org.llorllale.youtrack.api.mock.MockIssue;
@@ -31,8 +36,13 @@ import org.llorllale.youtrack.api.mock.MockProject;
  * @since 1.0.0
  */
 public class XmlAssignedFieldTest {
+  /**
+   * {@link XmlAssignedField#issue()} must return the same issue.
+   * 
+   * @sinec 1.0.0
+   */
   @Test
-  public void testIssue() {
+  public void issue() {
     final Issue issue = new MockIssue(new MockProject());
     assertThat(
         new XmlAssignedField(null, issue, null).issue(),
@@ -40,8 +50,15 @@ public class XmlAssignedFieldTest {
     );
   }
 
+  /**
+   * {@link XmlAssignedField#value()} must return a {@link FieldValue} with a value equal 
+   * to the "value" element in the XML.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
   @Test
-  public void testValue() throws Exception {
+  public void value() throws Exception {
     final String FIELD_XML =
 "    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
 "      <value>Normal</value>\n" +
@@ -62,23 +79,263 @@ public class XmlAssignedFieldTest {
     );
   }
 
+  /**
+   * {@link XmlAssignedField#change()} must return only the values configured for the same field
+   * in the same project.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
   @Test
-  public void testChange() throws Exception {
+  public void change() throws Exception {
+    //the field of interest
+    final String fieldName = "field2";
+    final MockProject project = new MockProject()
+        .withFieldValue("field1", "value1")
+        .withFieldValue(fieldName, "value21")
+        .withFieldValue(fieldName, "value22")
+        .withFieldValue(fieldName, "value23")
+        .withFieldValue("field3", "value3");
+    assertThat(
+        new XmlAssignedField(
+            new MockField(fieldName, project), 
+            new MockIssue(
+                project
+            ), 
+            null
+        ).change().map(SelectableFieldValue::asString).collect(Collectors.toList()),
+        containsInAnyOrder("value21", "value22", "value23")
+    );
   }
 
+  /**
+   * {@link XmlAssignedField#project()} must return the same project.
+   * 
+   * @since 1.0.0
+   */
   @Test
-  public void testProject() {
+  public void project() {
+    final Project project = new MockProject();
+    assertThat(
+        new XmlAssignedField(
+            new MockField("field", project), 
+            null, 
+            null
+        ).project(),
+        is(project)
+    );
   }
 
+  /**
+   * {@link XmlAssignedField#name()} must return the enclosed field's name.
+   * 
+   * @since 1.0.0
+   */
   @Test
-  public void testName() {
+  public void name() {
+    //the name of interest
+    final String name = "abc123";
+    assertThat(
+        new XmlAssignedField(
+            new MockField(name, new MockProject()),
+            null, 
+            null
+        ).name(),
+        is(name)
+    );
   }
 
+  /**
+   * {@link XmlAssignedField#hashCode()} must be equal to its name's hashcode.
+   * 
+   * @since 1.0.0
+   */
   @Test
   public void testHashCode() {
+    final String name = "abc123";
+    assertThat(
+        new XmlAssignedField(new MockField(name, new MockProject()), null, null).hashCode(),
+        is(name.hashCode())
+    );
   }
 
+  /**
+   * An {@link XmlAssignedField} must be equal to another {@link AssignedField} with the same name
+   * and value. The {@link XmlAssignedField}'s name and value are set in its enclosed XML.
+   * 
+   * @throws ParseException 
+   * @since 1.0.0
+   */
   @Test
-  public void testEquals() {
+  public void equals() throws ParseException {
+    final String FIELD_XML =
+    "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
+    "  <value>Normal</value>\n" +
+    "  <valueId>Normal</valueId>\n" +
+    "  <color>\n" +
+    "    <bg>#e6f6cf</bg>\n" +
+    "    <fg>#4da400</fg>\n" +
+    "  </color>\n" +
+    "</field>";
+    final Field field = new MockField("Normal", new MockProject());
+    final Issue issue = new MockIssue(field.project());
+    assertTrue(
+        new XmlAssignedField(
+            field, 
+            issue,
+            new XmlObject(new StringAsDocument(FIELD_XML))
+        ).equals(
+            new MockAssignedField(field.name(), issue, "Normal")
+        )
+    );
+  }
+
+  /**
+   * An {@link XmlAssignedField} cannot be equal to another {@link AssignedField} with with a 
+   * different name.
+   * 
+   * @throws ParseException 
+   * @since 1.0.0
+   */
+  @Test
+  public void notEqualsWithFieldOfDifferentName() throws ParseException {
+    final String FIELD_XML =
+    "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
+    "  <value>Normal</value>\n" +
+    "  <valueId>Normal</valueId>\n" +
+    "  <color>\n" +
+    "    <bg>#e6f6cf</bg>\n" +
+    "    <fg>#4da400</fg>\n" +
+    "  </color>\n" +
+    "</field>";
+    final Field field = new MockField("Normal", new MockProject());
+    final Issue issue = new MockIssue(field.project());
+    assertFalse(
+        new XmlAssignedField(
+            field, 
+            issue,
+            new XmlObject(new StringAsDocument(FIELD_XML))
+        ).equals(
+            new MockAssignedField("Some Other Name", issue, "Normal")
+        )
+    );
+  }
+
+  /**
+   * An {@link XmlAssignedField} cannot be equal to another {@link AssignedField} that, 
+   * although belonging to the same {@link Field}, has a different {@link FieldValue value}.
+   * 
+   * @throws ParseException 
+   * @since 1.0.0
+   */
+  @Test
+  public void notEqualsWithFieldOfDifferentValue() throws ParseException {
+    final String FIELD_XML =
+    "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
+    "  <value>Normal</value>\n" +
+    "  <valueId>Normal</valueId>\n" +
+    "  <color>\n" +
+    "    <bg>#e6f6cf</bg>\n" +
+    "    <fg>#4da400</fg>\n" +
+    "  </color>\n" +
+    "</field>";
+    final Field field = new MockField("Normal", new MockProject());
+    final Issue issue = new MockIssue(field.project());
+    assertFalse(
+        new XmlAssignedField(
+            field, 
+            issue,
+            new XmlObject(new StringAsDocument(FIELD_XML))
+        ).equals(
+            new MockAssignedField(field.name(), issue, "Some Other Value")
+        )
+    );
+  }
+
+  /**
+   * An {@link XmlAssignedField} cannot be equal to a field associated with a different project,
+   * even if both share the same name and value.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
+  @Test
+  public void notEqualsWithFieldOfDifferentProject() throws Exception {
+    final String FIELD_XML =
+    "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
+    "  <value>Normal</value>\n" +
+    "  <valueId>Normal</valueId>\n" +
+    "  <color>\n" +
+    "    <bg>#e6f6cf</bg>\n" +
+    "    <fg>#4da400</fg>\n" +
+    "  </color>\n" +
+    "</field>";
+    final Project project1 = new MockProject("PR-1", "Project Name 1", "desc1");
+    final Project project2 = new MockProject("PR-2", "Project Name 2", "desc2");
+    assertFalse(
+        new XmlAssignedField(
+            new MockField("Normal", project1),
+            new MockIssue(project1),
+            new XmlObject(new StringAsDocument(FIELD_XML))
+        ).equals(
+            new MockAssignedField(
+                "Normal", 
+                new MockIssue(project2), 
+                "Normal"
+            )
+        )
+    );
+  }
+
+  /**
+   * An {@link XmlAssignedField} cannot be equal to {@code null}.
+   * 
+   * @throws ParseException 
+   * @since 1.0.0
+   */
+  @Test
+  public void notEqualsWithNull() throws ParseException {
+    final String FIELD_XML =
+    "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
+    "  <value>Normal</value>\n" +
+    "  <valueId>Normal</valueId>\n" +
+    "  <color>\n" +
+    "    <bg>#e6f6cf</bg>\n" +
+    "    <fg>#4da400</fg>\n" +
+    "  </color>\n" +
+    "</field>";
+    assertFalse(
+        new XmlAssignedField(
+            new MockField("field", new MockProject()), 
+            new MockIssue(new MockProject()),
+            new XmlObject(new StringAsDocument(FIELD_XML))
+        ).equals(null)
+    );
+  }
+
+  /**
+   * An {@link XmlAssignedField} cannot be equal to an object that is not an {@link AssignedField}.
+   * 
+   * @throws ParseException 
+   * @since 1.0.0
+   */
+  @Test
+  public void notEqualsWithOtherType() throws ParseException {
+    final String FIELD_XML =
+    "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
+    "  <value>Normal</value>\n" +
+    "  <valueId>Normal</valueId>\n" +
+    "  <color>\n" +
+    "    <bg>#e6f6cf</bg>\n" +
+    "    <fg>#4da400</fg>\n" +
+    "  </color>\n" +
+    "</field>";
+    assertFalse(
+        new XmlAssignedField(
+            new MockField("field", new MockProject()), 
+            new MockIssue(new MockProject()),
+            new XmlObject(new StringAsDocument(FIELD_XML))
+        ).equals(new Object())
+    );
   }
 }
