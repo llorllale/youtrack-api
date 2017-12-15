@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.stream.Stream;
+import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -35,17 +36,31 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
   private static final String PATH_TEMPLATE = "/admin/project/%s/timetracking";
   private final Project project;
   private final Session session;
+  private final HttpClient httpClient;
 
   /**
    * Primary ctor.
    * 
    * @param project the parent {@link Project}
    * @param session the user's {@link Session}
+   * @param httpClient the {@link HttpClient} to use
+   * @since 1.0.0
+   */
+  DefaultProjectTimeTracking(Project project, Session session, HttpClient httpClient) {
+    this.project = project;
+    this.session = session;
+    this.httpClient = httpClient;
+  }
+
+  /**
+   * Ctor.
+   * 
+   * @param project the parent {@link Project}
+   * @param session the user's {@link Session}
    * @since 0.8.0
    */
   DefaultProjectTimeTracking(Project project, Session session) {
-    this.project = project;
-    this.session = session;
+    this(project, session, HttpClients.createDefault());
   }
   
   @Override
@@ -58,7 +73,7 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
     final XmlObject settings = new XmlObjects(
         "/settings",
         new HttpResponseAsResponse(
-            HttpClients.createDefault().execute(
+            this.httpClient.execute(
                 new HttpRequestWithSession(
                     this.session, 
                     new HttpGet(
@@ -83,7 +98,7 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
             new XmlObjects(
                 "/workItemTypes/workType",
                 new HttpResponseAsResponse(
-                    HttpClients.createDefault().execute(
+                    this.httpClient.execute(
                         new HttpRequestWithSession(
                             this.session, 
                             new HttpGet(
