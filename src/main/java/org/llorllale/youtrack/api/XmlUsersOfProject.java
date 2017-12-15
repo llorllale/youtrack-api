@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.stream.Stream;
+import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -35,6 +36,7 @@ class XmlUsersOfProject implements UsersOfProject {
   private final Project project;
   private final Session session;
   private final XmlObject xml;
+  private final HttpClient httpClient;
 
   /**
    * Primary ctor.
@@ -42,12 +44,26 @@ class XmlUsersOfProject implements UsersOfProject {
    * @param project the {@link Project} in scope
    * @param session the users's {@link Session}
    * @param xml the xml object received from YouTrack for this {@link #project() project}
+   * @param httpClient the {@link HttpClient} to use
    * @since 0.9.0
    */
-  XmlUsersOfProject(Project project, Session session, XmlObject xml) {
+  XmlUsersOfProject(Project project, Session session, XmlObject xml, HttpClient httpClient) {
     this.project = project;
     this.session = session;
     this.xml = xml;
+    this.httpClient = httpClient;
+  }
+
+  /**
+   * Ctor.
+   * 
+   * @param project the {@link Project} in scope
+   * @param session the users's {@link Session}
+   * @param xml the xml object received from YouTrack for this {@link #project() project}
+   * @since 1.0.0
+   */
+  XmlUsersOfProject(Project project, Session session, XmlObject xml) {
+    this(project, session, xml, HttpClients.createDefault());
   }
 
   @Override
@@ -61,7 +77,7 @@ class XmlUsersOfProject implements UsersOfProject {
         new XmlObjects(
             "/user",
             new HttpResponseAsResponse(
-                HttpClients.createDefault().execute(
+                this.httpClient.execute(
                     new HttpRequestWithSession(
                         this.session, 
                         new HttpGet(
@@ -78,7 +94,7 @@ class XmlUsersOfProject implements UsersOfProject {
   public Stream<User> assignees() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            () -> x -> this.user(x.textOf("//@value").get()),
+            () -> x -> this.user(x.textOf("@value").get()),
             this.xml.children("//assigneesLogin/sub")
         )
     );
