@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api.mock;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.llorllale.youtrack.api.ProjectField;
 import org.llorllale.youtrack.api.UsersOfProject;
 import org.llorllale.youtrack.api.YouTrack;
 import org.llorllale.youtrack.api.ProjectTimeTracking;
+import org.llorllale.youtrack.api.User;
 
 /**
  * Mock implementation of {@link Project} suitable for unit tests.
@@ -44,6 +46,7 @@ public class MockProject implements Project {
   private final String name;
   private final Optional<String> description;
   private final Map<Field, List<FieldValue>> fields;
+  private final List<User> users;
 
   /**
    * Primary ctor.
@@ -58,6 +61,7 @@ public class MockProject implements Project {
     this.name = name;
     this.description = Optional.of(description);
     this.fields = new HashMap<>();
+    this.users = new ArrayList<>();
   }
 
   /**
@@ -131,6 +135,18 @@ public class MockProject implements Project {
     );
   }
 
+  /**
+   * Adds {@code user} to the collection of configured {@link User users} for this project.
+   * 
+   * @param user the user to add
+   * @return this object
+   * @since 1.0.0
+   */
+  public MockProject withUser(User user) {
+    this.users.add(user);
+    return this;
+  }
+
   @Override
   public String id() {
     return this.id;
@@ -194,6 +210,6 @@ public class MockProject implements Project {
 
   @Override
   public UsersOfProject users() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    return new MockUsersOfProject(this, Collections.unmodifiableList(this.users));
   }
 }
