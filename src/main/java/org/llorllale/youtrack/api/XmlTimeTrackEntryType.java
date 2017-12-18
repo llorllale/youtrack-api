@@ -16,8 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.jaxb.WorkType;
-
 /**
  * Adapts a JAXB DTO to {@link TimeTrackEntryType}.
  * 
@@ -25,20 +23,20 @@ import org.llorllale.youtrack.api.jaxb.WorkType;
  * @since 0.8.0
  */
 class XmlTimeTrackEntryType implements TimeTrackEntryType {
-  private final WorkType jaxb;
+  private final XmlObject xml;
 
   /**
    * Ctor.
    * 
-   * @param jaxb the jaxb instance
+   * @param xml the xml recieved from YouTrack
    * @since 0.8.0
    */
-  XmlTimeTrackEntryType(WorkType jaxb) {
-    this.jaxb = jaxb;
+  XmlTimeTrackEntryType(XmlObject xml) {
+    this.xml = xml;
   }
 
   @Override
   public String asString() {
-    return this.jaxb.getName();
+    return this.xml.textOf("name").get();
   }
 }

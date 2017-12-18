@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.llorllale.youtrack.api.mock.MockField;
 import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
@@ -50,7 +51,15 @@ public class BasicFieldTest {
   @Test
   public void equalsOtherField() {
     assertTrue(
-        new BasicField("field", new MockProject()).equals(field("field", new MockProject()))
+        new BasicField(
+            "field", 
+            new MockProject()
+        ).equals(
+            new MockField(
+                "field", 
+                new MockProject()
+            )
+        )
     );
   }
 
@@ -64,7 +73,12 @@ public class BasicFieldTest {
   @Test
   public void notEqualsDiffProjects() {
     assertFalse(
-        new BasicField("field", new MockProject("p1", "p1", "")).equals(field("field", new MockProject("p2", "p2", "")))
+        new BasicField(
+            "field", 
+            new MockProject("p1", "p1", "")
+        ).equals(
+            new MockField("field", new MockProject("p2", "p2", ""))
+        )
     );
   }
 
@@ -73,29 +87,5 @@ public class BasicFieldTest {
     assertFalse(
         new BasicField("field", new MockProject()).equals(new Object())
     );
-  }
-
-  private Field field(String name, Project project) {
-    return new Field() {
-      @Override
-      public Project project() {
-        return project;
-      }
-
-      @Override
-      public String name() {
-        return name;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-        if(!(obj instanceof Field)) {
-          return false;
-        }
-
-        final Field other = (Field) obj;
-        return this.isSameField(other);
-      }
-    };
   }
 }

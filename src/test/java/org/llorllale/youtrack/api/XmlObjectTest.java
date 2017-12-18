@@ -16,118 +16,111 @@
 
 package org.llorllale.youtrack.api;
 
-import java.time.Instant;
+import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.empty;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
-import org.llorllale.youtrack.api.mock.MockAssignedField;
-import org.llorllale.youtrack.api.mock.MockProject;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 
 /**
- * Unit tests for {@link XmlIssue}.
- * 
+ * Unit tests for {@link XmlObject}.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 1.0.0
  */
-public class XmlIssueTest {
+public class XmlObjectTest {
   private static XmlObject xml;
 
   @BeforeClass
-  public static void setup() throws Exception {
-    xml = new XmlObject(new StringAsDocument(XML_ISSUE));
-  }
-
-  @Test
-  public void testId() {
-    assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).id(),
-        is("HBR-63")
-    );
-  }
-
-  @Test
-  public void testCreationDate() {
-    assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).creationDate(),
-        is(Instant.ofEpochMilli(1262171005630L))
-    );
-  }
-
-  @Test
-  public void testSummary() {
-    assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).summary(),
-        is("summary")
-    );
-  }
-
-  @Test
-  public void testDescription() {
-    assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).description().get(),
-        is("description")
-    );
-  }
-
-  @Test
-  public void testFields() {
-    assertThat(
-        new XmlIssue(new MockProject(), new MockSession(), xml).fields().size(),
-        is(3)
-    );
+  public static void setup() throws ParseException {
+    xml = new XmlObject(new StringAsDocument(XML));
   }
 
   /**
-   * {@link XmlIssue#spec()} should describe issue accurately.
+   * {@link XmlObject#textOf(java.lang.String)} must return the string value if given an 
+   * valid xpath.
    * 
    * @since 1.0.0
    */
   @Test
-  public void spec() {
-    final String summary = "summary";
-    final String description = "description";
-    final Issue issue = new XmlIssue(
-        new MockProject(),
-        new MockSession(),
-        xml
-    );
-
-    final IssueSpec expected = new IssueSpec(summary, description);
-    xml.children("//field[count(valueId) > 0]").stream().map(
-        x -> 
-            new MockAssignedField(
-                x.textOf("@name").get(), 
-                issue, 
-                x.textOf("value").get()
-            )
-    ).forEach(field -> expected.with(field, field.value()));
-
+  public void textAtWithValidXpath() {
     assertThat(
-        issue.spec(),
-        is(expected)
+        xml.textOf("@id"),
+        is(Optional.of("HBR-63"))
     );
   }
 
-  private static final String XML_ISSUE =
+  /**
+   * Result of {@link XmlObject#textOf(java.lang.String)} with an invalid xpath must be an empty
+   * optional.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void textAtWithInvalidXpath() {
+    assertFalse(
+        xml.textOf("//asdf").isPresent()
+    );
+  }
+
+  /**
+   * Result of {@link XmlObject#child(java.lang.String)} with an invalid xpath must be an empty
+   * optional.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void childWithInvalidXpath() {
+    assertFalse(
+        xml.child("//asdfd").isPresent()
+    );
+  }
+
+  /**
+   * {@link XmlObject#child(java.lang.String)} with a valid xpath must return the correct 
+   * {@link XmlObject}
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void childWithValidXpath() {
+    assertThat(
+        xml.child("//field[@name='attachments']").get().textOf("value").get(),
+        is("uploadFile.html")
+    );
+  }
+
+  /**
+   * Result of {@link XmlObject#children(java.lang.String)} with valid xpath should consist of a 
+   * collection of the expected size.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void testChildrenWithValidXpath() {
+    assertThat(
+        xml.children("//comment").size(),
+        is(2)
+    );
+  }
+
+  /**
+   * Result of {@link XmlObject#children(java.lang.String)} with an invalid xpath should be an 
+   * empty collection.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void testChildrenWithInvalidXpath() {
+    assertThat(
+        xml.children("//asdfb"),
+        is(empty())
+    );
+  }
+
+  private static final String XML =
 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
 "<issue id=\"HBR-63\">\n" +
 "    <field name=\"attachments\">\n" +
@@ -209,21 +202,5 @@ public class XmlIssueTest {
 "    <field name=\"votes\">\n" +
 "        <value>0</value>\n" +
 "    </field>\n" +
-"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
-"      <value>Normal</value>\n" +
-"      <valueId>Normal</valueId>\n" +
-"      <color>\n" +
-"        <bg>#e6f6cf</bg>\n" +
-"        <fg>#4da400</fg>\n" +
-"      </color>\n" +
-"    </field>\n" +
-"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Type\">\n" +
-"      <value>Task</value>\n" +
-"      <valueId>Task</valueId>\n" +
-"    </field>\n" +
-"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"State\">\n" +
-"      <value>Open</value>\n" +
-"      <valueId>Open</valueId>\n" +
-"    </field>" +
 "</issue>";
 }

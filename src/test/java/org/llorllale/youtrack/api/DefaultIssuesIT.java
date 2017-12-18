@@ -47,7 +47,7 @@ public class DefaultIssuesIT {
   public void testStream() throws Exception {
     final Issue issue = new DefaultIssues(project, session)
         .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testAll"), "description")
+            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testStream"), "description")
         );
 
     assertTrue(
@@ -61,7 +61,7 @@ public class DefaultIssuesIT {
   public void createAndGetIssue() throws Exception {
     final Issue issue = new DefaultIssues(project, session)
         .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat("testGet"), "description")
+            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testGet"), "description")
         );
 
     assertTrue(

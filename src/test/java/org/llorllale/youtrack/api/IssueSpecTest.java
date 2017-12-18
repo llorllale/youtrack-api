@@ -26,6 +26,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
+import org.llorllale.youtrack.api.mock.MockField;
+import org.llorllale.youtrack.api.mock.MockFieldValue;
+import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
  * Unit tests for {@link IssueSpec}.
@@ -52,10 +55,10 @@ public class IssueSpecTest {
    */
   @Test
   public void fields() {
-    final Field f1 = new TestField("field1");
-    final FieldValue v1 = new TestFieldValue("value1");
-    final Field f2 = new TestField("field2");
-    final FieldValue v2 = new TestFieldValue("value2");
+    final Field f1 = new MockField("field1", new MockProject());
+    final FieldValue v1 = new MockFieldValue(f1, "value1");
+    final Field f2 = new MockField("field2", new MockProject());
+    final FieldValue v2 = new MockFieldValue(f2, "value2");
 
     assertThat(
         new IssueSpec("", "").with(f1, v1).with(f2, v2).fields().entrySet(),
@@ -73,10 +76,10 @@ public class IssueSpecTest {
    */
   @Test
   public void equal() {
-    final Field f1 = new TestField("field1");
-    final FieldValue v1 = new TestFieldValue("value1");
-    final Field f2 = new TestField("field2");
-    final FieldValue v2 = new TestFieldValue("value2");   
+    final Field f1 = new MockField("field1", new MockProject());
+    final FieldValue v1 = new MockFieldValue(f1, "value1");
+    final Field f2 = new MockField("field2", new MockProject());
+    final FieldValue v2 = new MockFieldValue(f2, "value2");   
 
     assertThat(
         new IssueSpec("", "").with(f1, v1).with(f2, v2),
@@ -91,10 +94,10 @@ public class IssueSpecTest {
    */
   @Test
   public void notEqual() {
-    final Field f1 = new TestField("field1");
-    final FieldValue v1 = new TestFieldValue("value1");
-    final Field f2 = new TestField("field2");
-    final FieldValue v2 = new TestFieldValue("value2");   
+    final Field f1 = new MockField("field1", new MockProject());
+    final FieldValue v1 = new MockFieldValue(f1, "value1");
+    final Field f2 = new MockField("field2", new MockProject());
+    final FieldValue v2 = new MockFieldValue(f2, "value2");   
 
     assertThat(
         new IssueSpec("summary", "desc").with(f1, v1).with(f2, v2),
@@ -133,10 +136,10 @@ public class IssueSpecTest {
    */
   @Test
   public void equalsIfFalseWithDiffNameValuePairs() {
-    final Field f1 = new TestField("field1");
-    final FieldValue v1 = new TestFieldValue("value1");
-    final Field f2 = new TestField("field2");
-    final FieldValue v2 = new TestFieldValue("value2");
+    final Field f1 = new MockField("field1", new MockProject());
+    final FieldValue v1 = new MockFieldValue(f1, "value1");
+    final Field f2 = new MockField("field2", new MockProject());
+    final FieldValue v2 = new MockFieldValue(f2, "value2");
 
     assertFalse(
         new IssueSpec("summary").with(f1, v1).with(f2, v2).equals(
@@ -152,100 +155,18 @@ public class IssueSpecTest {
    */
   @Test
   public void testHashCode() {
+    final Field f1 = new MockField("f1", new MockProject());
+    final FieldValue v1 = new MockFieldValue(f1, "v1");
+    final Field f2 = new MockField("f2", new MockProject());
+    final FieldValue v2 = new MockFieldValue(f2, "v2");
     final IssueSpec spec = new IssueSpec("summary", "description")
-        .with(new TestField("f1"), new TestFieldValue("v1"))
-        .with(new TestField("f2"), new TestFieldValue("v2"));
+        .with(f1, v1)
+        .with(f2, v2);
 
     assertThat(
         spec.hashCode(),
         is(spec.nameValuePairs().hashCode() + spec.fields().hashCode())
     );
-  }
-
-  private static class TestField implements Field {
-    private final String name;
-
-    TestField(String name) {
-      this.name = name;
-    }
-
-    @Override
-    public Project project() {
-      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String name() {
-      return name;
-    }
-
-    @Override
-    public int hashCode() {
-      int hash = 7;
-      hash = 37 * hash + Objects.hashCode(this.name);
-      return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      final TestField other = (TestField) obj;
-      if (!Objects.equals(this.name, other.name)) {
-        return false;
-      }
-      return true;
-    }
-  }
-
-  private static class TestFieldValue implements FieldValue {
-    private final String string;
-
-    TestFieldValue(String string) {
-      this.string = string;
-    }
-
-    @Override
-    public Field field() {
-      throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String asString() {
-      return string;
-    }
-
-    @Override
-    public int hashCode() {
-      int hash = 7;
-      hash = 13 * hash + Objects.hashCode(this.string);
-      return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj) {
-        return true;
-      }
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      final TestFieldValue other = (TestFieldValue) obj;
-      if (!Objects.equals(this.string, other.string)) {
-        return false;
-      }
-      return true;
-    }
   }
 
   private static class MapEntry implements Map.Entry<Field,FieldValue> {

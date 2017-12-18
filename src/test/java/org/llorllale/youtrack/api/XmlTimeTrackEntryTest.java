@@ -28,16 +28,16 @@ import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
  * Unit tests for {@link XmlTimeTrackEntry}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public class XmlTimeTrackEntryTest {
-  private static org.llorllale.youtrack.api.jaxb.WorkItem jaxbWorkItem;
+  private static XmlObject xml;
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbWorkItem = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItem.class)
-        .apply(XML);
+    xml = new XmlObject(new StringAsDocument(XML));
   }
 
   @Test
@@ -45,7 +45,7 @@ public class XmlTimeTrackEntryTest {
     final Issue issue = issue();
 
     assertThat(
-        new XmlTimeTrackEntry(issue, jaxbWorkItem).issue(),
+        new XmlTimeTrackEntry(issue, xml).issue(),
         is(issue)
     );
   }
@@ -53,28 +53,28 @@ public class XmlTimeTrackEntryTest {
   @Test
   public void testDate() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), jaxbWorkItem).date(),
+        new XmlTimeTrackEntry(issue(), xml).date(),
         is(
-            Instant.ofEpochMilli(jaxbWorkItem.getDate())
+            Instant.ofEpochMilli(1480204800000L)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
         )
-);
+    );
   }
 
   @Test
   public void testDuration() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), jaxbWorkItem).duration(),
-        is(Duration.ofMinutes(jaxbWorkItem.getDuration()))
-);
+        new XmlTimeTrackEntry(issue(), xml).duration(),
+        is(Duration.ofMinutes(240))
+    );
   }
 
   @Test
   public void testDescription() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), jaxbWorkItem).description().get(),
-        is(jaxbWorkItem.getDescription())
+        new XmlTimeTrackEntry(issue(), xml).description().get(),
+        is("first work item")
 );
   }
 

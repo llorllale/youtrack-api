@@ -21,17 +21,16 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.BeforeClass;
-import org.llorllale.youtrack.api.jaxb.Sub;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Integration tests for {@link DefaultUsersOfProject}.
+ * Integration tests for {@link XmlUsersOfProject}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-public class DefaultUsersOfProjectIT {
+public class XmlUsersOfProjectIT {
   private static IntegrationTestsConfig config;
   private static Session session;
   private static Project project;
@@ -45,8 +44,7 @@ public class DefaultUsersOfProjectIT {
 
   @Test
   public void testUser() throws Exception {
-    assertThat(
-        new DefaultUsersOfProject(project, session, jaxb("random"))
+    assertThat(new XmlUsersOfProject(project, session, this.xmlObject("random"))
             .user(config.youtrackUser())
             .loginName(),
         is(config.youtrackUser())
@@ -55,20 +53,24 @@ public class DefaultUsersOfProjectIT {
 
   @Test
   public void testAssignees() throws Exception {
-    assertTrue(
-        new DefaultUsersOfProject(project, session, jaxb(config.youtrackUser()))
+    assertTrue(new XmlUsersOfProject(project, session, this.xmlObject(config.youtrackUser()))
             .assignees()
             .anyMatch(a -> config.youtrackUser().equals(a.loginName()))
     );
   }
 
-  private org.llorllale.youtrack.api.jaxb.Project jaxb(String assigneeLogin) {
-    final org.llorllale.youtrack.api.jaxb.Project project = new org.llorllale.youtrack.api.jaxb.Project();
-    final org.llorllale.youtrack.api.jaxb.Project.AssigneesLogin logins = new org.llorllale.youtrack.api.jaxb.Project.AssigneesLogin();
-    final Sub sub = new Sub();
-    sub.setValue(assigneeLogin);
-    logins.getSub().add(sub);
-    project.setAssigneesLogin(logins);
-    return project;
+  private XmlObject xmlObject(String assigneeLogin) throws Exception {
+    final String TEMPLATE = 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+        "<project>\n" +
+        "  <assigneesLogin>\n" +
+        "    <sub value=\"%s\"/>\n" +
+        "  </assigneesLogin>\n" +
+        "</project>";
+    return new XmlObject(
+        new StringAsDocument(
+            String.format(TEMPLATE, assigneeLogin)
+        )
+    );
   }
 }

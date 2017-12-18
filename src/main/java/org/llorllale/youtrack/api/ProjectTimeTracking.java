@@ -44,8 +44,15 @@ public interface ProjectTimeTracking {
   /**
    * Whether timetracking is enabled for the {@link Project} or not.
    * 
-   * @return {@code true} if timetracking is enabled for the {@link Project}, {@code false} 
-   *     otherwise
+   * <p>The determination is made by making sure that all these conditions are met:
+   * <ul>
+   *   <li>Timetracking is enabled for the project</li>
+   *   <li>An estimation field has been configured</li>
+   *   <li>A "time spent" field has been configured</li>
+   * </ul>
+   * 
+   * @return {@code true} if timetracking is enabled for the {@link Project} according to the rules
+   *     above, {@code false} otherwise
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation

@@ -22,10 +22,9 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import org.apache.http.client.HttpClient;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClients;
 
 /**
  * An {@link Iterator} that holds the contents of a single page of results from the YouTrack server.
@@ -39,8 +38,6 @@ import org.apache.http.impl.client.HttpClients;
  * @since 0.7.0
  */
 final class Page<T> implements Iterator<T> {
-  private final HttpUriRequest request;
-  private final ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper;
   private final Deque<T> contents;
 
   /**
@@ -48,33 +45,30 @@ final class Page<T> implements Iterator<T> {
    * 
    * @param request the {@link HttpUriRequest} for the page
    * @param mapper the mapping function to transform the results from YouTrack into types T
+   * @param httpClient the {@link HttpClient} to use
+   * @throws UncheckedException wrapping any IOException thrown when fetching this page's contents
    * @since 0.7.0
    */
   Page(
       HttpUriRequest request, 
-      ExceptionalFunction<HttpEntity, Collection<T>, IOException> mapper
-  ) {
-    this.request = request;
-    this.mapper = mapper;
-    this.contents = new ArrayDeque<>();
+      ExceptionalFunction<Response, Collection<T>, IOException> mapper,
+      HttpClient httpClient
+  ) throws UncheckedException {
+    try {
+      this.contents = new ArrayDeque<>(
+          mapper.apply(
+              new HttpResponseAsResponse(
+                  httpClient.execute(request)
+              )
+          )
+      );
+    } catch (IOException e) {
+      throw new UncheckedException(e);
+    }
   }
 
   @Override
   public boolean hasNext() {
-    if (this.contents.isEmpty()) {
-      try {
-        this.contents.addAll(
-            this.mapper.apply(
-                new HttpResponseAsResponse(
-                    HttpClients.createDefault().execute(this.request)
-                ).httpResponse().getEntity()
-            )
-        );
-      } catch (IOException e) {
-        throw new UncheckedException(e);
-      }
-    }
-
     return !this.contents.isEmpty();
   }
 
@@ -94,7 +88,7 @@ final class Page<T> implements Iterator<T> {
    * @param <T> the type parameter for the results enclosed
    * @since 0.7.0
    */
-  public static final class Empty<T> implements Iterator<T> {
+  static final class Empty<T> implements Iterator<T> {
     @Override
     public boolean hasNext() {
       return false;

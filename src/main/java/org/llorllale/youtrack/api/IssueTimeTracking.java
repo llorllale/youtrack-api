@@ -185,12 +185,7 @@ public interface IssueTimeTracking {
                   )
           ).append("</date>")
           .append("<duration>")
-          .append(String.valueOf(
-                      this.date.atStartOfDay()
-                          .atZone(ZoneId.systemDefault())
-                          .toInstant()
-                          .toEpochMilli()
-                  )
+          .append(String.valueOf(this.duration.toMinutes())
           ).append("</duration>")
           .append("<description>")
           .append(this.description.orElse(""))

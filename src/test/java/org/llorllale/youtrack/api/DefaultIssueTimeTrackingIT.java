@@ -56,7 +56,8 @@ public class DefaultIssueTimeTrackingIT {
 
   @Test
   public void createAndCountAll() throws Exception {
-    assertThat(new DefaultIssueTimeTracking(session, issue)
+    assertThat(
+        new DefaultIssueTimeTracking(session, issue)
             .create(new EntrySpec(Duration.ofMinutes(45)))
             .create(new EntrySpec(Duration.ofHours(1)))
             .stream()

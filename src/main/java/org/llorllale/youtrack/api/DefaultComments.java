@@ -17,7 +17,6 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -74,8 +73,10 @@ class DefaultComments implements Comments {
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            new Mapping<Response, Collection<org.llorllale.youtrack.api.jaxb.Comment>>(
-                () -> new HttpResponseAsResponse(
+            xml -> new XmlComment(this.issue(), this.session, xml),
+            new XmlObjects(
+                "//comment",
+                new HttpResponseAsResponse(
                     this.httpClient.execute(
                         new HttpRequestWithSession(
                             this.session, 
@@ -87,11 +88,8 @@ class DefaultComments implements Comments {
                             )
                         )
                     )
-                ),
-                resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Comments.class)
-                    .apply(resp.httpResponse().getEntity()).getComment()
-            ),
-            c -> new XmlComment(this.issue(), this.session, c)
+                )
+            )
         )
     );
   }

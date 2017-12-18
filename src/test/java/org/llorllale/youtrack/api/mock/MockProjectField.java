@@ -14,28 +14,44 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.FieldValue;
+import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.ProjectField;
 
 /**
- * Default impl of {@link Field}.
- * 
+ * Mock implementation of {@link ProjectField} suitable for tests.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
+ * @since 1.0.0
  */
-class BasicField implements Field {
+public class MockProjectField implements ProjectField {
   private final String name;
   private final Project project;
+  private final Stream<FieldValue> values;
 
   /**
    * Primary ctor.
    * 
-   * @param name the field's name
-   * @param project the parent {@link Project}
-   * @since 0.8.0
+   * @param name this field's name
+   * @param project the associated project
+   * @param values this project field's set of possible values
+   * @since 1.0.0
    */
-  BasicField(String name, Project project) {
+  public MockProjectField(String name, Project project, FieldValue... values) {
     this.name = name;
     this.project = project;
+    this.values = Arrays.asList(values).stream();
+  }
+
+
+  @Override
+  public Stream<FieldValue> values() {
+    return this.values;
   }
 
   @Override
@@ -55,10 +71,6 @@ class BasicField implements Field {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-
     if (!(obj instanceof Field)) {
       return false;
     }

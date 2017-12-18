@@ -23,28 +23,25 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 /**
- * <p>JAXB implementation of {@link WorkItem}.</p>
- * 
- * <p>This class adapts {@link org.llorllale.youtrack.api.issues.jaxb.WorkItem} into 
- * {@link WorkItem}.</p>
+ * Xml impl of {@link TimeTrackEntry}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
 class XmlTimeTrackEntry implements TimeTrackEntry {
   private final Issue issue;
-  private final org.llorllale.youtrack.api.jaxb.WorkItem jaxbWorkItem;
+  private final XmlObject xml;
 
   /**
    * Ctor.
    * 
    * @param issue the parent issue
-   * @param jaxbWorkItem the JAXB class 
+   * @param xml the XML received from YouTrack
    * @since 0.3.0
    */
-  XmlTimeTrackEntry(Issue issue, org.llorllale.youtrack.api.jaxb.WorkItem jaxbWorkItem) {
+  XmlTimeTrackEntry(Issue issue, XmlObject xml) {
     this.issue = issue;
-    this.jaxbWorkItem = jaxbWorkItem;
+    this.xml = xml;
   }
 
   @Override
@@ -54,24 +51,26 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
 
   @Override
   public LocalDate date() {
-    return Instant.ofEpochMilli(this.jaxbWorkItem.getDate())
-        .atZone(ZoneId.systemDefault())
+    return Instant.ofEpochMilli(
+        Long.parseLong(
+            this.xml.textOf("date").get()
+        )
+    ).atZone(ZoneId.systemDefault())
         .toLocalDate();
   }
 
   @Override
   public Duration duration() {
-    return Duration.ofMinutes(this.jaxbWorkItem.getDuration());
+    return Duration.ofMinutes(Long.parseLong(this.xml.textOf("duration").get()));
   }
 
   @Override
   public Optional<String> description() {
-    return Optional.ofNullable(this.jaxbWorkItem.getDescription());
+    return this.xml.textOf("description");
   }
 
   @Override
   public Optional<TimeTrackEntryType> type() {
-    return Optional.ofNullable(this.jaxbWorkItem.getWorkType())
-        .map(XmlTimeTrackEntryType::new);
+    return this.xml.child("workType").map(XmlTimeTrackEntryType::new);
   }
 }

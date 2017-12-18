@@ -21,6 +21,8 @@ import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Handy class that maps a collection of type {@code I} to one of type {@code O} by applying 
@@ -38,46 +40,37 @@ final class MappedCollection<I, O> extends AbstractCollection<O> {
   private final Collection<O> output;
 
   /**
-   * Eagerly applies {@code function} on each element of {@code collection} in order to implement
-   * the {@link Collection} contract. 
+   * Similar to {@link #MappedCollection(Collection, ExceptionalFunction)}.
    * 
-   * <p>The behaviour is like this:<br>
-   * <pre>  {@code for (I e : collection) {
-   *      this.add(function.apply(e));
-   *   }}</pre>
-   * 
-   * <p>Iteration stops if {@code function} throws exception {@code E}, which in turn is propagated 
-   * back to the caller.
-   * 
-   * @param collection input collection to map
    * @param mappingFunction the {@link ExceptionalFunction mapping function}
-   * @throws IOException from the {@code mappingFunction}
-   * @since 0.9.0
+   * @param collection input collection to map
+   * @see #MappedCollection(Collection, Supplier) 
+   * @since 1.0.0
    */
-  MappedCollection(
-      Collection<I> collection, 
-      ExceptionalFunction<I, O, IOException> mappingFunction
-  ) throws IOException {
+  MappedCollection(Function<I, O> mappingFunction, Collection<I> collection) {
     this.output = new ArrayList<>();
-    for (I i : collection) {
-      this.output.add(mappingFunction.apply(i));
-    }
+    collection.forEach(item -> {
+      this.output.add(mappingFunction.apply(item));
+    });
   }
 
   /**
    * Uses the collection supplied by the {@code supplier}.
    * 
-   * @param supplier supplies the collection to map
    * @param function the mapping function
+   * @param collection the collection to map
    * @throws IOException from the {@code supplier}
    * @see #MappedCollection(Collection, ExceptionalFunction) 
    * @since 1.0.0
    */
   MappedCollection(
-      ExceptionalSupplier<Collection<I>, IOException> supplier, 
-      ExceptionalFunction<I, O, IOException> function
+      Supplier<ExceptionalFunction<I, O, IOException>> function,
+      Collection<I> collection
   ) throws IOException {
-    this(supplier.get(), function);
+    this.output = new ArrayList<>();
+    for (I i : collection) {
+      this.output.add(function.get().apply(i));
+    }
   }
 
   @Override

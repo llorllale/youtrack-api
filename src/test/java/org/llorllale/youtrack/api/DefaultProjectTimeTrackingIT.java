@@ -31,7 +31,7 @@ import org.llorllale.youtrack.api.session.Session;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-public class DefaultTimeTrackingIT {
+public class DefaultProjectTimeTrackingIT {
   private static Session session;
   private static Project project;
 

@@ -27,26 +27,25 @@ import org.llorllale.youtrack.api.mock.http.MockSession;
 
 /**
  * Unit tests for {@link XmlProject}.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 public class XmlProjectTest {
-  private static org.llorllale.youtrack.api.jaxb.Project jaxbProjectWithShortName;
-  private static org.llorllale.youtrack.api.jaxb.Project jaxbProjectWithId;
+  private static XmlObject xmlProjectWithShortName;
+  private static XmlObject xmlProjectWithId;
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxbProjectWithShortName = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class)
-        .apply(PROJECT_WITH_SHORTNAME);
-    jaxbProjectWithId = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class)
-        .apply(PROJECT_WITH_ID);
+    xmlProjectWithShortName = new XmlObject(new StringAsDocument(PROJECT_WITH_SHORTNAME));
+    xmlProjectWithId = new XmlObject(new StringAsDocument(PROJECT_WITH_ID));
   }
 
   @Test
   public void testIdFromShortName() {
     assertThat(
-        new XmlProject(null, new MockSession(), jaxbProjectWithShortName).id(),
-        is(jaxbProjectWithShortName.getShortName())
+        new XmlProject(null, new MockSession(), xmlProjectWithShortName).id(),
+        is("HBR")
     );
   }
 
@@ -57,44 +56,44 @@ public class XmlProjectTest {
   @Test
   public void testIdFromId() {
     assertThat(
-        new XmlProject(null, new MockSession(), jaxbProjectWithId).id(),
-        is(jaxbProjectWithId.getId())
+        new XmlProject(null, new MockSession(), xmlProjectWithId).id(),
+        is("IT-TEST")
     );
   }
 
   @Test
   public void testName() {
     assertThat(
-        new XmlProject(null, new MockSession(), jaxbProjectWithShortName).name(),
-        is(jaxbProjectWithShortName.getName())
+        new XmlProject(null, new MockSession(), xmlProjectWithShortName).name(),
+        is("Hibero")
     );
   }
 
   @Test
   public void testDescription() {
     assertThat(
-        new XmlProject(null, new MockSession(), jaxbProjectWithShortName).description().get(),
-        is(jaxbProjectWithShortName.getDescription())
+        new XmlProject(null, new MockSession(), xmlProjectWithShortName).description().get(),
+        is("Makes developing Hibernate applications a pleasure.")
     );
   }
 
   @Test
   public void notEqualsNull() {
     assertFalse(
-        new XmlProject(null, null, jaxbProjectWithId).equals(null)
+        new XmlProject(null, null, xmlProjectWithId).equals(null)
     );
   }
 
   @Test
   public void notEqualsObject() {
     assertFalse(
-        new XmlProject(null, null, jaxbProjectWithId).equals(new Object())
+        new XmlProject(null, null, xmlProjectWithId).equals(new Object())
     );
   }
 
   @Test
   public void equalsItself() {
-    final Project p = new XmlProject(null, null, jaxbProjectWithId);
+    final Project p = new XmlProject(null, null, xmlProjectWithId);
 
     assertTrue(
         p.equals(p)
@@ -104,14 +103,14 @@ public class XmlProjectTest {
   @Test
   public void equalsOtherProjectSameId() {
     assertTrue(
-        new XmlProject(null, null, jaxbProjectWithShortName).equals(new MockProject(jaxbProjectWithShortName.getShortName(), "", ""))
+        new XmlProject(null, null, xmlProjectWithShortName).equals(new MockProject("HBR", "", ""))
     );
   }
 
   @Test
   public void notEqualsOtherProjectWithDiffId() {
     assertFalse(
-        new XmlProject(null, null, jaxbProjectWithShortName).equals(new MockProject(jaxbProjectWithId.getId(), "", ""))
+        new XmlProject(null, null, xmlProjectWithShortName).equals(new MockProject("IT-TEST", "", ""))
     );
   }
 

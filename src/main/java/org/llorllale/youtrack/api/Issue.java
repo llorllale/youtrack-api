@@ -18,7 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 
@@ -130,7 +130,7 @@ public interface Issue {
    * @see UpdateIssue#fields(java.util.Map) 
    * @since 0.8.0
    */
-  List<AssignedField> fields();
+  Collection<AssignedField> fields();
 
   /**
    * An {@link IssueSpec} serving as a blueprint for this {@link Issue}.

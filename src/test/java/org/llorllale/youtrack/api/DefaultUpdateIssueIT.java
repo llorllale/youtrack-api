@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.HashMap;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 import org.junit.BeforeClass;
@@ -118,15 +119,22 @@ public class DefaultUpdateIssueIT {
         .filter(v -> !v.equals(oldValue2))
         .findAny().get();
 
+    new DefaultUpdateIssue(issue, session).fields(
+        new HashMap<Field, FieldValue>(){{
+            put(field1, newValue1);
+            put(field2, newValue2);
+        }}
+    );
+
     assertNotEquals(
-        new DefaultUpdateIssue(issue, session).field(field1, newValue1).fields().stream()
+        issue.refresh().fields().stream()
             .filter(f -> f.isSameField(field1))
             .map(AssignedField::value).findAny().get(),
         oldValue1
     );
 
     assertNotEquals(
-        new DefaultUpdateIssue(issue, session).field(field2, newValue2).fields().stream()
+        issue.refresh().fields().stream()
             .filter(f -> f.isSameField(field2))
             .map(AssignedField::value).findAny().get(),
         oldValue2

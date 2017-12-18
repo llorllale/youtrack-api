@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
+
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.Project;
 
 /**
- * Default impl of {@link Field}.
- * 
+ * Mock implementation of {@link Field} suitable for tests.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
+ * @since 1.0.0
  */
-class BasicField implements Field {
+public class MockField implements Field {
   private final String name;
   private final Project project;
 
   /**
-   * Primary ctor.
+   * Ctor.
    * 
    * @param name the field's name
-   * @param project the parent {@link Project}
-   * @since 0.8.0
+   * @param project the project to which this field belongs to
+   * @since 1.0.0
    */
-  BasicField(String name, Project project) {
+  public MockField(String name, Project project) {
     this.name = name;
     this.project = project;
   }
@@ -49,21 +52,17 @@ class BasicField implements Field {
   }
 
   @Override
-  public int hashCode() {
-    return this.name().hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-
-    if (!(obj instanceof Field)) {
+  public boolean equals(Object object) {
+    if (!(object instanceof Field)) {
       return false;
     }
 
-    final Field other = (Field) obj;
+    final Field other = (Field) object;
     return this.isSameField(other);
+  }
+
+  @Override
+  public int hashCode() {
+    return this.name().hashCode();
   }
 }

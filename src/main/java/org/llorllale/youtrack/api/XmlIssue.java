@@ -18,10 +18,8 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
+import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 
 import org.llorllale.youtrack.api.session.Session;
@@ -36,70 +34,48 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
-  private final org.llorllale.youtrack.api.jaxb.Issue jaxbIssue;
+  private final XmlObject xml;
 
   /**
    * Primary ctor.
    * 
    * @param project this {@link Issue issue's} {@link Project}
    * @param session the user's {@link Session}
-   * @param jaxbIssue the JAXB issue to be adapted
+   * @param xml the xml object received from YouTrack
    * @since 0.1.0
    */
   XmlIssue(
       Project project, 
       Session session, 
-      org.llorllale.youtrack.api.jaxb.Issue jaxbIssue
+      XmlObject xml
   ) {
     this.project = project;
     this.session = session;
-    this.jaxbIssue = jaxbIssue;
-  }
-
-  /**
-   * For testing purposes.
-   * 
-   * @param prototype the prototype
-   * @since 0.8.0
-   */
-  XmlIssue(XmlIssue prototype) {
-    this(prototype.project(), prototype.session, prototype.jaxbIssue);
+    this.xml = xml;
   }
 
   @Override
   public String id() {
-    return this.jaxbIssue.getId();
+    return this.xml.textOf("@id").get();
   }
 
   @Override
   public Instant creationDate() {
-    return Instant.ofEpochMilli(this.jaxbIssue.getField()
-            .stream()
-            .filter(f -> "created".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .map(Long::valueOf)
-            .findFirst()
-            .get()
+    return Instant.ofEpochMilli(
+        Long.parseLong(
+            this.xml.textOf("//field[@name = 'created']/value").get()
+        )
     );
   }
 
   @Override
   public String summary() {
-    return this.jaxbIssue.getField()
-            .stream()
-            .filter(f -> "summary".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findFirst()
-            .get();
+    return this.xml.textOf("//field[@name = 'summary']/value").get();
   }
 
   @Override
   public Optional<String> description() {
-    return this.jaxbIssue.getField()
-            .stream()
-            .filter(f -> "description".equals(f.getName()))
-            .map(f -> f.getValue().getValue())
-            .findAny();
+    return this.xml.textOf("//field[@name = 'description']/value");
   }
 
   @Override
@@ -119,7 +95,7 @@ class XmlIssue implements Issue {
 
   @Override
   public UsersOfIssue users() {
-    return new DefaultUsersOfIssue(this, this.jaxbIssue);
+    return new XmlUsersOfIssue(this, this.xml);
   }
 
   @Override
@@ -135,16 +111,16 @@ class XmlIssue implements Issue {
   }
 
   @Override
-  public List<AssignedField> fields() {
-    return this.jaxbIssue.getField().stream()
-        .filter(f -> Objects.nonNull(f.getValueId()))
-        .map(f -> 
-            new DefaultAssignedField(
-                new BasicField(f.getName(), this.project),
-                this, 
-                f
-            )
-        ).collect(Collectors.toList());
+  public Collection<AssignedField> fields() {
+    return new MappedCollection<>(
+        x -> 
+            new XmlAssignedField(
+                new BasicField(x.textOf("@name").get(), this.project()),
+                this,
+                x
+            ),
+        this.xml.children("//field[count(valueId) > 0]")
+    );
   }
 
   @Override

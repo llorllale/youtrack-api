@@ -62,7 +62,7 @@ public class XmlCommentIT {
         .filter(c -> initialText.equals(c.text()))
         .findFirst()
         .get();
-    new XmlComment(issue, session, this.jaxb(comment)).update(finalText);
+    new XmlComment(issue, session, this.xmlObject(comment)).update(finalText);
 
     assertTrue(
         issue.comments().stream().noneMatch(c -> initialText.equals(c.text()))
@@ -81,19 +81,29 @@ public class XmlCommentIT {
         .filter(c -> initialText.equals(c.text()))
         .findFirst()
         .get();
-    new XmlComment(issue, session, this.jaxb(comment)).delete();
+    new XmlComment(issue, session, this.xmlObject(comment)).delete();
 
     assertTrue(
         issue.comments().stream().noneMatch(c -> comment.id().equals(c.id()))
     );
   }
 
-  private org.llorllale.youtrack.api.jaxb.Comment jaxb(Comment base) {
-     final org.llorllale.youtrack.api.jaxb.Comment jaxb = new org.llorllale.youtrack.api.jaxb.Comment();
-     jaxb.setId(base.id());
-     jaxb.setCreated(base.creationDate().toEpochMilli());
-     jaxb.setIssueId(base.issue().id());
-     jaxb.setText(base.text());
-     return jaxb;
+  private XmlObject xmlObject(Comment base) throws Exception {
+    return new XmlObject(
+        new StringAsDocument(
+            COMMENT_TEMPLATE
+                .replace("%ID%", base.id())
+                .replace("%ISSUE%", base.issue().id())
+                .replace("%TEXT%", base.text())
+                .replace("%CREATED%", String.valueOf(base.creationDate().toEpochMilli()))
+        )
+    );
   }
+
+  private static final String COMMENT_TEMPLATE =
+"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
+"<comment id=\"%ID%\" author=\"%AUTHOR%\" issueId=\"%ISSUE%\" deleted=\"false\" text=\"%TEXT%\" shownForIssueAuthor=\"false\"\n" +
+"         created=\"%CREATED%\" updated=\"1267030230127\">\n" +
+"  <replies/>\n" +
+"</comment>";
 }

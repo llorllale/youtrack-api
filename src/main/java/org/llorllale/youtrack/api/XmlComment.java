@@ -66,11 +66,17 @@ final class XmlComment implements Comment {
    * 
    * @param issue the {@link Issue} to which this comment is attached
    * @param session the user's session
-   * @param jaxbComment the jaxb instance to be adapted into {@link Comment}
-   * @since 0.2.0
+   * @param xml comment's XML object received from YouTrack
+   * @throws UncheckedException from {@link XmlObject#textOf(java.lang.String)}
+   * @since 1.0.0
    */
-  XmlComment(Issue issue, Session session, org.llorllale.youtrack.api.jaxb.Comment jaxbComment) {
-    this(jaxbComment.getId(), jaxbComment.getCreated(), jaxbComment.getText(), issue, session);
+  XmlComment(Issue issue, Session session, XmlObject xml) throws UncheckedException {
+    this(xml.textOf("//@id").get(), 
+        Long.parseLong(xml.textOf("//@created").get()), 
+        xml.textOf("//@text").get(), 
+        issue, 
+        session
+    );
   }
 
   @Override

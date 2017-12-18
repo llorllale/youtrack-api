@@ -27,22 +27,23 @@ import static org.junit.Assert.*;
  * @since 0.4.0
  */
 public class XmlUserTest {
-  private static org.llorllale.youtrack.api.jaxb.User jaxbUser;
+  private static XmlObject xml;
 
   @BeforeClass
   public static void setUpClass() throws Exception {
-    jaxbUser = new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.User.class).apply(USER);
+    xml = new XmlObject(new StringAsDocument(USER));
   }
 
   /**
    * Test of name method, of class XmlUser.
+   * 
    * @since 0.4.0
    */
   @Test
   public void testName() {
     assertThat(
-        new XmlUser(jaxbUser).name(),
-        is(jaxbUser.getFullName())
+        new XmlUser(xml).name(),
+        is("Application Exception")
     );
   }
 
@@ -53,16 +54,16 @@ public class XmlUserTest {
   @Test
   public void testEmail() {
     assertThat(
-        new XmlUser(jaxbUser).email(),
-        is(jaxbUser.getEmail())
+        new XmlUser(xml).email(),
+        is("vadim.gurov@gmail.com")
     );
   }
 
   @Test
   public void testLoginName() {
     assertThat(
-        new XmlUser(jaxbUser).loginName(),
-        is(jaxbUser.getLogin())
+        new XmlUser(xml).loginName(),
+        is("exception")
     );
   }
 

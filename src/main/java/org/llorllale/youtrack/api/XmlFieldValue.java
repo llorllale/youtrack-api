@@ -16,28 +16,25 @@
 
 package org.llorllale.youtrack.api;
 
-import java.util.Objects;
-
-import org.llorllale.youtrack.api.jaxb.Value;
-
 /**
- * JAXB impl of {@link FieldValue}.
+ * XML impl of {@link FieldValue}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
 class XmlFieldValue implements FieldValue {
-  private final Value jaxb;
+  private final XmlObject xml;
   private final Field field;
 
   /**
    * Primary ctor.
-   * @param jaxb the jaxb instance to adapt
+   * 
+   * @param xml the xml recieved from YouTrack
    * @param field the parent {@link Field}
    * @since 0.8.0
    */
-  XmlFieldValue(Value jaxb, Field field) {
-    this.jaxb = jaxb;
+  XmlFieldValue(XmlObject xml, Field field) {
+    this.xml = xml;
     this.field = field;
   }
 
@@ -48,15 +45,12 @@ class XmlFieldValue implements FieldValue {
 
   @Override
   public String asString() {
-    return this.jaxb.getValue();
+    return this.xml.textOf("text()").get();
   }
 
   @Override
   public int hashCode() {
-    int hash = 7;
-    hash = 59 * hash + Objects.hashCode(this.asString());
-    hash = 59 * hash + Objects.hashCode(this.field);
-    return hash;
+    return this.asString().hashCode();
   }
 
   @Override
@@ -66,11 +60,6 @@ class XmlFieldValue implements FieldValue {
     }
 
     final FieldValue other = (FieldValue) obj;
-
-    if (!Objects.equals(this.asString(), other.asString())) {
-      return false;
-    }
-
-    return Objects.equals(this.field(), other.field());
+    return this.isEqualTo(other);
   }
 }

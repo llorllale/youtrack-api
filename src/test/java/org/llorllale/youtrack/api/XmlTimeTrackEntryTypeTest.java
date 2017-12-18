@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.BeforeClass;
-import org.llorllale.youtrack.api.jaxb.WorkType;
 
 /**
  * Unit tests for {@link XmlTimeTrackEntryType}.
@@ -29,18 +28,18 @@ import org.llorllale.youtrack.api.jaxb.WorkType;
  * @since 0.8.0
  */
 public class XmlTimeTrackEntryTypeTest {
-  private static WorkType jaxb;
+  private static XmlObject xml;
 
   @BeforeClass
   public static void setup() throws Exception {
-    jaxb = new XmlStringAsJaxb<>(WorkType.class).apply(WORK_TYPE);
+    xml = new XmlObject(new StringAsDocument(WORK_TYPE));
   }
 
   @Test
   public void testAsString() {
     assertThat(
-        new XmlTimeTrackEntryType(jaxb).asString(),
-        is(jaxb.getName())
+        new XmlTimeTrackEntryType(xml).asString(),
+        is("Development")
     );
   }
 

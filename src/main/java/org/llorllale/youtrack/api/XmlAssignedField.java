@@ -28,23 +28,23 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class DefaultAssignedField implements AssignedField {
+class XmlAssignedField implements AssignedField {
   private final Field field;
   private final Issue issue;
-  private final org.llorllale.youtrack.api.jaxb.Field jaxb;
+  private final XmlObject xml;
 
   /**
    * Ctor.
    * 
    * @param field the {@link Field} to adapt
    * @param issue the parent {@link Issue}
-   * @param jaxb the jaxb instance
+   * @param xml the jaxb instance
    * @since 0.8.0
    */
-  DefaultAssignedField(Field field, Issue issue, org.llorllale.youtrack.api.jaxb.Field jaxb) {
+  XmlAssignedField(Field field, Issue issue, XmlObject xml) {
     this.field = field;
     this.issue = issue;
-    this.jaxb = jaxb;
+    this.xml = xml;
   }
 
   @Override
@@ -54,13 +54,13 @@ class DefaultAssignedField implements AssignedField {
 
   @Override
   public FieldValue value() {
-    return new XmlFieldValue(this.jaxb.getValue(), this);
+    return new XmlFieldValue(this.xml.child("value").get(), this);
   }
 
   @Override
   public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException {
     return this.project().fields().stream()
-        .filter(f -> f.name().equals(this.name()))
+        .filter(f -> f.isSameField(this))
         .findAny()
         .get()
         .values()
@@ -79,11 +79,16 @@ class DefaultAssignedField implements AssignedField {
 
   @Override
   public int hashCode() {
-    return this.field.hashCode();
+    return this.name().hashCode();
   }
 
   @Override
-  public boolean equals(Object other) {
-    return this.field.equals(other);
+  public boolean equals(Object object) {
+    if (!(object instanceof AssignedField)) {
+      return false;
+    }
+
+    final AssignedField other = (AssignedField) object;
+    return this.field.isSameField(other) && this.value().equals(other.value());
   }
 }

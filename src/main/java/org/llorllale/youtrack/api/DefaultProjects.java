@@ -68,9 +68,11 @@ class DefaultProjects implements Projects {
   @Override
   public Stream<Project> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<org.llorllale.youtrack.api.jaxb.Project, Project>(
-            new Mapping<>(
-                () -> new HttpResponseAsResponse(
+        new MappedCollection<>(
+            xml -> new XmlProject(this.youtrack, this.session, xml),
+            new XmlObjects(
+                "/projects/project",
+                new HttpResponseAsResponse(
                     this.httpClient.execute(
                         new HttpRequestWithSession(
                             this.session, 
@@ -79,19 +81,18 @@ class DefaultProjects implements Projects {
                             )
                         )
                     )
-                ),
-                resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.Projects.class)
-                    .apply(resp.httpResponse().getEntity()).getProject()
-            ),
-            p -> new XmlProject(this.youtrack, this.session, p)
+                )
+            )
         )
     );
   }
 
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
-    return new MapIfNoError<Project>(
-        () -> Optional.ofNullable(
+    return new MappedCollection<XmlObject, Project>(
+        xml -> new XmlProject(this.youtrack, this.session, xml),
+        new XmlObjects(
+            "/project",
             new HttpResponseAsResponse(
                 this.httpClient.execute(
                     new HttpRequestWithSession(
@@ -103,14 +104,8 @@ class DefaultProjects implements Projects {
                         )
                     )
                 )
-            ).httpResponse().getEntity()
-        ),
-        xml -> 
-            new XmlProject(
-                this.youtrack, 
-                this.session, 
-                new XmlStringAsJaxb<>(org.llorllale.youtrack.api.jaxb.Project.class).apply(xml)
             )
-    ).get();
+        )
+    ).stream().findAny();
   }
 }

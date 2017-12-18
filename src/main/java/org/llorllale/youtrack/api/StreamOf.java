@@ -16,7 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -85,17 +84,6 @@ final class StreamOf<T> implements Stream<T> {
             false
         )
     );
-  }
-
-  /**
-   * Encapsulates the given supplier as a stream.
-   * 
-   * @param supplier the supplier to encapsulate
-   * @throws IOException from the {@link ExceptionalSupplier supplier}
-   * @since 1.0.0
-   */
-  StreamOf(ExceptionalSupplier<Collection<T>, IOException> supplier) throws IOException {
-    this(supplier.get());
   }
 
   @Override

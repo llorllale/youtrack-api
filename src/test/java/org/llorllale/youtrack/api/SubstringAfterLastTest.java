@@ -16,21 +16,22 @@
 
 package org.llorllale.youtrack.api;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
 /**
- * Generic supplier that can throw an exception.
+ * Unit tests for {@link SubstringAfterLast}.
  *
  * @author George Aristy (george.aristy@gmail.com)
- * @param <T> the type of objects produced by this supplier
- * @param <E> the exception's type
  * @since 1.0.0
  */
-interface ExceptionalSupplier<T, E extends Exception> {
-  /**
-   * Returns an instance of {@code T}.
-   * 
-   * @return an instance of {@code T}
-   * @throws E if there's an error
-   * @since 1.0.0
-   */
-  T get() throws E;
+public class SubstringAfterLastTest {
+  @Test
+  public void testGet() {
+    assertThat(
+        new SubstringAfterLast("http://some.host.com:8080/some/path/to/some/resource", "/").get(),
+        is("resource")
+    );
+  }
 }

@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.BeforeClass;
@@ -23,7 +24,7 @@ import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 
 /**
- * Integration tests for {@link DefaultAssignedField}.
+ * Integration tests for {@link XmlAssignedField}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
@@ -49,22 +50,33 @@ public class DefaultAssignedFieldIT {
 
   @Test
   public void testChange() throws Exception {
-    final DefaultAssignedField field = (DefaultAssignedField) issue.fields().get(0);
-    final FieldValue other = issue.project().fields().stream()
+    final XmlAssignedField field = (XmlAssignedField) issue.fields().stream().findFirst().get();
+    final FieldValue originalValue = field.value();
+    final FieldValue newValue = issue.project().fields().stream()
         .filter(f -> field.isSameField(f))
-        .findAny()
-        .get()
+        .findAny().get()
         .values()
-        .findAny()
-        .get();
+        .filter(v -> !v.isEqualTo(originalValue))
+        .findAny().get();
+    final Issue updatedIssue = field.change()
+        .filter(v -> v.isEqualTo(newValue))
+        .findAny().get()
+        .apply();
 
-    assertTrue(
-        field.change().filter(v -> v.isEqualTo(other))
-            .findAny().get().apply().fields().stream()
+    assertFalse(
+        updatedIssue.fields().stream()
             .filter(f -> f.isSameField(field))
             .findAny().get()
             .value()
-            .isEqualTo(other)
+            .isEqualTo(originalValue)
+    );
+
+    assertTrue(
+         updatedIssue.fields().stream()
+            .filter(f -> f.isSameField(field))
+            .findAny().get()
+            .value()
+            .isEqualTo(newValue)   
     );
   }
 }

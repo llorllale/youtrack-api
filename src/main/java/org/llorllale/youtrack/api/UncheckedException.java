@@ -18,12 +18,25 @@ package org.llorllale.youtrack.api;
 
 /**
  * A runtime exception used to wrap checked exceptions.
+ * 
+ * <p>Use of this exception is reserved for improbable scenarios!
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.7.0
  */
 final class UncheckedException extends RuntimeException {
   private static final long serialVersionUID = -9216739746684341214L;
+
+  /**
+   * Ctor.
+   * 
+   * @param msg the error's description
+   * @param cause the error's cause
+   * @since 1.0.0
+   */
+  UncheckedException(String msg, Throwable cause) {
+    super(msg, cause);
+  }
 
   /**
    * Ctor.

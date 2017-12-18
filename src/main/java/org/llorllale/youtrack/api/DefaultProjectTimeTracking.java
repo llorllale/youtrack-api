@@ -17,13 +17,12 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.Objects;
 import java.util.stream.Stream;
+import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 
-import org.llorllale.youtrack.api.jaxb.Settings;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -37,17 +36,31 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
   private static final String PATH_TEMPLATE = "/admin/project/%s/timetracking";
   private final Project project;
   private final Session session;
+  private final HttpClient httpClient;
 
   /**
    * Primary ctor.
    * 
    * @param project the parent {@link Project}
    * @param session the user's {@link Session}
+   * @param httpClient the {@link HttpClient} to use
+   * @since 1.0.0
+   */
+  DefaultProjectTimeTracking(Project project, Session session, HttpClient httpClient) {
+    this.project = project;
+    this.session = session;
+    this.httpClient = httpClient;
+  }
+
+  /**
+   * Ctor.
+   * 
+   * @param project the parent {@link Project}
+   * @param session the user's {@link Session}
    * @since 0.8.0
    */
   DefaultProjectTimeTracking(Project project, Session session) {
-    this.project = project;
-    this.session = session;
+    this(project, session, HttpClients.createDefault());
   }
   
   @Override
@@ -57,9 +70,10 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public boolean enabled() throws IOException, UnauthorizedException {
-    final Settings settings = new Mapping<>(
-        () -> new HttpResponseAsResponse(
-            HttpClients.createDefault().execute(
+    final XmlObject settings = new XmlObjects(
+        "/settings",
+        new HttpResponseAsResponse(
+            this.httpClient.execute(
                 new HttpRequestWithSession(
                     this.session, 
                     new HttpGet(
@@ -68,22 +82,23 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
                     )
                 )
             )
-        ),
-        resp -> new HttpEntityAsJaxb<>(Settings.class).apply(resp.httpResponse().getEntity())
-    ).get();
+        )
+    ).stream().findAny().get();
 
-    return settings.isEnabled() 
-        && Objects.nonNull(settings.getEstimation()) 
-        && Objects.nonNull(settings.getSpentTime());
+    return Boolean.parseBoolean(settings.textOf("@enabled").get())
+        && settings.child("estimation").isPresent()
+        && settings.child("spentTime").isPresent();
   }
 
   @Override
   public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException {
     return new StreamOf<>(
         new MappedCollection<>(
-            new Mapping<>(
-                () -> new HttpResponseAsResponse(
-                    HttpClients.createDefault().execute(
+            XmlTimeTrackEntryType::new,
+            new XmlObjects(
+                "/workItemTypes/workType",
+                new HttpResponseAsResponse(
+                    this.httpClient.execute(
                         new HttpRequestWithSession(
                             this.session, 
                             new HttpGet(
@@ -93,11 +108,8 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
                             )
                         )
                     )
-                ),
-                resp -> new HttpEntityAsJaxb<>(org.llorllale.youtrack.api.jaxb.WorkItemTypes.class)
-                    .apply(resp.httpResponse().getEntity()).getWorkType()
-            ),
-            XmlTimeTrackEntryType::new
+                )
+            )
         )
     );
   }
