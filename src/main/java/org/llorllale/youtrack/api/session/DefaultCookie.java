@@ -16,15 +16,13 @@
 
 package org.llorllale.youtrack.api.session;
 
-import org.apache.http.Header;
-
 /**
  * Default implementation of {@link Cookie}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public final class DefaultCookie implements Cookie {
+final class DefaultCookie implements Cookie {
   private final String name;
   private final String value;
 
@@ -35,20 +33,9 @@ public final class DefaultCookie implements Cookie {
    * @param value the cookie's value
    * @since 1.0.0
    */
-  public DefaultCookie(String name, String value) {
+  DefaultCookie(String name, String value) {
     this.name = name;
     this.value = value;
-  }
-
-  /**
-   * Constructs this {@link Cookie} base on the given {@link Header}.
-   * 
-   * @param header the header
-   * @see #DefaultCookie(java.lang.String, java.lang.String) 
-   * @since 1.0.0
-   */
-  DefaultCookie(Header header) {
-    this(header.getName(), header.getValue());
   }
 
   @Override
