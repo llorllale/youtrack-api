@@ -28,6 +28,9 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 /**
  * A {@link YouTrack} issue.
  * 
+ * <p>Two issues are equal if their {@link #project() projects} are both equal, and their 
+ * {@link #id() ids} are also equal.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */

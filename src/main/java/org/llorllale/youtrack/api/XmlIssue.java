@@ -31,6 +31,8 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
+//equals and hashCode tip the method count to just over the max allowed (12) to the actual 14
+@SuppressWarnings("checkstyle:MethodCount")
 class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
@@ -128,5 +130,20 @@ class XmlIssue implements Issue {
     final IssueSpec spec = new IssueSpec(this.summary(), this.description());
     this.fields().forEach(f -> spec.with(f, f.value()));
     return spec;
+  }
+
+  @Override
+  public int hashCode() {
+    return this.id().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Issue)) {
+      return false;
+    }
+
+    final Issue other = (Issue) object;
+    return this.id().equals(other.id()) && this.project().equals(other.project());
   }
 }

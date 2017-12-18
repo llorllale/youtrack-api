@@ -21,6 +21,8 @@ import java.util.Optional;
 /**
  * A YouTrack project.
  * 
+ * <p>Two projects are equal only if both their {@link #id() ids} are equal.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
