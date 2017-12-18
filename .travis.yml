@@ -1,4 +1,8 @@
 sudo: required
+dist: trusty
+# issue #107: using deprecated image
+group: deprecated-2017Q4
+
 services:
 - docker
 language: java
