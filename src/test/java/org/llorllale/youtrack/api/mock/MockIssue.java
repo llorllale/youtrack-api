@@ -132,24 +132,13 @@ public class MockIssue implements Issue {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (obj == null) {
+  public boolean equals(Object object) {
+    if (!(object instanceof Issue)) {
       return false;
     }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    final MockIssue other = (MockIssue) obj;
-    if (!Objects.equals(this.id, other.id)) {
-      return false;
-    }
-    if (!Objects.equals(this.project, other.project)) {
-      return false;
-    }
-    return true;
+
+    final Issue other = (Issue) object;
+    return this.id().equals(other.id()) && this.project().equals(other.project());
   }
 
   @Override

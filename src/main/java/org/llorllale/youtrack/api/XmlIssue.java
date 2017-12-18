@@ -129,4 +129,19 @@ class XmlIssue implements Issue {
     this.fields().forEach(f -> spec.with(f, f.value()));
     return spec;
   }
+
+  @Override
+  public int hashCode() {
+    return this.id().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (!(object instanceof Issue)) {
+      return false;
+    }
+
+    final Issue other = (Issue) object;
+    return this.id().equals(other.id()) && this.project().equals(other.project());
+  }
 }

@@ -18,11 +18,15 @@ package org.llorllale.youtrack.api;
 
 import java.time.Instant;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.mock.MockAssignedField;
+import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 
@@ -124,6 +128,105 @@ public class XmlIssueTest {
     assertThat(
         issue.spec(),
         is(expected)
+    );
+  }
+
+  /**
+   * {@link XmlIssue#hashCode()} must be equal to it's ID's hashCode.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void testHashCode() {
+    assertThat(
+        new XmlIssue(new MockProject(), new MockSession(), xml).id().hashCode(),
+        is("HBR-63".hashCode())
+    );
+  }
+
+  /**
+   * Two issues are equal if both their IDs and projects are equal.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void equals() {
+    final Project project = new MockProject("PR-1", "name", "description");
+    assertEquals(
+        new XmlIssue(project, new MockSession(), xml),
+        new MockIssue(project, "HBR-63", null, null, null)
+    );
+  }
+
+  /**
+   * An {@link XmlIssue} cannot be equal to {@code null}.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void equalsNullIsFalse() {
+    assertFalse(
+        new XmlIssue(new MockProject(), new MockSession(), xml).equals(null)
+    );
+  }
+
+  /**
+   * An {@link XmlIssue} cannot be equal to a type other than another {@link Issue}.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void equalsObjectIsFalse() {
+    assertFalse(
+        new XmlIssue(new MockProject(), new MockSession(), xml).equals(new Object())
+    );
+  }
+
+  /**
+   * An issue cannot be equal to an issue that belongs to another project, even if both their 
+   * ids are the same.
+   * 
+   * @since 1.0.0
+   */
+  @Test 
+  public void equalsWithDifferentProjectIsFalse() {
+    assertNotEquals( 
+        new XmlIssue(
+            new MockProject("PR-1", "name", "description"), 
+            new MockSession(), 
+            xml
+        ),
+        new MockIssue(
+            new MockProject("PR-2", "name", "description"), 
+            "HBR-63", 
+            null, 
+            null, 
+            null
+        )
+    );
+  }
+
+  /**
+   * An issue cannot be equal to another issue with a different ID, even if both belong to the 
+   * same project.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void equalsWithDifferentIssueIdIsFalse() {
+    assertNotEquals( 
+        new XmlIssue(
+            new MockProject("PR-1", "name", "description"), 
+            new MockSession(), 
+            xml
+        ),
+        new MockIssue(
+            new MockProject("PR-1", "name", "description"), 
+            "HBR-64", 
+            null, 
+            null, 
+            null
+        )
     );
   }
 
