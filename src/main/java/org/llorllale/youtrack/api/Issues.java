@@ -88,7 +88,7 @@ public interface Issues {
    * 
    * @since 0.4.0
    */
-  class IssueSpec {
+  final class IssueSpec {
     private final String summary;
     private final Optional<String> description;
     private final Map<Field, FieldValue> fields;
