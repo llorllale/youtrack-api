@@ -72,7 +72,7 @@ public interface IssueTimeTracking {
    * 
    * @since 0.4.0
    */
-  class EntrySpec {
+  final class EntrySpec {
     private final LocalDate date;
     private final Duration duration;
     private final Optional<String> description;
