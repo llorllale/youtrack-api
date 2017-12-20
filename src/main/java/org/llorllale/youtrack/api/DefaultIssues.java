@@ -83,7 +83,7 @@ class DefaultIssues implements Issues {
                         this.session.baseUrl().toString()
                             .concat("/issue/byproject/")
                             .concat(this.project().id())
-                    ).setParameter("after", String.valueOf(n))
+                    ).param("after", String.valueOf(n))
                         .build()
                 )
             ),
@@ -137,8 +137,9 @@ class DefaultIssues implements Issues {
                         new HttpPut(
                             new UncheckedUriBuilder(
                                 this.session.baseUrl().toString().concat("/issue")
-                            ).setParameter("project", this.project().id())
-                                .addParameters(spec.nameValuePairs())
+                            ).param("project", this.project().id())
+                                .param("summary", spec.summary())
+                                .paramIfPresent("description", spec.description())
                                 .build()
                         )
                     )

@@ -18,7 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.util.Map;
 import java.util.Objects;
-import org.apache.http.message.BasicNameValuePair;
+import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -37,14 +37,42 @@ import org.llorllale.youtrack.api.mock.MockProject;
  * @since 0.4.0
  */
 public class IssueSpecTest {
+  /**
+   * {@link IssueSpec#summary()} must return the input summary text.
+   * 
+   * @since 1.0.0
+   */
   @Test
-  public void nameValuePairs() {
+  public void summary() {
     assertThat(
-        new IssueSpec("summary", "description").nameValuePairs(),
-        containsInAnyOrder(
-            new BasicNameValuePair("summary", "summary"),
-            new BasicNameValuePair("description", "description")
-        )
+        new IssueSpec("summary").summary(),
+        is("summary")
+    );
+  }
+
+  /**
+   * {@link IssueSpec#description()} must return an optional with the given description.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void description() {
+    assertThat(
+        new IssueSpec("", "description").description(),
+        is(Optional.of("description"))
+    );
+  }
+
+  /**
+   * {@link IssueSpec#description()} must return an empty optional if no description was provided.
+   * 
+   * @since 1.0.0
+   */
+  @Test
+  public void noDescription() {
+    assertThat(
+        new IssueSpec("summary").description(),
+        is(Optional.empty())
     );
   }
 
@@ -135,7 +163,7 @@ public class IssueSpecTest {
    * @since 1.0.0
    */
   @Test
-  public void equalsIfFalseWithDiffNameValuePairs() {
+  public void equalsIfFalseWithDiffDescription() {
     final Field f1 = new MockField("field1", new MockProject());
     final FieldValue v1 = new MockFieldValue(f1, "value1");
     final Field f2 = new MockField("field2", new MockProject());
@@ -149,7 +177,7 @@ public class IssueSpecTest {
   }
 
   /**
-   * Hashcode must be equal to hashcodes of namevaluepairs and fields.
+   * Hashcode must be equal to hashcodes of the summary, description, and the fields.
    * 
    * @since 1.0.0
    */
@@ -165,7 +193,7 @@ public class IssueSpecTest {
 
     assertThat(
         spec.hashCode(),
-        is(spec.nameValuePairs().hashCode() + spec.fields().hashCode())
+        is(spec.summary().hashCode() + spec.description().hashCode() + spec.fields().hashCode())
     );
   }
 

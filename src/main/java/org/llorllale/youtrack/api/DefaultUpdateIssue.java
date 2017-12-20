@@ -104,7 +104,8 @@ class DefaultUpdateIssue implements UpdateIssue {
                     new UncheckedUriBuilder(
                         this.session.baseUrl().toString()
                             .concat(String.format(PATH_TEMPLATE, this.issue.id()))
-                    ).addParameters(spec.nameValuePairs())
+                    ).param("summary", spec.summary())
+                        .paramIfPresent("description", spec.description())
                         .build()
                 )
             )

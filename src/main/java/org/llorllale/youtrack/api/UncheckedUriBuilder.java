@@ -19,9 +19,7 @@ package org.llorllale.youtrack.api;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
+import java.util.Optional;
 import org.apache.http.client.utils.URIBuilder;
 
 /**
@@ -98,20 +96,22 @@ final class UncheckedUriBuilder {
    * @return this object
    * @since 0.1.0
    */
-  public UncheckedUriBuilder setParameter(String name, String value) {
+  public UncheckedUriBuilder param(String name, String value) {
     this.builder.setParameter(name, value);
     return this;
   }
 
   /**
-   * Adds {@code params} on the internal {@link URIBuilder}.
+   * Calls the internal {@link URIBuilder#setParameter(java.lang.String, java.lang.String)} with
+   * the values provided, if {@code value} is present.
    * 
-   * @param params the query parameters
+   * @param name the name of the parameter
+   * @param value the parameter's value
    * @return this object
-   * @since 0.4.0
+   * @since 1.0.0
    */
-  public UncheckedUriBuilder addParameters(List<NameValuePair> params) {
-    this.builder.addParameters(params);
+  public UncheckedUriBuilder paramIfPresent(String name, Optional<String> value) {
+    value.ifPresent(v -> this.param(name, v));
     return this;
   }
 
