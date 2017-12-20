@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,10 @@ class DefaultUpdateIssue implements UpdateIssue {
     return this.updateFields(
         new IssueSpec(
             this.issue.summary(), 
-            this.issue.description()
+            this.issue.description(),
+            new HashMap<Field, FieldValue>(){{
+                put(field, value);
+            }}
         )
     );
   }
