@@ -17,16 +17,11 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -84,18 +79,12 @@ public interface Issues {
   /**
    * Specifications for building an {@link Issue}.
    * 
-   * <p><strong>None</strong> of the transformations <em>spec -&gt; issue -&gt; spec</em> are 
-   * reversible.
-   * The following truisms hold:
+   * <p>Note the following:
    * 
    * <ul>
-   *   <li>Users <strong>cannot</strong> expect two Issues derived from the same spec to be 
-   * equal</li>
-   *   <li>Two specs derived from the same issue <strong>can</strong> be expected to be equal</li>
+   *   <li>Two Issues created from the same spec are <strong>not</strong> equal.</li>
+   *   <li>Two specs derived from the same issue <strong>are</strong> equal.</li>
    * </ul>
-   * 
-   * <p>An {@link IssueSpec} is just a <em>blueprint</em> to create {@link Issue issues} and nothing
-   * more. The final {@link Issue#id() id} of the issue is determined by the YouTrack backend.
    * 
    * @since 0.4.0
    */
@@ -168,16 +157,23 @@ public interface Issues {
     }
 
     /**
-     * A view of this spec as name-value pairs.
+     * The summary text for the issue.
      * 
-     * @return this spec as name-value pairs
-     * @since 0.4.0
+     * @return the summary text for the issue 
+     * @since 1.0.0
      */
-    List<NameValuePair> nameValuePairs() {
-      final List<NameValuePair> pairs = new ArrayList<>();
-      pairs.add(new BasicNameValuePair("summary", this.summary));
-      this.description.ifPresent(d -> pairs.add(new BasicNameValuePair("description", d)));
-      return pairs;
+    public String summary() {
+      return this.summary;
+    }
+
+    /**
+     * The descriptive text for the issue, if specified.
+     * 
+     * @return the descriptive text for the issue, if specified
+     * @since 1.0.0
+     */
+    public Optional<String> description() {
+      return this.description;
     }
 
     /**
@@ -186,7 +182,7 @@ public interface Issues {
      * @return this spec as Issue {@link Field fields} and {@link FieldValue values}
      * @since 0.8.0
      */
-    Map<Field, FieldValue> fields() {
+    public Map<Field, FieldValue> fields() {
       return Collections.unmodifiableMap(this.fields);
     }
 
@@ -198,23 +194,14 @@ public interface Issues {
       }
 
       final IssueSpec other = (IssueSpec) object;
-
-      if (this.nameValuePairs().size() != other.nameValuePairs().size()) {
-        return false;
-      }
-
-      for (NameValuePair pair : this.nameValuePairs()) {
-        if (!other.nameValuePairs().contains(pair)) {
-          return false;
-        }
-      }
-
-      return this.fields().equals(other.fields());
+      return this.summary().equals(other.summary())
+          && this.description().equals(other.description())
+          && this.fields().equals(other.fields());
     }
 
     @Override
     public int hashCode() {
-      return this.nameValuePairs().hashCode() + this.fields().hashCode();
+      return this.summary().hashCode() + this.description().hashCode() + this.fields().hashCode();
     }
   }
 }
