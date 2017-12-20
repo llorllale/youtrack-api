@@ -91,7 +91,7 @@ public class XmlUsersOfProjectTest {
         new XmlUsersOfProject(
             new MockProject(),
             new MockSession(),
-            new XmlObject(new StringAsDocument(
+            new XmlOf(new StringAsDocument(
                 "<project versions=\"[2.0, 2.0.1, 2.0.2]\" name=\"Hibero\" shortName=\"HBR\" description=\"Test project.\" isImporting=\"false\">\n" +
                 "  <assigneesFullName>\n" +
                 "    <sub value=\"Adam Jordens\"/>\n" +

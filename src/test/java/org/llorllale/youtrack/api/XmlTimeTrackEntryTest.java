@@ -33,11 +33,11 @@ import org.llorllale.youtrack.api.mock.MockProject;
  * @since 0.4.0
  */
 public class XmlTimeTrackEntryTest {
-  private static XmlObject xml;
+  private static Xml xml;
 
   @BeforeClass
   public static void setup() throws Exception {
-    xml = new XmlObject(new StringAsDocument(XML));
+    xml = new XmlOf(new StringAsDocument(XML));
   }
 
   @Test

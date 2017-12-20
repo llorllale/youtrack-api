@@ -74,7 +74,7 @@ class DefaultComments implements Comments {
     return new StreamOf<>(
         new MappedCollection<>(
             xml -> new XmlComment(this.issue(), this.session, xml),
-            new XmlObjects(
+            new XmlsOf(
                 "//comment",
                 new HttpResponseAsResponse(
                     this.httpClient.execute(

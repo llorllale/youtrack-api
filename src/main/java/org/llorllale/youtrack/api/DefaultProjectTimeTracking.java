@@ -70,7 +70,7 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
 
   @Override
   public boolean enabled() throws IOException, UnauthorizedException {
-    final XmlObject settings = new XmlObjects(
+    final Xml settings = new XmlsOf(
         "/settings",
         new HttpResponseAsResponse(
             this.httpClient.execute(
@@ -95,7 +95,7 @@ class DefaultProjectTimeTracking implements ProjectTimeTracking {
     return new StreamOf<>(
         new MappedCollection<>(
             XmlTimeTrackEntryType::new,
-            new XmlObjects(
+            new XmlsOf(
                 "/workItemTypes/workType",
                 new HttpResponseAsResponse(
                     this.httpClient.execute(

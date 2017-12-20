@@ -29,7 +29,7 @@ import org.llorllale.youtrack.api.session.Session;
 class XmlProject implements Project {
   private final YouTrack youtrack;
   private final Session session;
-  private final XmlObject xml;
+  private final Xml xml;
 
   /**
    * Ctor.
@@ -42,7 +42,7 @@ class XmlProject implements Project {
   XmlProject(
       YouTrack youtrack, 
       Session session, 
-      XmlObject xml
+      Xml xml
   ) {
     this.youtrack = youtrack;
     this.session = session;

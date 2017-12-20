@@ -33,11 +33,11 @@ import org.llorllale.youtrack.api.mock.http.MockSession;
  * @since 0.8.0
  */
 public class XmlProjectFieldTest {
-  private static XmlObject xml;
+  private static Xml xml;
 
   @BeforeClass
   public static void setup() throws Exception {
-    xml = new XmlObject(new StringAsDocument(XML));
+    xml = new XmlOf(new StringAsDocument(XML));
   }
 
   @Test
@@ -96,7 +96,7 @@ public class XmlProjectFieldTest {
   public void notEqualsFieldWithDiffName() throws Exception {
     assertFalse(
         new XmlProjectField(
-            new XmlObject(new StringAsDocument(
+            new XmlOf(new StringAsDocument(
                 "<projectCustomField name=\"name1\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"
             )), 
             new MockProject(), 
@@ -111,7 +111,7 @@ public class XmlProjectFieldTest {
   public void notEqualsFieldFromDiffProject() throws Exception {
     assertFalse(
         new XmlProjectField(
-            new XmlObject(new StringAsDocument(
+            new XmlOf(new StringAsDocument(
                 "<projectCustomField name=\"name\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"
             )), 
             new MockProject("p1", "p1", ""), 

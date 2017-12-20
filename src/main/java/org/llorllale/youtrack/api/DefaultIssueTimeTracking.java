@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 
 import org.llorllale.youtrack.api.session.Session;
@@ -71,7 +73,7 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
     return new StreamOf<>(
         new MappedCollection<>(
             xml -> new XmlTimeTrackEntry(this.issue, xml),
-            new XmlObjects(
+            new XmlsOf(
                 "/workItems/workItem",
                 new HttpResponseAsResponse(
                     this.httpClient.execute(
@@ -96,7 +98,10 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
             new HttpRequestWithSession(
                 this.session, 
                 new HttpRequestWithEntity(
-                    spec.asHttpEntity(),
+                    new StringEntity(
+                        spec.asXml().asString(),
+                        ContentType.APPLICATION_XML
+                    ),
                     new HttpPost(
                         this.session.baseUrl().toString()
                             .concat(String.format(PATH_TEMPLATE, this.issue.id()))

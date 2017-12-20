@@ -17,8 +17,13 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Optional;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -32,7 +37,7 @@ import org.w3c.dom.NodeList;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-final class XmlObject {
+final class XmlOf implements Xml {
   private final Node xml;
 
   /**
@@ -41,7 +46,7 @@ final class XmlObject {
    * @param xml the node to operate against
    * @since 1.0.0
    */
-  XmlObject(Node xml) {
+  XmlOf(Node xml) {
     this.xml = xml;
   }
 
@@ -51,7 +56,7 @@ final class XmlObject {
    * @param document the document to encapsulate
    * @since 1.0.0
    */
-  XmlObject(Document document) {
+  XmlOf(Document document) {
     this(document.getDocumentElement());
   }
 
@@ -60,11 +65,11 @@ final class XmlObject {
    * 
    * @param response the response to encapsulate
    * @throws IOException from {@link InputStreamAsString#apply(java.io.InputStream)}
-   * @throws ParseException from {@link StringAsDocument}
-   * @see #XmlObject(org.w3c.dom.Node) 
+   * @throws UncheckedException from {@link StringAsDocument}
+   * @see #XmlOf(org.w3c.dom.Node) 
    * @since 1.0.0
    */
-  XmlObject(Response response) throws ParseException, IOException {
+  XmlOf(Response response) throws UncheckedException, IOException {
     this(
         new StringAsDocument(
             new InputStreamAsString().apply(
@@ -75,41 +80,31 @@ final class XmlObject {
   }
 
   /**
-   * Returns the string textOf resulting from applying {@code xpath} to the node if the xpath 
-   * "exists", otherwise an empty optional.
+   * Encapsulates {@code xml} as a {@link Xml}.
    * 
-   * @param xpath the xpath expression
-   * @return the string textOf obtained by applying {@code xpath} on the node
-   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
+   * @param xml the xml string
+   * @throws UncheckedException from {@link StringAsDocument}
+   * @see #XmlOf(org.w3c.dom.Document) 
    * @since 1.0.0
    */
-  Optional<String> textOf(String xpath) throws UncheckedException {
+  XmlOf(String xml) throws UncheckedException {
+    this(new StringAsDocument(xml));
+  }
+
+  @Override
+  public Optional<String> textOf(String xpath) throws UncheckedException {
     return this.child(xpath).map(x -> x.node().getTextContent());
   }
 
-  /**
-   * Returns the first {@link XmlObject} node selected with {@code xpath}.
-   * 
-   * @param xpath the xpath expression that identifies the child node desired
-   * @return the first {@link XmlObject} node selected with {@code xpath}
-   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
-   * @since 1.0.0
-   */
-  Optional<XmlObject> child(String xpath) throws UncheckedException {
+  @Override
+  public Optional<Xml> child(String xpath) throws UncheckedException {
     return this.children(xpath).stream().findFirst();
   }
 
-  /**
-   * Returns all descendant {@link XmlObject} nodes selected with {@code xpath}.
-   * 
-   * @param xpath the xpath expression that identifies the child nodes desired
-   * @return a collection of descendant {@link XmlObject} nodes selected with {@code xpath}
-   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
-   * @since 1.0.0
-   */
-  Collection<XmlObject> children(String xpath) throws UncheckedException {
+  @Override
+  public Collection<Xml> children(String xpath) throws UncheckedException {
     try {
-      return new XmlObjects(
+      return new XmlsOf(
           (NodeList) XPathFactory.newInstance()
               .newXPath()
               .evaluate(xpath, this.node(), XPathConstants.NODESET)
@@ -119,13 +114,25 @@ final class XmlObject {
     }
   }
 
-  /**
-   * Used internally to pass the encapsulated {@link Node} object.
-   * 
-   * @return the {@link Node} encapsulated by this {@link XmlObject}
-   * @since 1.0.0
-   */
-  private Node node() {
+  @Override
+  public Node node() {
     return this.xml;
+  }
+
+  @Override
+  public String asString() {
+    try {
+      final StringWriter writer = new StringWriter();
+      TransformerFactory 
+          .newInstance()
+          .newTransformer()
+          .transform(
+              new DOMSource(this.node()), 
+              new StreamResult(writer)
+        );
+      return writer.toString(); 
+    } catch(TransformerException e) {
+      throw new UncheckedException(e);
+    }
   }
 }

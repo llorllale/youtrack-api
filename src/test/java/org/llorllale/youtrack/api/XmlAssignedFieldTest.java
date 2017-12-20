@@ -73,7 +73,7 @@ public class XmlAssignedFieldTest {
         new XmlAssignedField(
             field, 
             new MockIssue(field.project()), 
-            new XmlObject(new StringAsDocument(FIELD_XML))
+            new XmlOf(new StringAsDocument(FIELD_XML))
         ).value(),
         is(new MockFieldValue(field, "Normal"))
     );
@@ -163,11 +163,11 @@ public class XmlAssignedFieldTest {
    * An {@link XmlAssignedField} must be equal to another {@link AssignedField} with the same name
    * and value. The {@link XmlAssignedField}'s name and value are set in its enclosed XML.
    * 
-   * @throws ParseException 
+   * @throws Exception 
    * @since 1.0.0
    */
   @Test
-  public void equals() throws ParseException {
+  public void equals() throws Exception {
     final String FIELD_XML =
     "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
     "  <value>Normal</value>\n" +
@@ -183,7 +183,7 @@ public class XmlAssignedFieldTest {
         new XmlAssignedField(
             field, 
             issue,
-            new XmlObject(new StringAsDocument(FIELD_XML))
+            new XmlOf(new StringAsDocument(FIELD_XML))
         ).equals(
             new MockAssignedField(field.name(), issue, "Normal")
         )
@@ -194,11 +194,11 @@ public class XmlAssignedFieldTest {
    * An {@link XmlAssignedField} cannot be equal to another {@link AssignedField} with with a 
    * different name.
    * 
-   * @throws ParseException 
+   * @throws Exception 
    * @since 1.0.0
    */
   @Test
-  public void notEqualsWithFieldOfDifferentName() throws ParseException {
+  public void notEqualsWithFieldOfDifferentName() throws Exception {
     final String FIELD_XML =
     "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
     "  <value>Normal</value>\n" +
@@ -214,7 +214,7 @@ public class XmlAssignedFieldTest {
         new XmlAssignedField(
             field, 
             issue,
-            new XmlObject(new StringAsDocument(FIELD_XML))
+            new XmlOf(new StringAsDocument(FIELD_XML))
         ).equals(
             new MockAssignedField("Some Other Name", issue, "Normal")
         )
@@ -225,11 +225,11 @@ public class XmlAssignedFieldTest {
    * An {@link XmlAssignedField} cannot be equal to another {@link AssignedField} that, 
    * although belonging to the same {@link Field}, has a different {@link FieldValue value}.
    * 
-   * @throws ParseException 
+   * @throws Exception 
    * @since 1.0.0
    */
   @Test
-  public void notEqualsWithFieldOfDifferentValue() throws ParseException {
+  public void notEqualsWithFieldOfDifferentValue() throws Exception {
     final String FIELD_XML =
     "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
     "  <value>Normal</value>\n" +
@@ -245,7 +245,7 @@ public class XmlAssignedFieldTest {
         new XmlAssignedField(
             field, 
             issue,
-            new XmlObject(new StringAsDocument(FIELD_XML))
+            new XmlOf(new StringAsDocument(FIELD_XML))
         ).equals(
             new MockAssignedField(field.name(), issue, "Some Other Value")
         )
@@ -276,7 +276,7 @@ public class XmlAssignedFieldTest {
         new XmlAssignedField(
             new MockField("Normal", project1),
             new MockIssue(project1),
-            new XmlObject(new StringAsDocument(FIELD_XML))
+            new XmlOf(new StringAsDocument(FIELD_XML))
         ).equals(
             new MockAssignedField(
                 "Normal", 
@@ -290,11 +290,11 @@ public class XmlAssignedFieldTest {
   /**
    * An {@link XmlAssignedField} cannot be equal to {@code null}.
    * 
-   * @throws ParseException 
+   * @throws Exception 
    * @since 1.0.0
    */
   @Test
-  public void notEqualsWithNull() throws ParseException {
+  public void notEqualsWithNull() throws Exception {
     final String FIELD_XML =
     "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
     "  <value>Normal</value>\n" +
@@ -308,7 +308,7 @@ public class XmlAssignedFieldTest {
         new XmlAssignedField(
             new MockField("field", new MockProject()), 
             new MockIssue(new MockProject()),
-            new XmlObject(new StringAsDocument(FIELD_XML))
+            new XmlOf(new StringAsDocument(FIELD_XML))
         ).equals(null)
     );
   }
@@ -316,11 +316,11 @@ public class XmlAssignedFieldTest {
   /**
    * An {@link XmlAssignedField} cannot be equal to an object that is not an {@link AssignedField}.
    * 
-   * @throws ParseException 
+   * @throws Exception 
    * @since 1.0.0
    */
   @Test
-  public void notEqualsWithOtherType() throws ParseException {
+  public void notEqualsWithOtherType() throws Exception {
     final String FIELD_XML =
     "<field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
     "  <value>Normal</value>\n" +
@@ -334,7 +334,7 @@ public class XmlAssignedFieldTest {
         new XmlAssignedField(
             new MockField("field", new MockProject()), 
             new MockIssue(new MockProject()),
-            new XmlObject(new StringAsDocument(FIELD_XML))
+            new XmlOf(new StringAsDocument(FIELD_XML))
         ).equals(new Object())
     );
   }

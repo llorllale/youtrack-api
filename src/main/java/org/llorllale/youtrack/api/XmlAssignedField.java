@@ -31,7 +31,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 class XmlAssignedField implements AssignedField {
   private final Field field;
   private final Issue issue;
-  private final XmlObject xml;
+  private final Xml xml;
 
   /**
    * Ctor.
@@ -41,7 +41,7 @@ class XmlAssignedField implements AssignedField {
    * @param xml the jaxb instance
    * @since 0.8.0
    */
-  XmlAssignedField(Field field, Issue issue, XmlObject xml) {
+  XmlAssignedField(Field field, Issue issue, Xml xml) {
     this.field = field;
     this.issue = issue;
     this.xml = xml;

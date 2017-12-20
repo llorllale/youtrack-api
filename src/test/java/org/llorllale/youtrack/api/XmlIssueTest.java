@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -37,11 +38,11 @@ import org.llorllale.youtrack.api.mock.http.MockSession;
  * @since 0.4.0
  */
 public class XmlIssueTest {
-  private static XmlObject xml;
+  private static Xml xml;
 
   @BeforeClass
   public static void setup() throws Exception {
-    xml = new XmlObject(new StringAsDocument(XML_ISSUE));
+    xml = new XmlOf(new StringAsDocument(XML_ISSUE));
   }
 
   @Test
@@ -107,27 +108,28 @@ public class XmlIssueTest {
    */
   @Test
   public void spec() {
-    final String summary = "summary";
-    final String description = "description";
-    final Issue issue = new XmlIssue(
-        new MockProject(),
-        new MockSession(),
-        xml
-    );
-
-    final IssueSpec expected = new IssueSpec(summary, description);
-    xml.children("//field[count(valueId) > 0]").stream().map(
-        x -> 
-            new MockAssignedField(
-                x.textOf("@name").get(), 
-                issue, 
-                x.textOf("value").get()
-            )
-    ).forEach(field -> expected.with(field, field.value()));
-
     assertThat(
-        issue.spec(),
-        is(expected)
+        new XmlIssue(
+            new MockProject(),
+            new MockSession(),
+            xml
+        ).spec(),
+        is(new IssueSpec(
+            "summary", 
+            "description",
+            xml.children("//field[count(valueId) > 0]")
+                .stream()
+                .map(x -> 
+                    new MockAssignedField(
+                        x.textOf("@name").get(), 
+                        new MockIssue(new MockProject(), "HBR-63", null, null, null), 
+                        x.textOf("value").get()
+                    )
+                ).collect(Collectors.toMap(
+                    f -> f,
+                    f -> f.value()
+            ))
+        ))
     );
   }
 

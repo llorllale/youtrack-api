@@ -32,13 +32,13 @@ import org.llorllale.youtrack.api.mock.http.MockSession;
  * @since 0.4.0
  */
 public class XmlProjectTest {
-  private static XmlObject xmlProjectWithShortName;
-  private static XmlObject xmlProjectWithId;
+  private static Xml xmlProjectWithShortName;
+  private static Xml xmlProjectWithId;
 
   @BeforeClass
   public static void setup() throws Exception {
-    xmlProjectWithShortName = new XmlObject(new StringAsDocument(PROJECT_WITH_SHORTNAME));
-    xmlProjectWithId = new XmlObject(new StringAsDocument(PROJECT_WITH_ID));
+    xmlProjectWithShortName = new XmlOf(new StringAsDocument(PROJECT_WITH_SHORTNAME));
+    xmlProjectWithId = new XmlOf(new StringAsDocument(PROJECT_WITH_ID));
   }
 
   @Test

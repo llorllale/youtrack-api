@@ -44,7 +44,7 @@ public class XmlUsersOfIssueTest {
     assertThat(
         new XmlUsersOfIssue(
             new MockIssue(project), 
-            new XmlObject(new StringAsDocument(XML_ISSUE))
+            new XmlOf(new StringAsDocument(XML_ISSUE))
         ).creator().loginName(),
         is("TestCreatorUserLogin")
     );
@@ -63,7 +63,7 @@ public class XmlUsersOfIssueTest {
         .withUser(new MockUser("updater", "updater@gmail.com", "UpdaterLogin"));
     final Optional<User> updater = new XmlUsersOfIssue(
         new MockIssue(project),
-        new XmlObject(new StringAsDocument(XML_ISSUE))
+        new XmlOf(new StringAsDocument(XML_ISSUE))
     ).updater();
 
     assertThat(
@@ -88,7 +88,7 @@ public class XmlUsersOfIssueTest {
   public void nonExistingUpdater() throws Exception {
     final Optional<User> updater = new XmlUsersOfIssue(
         new MockIssue(new MockProject()),
-        new XmlObject(new StringAsDocument(XML_ISSUE_NO_ASSIGNEE_UPDATER))
+        new XmlOf(new StringAsDocument(XML_ISSUE_NO_ASSIGNEE_UPDATER))
     ).updater();
 
     assertThat(
@@ -110,7 +110,7 @@ public class XmlUsersOfIssueTest {
         new MockIssue(
             new MockProject().withUser(new MockUser("Beto", "beto@gmail.com", "beto"))
         ),
-        new XmlObject(new StringAsDocument(XML_ISSUE))
+        new XmlOf(new StringAsDocument(XML_ISSUE))
     ).assignee();
     assertThat(
         assignee.isPresent(),
@@ -134,7 +134,7 @@ public class XmlUsersOfIssueTest {
   public void nonExistingAssignee() throws Exception {
     final Optional<User> assignee = new XmlUsersOfIssue(
         new MockIssue(new MockProject()),
-        new XmlObject(new StringAsDocument(XML_ISSUE_NO_ASSIGNEE_UPDATER))
+        new XmlOf(new StringAsDocument(XML_ISSUE_NO_ASSIGNEE_UPDATER))
     ).assignee();
     assertThat(
         assignee.isPresent(),

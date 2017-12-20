@@ -62,18 +62,21 @@ final class StringAsDocument implements Document {
   /**
    * Ctor.
    * 
+   * <p>Throws {@link UncheckedException} because {@code xml} is expected to be well-formed and
+   * the JDK's DOM infrastructure should be well-configured.
+   * 
    * @param xml the xml string
-   * @throws ParseException wrapping any {@link ParserConfigurationException}, {@link SAXException},
-   *   {@link IOException} thrown by Java
+   * @throws UncheckedException wrapping any {@link ParserConfigurationException}, 
+   *   {@link SAXException}, {@link IOException} thrown by Java
    * @since 1.0.0
    */
-  StringAsDocument(String xml) throws ParseException {
+  StringAsDocument(String xml) throws UncheckedException {
     try {
       this.base = DocumentBuilderFactory.newInstance()
           .newDocumentBuilder()
           .parse(new InputSource(new StringReader(xml)));
     } catch(ParserConfigurationException | SAXException | IOException e) {
-      throw new ParseException(e.getMessage(), e);
+      throw new UncheckedException(e.getMessage(), e);
     }
   }
 

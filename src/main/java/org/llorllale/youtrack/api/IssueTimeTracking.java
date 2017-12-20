@@ -23,9 +23,6 @@ import java.time.ZoneId;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -75,23 +72,23 @@ public interface IssueTimeTracking {
   final class EntrySpec {
     private final LocalDate date;
     private final Duration duration;
-    private final Optional<String> description;
-    private final Optional<TimeTrackEntryType> type;
+    private final String description;
+    private final TimeTrackEntryType type;
 
     /**
      * Primary ctor.
      * 
      * @param date the date when the entry was worked
      * @param duration the duration for the work
-     * @param description description for the work
-     * @param type the work type (eg. "Development")
+     * @param description description for the work (may be {@code null})
+     * @param type the work type (eg. "Development") (may be {@code null})
      * @since 0.4.0
      */
     public EntrySpec(
         LocalDate date, 
         Duration duration, 
-        Optional<String> description, 
-        Optional<TimeTrackEntryType> type
+        String description, 
+        TimeTrackEntryType type
     ) {
       this.date = date;
       this.duration = duration;
@@ -100,81 +97,79 @@ public interface IssueTimeTracking {
     }
 
     /**
-     * Shorthand constructor. The following assumptions are made:
-     * 
-     * <ul>
-     *   <li>date is <em>now</em></li>
-     *   <li>description is empty</li>
-     *   <li>type is empty</li>
-     * </ul>
+     * Assumes that the date is <em>now</em>, the description is empty, and the type is empty.
      * 
      * @param duration the work's duration
-     * @see #EntrySpec(LocalDate, Duration, Optional, Optional) 
      * @since 0.4.0
      */
     public EntrySpec(Duration duration) {
-      this(
-          LocalDate.now(), 
-          duration, 
-          Optional.empty(), 
-          Optional.empty()
-      );
+      this(LocalDate.now(), duration, null, null);
     }
 
     /**
-     * Returns a new spec with {@code date} and using {@code this} as a prototype.
+     * Assumes the date is <em>now</em> and {@code type} is empty.
      * 
-     * @param entryDate the entry's date
-     * @return a new spec with {@code date} and using {@code this} as a prototype
-     * @since 0.4.0
+     * @param duration the work's duration
+     * @param description descriptive text
+     * @since 1.0.0
      */
-    public EntrySpec withDate(LocalDate entryDate) {
-      return new EntrySpec(
-          entryDate, 
-          this.duration, 
-          this.description, 
-          this.type
-      );
+    public EntrySpec(Duration duration, String description) {
+      this(LocalDate.now(), duration, description, null);
     }
 
     /**
-     * Returns a new spec with {@code description} and using {@code this} as a prototype.
+     * Assumes an empty description and type.
      * 
-     * @param desc the entry's description
-     * @return a new spec with {@code description} and using {@code this} as a prototype
-     * @since 0.4.0
+     * @param date the date when the work took place
+     * @param duration  the work's duration
+     * @since 1.0.0
      */
-    public EntrySpec withDesc(String desc) {
-      return new EntrySpec(
-          this.date, 
-          this.duration, 
-          Optional.of(desc), 
-          this.type
-      );
+    public EntrySpec(LocalDate date, Duration duration) {
+      this(date, duration, null, null);
     }
 
     /**
-     * Returns a new spec with {@code type} and using {@code this} as a prototype.
+     * Assumes the date is <em>now</em> and an empty description.
      * 
-     * @param entryType the entry's type
-     * @return a new spec with {@code type} and using {@code this} as a prototype
-     * @since 0.4.0
+     * @param duration the work's duration
+     * @param type the work type
+     * @since 1.0.0
      */
-    public EntrySpec withType(TimeTrackEntryType entryType) {
-      return new EntrySpec(
-          this.date, 
-          this.duration, 
-          this.description, 
-          Optional.of(entryType)
-      );
+    public EntrySpec(Duration duration, TimeTrackEntryType type) {
+      this(LocalDate.now(), duration, null, type);
     }
 
     /**
-     * Returns a {@link HttpEntity} representing this spec.
+     * Assumes the date is <em>now</em>.
      * 
-     * @return a {@link HttpEntity} representing this spec
+     * @param duration the work's duration
+     * @param description descriptive text
+     * @param type the work type
+     * @since 1.0.0
      */
-    HttpEntity asHttpEntity() {
+    public EntrySpec(Duration duration, String description, TimeTrackEntryType type) {
+      this(LocalDate.now(), duration, description, type);
+    }
+
+    /**
+     * Assumes the {@code type} is {@code null}.
+     * 
+     * @param date the date when the work was performed
+     * @param duration the work's duration
+     * @param description descriptive text
+     * @since 1.0.0
+     */
+    public EntrySpec(LocalDate date, Duration duration, String description) {
+      this(date, duration, description, null);
+    }
+
+    /**
+     * A view of this {@link EntrySpec} as an {@link Xml}.
+     * 
+     * @return a view of this spec as an xml
+     * @since 1.0.0
+     */
+    public Xml asXml() {
       final StringBuilder xmlBuilder = new StringBuilder("<workItem>")
           .append("<date>")
           .append(String.valueOf(
@@ -185,25 +180,47 @@ public interface IssueTimeTracking {
                   )
           ).append("</date>")
           .append("<duration>")
-          .append(String.valueOf(this.duration.toMinutes())
-          ).append("</duration>")
+          .append(String.valueOf(this.duration.toMinutes()))
+          .append("</duration>")
           .append("<description>")
-          .append(this.description.orElse(""))
+          .append(Optional.ofNullable(this.description).orElse(""))
           .append("</description>");
 
-      this.type.ifPresent(t -> 
+      Optional.ofNullable(this.type).ifPresent(t -> 
           xmlBuilder
-              .append("<workType>")
+              .append("<worktype>")
                   .append("<name>")
                       .append(t.asString())
                   .append("</name>")
               .append("</worktype>")
       );
 
-      return new StringEntity(
-          xmlBuilder.append("</workItem>").toString(), 
-          ContentType.APPLICATION_XML
+      xmlBuilder.append("</workItem>");
+
+      return new XmlOf(
+          new StringAsDocument(
+              xmlBuilder.toString()
+          )
       );
+    }
+
+    @Override
+    public int hashCode() {
+      return this.duration.hashCode() 
+          ^ this.date.hashCode()
+          ^ Optional.ofNullable(this.description).hashCode()
+          ^ Optional.ofNullable(this.type).hashCode();
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:NPathComplexity")
+    public boolean equals(Object object) {
+      if (!(object instanceof EntrySpec)) {
+        return false;
+      }
+
+      final EntrySpec other = (EntrySpec) object;
+      return this.asXml().node().isEqualNode(other.asXml().node());
     }
   }
 }

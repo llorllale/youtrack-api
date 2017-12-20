@@ -90,7 +90,7 @@ class DefaultIssues implements Issues {
             resp -> 
                 new MappedCollection<>(
                     xml -> new XmlIssue(this.project(), this.session, xml),
-                    new XmlObjects("/issues/issue", resp)
+                    new XmlsOf("/issues/issue", resp)
                 ),
             this.httpClient
         )
@@ -100,7 +100,7 @@ class DefaultIssues implements Issues {
   @Override
   public Optional<Issue> get(String issueId) throws IOException, UnauthorizedException {
     final Optional<Issue> issue;
-    final XmlObject xml = new XmlObject(
+    final XmlOf xml = new XmlOf(
         new HttpResponseAsResponse(
             this.httpClient.execute(
                 new HttpRequestWithSession(

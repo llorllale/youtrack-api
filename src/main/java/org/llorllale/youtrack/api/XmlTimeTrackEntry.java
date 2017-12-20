@@ -23,14 +23,14 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 /**
- * Xml impl of {@link TimeTrackEntry}.
+ * XmlOf impl of {@link TimeTrackEntry}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
 class XmlTimeTrackEntry implements TimeTrackEntry {
   private final Issue issue;
-  private final XmlObject xml;
+  private final Xml xml;
 
   /**
    * Ctor.
@@ -39,7 +39,7 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
    * @param xml the XML received from YouTrack
    * @since 0.3.0
    */
-  XmlTimeTrackEntry(Issue issue, XmlObject xml) {
+  XmlTimeTrackEntry(Issue issue, Xml xml) {
     this.issue = issue;
     this.xml = xml;
   }

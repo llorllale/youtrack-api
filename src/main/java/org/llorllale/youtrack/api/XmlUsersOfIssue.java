@@ -29,7 +29,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  */
 class XmlUsersOfIssue implements UsersOfIssue {
   private final Issue issue;
-  private final XmlObject xml;
+  private final Xml xml;
 
   /**
    * Primary ctor.
@@ -40,7 +40,7 @@ class XmlUsersOfIssue implements UsersOfIssue {
    */
   XmlUsersOfIssue(
       Issue issue,
-      XmlObject xml
+      Xml xml
   ) {
     this.issue = issue;
     this.xml = xml;

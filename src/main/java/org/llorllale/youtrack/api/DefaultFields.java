@@ -70,7 +70,7 @@ class DefaultFields implements Fields {
     return new StreamOf<>(
         new MappedCollection<>(
             x -> new XmlProjectField(x, this.project(), this.session),
-            new XmlObjects(
+            new XmlsOf(
                 "/projectCustomFieldRefs/projectCustomField",
                 new HttpResponseAsResponse(
                     this.httpClient.execute(

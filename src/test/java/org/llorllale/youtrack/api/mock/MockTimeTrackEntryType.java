@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.mock;
+
+import org.llorllale.youtrack.api.TimeTrackEntryType;
 
 /**
- * Adapts an {@link Xml} received from YouTrack to a {@link TimeTrackEntryType}.
- * 
+ * Mock implementation of {@link TimeTrackEntryType} suitable for tests.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.8.0
+ * @since 1.0.0
  */
-class XmlTimeTrackEntryType implements TimeTrackEntryType {
-  private final Xml xml;
+public final class MockTimeTrackEntryType implements TimeTrackEntryType {
+  private final String type;
 
   /**
    * Ctor.
    * 
-   * @param xml the xml recieved from YouTrack
-   * @since 0.8.0
+   * @param type the type
    */
-  XmlTimeTrackEntryType(Xml xml) {
-    this.xml = xml;
+  public MockTimeTrackEntryType(String type) {
+    this.type = type;
   }
 
   @Override
   public String asString() {
-    return this.xml.textOf("name").get();
+    return this.type;
   }
 
   @Override

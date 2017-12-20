@@ -33,11 +33,11 @@ import org.llorllale.youtrack.api.session.Session;
  * @since 0.4.0
  */
 public class XmlCommentTest {
-  private static XmlObject xmlObject;
+  private static Xml xmlObject;
 
   @BeforeClass
   public static void setup() throws Exception {
-    xmlObject = new XmlObject(new StringAsDocument(XML));
+    xmlObject = new XmlOf(new StringAsDocument(XML));
   }
 
   @Test

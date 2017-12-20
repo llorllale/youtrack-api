@@ -33,7 +33,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @since 0.8.0
  */
 class XmlProjectField implements ProjectField {
-  private final XmlObject xml;
+  private final Xml xml;
   private final Project project;
   private final Session session;
   private final HttpClient httpClient;
@@ -46,7 +46,7 @@ class XmlProjectField implements ProjectField {
    * @param session the user's {@link Session}
    * @since 0.8.0
    */
-  XmlProjectField(XmlObject xml, Project project, Session session) {
+  XmlProjectField(Xml xml, Project project, Session session) {
     this.xml = xml;
     this.project = project;
     this.session = session;
@@ -65,7 +65,7 @@ class XmlProjectField implements ProjectField {
 
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
-    final String bundleName = new XmlObjects(
+    final String bundleName = new XmlsOf(
         "/projectCustomField/param",
         new HttpResponseAsResponse(
             this.httpClient.execute(
@@ -90,7 +90,7 @@ class XmlProjectField implements ProjectField {
     return new StreamOf<>(
         new MappedCollection<>(
             x -> new XmlFieldValue(x, new XmlProjectField(this.xml, this.project, this.session)),
-            new XmlObjects(
+            new XmlsOf(
                 "/enumeration/value",
                 new HttpResponseAsResponse(
                     this.httpClient.execute(

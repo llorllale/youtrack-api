@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -75,16 +76,23 @@ class DefaultUpdateIssue implements UpdateIssue {
     return this.updateFields(
         new IssueSpec(
             this.issue.summary(), 
-            this.issue.description()
-        ).with(field, value)
+            this.issue.description(),
+            new HashMap<Field, FieldValue>(){{
+                put(field, value);
+            }}
+        )
     );
   }
 
   @Override
   public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
-    final IssueSpec spec = new IssueSpec(this.issue.summary(), this.issue.description());
-    fields.forEach(spec::with);
-    return this.updateFields(spec);
+    return this.updateFields(
+        new IssueSpec(
+            this.issue.summary(),
+            this.issue.description(),
+            fields
+        )
+    );
   }
 
   /**
