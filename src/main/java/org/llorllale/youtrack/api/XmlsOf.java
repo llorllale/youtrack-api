@@ -24,23 +24,23 @@ import java.util.Iterator;
 import org.w3c.dom.NodeList;
 
 /**
- * Encapsulates several kinds of inputs as a {@link Collection} of {@link XmlObject xml objects}.
+ * Encapsulates several kinds of inputs as a {@link Collection} of {@link Xml xml objects}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-final class XmlObjects extends AbstractCollection<XmlObject> {
-  private final Collection<XmlObject> base;
+final class XmlsOf extends AbstractCollection<Xml> {
+  private final Collection<Xml> base;
 
   /**
    * Ctor.
    * 
    * <p>This constructor hides this tedious code:
    * <pre>
-   * {@code
-   * final Collection<XmlObject> coll = new ArrayList<>();
+   * {@code 
+   * final Collection<Xml> coll = new ArrayList<>();
    * for (int i = 0; i < nodeList.getLength(); i++) {
-   *   coll.add(new XmlObject(nodeList.item(i)));
+   *   coll.add(new XmlOf(nodeList.item(i)));
    * }
    * }
    * </pre>
@@ -48,10 +48,10 @@ final class XmlObjects extends AbstractCollection<XmlObject> {
    * @param nodeList the {@link NodeList} to encapsulate
    * @since 1.0.0
    */
-  XmlObjects(NodeList nodeList) {
+  XmlsOf(NodeList nodeList) {
     this.base = new ArrayList<>();
     for (int i = 0; i < nodeList.getLength(); i++) {
-      this.base.add(new XmlObject(nodeList.item(i)));
+      this.base.add(new XmlOf(nodeList.item(i)));
     }
   }
 
@@ -60,8 +60,8 @@ final class XmlObjects extends AbstractCollection<XmlObject> {
    * 
    * <p>This constructor hides this tedious code:
    * <pre>
-   * {@code
-   * new XmlObject(
+   * {@code 
+   * new XmlOf(
    *     new StringAsDocument(
    *         new InputStreamAsString().apply(
    *             response.httpResponse().getEntity().getContent()
@@ -74,17 +74,16 @@ final class XmlObjects extends AbstractCollection<XmlObject> {
    * @param xpath the xpath expression used to add Xml nodes to this collection
    * @param response the response object to encapsulate
    * @throws IOException if there's an error reading the response's entity's contents
-   * @throws ParseException if there's an error parsing the xml payload into a document node
-   * @throws UncheckedException is there's an error while appyling {@code xpath}
+   * @throws UncheckedException if there's an error parsing the xml payload into a document node or
+   *    if there's an error while appyling {@code xpath}
    * @see InputStreamAsString
    * @see StringAsDocument
-   * @see XmlObject
+   * @see Xml
    * @since 1.0.0
    */
-  XmlObjects(String xpath, Response response) 
-      throws ParseException, IOException, UncheckedException {
+  XmlsOf(String xpath, Response response) throws IOException, UncheckedException {
     this.base = 
-        new XmlObject(
+        new XmlOf(
             new StringAsDocument(
                 new InputStreamAsString().apply(
                     response.httpResponse().getEntity().getContent()
@@ -94,7 +93,7 @@ final class XmlObjects extends AbstractCollection<XmlObject> {
   }
 
   @Override
-  public Iterator<XmlObject> iterator() {
+  public Iterator<Xml> iterator() {
     return this.base.iterator();
   }
 

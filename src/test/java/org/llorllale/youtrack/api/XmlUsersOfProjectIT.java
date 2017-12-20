@@ -59,7 +59,7 @@ public class XmlUsersOfProjectIT {
     );
   }
 
-  private XmlObject xmlObject(String assigneeLogin) throws Exception {
+  private Xml xmlObject(String assigneeLogin) throws Exception {
     final String TEMPLATE = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
         "<project>\n" +
@@ -67,7 +67,7 @@ public class XmlUsersOfProjectIT {
         "    <sub value=\"%s\"/>\n" +
         "  </assigneesLogin>\n" +
         "</project>";
-    return new XmlObject(
+    return new XmlOf(
         new StringAsDocument(
             String.format(TEMPLATE, assigneeLogin)
         )

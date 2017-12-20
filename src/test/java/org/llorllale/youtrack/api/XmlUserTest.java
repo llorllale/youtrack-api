@@ -27,11 +27,11 @@ import static org.junit.Assert.*;
  * @since 0.4.0
  */
 public class XmlUserTest {
-  private static XmlObject xml;
+  private static Xml xml;
 
   @BeforeClass
   public static void setUpClass() throws Exception {
-    xml = new XmlObject(new StringAsDocument(USER));
+    xml = new XmlOf(new StringAsDocument(USER));
   }
 
   /**

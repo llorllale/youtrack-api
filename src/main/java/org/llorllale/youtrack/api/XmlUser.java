@@ -23,7 +23,7 @@ package org.llorllale.youtrack.api;
  * @since 0.5.0
  */
 class XmlUser implements User {
-  private final XmlObject xml;
+  private final Xml xml;
 
   /**
    * Primary ctor.
@@ -31,7 +31,7 @@ class XmlUser implements User {
    * @param xml the XML user received from YouTrack
    * @since 1.0.0
    */
-  XmlUser(XmlObject xml) {
+  XmlUser(Xml xml) {
     this.xml = xml;
   }
 

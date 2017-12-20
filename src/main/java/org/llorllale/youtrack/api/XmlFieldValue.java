@@ -23,7 +23,7 @@ package org.llorllale.youtrack.api;
  * @since 0.8.0
  */
 class XmlFieldValue implements FieldValue {
-  private final XmlObject xml;
+  private final Xml xml;
   private final Field field;
 
   /**
@@ -33,7 +33,7 @@ class XmlFieldValue implements FieldValue {
    * @param field the parent {@link Field}
    * @since 0.8.0
    */
-  XmlFieldValue(XmlObject xml, Field field) {
+  XmlFieldValue(Xml xml, Field field) {
     this.xml = xml;
     this.field = field;
   }

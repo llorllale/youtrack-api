@@ -76,15 +76,19 @@ class DefaultUpdateIssue implements UpdateIssue {
         new IssueSpec(
             this.issue.summary(), 
             this.issue.description()
-        ).with(field, value)
+        )
     );
   }
 
   @Override
   public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
-    final IssueSpec spec = new IssueSpec(this.issue.summary(), this.issue.description());
-    fields.forEach(spec::with);
-    return this.updateFields(spec);
+    return this.updateFields(
+        new IssueSpec(
+            this.issue.summary(),
+            this.issue.description(),
+            fields
+        )
+    );
   }
 
   /**

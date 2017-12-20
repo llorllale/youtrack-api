@@ -90,7 +90,7 @@ public interface Issues {
    */
   final class IssueSpec {
     private final String summary;
-    private final Optional<String> description;
+    private final String description;
     private final Map<Field, FieldValue> fields;
 
     /**
@@ -101,21 +101,47 @@ public interface Issues {
      * @param fields the fields to set
      * @since 0.8.0
      */
-    private IssueSpec(String summary, Optional<String> description, Map<Field, FieldValue> fields) {
+    public IssueSpec(String summary, String description, Map<Field, FieldValue> fields) {
       this.summary = summary;
       this.description = description;
       this.fields = fields;
     }
 
     /**
-     * Sets the fields to an empty map.
+     * Sets no fields.
+     * 
+     * @param summary the issue's summary
+     * @param description the issue's description
+     * @since 0.9.0
+     */
+    public IssueSpec(String summary, String description) {
+      this(summary, description, new HashMap<>());
+    }
+
+    /**
+     * Convenience method for internal use.
+     * 
+     * <p>Sets no fields, and sets the description if {@code description} is not empty.
      * 
      * @param summary the issue's summary
      * @param description an optional describing the issue's <em>description</em> attribute
-     * @since 0.9.0
+     * @since 1.0.0
      */
     IssueSpec(String summary, Optional<String> description) {
-      this(summary, description, new HashMap<>());
+      this(summary, description.orElse(null));
+    }
+
+    /**
+     * Convenience method for internal use.
+     * 
+     * <p>Sets the description if {@code description} is not empty.
+     * 
+     * @param summary the issue's summary
+     * @param description an optional describing the issue's <em>description</em> attribute
+     * @param fields the issue's fields
+     */
+    IssueSpec(String summary, Optional<String> description, Map<Field, FieldValue> fields) {
+      this(summary, description.orElse(null), fields);
     }
 
     /**
@@ -123,11 +149,11 @@ public interface Issues {
      * {@link Issue#description() description}.
      * 
      * @param summary the issue's summary (ie. its title)
-     * @param description the issue's description
+     * @param fields the issue's fields
      * @since 0.4.0
      */
-    public IssueSpec(String summary, String description) {
-      this(summary, Optional.of(description));
+    public IssueSpec(String summary, Map<Field, FieldValue> fields) {
+      this(summary, (String) null, fields);
     }
 
     /**
@@ -137,23 +163,7 @@ public interface Issues {
      * @since 0.9.0
      */
     public IssueSpec(String summary) {
-      this(summary, Optional.empty());
-    }
-
-    /**
-     * Will set the issue's {@link Field field} to the specified {@link FieldValue value} once
-     * {@link #create(org.llorllale.youtrack.api.Issues.IssueSpec) created}.
-     * 
-     * @param field the field to set
-     * @param value the field's value
-     * @return a new instance of this spec with the summary, description, and all fields
-     * @see UpdateIssue#field(org.llorllale.youtrack.api.Field, 
-     *     org.llorllale.youtrack.api.FieldValue) 
-     * @since 0.8.0
-     */
-    public IssueSpec with(Field field, FieldValue value) {
-      this.fields.put(field, value);
-      return new IssueSpec(this.summary, this.description, this.fields);
+      this(summary, new HashMap<>());
     }
 
     /**
@@ -173,7 +183,7 @@ public interface Issues {
      * @since 1.0.0
      */
     public Optional<String> description() {
-      return this.description;
+      return Optional.ofNullable(this.description);
     }
 
     /**

@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
- * Unit tests for {@link XmlObjects}.
+ * Unit tests for {@link XmlsOf}.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
@@ -35,8 +35,7 @@ public class XmlObjectsTest {
    */
   @Test
   public void size() throws Exception {
-    assertThat(
-        new XmlObjects(
+    assertThat(new XmlsOf(
             "/issues/issue", 
             new HttpResponseAsResponse(new MockOkResponse(XML_ISSUES))
         ).size(),

@@ -88,8 +88,8 @@ public class XmlCommentIT {
     );
   }
 
-  private XmlObject xmlObject(Comment base) throws Exception {
-    return new XmlObject(
+  private Xml xmlObject(Comment base) throws Exception {
+    return new XmlOf(
         new StringAsDocument(
             COMMENT_TEMPLATE
                 .replace("%ID%", base.id())

@@ -18,8 +18,11 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.AbstractMap;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 
 import org.llorllale.youtrack.api.session.Session;
@@ -36,7 +39,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
-  private final XmlObject xml;
+  private final Xml xml;
 
   /**
    * Primary ctor.
@@ -49,7 +52,7 @@ class XmlIssue implements Issue {
   XmlIssue(
       Project project, 
       Session session, 
-      XmlObject xml
+      Xml xml
   ) {
     this.project = project;
     this.session = session;
@@ -127,9 +130,17 @@ class XmlIssue implements Issue {
 
   @Override
   public IssueSpec spec() {
-    final IssueSpec spec = new IssueSpec(this.summary(), this.description());
-    this.fields().forEach(f -> spec.with(f, f.value()));
-    return spec;
+    return new IssueSpec(
+        this.summary(), 
+        this.description(), 
+        this.fields()
+            .stream()
+            .map(f -> new AbstractMap.SimpleImmutableEntry<>(f, f.value()))
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue
+            ))
+    );
   }
 
   @Override

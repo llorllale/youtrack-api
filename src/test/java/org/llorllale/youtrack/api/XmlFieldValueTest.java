@@ -36,7 +36,7 @@ public class XmlFieldValueTest {
   public void testAsString() throws Exception {
     assertThat(
         new XmlFieldValue(
-            new XmlObject(new StringAsDocument("<value>Bug</value>")), 
+            new XmlOf(new StringAsDocument("<value>Bug</value>")), 
             null
         ).asString(),
         is("Bug")
@@ -46,7 +46,7 @@ public class XmlFieldValueTest {
   @Test
   public void equalsItself() throws Exception {
     final FieldValue fv = new XmlFieldValue(
-        new XmlObject(new StringAsDocument("<value>v</value>")), 
+        new XmlOf(new StringAsDocument("<value>v</value>")), 
         new MockField("f", new MockProject())
     );
 
@@ -60,7 +60,7 @@ public class XmlFieldValueTest {
     final Field field = new MockField("field", new MockProject());
     assertTrue(
       new XmlFieldValue(
-          new XmlObject(new StringAsDocument("<value>value</value>")), 
+          new XmlOf(new StringAsDocument("<value>value</value>")), 
           field
       ).equals(new MockFieldValue(field, "value"))
     );
@@ -70,7 +70,7 @@ public class XmlFieldValueTest {
   public void notEqualsNull() throws Exception {
     assertFalse(
         new XmlFieldValue(
-            new XmlObject(new StringAsDocument("<value>Bug</value>")), 
+            new XmlOf(new StringAsDocument("<value>Bug</value>")), 
             new MockField("field", new MockProject())
         ).equals(null)
     );
@@ -80,7 +80,7 @@ public class XmlFieldValueTest {
   public void notEqualsObject() throws Exception {
     assertFalse(
         new XmlFieldValue(
-            new XmlObject(new StringAsDocument("<value>Test</value>")), 
+            new XmlOf(new StringAsDocument("<value>Test</value>")), 
             new MockField("field", new MockProject())
         ).equals(new Object())
     );
@@ -90,7 +90,7 @@ public class XmlFieldValueTest {
   public void notEqualsOtherField() throws Exception {
     assertFalse(
         new XmlFieldValue(
-            new XmlObject(new StringAsDocument("<value>test</value>")), 
+            new XmlOf(new StringAsDocument("<value>test</value>")), 
             new MockField("field1", new MockProject())
         ).equals(
             new MockFieldValue(

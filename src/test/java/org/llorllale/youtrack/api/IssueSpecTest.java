@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -89,7 +90,14 @@ public class IssueSpecTest {
     final FieldValue v2 = new MockFieldValue(f2, "value2");
 
     assertThat(
-        new IssueSpec("", "").with(f1, v1).with(f2, v2).fields().entrySet(),
+        new IssueSpec(
+            "", 
+            "",
+            new HashMap<Field, FieldValue>(){{
+                put(f1, v1);
+                put(f2, v2);
+            }}
+        ).fields().entrySet(),
         containsInAnyOrder(
             new MapEntry(f1, v1),
             new MapEntry(f2, v2)
@@ -110,8 +118,24 @@ public class IssueSpecTest {
     final FieldValue v2 = new MockFieldValue(f2, "value2");   
 
     assertThat(
-        new IssueSpec("", "").with(f1, v1).with(f2, v2),
-        is(new IssueSpec("", "").with(f1, v1).with(f2, v2))
+        new IssueSpec(
+            "", 
+            "",
+            new HashMap<Field, FieldValue>(){{
+                put(f1, v1);
+                put(f2, v2);
+            }}
+        ),
+        is(
+            new IssueSpec(
+                "", 
+                "",
+                new HashMap<Field, FieldValue>(){{
+                    put(f1, v1);
+                    put(f2, v2);
+                }}
+            )
+        )
     );
   }
 
@@ -128,8 +152,23 @@ public class IssueSpecTest {
     final FieldValue v2 = new MockFieldValue(f2, "value2");   
 
     assertThat(
-        new IssueSpec("summary", "desc").with(f1, v1).with(f2, v2),
-        is(not(new IssueSpec("summary", "description").with(f2, v2)))
+        new IssueSpec(
+            "summary", 
+            "desc",
+            new HashMap<Field, FieldValue>(){{
+                put(f1, v1);
+                put(f2, v2);
+            }}
+        ),
+        is(not(
+            new IssueSpec(
+                "summary", 
+                "description",
+                new HashMap<Field, FieldValue>(){{
+                    put(f2, v2);
+                }}
+            )
+        ))
     );
   }
 
@@ -170,8 +209,21 @@ public class IssueSpecTest {
     final FieldValue v2 = new MockFieldValue(f2, "value2");
 
     assertFalse(
-        new IssueSpec("summary").with(f1, v1).with(f2, v2).equals(
-            new IssueSpec("summary", "description").with(f1, v1).with(f2, v2)
+        new IssueSpec(
+            "summary",
+            new HashMap<Field, FieldValue>(){{
+                put(f1, v1);
+                put(f2, v2);
+            }}
+        ).equals(
+            new IssueSpec(
+                "summary", 
+                "description",
+                new HashMap<Field, FieldValue>(){{
+                    put(f1, v1);
+                    put(f2, v2);
+                }}
+            )
         )
     );
   }
@@ -187,9 +239,14 @@ public class IssueSpecTest {
     final FieldValue v1 = new MockFieldValue(f1, "v1");
     final Field f2 = new MockField("f2", new MockProject());
     final FieldValue v2 = new MockFieldValue(f2, "v2");
-    final IssueSpec spec = new IssueSpec("summary", "description")
-        .with(f1, v1)
-        .with(f2, v2);
+    final IssueSpec spec = new IssueSpec(
+        "summary", 
+        "description",
+        new HashMap<Field, FieldValue>(){{
+            put(f1, v1);
+            put(f2, v2);
+        }}
+    );
 
     assertThat(
         spec.hashCode(),

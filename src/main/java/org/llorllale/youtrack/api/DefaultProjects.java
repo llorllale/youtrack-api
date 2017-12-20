@@ -70,7 +70,7 @@ class DefaultProjects implements Projects {
     return new StreamOf<>(
         new MappedCollection<>(
             xml -> new XmlProject(this.youtrack, this.session, xml),
-            new XmlObjects(
+            new XmlsOf(
                 "/projects/project",
                 new HttpResponseAsResponse(
                     this.httpClient.execute(
@@ -89,9 +89,9 @@ class DefaultProjects implements Projects {
 
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
-    return new MappedCollection<XmlObject, Project>(
+    return new MappedCollection<Xml, Project>(
         xml -> new XmlProject(this.youtrack, this.session, xml),
-        new XmlObjects(
+        new XmlsOf(
             "/project",
             new HttpResponseAsResponse(
                 this.httpClient.execute(

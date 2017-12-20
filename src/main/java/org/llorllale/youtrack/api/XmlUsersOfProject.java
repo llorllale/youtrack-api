@@ -35,7 +35,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 class XmlUsersOfProject implements UsersOfProject {
   private final Project project;
   private final Session session;
-  private final XmlObject xml;
+  private final Xml xml;
   private final HttpClient httpClient;
 
   /**
@@ -47,7 +47,7 @@ class XmlUsersOfProject implements UsersOfProject {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.9.0
    */
-  XmlUsersOfProject(Project project, Session session, XmlObject xml, HttpClient httpClient) {
+  XmlUsersOfProject(Project project, Session session, Xml xml, HttpClient httpClient) {
     this.project = project;
     this.session = session;
     this.xml = xml;
@@ -62,7 +62,7 @@ class XmlUsersOfProject implements UsersOfProject {
    * @param xml the xml object received from YouTrack for this {@link #project() project}
    * @since 1.0.0
    */
-  XmlUsersOfProject(Project project, Session session, XmlObject xml) {
+  XmlUsersOfProject(Project project, Session session, Xml xml) {
     this(project, session, xml, HttpClients.createDefault());
   }
 
@@ -74,7 +74,7 @@ class XmlUsersOfProject implements UsersOfProject {
   @Override
   public User user(String login) throws IOException, UnauthorizedException {
     return new XmlUser(
-        new XmlObjects(
+        new XmlsOf(
             "/user",
             new HttpResponseAsResponse(
                 this.httpClient.execute(
