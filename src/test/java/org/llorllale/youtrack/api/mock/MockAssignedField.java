@@ -16,14 +16,10 @@
 
 package org.llorllale.youtrack.api.mock;
 
-import java.io.IOException;
-import java.util.stream.Stream;
 import org.llorllale.youtrack.api.AssignedField;
 import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Project;
-import org.llorllale.youtrack.api.SelectableFieldValue;
-import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Mock implementation of {@link AssignedField} suitable for tests.
@@ -60,11 +56,6 @@ public class MockAssignedField implements AssignedField {
   @Override
   public FieldValue value() {
     return new MockFieldValue(this, this.value);
-  }
-
-  @Override
-  public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException {
-    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
