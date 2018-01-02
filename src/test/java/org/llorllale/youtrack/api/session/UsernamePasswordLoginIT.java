@@ -43,4 +43,25 @@ public class UsernamePasswordLoginIT {
         is(not(empty()))
     );
   }
+
+  /**
+   * Fix #126: UsernamePasswordLogin: NPE when login() multiple times
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
+  @Test
+  public void multipleLogins() throws Exception {
+    final IntegrationTestsConfig config = new IntegrationTestsConfig();
+    final Login login = new UsernamePasswordLogin(
+        config.youtrackUrl(), 
+        config.youtrackUser(), 
+        config.youtrackPwd()
+    );
+    login.login();
+    assertThat(
+        login.login().cookies(),
+        is(not(empty()))
+    );
+  }
 }
