@@ -99,31 +99,23 @@ class DefaultIssues implements Issues {
 
   @Override
   public Optional<Issue> get(String issueId) throws IOException, UnauthorizedException {
-    final Optional<Issue> issue;
-    final XmlOf xml = new XmlOf(
-        new HttpResponseAsResponse(
-            this.httpClient.execute(
-                new HttpRequestWithSession(
-                    this.session, 
-                    new HttpGet(
-                        this.session.baseUrl().toString()
-                            .concat("/issue/")
-                            .concat(issueId)
+    //when the issueId does not exist, YouTrack returns a 404 response with an error XML
+    //in the payload
+    return Optional.of(
+        new XmlOf(
+            new HttpResponseAsResponse(
+                this.httpClient.execute(
+                    new HttpRequestWithSession(
+                        this.session, 
+                        new HttpGet(
+                            this.session.baseUrl().toString().concat("/issue/").concat(issueId)
+                        )
                     )
                 )
             )
         )
-    );
-    
-    //when the issueId does not exist, YouTrack returns a 404 response with an error in the 
-    //payload
-    if (xml.child("//error").isPresent()) {
-      issue = Optional.empty();
-    } else {
-      issue = Optional.of(new XmlIssue(this.project(), this.session, xml));
-    }
-
-    return issue;
+    ).filter(x -> !x.child("//error").isPresent())
+        .map(x -> new XmlIssue(this.project(), this.session, x));
   }
 
   @Override
