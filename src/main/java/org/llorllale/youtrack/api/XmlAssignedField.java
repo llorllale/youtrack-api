@@ -16,11 +16,6 @@
 
 package org.llorllale.youtrack.api;
 
-import java.io.IOException;
-import java.util.stream.Stream;
-
-import org.llorllale.youtrack.api.session.UnauthorizedException;
-
 /**
  * Combines and adapts a given {@link Field} and a given 
  * {@link org.llorllale.youtrack.api.jaxb.Field} into an {@link AssignedField}.
@@ -55,16 +50,6 @@ class XmlAssignedField implements AssignedField {
   @Override
   public FieldValue value() {
     return new XmlFieldValue(this.xml.child("value").get(), this);
-  }
-
-  @Override
-  public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException {
-    return this.project().fields().stream()
-        .filter(f -> f.isSameField(this))
-        .findAny()
-        .get()
-        .values()
-        .map(v -> new DefaultSelectableFieldValue(v, this.issue));
   }
 
   @Override
