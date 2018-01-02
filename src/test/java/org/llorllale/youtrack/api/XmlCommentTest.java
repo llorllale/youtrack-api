@@ -65,8 +65,7 @@ public class XmlCommentTest {
   }
 
   private Issue issue() {
-    return new MockIssue(new MockProject("PR-1", "", ""))
-        .withId("I-23");
+    return new MockIssue(new MockProject("PR-1", "", ""), "I-23");
   }
 
   private Session session() {

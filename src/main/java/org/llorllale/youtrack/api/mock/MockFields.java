@@ -17,41 +17,45 @@
 package org.llorllale.youtrack.api.mock;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Stream;
-import org.llorllale.youtrack.api.Field;
-import org.llorllale.youtrack.api.FieldValue;
+import org.llorllale.youtrack.api.Fields;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.ProjectField;
 
 /**
- * Mock implementation of {@link ProjectField} suitable for tests.
+ * Mock implementation of {@link Fields} suitable for tests.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockProjectField implements ProjectField {
-  private final String name;
+public final class MockFields implements Fields {
   private final Project project;
-  private final Stream<FieldValue> values;
+  private final Stream<ProjectField> stream;
 
   /**
    * Primary ctor.
    * 
-   * @param name this field's name
    * @param project the associated project
-   * @param values this project field's set of possible values
+   * @param fields the {@link ProjectField fields} to be produced by {@link #stream()}
    * @since 1.0.0
    */
-  public MockProjectField(String name, Project project, FieldValue... values) {
-    this.name = name;
+  public MockFields(Project project, Collection<ProjectField> fields) {
     this.project = project;
-    this.values = Arrays.asList(values).stream();
+    this.stream = fields.stream();
   }
 
-
-  @Override
-  public Stream<FieldValue> values() {
-    return this.values;
+  /**
+   * Ctor.
+   * 
+   * <p>Same as calling {@code new MockFields(project, Arrays.asList(fields))}.
+   * 
+   * @param project the associated project
+   * @param fields the {@link ProjectField fields} to be produced by {@link #stream()}
+   * @since 1.0.0
+   */
+  public MockFields(Project project, ProjectField... fields) {
+    this(project, Arrays.asList(fields));
   }
 
   @Override
@@ -60,22 +64,7 @@ public class MockProjectField implements ProjectField {
   }
 
   @Override
-  public String name() {
-    return this.name;
-  }
-
-  @Override
-  public int hashCode() {
-    return this.name().hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof Field)) {
-      return false;
-    }
-
-    final Field other = (Field) obj;
-    return this.isSameField(other);
+  public Stream<ProjectField> stream() {
+    return this.stream;
   }
 }

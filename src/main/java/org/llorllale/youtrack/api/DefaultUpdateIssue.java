@@ -76,7 +76,7 @@ class DefaultUpdateIssue implements UpdateIssue {
     return this.updateFields(
         new IssueSpec(
             this.issue.summary(), 
-            this.issue.description(),
+            this.issue.description().orElse(null),
             new HashMap<Field, FieldValue>(){{
                 put(field, value);
             }}
@@ -89,7 +89,7 @@ class DefaultUpdateIssue implements UpdateIssue {
     return this.updateFields(
         new IssueSpec(
             this.issue.summary(),
-            this.issue.description(),
+            this.issue.description().orElse(null),
             fields
         )
     );

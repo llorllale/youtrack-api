@@ -25,7 +25,7 @@ import org.llorllale.youtrack.api.FieldValue;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockFieldValue implements FieldValue {
+public final class MockFieldValue implements FieldValue {
   private final Field field;
   private final String value;
 

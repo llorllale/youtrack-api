@@ -18,7 +18,6 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -97,7 +96,7 @@ public interface Issues {
      * Primary ctor.
      * 
      * @param summary the issue's summary (ie. its title)
-     * @param description the issue's description
+     * @param description the issue's description (may be {@code null})
      * @param fields the fields to set
      * @since 0.8.0
      */
@@ -111,37 +110,11 @@ public interface Issues {
      * Sets no fields.
      * 
      * @param summary the issue's summary
-     * @param description the issue's description
+     * @param description the issue's description (may be {@code null})
      * @since 0.9.0
      */
     public IssueSpec(String summary, String description) {
-      this(summary, description, new HashMap<>());
-    }
-
-    /**
-     * Convenience method for internal use.
-     * 
-     * <p>Sets no fields, and sets the description if {@code description} is not empty.
-     * 
-     * @param summary the issue's summary
-     * @param description an optional describing the issue's <em>description</em> attribute
-     * @since 1.0.0
-     */
-    IssueSpec(String summary, Optional<String> description) {
-      this(summary, description.orElse(null));
-    }
-
-    /**
-     * Convenience method for internal use.
-     * 
-     * <p>Sets the description if {@code description} is not empty.
-     * 
-     * @param summary the issue's summary
-     * @param description an optional describing the issue's <em>description</em> attribute
-     * @param fields the issue's fields
-     */
-    IssueSpec(String summary, Optional<String> description, Map<Field, FieldValue> fields) {
-      this(summary, description.orElse(null), fields);
+      this(summary, description, Collections.emptyMap());
     }
 
     /**
@@ -163,7 +136,7 @@ public interface Issues {
      * @since 0.9.0
      */
     public IssueSpec(String summary) {
-      this(summary, new HashMap<>());
+      this(summary, Collections.emptyMap());
     }
 
     /**

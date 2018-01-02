@@ -132,7 +132,7 @@ class XmlIssue implements Issue {
   public IssueSpec spec() {
     return new IssueSpec(
         this.summary(), 
-        this.description(), 
+        this.description().orElse(null), 
         this.fields()
             .stream()
             .map(f -> new AbstractMap.SimpleImmutableEntry<>(f, f.value()))

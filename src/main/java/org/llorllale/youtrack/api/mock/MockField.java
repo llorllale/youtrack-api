@@ -16,43 +16,53 @@
 
 package org.llorllale.youtrack.api.mock;
 
-import org.llorllale.youtrack.api.User;
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.Project;
 
 /**
- * Mock implementation of {@link User} suitable for tests.
+ * Mock implementation of {@link Field} suitable for tests.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.5.0
+ * @since 1.0.0
  */
-public class MockUser implements User {
+public final class MockField implements Field {
   private final String name;
-  private final String email;
-  private final String loginName;
+  private final Project project;
 
   /**
    * Ctor.
-   * @param name
-   * @param email
-   * @param loginName 
-   * @since 0.5.0
+   * 
+   * @param name the field's name
+   * @param project the project to which this field belongs to
+   * @since 1.0.0
    */
-  public MockUser(String name, String email, String loginName) {
+  public MockField(String name, Project project) {
     this.name = name;
-    this.email = email;
-    this.loginName = loginName;
+    this.project = project;
+  }
+
+  @Override
+  public Project project() {
+    return this.project;
   }
 
   @Override
   public String name() {
-    return name;
+    return this.name;
   }
 
   @Override
-  public String email() {
-    return email;
+  public boolean equals(Object object) {
+    if (!(object instanceof Field)) {
+      return false;
+    }
+
+    final Field other = (Field) object;
+    return this.isSameField(other);
   }
 
   @Override
-  public String loginName() {
-    return loginName;
+  public int hashCode() {
+    return this.name().hashCode();
   }
 }

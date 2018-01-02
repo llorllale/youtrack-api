@@ -79,7 +79,7 @@ public class XmlTimeTrackEntryTest {
   }
 
   private Issue issue() {
-    return new MockIssue(new MockProject("PR-X", "", "")).withId("ISSUE-1");
+    return new MockIssue(new MockProject("PR-X", "", ""), "ISSUE-1");
   }
 
   private static final String XML =

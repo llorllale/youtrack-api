@@ -33,7 +33,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockAssignedField implements AssignedField {
+public final class MockAssignedField implements AssignedField {
   private final String name;
   private final Issue issue;
   private final String value;
@@ -64,7 +64,7 @@ public class MockAssignedField implements AssignedField {
 
   @Override
   public Stream<SelectableFieldValue> change() throws IOException, UnauthorizedException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    throw new UnsupportedOperationException("Not supported yet."); //TODO
   }
 
   @Override
@@ -79,7 +79,7 @@ public class MockAssignedField implements AssignedField {
 
   @Override
   public boolean equals(Object object) {
-    if(!(object instanceof AssignedField)) {
+    if (!(object instanceof AssignedField)) {
       return false;
     }
 

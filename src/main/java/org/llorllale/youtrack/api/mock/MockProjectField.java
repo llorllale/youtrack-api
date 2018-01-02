@@ -16,29 +16,41 @@
 
 package org.llorllale.youtrack.api.mock;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
 import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.ProjectField;
 
 /**
- * Mock implementation of {@link Field} suitable for tests.
+ * Mock implementation of {@link ProjectField} suitable for tests.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockField implements Field {
+public final class MockProjectField implements ProjectField {
   private final String name;
   private final Project project;
+  private final Stream<FieldValue> values;
 
   /**
-   * Ctor.
+   * Primary ctor.
    * 
-   * @param name the field's name
-   * @param project the project to which this field belongs to
+   * @param name this field's name
+   * @param project the associated project
+   * @param values this project field's set of possible values
    * @since 1.0.0
    */
-  public MockField(String name, Project project) {
+  public MockProjectField(String name, Project project, FieldValue... values) {
     this.name = name;
     this.project = project;
+    this.values = Arrays.asList(values).stream();
+  }
+
+  @Override
+  public Stream<FieldValue> values() {
+    return this.values;
   }
 
   @Override
@@ -52,17 +64,17 @@ public class MockField implements Field {
   }
 
   @Override
-  public boolean equals(Object object) {
-    if (!(object instanceof Field)) {
-      return false;
-    }
-
-    final Field other = (Field) object;
-    return this.isSameField(other);
+  public int hashCode() {
+    return this.name().hashCode();
   }
 
   @Override
-  public int hashCode() {
-    return this.name().hashCode();
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Field)) {
+      return false;
+    }
+
+    final Field other = (Field) obj;
+    return this.isSameField(other);
   }
 }

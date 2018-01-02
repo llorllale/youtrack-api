@@ -16,40 +16,75 @@
 
 package org.llorllale.youtrack.api.mock;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.llorllale.youtrack.api.Field;
 import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Fields;
+import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.Project;
-import org.llorllale.youtrack.api.ProjectField;
+import org.llorllale.youtrack.api.ProjectTimeTracking;
+import org.llorllale.youtrack.api.TimeTrackEntryType;
+import org.llorllale.youtrack.api.User;
 import org.llorllale.youtrack.api.UsersOfProject;
 import org.llorllale.youtrack.api.YouTrack;
-import org.llorllale.youtrack.api.ProjectTimeTracking;
-import org.llorllale.youtrack.api.User;
 
 /**
  * Mock implementation of {@link Project} suitable for unit tests.
  * 
- * Note: {@link  #issues()} throws an UnsupportedOperationException.
+ * <p>Note: {@link  #issues()} throws an UnsupportedOperationException.
+ * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class MockProject implements Project {
+public final class MockProject implements Project {
+  private static final String DEFAULT_ATTR_VALUE = "";
   private final String id;
   private final String name;
-  private final Optional<String> description;
-  private final Map<Field, List<FieldValue>> fields;
-  private final List<User> users;
+  private final String description;
+  private final Map<Field, Collection<FieldValue>> fields;
+  private final Collection<User> users;
+  private final Collection<Issue> issues;
+  private final Collection<TimeTrackEntryType> timetrackTypes;
 
   /**
    * Primary ctor.
+   * 
+   * @param id this project's id
+   * @param name this project's name
+   * @param description this project's description
+   * @param fields the fields configured for this project
+   * @param users the users configured for this project
+   * @param issues the issues belonging to this project
+   * @param timeTrackTypes the {@link TimeTrackEntryType timetrack entry types} to configure for 
+   *     this project
+   * @since 1.0.0
+   */
+  @SuppressWarnings("checkstyle:ParameterNumber")
+  public MockProject(
+      String id,
+      String name,
+      String description,
+      Map<Field, Collection<FieldValue>> fields,
+      Collection<User> users,
+      Collection<Issue> issues,
+      Collection<TimeTrackEntryType> timeTrackTypes
+  ) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.fields = fields;
+    this.users = users;
+    this.issues = issues;
+    this.timetrackTypes = timeTrackTypes;
+  }
+
+  /**
+   * Ctor.
    * 
    * @param id the mock project's id
    * @param name the mock project's name
@@ -57,11 +92,15 @@ public class MockProject implements Project {
    * @since 0.4.0
    */
   public MockProject(String id, String name, String description) {
-    this.id = id;
-    this.name = name;
-    this.description = Optional.of(description);
-    this.fields = new HashMap<>();
-    this.users = new ArrayList<>();
+    this(
+        id, 
+        name, 
+        description, 
+        Collections.emptyMap(), 
+        Collections.emptyList(), 
+        Collections.emptyList(),
+        Collections.emptyList()
+    );
   }
 
   /**
@@ -77,76 +116,9 @@ public class MockProject implements Project {
    * @since 0.4.0
    */
   public MockProject() {
-    this("", "", "");
+    this(DEFAULT_ATTR_VALUE, DEFAULT_ATTR_VALUE, DEFAULT_ATTR_VALUE);
   }
   
-  /**
-   * Add {@code field} to this project's collection of configured {@link ProjectField fields}.
-   * 
-   * @param field
-   * @return 
-   * @since 1.0.0
-   */
-  public MockProject withField(MockProjectField field) {
-    this.fields.merge(
-        field, 
-        field.values().collect(Collectors.toList()), 
-        (a, b) -> {a.addAll(b); return a;}
-    );
-    return this;
-  }
-
-  /**
-   * Shorthand for {@link #withField(org.llorllale.youtrack.api.ProjectField)}. Equivalent to
-   * doing:
-   * <pre>
-   * {@code 
-   * final MockProject project = ...;
-   * final String fieldName = ...;
-   * final String fieldValue = ...;
-   * project.withField(
-   *    new MockProjectField(
-   *        fieldName, 
-   *        project, 
-   *        new MockFieldValue(
-   *            new MockField(fieldName, project), 
-   *            fieldValue
-   *        )
-   *    )
-   * );
-   * }
-   * </pre>
-   * 
-   * @param name
-   * @param value
-   * @return 
-   * @since 1.0.0
-   */
-  public MockProject withFieldValue(String name, String value) {
-    return this.withField(
-        new MockProjectField(
-            name, 
-            this, 
-            new MockFieldValue(
-                new MockField(name, this), 
-                value
-            )
-        )
-    );
-  }
-
-  /**
-   * Adds {@code user} to the collection of configured {@link User users} for this project.
-   * 
-   * @param user the user to add
-   * @return this object
-   * @since 1.0.0
-   */
-  public MockProject withUser(User user) {
-    this.users.add(user);
-    return this;
-  }
-
   @Override
   public String id() {
     return this.id;
@@ -159,12 +131,12 @@ public class MockProject implements Project {
 
   @Override
   public Optional<String> description() {
-    return this.description;
+    return Optional.ofNullable(this.description);
   }
 
   @Override
   public Issues issues() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    return new MockIssues(this.issues, this);
   }
 
   @Override
@@ -196,7 +168,7 @@ public class MockProject implements Project {
                 new MockProjectField(
                     entry.getKey().name(), 
                     entry.getKey().project(), 
-                    entry.getValue().toArray(new FieldValue[]{})
+                    entry.getValue().toArray(new FieldValue[] {})
                 )
             ).collect(Collectors.toList())
         )
@@ -205,11 +177,14 @@ public class MockProject implements Project {
 
   @Override
   public ProjectTimeTracking timetracking() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    return new MockProjectTimeTracking(
+        this, 
+        Collections.unmodifiableCollection(this.timetrackTypes)
+    );
   }
 
   @Override
   public UsersOfProject users() {
-    return new MockUsersOfProject(this, Collections.unmodifiableList(this.users));
+    return new MockUsersOfProject(this, Collections.unmodifiableCollection(this.users));
   }
 }

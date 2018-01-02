@@ -17,34 +17,36 @@
 package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Stream;
 import org.llorllale.youtrack.api.Project;
-import org.llorllale.youtrack.api.User;
-import org.llorllale.youtrack.api.UsersOfProject;
+import org.llorllale.youtrack.api.ProjectTimeTracking;
+import org.llorllale.youtrack.api.TimeTrackEntryType;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- * Mock implementation of {@link UsersOfProject} suitable for tests.
+ * Mock implementation of {@link ProjectTimeTracking} suitable for tests.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockUsersOfProject implements UsersOfProject {
+public final class MockProjectTimeTracking implements ProjectTimeTracking {
   private final Project project;
-  private final List<User> users;
+  private final Collection<TimeTrackEntryType> types;
 
   /**
    * Primary ctor.
    * 
+   * <p>{@link #enabled() Enable} or disable timetracking by providing a non-empty/empty 
+   * {@code types}.
+   * 
    * @param project the associated project
-   * @param users the users to configure for this mock project
+   * @param types the types to configure for the associated project
    * @since 1.0.0
    */
-  public MockUsersOfProject(Project project, List<User> users) {
+  public MockProjectTimeTracking(Project project, Collection<TimeTrackEntryType> types) {
     this.project = project;
-    this.users = new ArrayList<>(users);
+    this.types = types;
   }
 
   @Override
@@ -53,15 +55,16 @@ public class MockUsersOfProject implements UsersOfProject {
   }
 
   @Override
-  public User user(String login) throws IOException, UnauthorizedException {
-    return this.users.stream()
-        .filter(user -> login.equals(user.loginName()))
-        .findAny()
-        .orElseThrow(() -> new IOException(String.format("User login %s not found.", login)));
+  public boolean enabled() throws IOException, UnauthorizedException {
+    return !this.types.isEmpty();
   }
 
   @Override
-  public Stream<User> assignees() throws IOException, UnauthorizedException {
-    return this.users.stream();
+  public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException {
+    if (this.enabled()) {
+      return this.types.stream();
+    }
+
+    throw new IOException("Disabled because no types were added. Always check enabled() first.");
   }
 }
