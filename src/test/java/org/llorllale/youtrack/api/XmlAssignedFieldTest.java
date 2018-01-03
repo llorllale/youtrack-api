@@ -16,9 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
-import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -76,35 +74,6 @@ public class XmlAssignedFieldTest {
             new XmlOf(new StringAsDocument(FIELD_XML))
         ).value(),
         is(new MockFieldValue(field, "Normal"))
-    );
-  }
-
-  /**
-   * {@link XmlAssignedField#change()} must return only the values configured for the same field
-   * in the same project.
-   * 
-   * @throws Exception 
-   * @since 1.0.0
-   */
-  @Test
-  public void change() throws Exception {
-    //the field of interest
-    final String fieldName = "field2";
-    final MockProject project = new MockProject()
-        .withFieldValue("field1", "value1")
-        .withFieldValue(fieldName, "value21")
-        .withFieldValue(fieldName, "value22")
-        .withFieldValue(fieldName, "value23")
-        .withFieldValue("field3", "value3");
-    assertThat(
-        new XmlAssignedField(
-            new MockField(fieldName, project), 
-            new MockIssue(
-                project
-            ), 
-            null
-        ).change().map(SelectableFieldValue::asString).collect(Collectors.toList()),
-        containsInAnyOrder("value21", "value22", "value23")
     );
   }
 
