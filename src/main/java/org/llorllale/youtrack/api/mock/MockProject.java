@@ -86,6 +86,27 @@ public final class MockProject implements Project {
   /**
    * Ctor.
    * 
+   * @param id
+   * @param name
+   * @param description
+   * @param users 
+   * @since 1.0.0
+   */
+  public MockProject(String id, String name, String description, Collection<User> users) {
+    this(
+        id, 
+        name, 
+        description, 
+        Collections.emptyMap(), 
+        users, 
+        Collections.emptyList(), 
+        Collections.emptyList()
+    );
+  }
+
+  /**
+   * Ctor.
+   * 
    * @param id the mock project's id
    * @param name the mock project's name
    * @param description the mock project's description

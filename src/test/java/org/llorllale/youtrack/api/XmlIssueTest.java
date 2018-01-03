@@ -122,7 +122,7 @@ public class XmlIssueTest {
                 .map(x -> 
                     new MockAssignedField(
                         x.textOf("@name").get(), 
-                        new MockIssue(new MockProject(), "HBR-63", null, null, null), 
+                        new MockIssue(new MockProject(), "HBR-63"), 
                         x.textOf("value").get()
                     )
                 ).collect(Collectors.toMap(
@@ -156,7 +156,7 @@ public class XmlIssueTest {
     final Project project = new MockProject("PR-1", "name", "description");
     assertEquals(
         new XmlIssue(project, new MockSession(), xml),
-        new MockIssue(project, "HBR-63", null, null, null)
+        new MockIssue(project, "HBR-63")
     );
   }
 
@@ -200,10 +200,7 @@ public class XmlIssueTest {
         ),
         new MockIssue(
             new MockProject("PR-2", "name", "description"), 
-            "HBR-63", 
-            null, 
-            null, 
-            null
+            "HBR-63"
         )
     );
   }
@@ -224,10 +221,7 @@ public class XmlIssueTest {
         ),
         new MockIssue(
             new MockProject("PR-1", "name", "description"), 
-            "HBR-64", 
-            null, 
-            null, 
-            null
+            "HBR-64"
         )
     );
   }

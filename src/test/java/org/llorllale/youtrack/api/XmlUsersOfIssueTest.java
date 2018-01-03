@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import java.util.Arrays;
 import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -39,8 +40,10 @@ public class XmlUsersOfIssueTest {
    */
   @Test
   public void testCreator() throws Exception {
-    final Project project = new MockProject()
-        .withUser(new MockUser("creator", "creator@gmail.com", "TestCreatorUserLogin"));
+    final Project project = new MockProject(
+        "", "", "", 
+        Arrays.asList(new MockUser("creator", "creator@gmail.com", "TestCreatorUserLogin"))
+    );
     assertThat(
         new XmlUsersOfIssue(
             new MockIssue(project), 
@@ -59,8 +62,10 @@ public class XmlUsersOfIssueTest {
    */
   @Test
   public void existingUpdater() throws Exception {
-    final Project project = new MockProject()
-        .withUser(new MockUser("updater", "updater@gmail.com", "UpdaterLogin"));
+    final Project project = new MockProject(
+        "", "", "",
+        Arrays.asList(new MockUser("updater", "updater@gmail.com", "UpdaterLogin"))
+    );
     final Optional<User> updater = new XmlUsersOfIssue(
         new MockIssue(project),
         new XmlOf(new StringAsDocument(XML_ISSUE))
@@ -108,7 +113,10 @@ public class XmlUsersOfIssueTest {
   public void existingAssignee() throws Exception {
     final Optional<User> assignee = new XmlUsersOfIssue(
         new MockIssue(
-            new MockProject().withUser(new MockUser("Beto", "beto@gmail.com", "beto"))
+            new MockProject(
+                "", "", "",
+                Arrays.asList(new MockUser("Beto", "beto@gmail.com", "beto"))
+            )
         ),
         new XmlOf(new StringAsDocument(XML_ISSUE))
     ).assignee();
