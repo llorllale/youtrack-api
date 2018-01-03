@@ -17,7 +17,6 @@
 package org.llorllale.youtrack.api.session;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -39,8 +38,8 @@ import org.apache.http.impl.client.HttpClients;
 public final class UsernamePasswordLogin implements Login {
   private final URL youtrackUrl;
   private final HttpClient httpClient;
-  private String username;
-  private char[] password;
+  private final String username;
+  private final char[] password;
 
   /**
    * Primary constructor.
@@ -83,16 +82,15 @@ public final class UsernamePasswordLogin implements Login {
   @Override
   public Session login() throws AuthenticationException, IOException {
     try {
-      final URI uri = new URIBuilder(
-          this.youtrackUrl.toString().concat("/user/login")
-      ).setParameter("login", this.username)
-          .setParameter("password", new String(this.password))
-          .build();
-      this.username = null;
-      this.password = null;
-  
-      final HttpPost post = new HttpPost(uri);
-      final HttpResponse response = this.httpClient.execute(post);
+      final HttpResponse response = this.httpClient.execute(
+          new HttpPost(
+              new URIBuilder(
+                  this.youtrackUrl.toString().concat("/user/login")
+              ).setParameter("login", this.username)
+              .setParameter("password", new String(this.password))
+              .build()
+          )
+      );
   
       //@checkstyle todo there is more branching here
       if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
