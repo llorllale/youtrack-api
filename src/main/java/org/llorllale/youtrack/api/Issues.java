@@ -78,6 +78,17 @@ public interface Issues {
   /**
    * Specifications for building an {@link Issue}.
    * 
+   * <p>There are two main (expected) ways to use specs:
+   * <pre>
+   *   a) <strong>To create issues.</strong> Users can use any of the constructors to "fill out
+   *      the spec for the issue" and then call {@link Issues#create(IssueSpec)}.
+   *   b) <strong>To test for end-user changes to an issue.</strong> Since this library will
+   *      probably end up being used to display data on a GUI with modifiable fields, and since
+   *      {@link Issue issues} are immutable, client code can manually build a spec from the 
+   *      GUI's state and test for equality against the issue's own {@link Issue#spec() spec} to
+   *      detect any differences.
+   * </pre>
+   * 
    * <p>Note the following:
    * 
    * <ul>
@@ -170,7 +181,6 @@ public interface Issues {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:NPathComplexity")
     public boolean equals(Object object) {
       if (!(object instanceof IssueSpec)) {
         return false;

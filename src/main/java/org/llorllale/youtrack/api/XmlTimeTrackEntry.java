@@ -23,7 +23,7 @@ import java.time.ZoneId;
 import java.util.Optional;
 
 /**
- * XmlOf impl of {@link TimeTrackEntry}.
+ * Xml impl of {@link TimeTrackEntry}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0

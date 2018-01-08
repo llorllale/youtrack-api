@@ -213,7 +213,6 @@ public interface IssueTimeTracking {
     }
 
     @Override
-    @SuppressWarnings("checkstyle:NPathComplexity")
     public boolean equals(Object object) {
       if (!(object instanceof EntrySpec)) {
         return false;

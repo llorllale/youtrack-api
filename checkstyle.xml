@@ -277,10 +277,10 @@
       <property name="ignorePattern" value="^import .*$"/>
     </module>
     <module name="MethodCount">
-      <property name="maxTotal" value="12"/>
-      <property name="maxPublic" value="12"/>
+      <property name="maxTotal" value="10"/>
+      <property name="maxPublic" value="10"/>
       <property name="maxProtected" value="0"/>
-      <property name="maxPackage" value="3"/>
+      <property name="maxPackage" value="0"/>
     </module>
     <module name="MethodLength">
       <property name="max" value="50"/>

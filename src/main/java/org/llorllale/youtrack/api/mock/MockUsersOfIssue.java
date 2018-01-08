@@ -95,7 +95,8 @@ public final class MockUsersOfIssue implements UsersOfIssue {
             this.creator(), 
             user, 
             this.updater().orElse(null), 
-            this.issue.comments().stream().collect(Collectors.toList())
+            this.issue.comments().stream().collect(Collectors.toList()),
+            this.issue().timetracking().stream().collect(Collectors.toList())
         ), 
         this.creator(), 
         user, 

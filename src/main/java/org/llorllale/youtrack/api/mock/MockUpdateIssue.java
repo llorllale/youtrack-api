@@ -63,7 +63,8 @@ public final class MockUpdateIssue implements UpdateIssue {
         this.issue.users().creator(), 
         this.issue.users().assignee().orElse(null), 
         this.issue.users().updater().orElse(null), 
-        this.issue.comments().stream().collect(Collectors.toList())
+        this.issue.comments().stream().collect(Collectors.toList()),
+        Collections.emptyList()
     );
   }
 
@@ -82,7 +83,8 @@ public final class MockUpdateIssue implements UpdateIssue {
         this.issue.users().creator(), 
         this.issue.users().assignee().orElse(null), 
         this.issue.users().updater().orElse(null), 
-        this.issue.comments().stream().collect(Collectors.toList())
+        this.issue.comments().stream().collect(Collectors.toList()),
+        Collections.emptyList()
     );
   }
 
@@ -102,7 +104,8 @@ public final class MockUpdateIssue implements UpdateIssue {
         this.issue.users().creator(), 
         this.issue.users().assignee().orElse(null), 
         this.issue.users().updater().orElse(null), 
-        this.issue.comments().stream().collect(Collectors.toList())
+        this.issue.comments().stream().collect(Collectors.toList()),
+        Collections.emptyList()
     );
   }
 
@@ -138,7 +141,8 @@ public final class MockUpdateIssue implements UpdateIssue {
         this.issue.users().creator(),
         this.issue.users().assignee().orElse(null),
         this.issue.users().updater().orElse(null),
-        this.issue.comments().stream().collect(Collectors.toList())
+        this.issue.comments().stream().collect(Collectors.toList()),
+        Collections.emptyList()
     );
   }
 }

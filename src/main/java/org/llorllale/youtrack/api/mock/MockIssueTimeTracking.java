@@ -17,52 +17,39 @@
 package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.stream.Stream;
-import org.llorllale.youtrack.api.Project;
-import org.llorllale.youtrack.api.Projects;
+import org.llorllale.youtrack.api.Issue;
+import org.llorllale.youtrack.api.IssueTimeTracking;
+import org.llorllale.youtrack.api.TimeTrackEntry;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- * Mock implementation of {@link Projects} suitable for tests.
+ * Mock implementation of {@link IssueTimeTracking} suitable for tests.
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public final class MockProjects implements Projects {
-  private final Collection<Project> projects;
+public final class MockIssueTimeTracking implements IssueTimeTracking {
+  private final Collection<TimeTrackEntry> entries;
 
   /**
    * Primary ctor.
    * 
-   * @param projects the projects
+   * @param entries entries to configure for this issue's {@link Issue#timetracking() timetracking}
    * @since 1.0.0
    */
-  public MockProjects(Collection<Project> projects) {
-    this.projects = projects;
-  }
-
-  /**
-   * Ctor.
-   * 
-   * @param projects the projects
-   * @since 1.0.0
-   */
-  public MockProjects(Project... projects) {
-    this(Arrays.asList(projects));
+  public MockIssueTimeTracking(Collection<TimeTrackEntry> entries) {
+    this.entries = entries;
   }
 
   @Override
-  public Stream<Project> stream() throws IOException, UnauthorizedException {
-    return this.projects.stream();
+  public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException {
+    return this.entries.stream();
   }
 
   @Override
-  public Optional<Project> get(String id) throws IOException, UnauthorizedException {
-    return this.stream()
-        .filter(p -> id.equals(p.id()))
-        .findAny();
+  public IssueTimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException {
+    throw new UnsupportedOperationException("Not supported yet."); //TODO
   }
 }

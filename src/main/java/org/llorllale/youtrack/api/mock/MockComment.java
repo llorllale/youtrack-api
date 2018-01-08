@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import org.llorllale.youtrack.api.Comment;
 import org.llorllale.youtrack.api.Issue;
@@ -93,7 +94,8 @@ public final class MockComment implements Comment {
         this.issue().users().updater().orElse(null),
         this.issue().comments().stream()
             .filter(c -> !this.id().equals(c.id()))
-            .collect(Collectors.toList())
+            .collect(Collectors.toList()),
+        Collections.emptyList()
     );
   }
 }

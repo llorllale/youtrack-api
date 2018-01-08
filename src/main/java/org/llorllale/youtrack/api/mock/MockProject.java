@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api.mock;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.llorllale.youtrack.api.Field;
@@ -50,6 +51,7 @@ public final class MockProject implements Project {
   private final Collection<User> users;
   private final Collection<Issue> issues;
   private final Collection<TimeTrackEntryType> timetrackTypes;
+  private final YouTrack youtrack;
 
   /**
    * Primary ctor.
@@ -62,6 +64,7 @@ public final class MockProject implements Project {
    * @param issues the issues belonging to this project
    * @param timeTrackTypes the {@link TimeTrackEntryType timetrack entry types} to configure for 
    *     this project
+   * @param youtrack the parent {@link YouTrack}
    * @since 1.0.0
    */
   @SuppressWarnings("checkstyle:ParameterNumber")
@@ -72,7 +75,8 @@ public final class MockProject implements Project {
       Map<Field, Collection<FieldValue>> fields,
       Collection<User> users,
       Collection<Issue> issues,
-      Collection<TimeTrackEntryType> timeTrackTypes
+      Collection<TimeTrackEntryType> timeTrackTypes,
+      YouTrack youtrack
   ) {
     this.id = id;
     this.name = name;
@@ -81,15 +85,16 @@ public final class MockProject implements Project {
     this.users = users;
     this.issues = issues;
     this.timetrackTypes = timeTrackTypes;
+    this.youtrack = youtrack;
   }
 
   /**
-   * Ctor.
+   * Shorthand ctor to quickly create a {@link MockProject} with {@link User users}.
    * 
-   * @param id
-   * @param name
-   * @param description
-   * @param users 
+   * @param id this project's id
+   * @param name this project's name
+   * @param description this project's description
+   * @param users the users to configure for this project
    * @since 1.0.0
    */
   public MockProject(String id, String name, String description, Collection<User> users) {
@@ -100,7 +105,8 @@ public final class MockProject implements Project {
         Collections.emptyMap(), 
         users, 
         Collections.emptyList(), 
-        Collections.emptyList()
+        Collections.emptyList(),
+        null
     );
   }
 
@@ -117,9 +123,6 @@ public final class MockProject implements Project {
         id, 
         name, 
         description, 
-        Collections.emptyMap(), 
-        Collections.emptyList(), 
-        Collections.emptyList(),
         Collections.emptyList()
     );
   }
@@ -177,7 +180,7 @@ public final class MockProject implements Project {
 
   @Override
   public YouTrack youtrack() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    return Objects.requireNonNull(this.youtrack, "YouTrack instance not provided.");
   }
 
   @Override

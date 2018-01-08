@@ -33,6 +33,7 @@ import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.IssueTimeTracking;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.TimeTrackEntry;
 import org.llorllale.youtrack.api.UpdateIssue;
 import org.llorllale.youtrack.api.User;
 import org.llorllale.youtrack.api.UsersOfIssue;
@@ -56,6 +57,7 @@ public final class MockIssue implements Issue {
   private final Map<Field, FieldValue> fields;
   private final UsersOfIssue usersOfIssue;
   private final Collection<Comment> comments;
+  private final Collection<TimeTrackEntry> entries;
 
   /**
    * Primary ctor.
@@ -70,6 +72,7 @@ public final class MockIssue implements Issue {
    * @param assignee the user assigned to this issue (may be {@code null})
    * @param updater the last user that updated this issue (may be {@code null})
    * @param comments all comments for this issue
+   * @param entries all {@link TimeTrackEntry entries} for this issue
    * @since 0.4.0
    */
   @SuppressWarnings("checkstyle:ParameterNumber")
@@ -83,7 +86,8 @@ public final class MockIssue implements Issue {
       User creator,
       User assignee,
       User updater,
-      Collection<Comment> comments
+      Collection<Comment> comments,
+      Collection<TimeTrackEntry> entries
   ) {
     this.project = project;
     this.id = id;
@@ -93,6 +97,7 @@ public final class MockIssue implements Issue {
     this.fields = fields;
     this.usersOfIssue = new MockUsersOfIssue(this, creator, assignee, updater);
     this.comments = comments;
+    this.entries = entries;
   }
 
   /**
@@ -127,6 +132,7 @@ public final class MockIssue implements Issue {
         creator, 
         null, 
         null, 
+        Collections.emptyList(),
         Collections.emptyList()
     );
   }
@@ -221,7 +227,7 @@ public final class MockIssue implements Issue {
 
   @Override
   public IssueTimeTracking timetracking() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    return new MockIssueTimeTracking(this.entries);
   }
 
   @Override
