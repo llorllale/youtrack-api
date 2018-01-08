@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -28,7 +29,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -57,82 +57,29 @@ class DefaultUpdateIssue implements UpdateIssue {
 
   @Override
   public Issue summary(String summary) throws IOException, UnauthorizedException {
-    return this.updateSmmryDesc(new IssueSpec(summary));
+    return this.updateSmmryDesc(summary, this.issue.description().orElse(null));
   }
 
   @Override
   public Issue description(String description) throws IOException, UnauthorizedException {
-    return this.updateSmmryDesc(new IssueSpec(this.issue.summary(), description));
+    return this.updateSmmryDesc(this.issue.summary(), description);
   }
 
   @Override
   public Issue summaryAndDesc(String summary, String description) 
       throws IOException, UnauthorizedException {
-    return this.updateSmmryDesc(new IssueSpec(summary, description));
+    return this.updateSmmryDesc(summary, description);
   }
 
   @Override
   public Issue field(Field field, FieldValue value) throws IOException, UnauthorizedException {
-    return this.updateFields(
-        new IssueSpec(
-            this.issue.summary(), 
-            this.issue.description(),
-            new HashMap<Field, FieldValue>(){{
-                put(field, value);
-            }}
-        )
-    );
+    final Map<Field, FieldValue> fields = new HashMap<>();
+    fields.put(field, value);
+    return this.fields(fields);
   }
 
   @Override
   public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
-    return this.updateFields(
-        new IssueSpec(
-            this.issue.summary(),
-            this.issue.description(),
-            fields
-        )
-    );
-  }
-
-  /**
-   * Updates just the summary and description of the issue based on the spec.
-   * 
-   * @param spec the issue's spec
-   * @return a new instance of the same issue after being refreshed
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's is unauthorized
-   */
-  private Issue updateSmmryDesc(IssueSpec spec) throws IOException, UnauthorizedException {
-    new HttpResponseAsResponse(
-        HttpClients.createDefault().execute(
-            new HttpRequestWithSession(
-                this.session, 
-                new HttpPost(
-                    new UncheckedUriBuilder(
-                        this.session.baseUrl().toString()
-                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
-                    ).param("summary", spec.summary())
-                        .paramIfPresent("description", spec.description())
-                        .build()
-                )
-            )
-        )
-    ).httpResponse();
-
-    return this.issue.refresh();
-  }
-
-  /**
-   * Updates the issue's fields based on the spec.
-   * 
-   * @param spec the issue's spec
-   * @return a new instance of the same issue after being refreshed
-   * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's is unauthorized
-   */
-  private Issue updateFields(IssueSpec spec) 
-      throws IOException, UnauthorizedException {
     final String separator = " ";
     new HttpResponseAsResponse(
         HttpClients.createDefault().execute(
@@ -143,7 +90,7 @@ class DefaultUpdateIssue implements UpdateIssue {
                         Arrays.asList(
                             new BasicNameValuePair(
                                 "command", 
-                                spec.fields().entrySet().stream()
+                                fields.entrySet().stream()
                                     .map(
                                         e -> String.join(
                                             separator, 
@@ -160,6 +107,36 @@ class DefaultUpdateIssue implements UpdateIssue {
                             .concat(String.format(PATH_TEMPLATE, this.issue.id()))
                             .concat("/execute")
                     )
+                )
+            )
+        )
+    ).httpResponse();
+
+    return this.issue.refresh();
+  }
+
+  /**
+   * Updates just the summary and description of the issue.
+   * 
+   * @param summary the issue's summary
+   * @param description the issue's description (may be {@code null})
+   * @return a new instance of the same issue after being refreshed
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's is unauthorized
+   */
+  private Issue updateSmmryDesc(String summary, String description) 
+      throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+        HttpClients.createDefault().execute(
+            new HttpRequestWithSession(
+                this.session, 
+                new HttpPost(
+                    new UncheckedUriBuilder(
+                        this.session.baseUrl().toString()
+                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
+                    ).param("summary", summary)
+                        .paramIfPresent("description", Optional.ofNullable(description))
+                        .build()
                 )
             )
         )

@@ -17,9 +17,9 @@ final YouTrack youtrack = new DefaultYouTrack(
 );
 youtrack.projects().get("project_id").get()
     .issues()
-    .create(new IssueSpec("summary", "description"))    //creates issue
+    .create("summary", "description")       //creates issue
     .comments()
-    .post("Hello World!");                              //posts comment to the issue
+    .post("Hello World!");                  //posts comment to the issue
 ```
 
 ## Feedback

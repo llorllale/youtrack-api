@@ -11,7 +11,7 @@
 
   <name>youtrack-api</name>
   <description>Fluent, object-oriented Java API for YouTrack.</description>
-  <url>https://github.com/llorllale/youtrack-api</url>
+  <url>https://github.com/llorllale/fieldsyoutrack-api</url>
   <inceptionYear>2017</inceptionYear>
 
   <organization>
@@ -75,7 +75,7 @@
     <youtrack.test.user>root</youtrack.test.user>
     <youtrack.test.user.token>perm:cm9vdA==.eW91dHJhY2stYXBpLXRlc3Q=.nOe5IYpv520S120tK18hc2tkm8oCI4</youtrack.test.user.token>
     <youtrack.test.pwd>youtrack</youtrack.test.pwd>
-    <youtrack.test.baseUrl>http://localhost:18080</youtrack.test.baseUrl>
+    <youtrack.test.baseUrl>http://192.168.99.100:18080</youtrack.test.baseUrl>
     <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
     <youtrack.test.project.id>TP</youtrack.test.project.id>
   </properties>

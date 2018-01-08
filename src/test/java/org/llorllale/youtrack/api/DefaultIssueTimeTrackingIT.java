@@ -21,7 +21,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.IssueTimeTracking.EntrySpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
@@ -51,7 +50,7 @@ public class DefaultIssueTimeTrackingIT {
         .findFirst()
         .get()
         .issues()
-        .create(new IssueSpec(DefaultIssueTimeTrackingIT.class.getSimpleName(), "Description"));
+        .create(DefaultIssueTimeTrackingIT.class.getSimpleName(), "Description");
   }
 
   @Test

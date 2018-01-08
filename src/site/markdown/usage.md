@@ -105,15 +105,15 @@ To collect all time track entries for the issue:
 
     //with summary and description
     final Issue issue = project.issues()
-        .create(new IssueSpec("summary", "description"));
+        .create("summary", "description");
 
-    //with summary and state set to "Open"
+    //with summary, description, and state set to "Open"
     final Field state = /* use Project#fields() */
     final FieldValue open = /* use Project#fields()#stream()...#values() */
+    final Map<Field, FieldValue> fields = new HashMap<>();
+    fields.put(state, open);
     final Issue issue = project.issues()
-        .create(
-            new IssueSpec("summary").with(state, open)
-        );
+        .create("summary", "description", fields);
 
 ##### Collect all comments for an Issue
 

@@ -48,10 +48,9 @@
  * You can find an {@link org.llorllale.youtrack.api.Issue issue} like this:<br>
  * <pre>  {@code final Optional<Issue> issue = project.issues().get("issueId");}</pre>
  * To create an issue, use 
- * {@link org.llorllale.youtrack.api.Issues#create(org.llorllale.youtrack.api.Issues.IssueSpec)}:
- * <pre>  {@code final Issue is = project.issues().create(new IssueSpec("summary", "description"));}
- * </pre>See {@link org.llorllale.youtrack.api.Issues} and 
- * {@link org.llorllale.youtrack.api.Issues.IssueSpec} for more info.
+ * {@link org.llorllale.youtrack.api.Issues#create(String, String)}:
+ * <pre>  {@code final Issue is = project.issues().create("summary", "description");}
+ * </pre>See {@link org.llorllale.youtrack.api.Issues} for more info.
  * 
  * <h2>Fields of an Issue</h2>
  * <strong>Note:</strong><br>
@@ -68,21 +67,8 @@
  * <pre>  {@code final Stream<ProjectField> fields = project.fields().stream();}</pre>
  * To access all possible {@link org.llorllale.youtrack.api.FieldValue values} for a field:
  * <pre>  {@code final Stream<FieldValue> values = projectField.values();}</pre>
- * Updating an issue's fields can be done in two ways:
- * <ul>
- *   <li>By selecting a {@link org.llorllale.youtrack.api.SelectableFieldValue} on one of the 
- * issue's {@link org.llorllale.youtrack.api.Issue#fields() fields}</li>
- *   <li>By directly updating the issue via {@link org.llorllale.youtrack.api.Issue#update()}</li>
- * </ul>
- * Example of the former:
- * <pre>  {@code issue.fields().stream()
- *        .filter(f -> "State".equals(f.name())
- *        .findAny().get()
- *        .change()           //opens a stream of SelectableFieldValue
- *        .filter(v -> "Done".equals(v.asString())
- *        .findAny().get()
- *        .apply();}</pre> 
- * Example of the latter:
+ * Updating an issue's fields can be done via {@link org.llorllale.youtrack.api.Issue#update()}.
+ * Example:
  * <pre>  {@code final ProjectField state = project.fields().stream()
  *        .filter(f -> "State".equals(f.name()))
  *        .findAny().get();

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.Test;
 import org.junit.BeforeClass;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
@@ -44,10 +43,8 @@ public class DefaultUpdateIssueIT {
         .get()
         .issues()
         .create(
-            new IssueSpec(
-                DefaultUpdateIssueIT.class.getSimpleName(), 
-                "integration tests"
-            )
+            DefaultUpdateIssueIT.class.getSimpleName(), 
+            "integration tests"
         );
   }
   @Test
