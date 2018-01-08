@@ -34,6 +34,8 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
+//current MethodCount: 12
+@SuppressWarnings("checkstyle:MethodCount")
 public interface Issue {
   /**
    * The {@link Project} that the issue was created in.

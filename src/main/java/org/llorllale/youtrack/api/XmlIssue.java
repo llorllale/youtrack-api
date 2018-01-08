@@ -34,7 +34,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-//equals and hashCode tip the method count to just over the max allowed (12) to the actual 14
+//current MethodCount: 14
 @SuppressWarnings("checkstyle:MethodCount")
 class XmlIssue implements Issue {
   private final Project project;
