@@ -71,6 +71,6 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
 
   @Override
   public Optional<TimeTrackEntryType> type() {
-    return this.xml.child("workType").map(XmlTimeTrackEntryType::new);
+    return this.xml.child("worktype").map(XmlTimeTrackEntryType::new);
   }
 }
