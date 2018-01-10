@@ -18,7 +18,6 @@ package org.llorllale.youtrack.api;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -76,7 +75,7 @@ public class XmlTimeTrackEntryTest {
   @Test
   public void testDescription() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), xml).description().get(),
+        new XmlTimeTrackEntry(issue(), xml).description(),
         is("first work item")
 );
   }

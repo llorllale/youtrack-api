@@ -54,10 +54,10 @@ public interface TimeTrackEntry {
   /**
    * The item's description.
    * 
-   * @return the item's description (if any was entered)
+   * @return the item's description
    * @since 0.4.0
    */
-  Optional<String> description();
+  String description();
 
   /**
    * The entry's {@link TimeTrackEntryType type}.
