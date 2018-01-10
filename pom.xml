@@ -174,20 +174,6 @@
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <level>protected</level>
-            </configuration>
-            <reportSets>
-              <reportSet>
-                <reports>
-                  <report>javadoc</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
             <configuration>
               <configLocation>checkstyle.xml</configLocation>
