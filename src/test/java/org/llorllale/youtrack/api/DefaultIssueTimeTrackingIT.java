@@ -132,6 +132,25 @@ public class DefaultIssueTimeTrackingIT {
     );
   }
 
+  /**
+   * Creates an entry with date and duration, and reads it back.
+   * 
+   * @throws Exception 
+   * @see <a href="https://github.com/llorllale/youtrack-api/issues/133">#133</a>
+   * @since 1.0.0
+   */
+  @Test
+  public void bug133() throws Exception {
+    final LocalDate date = LocalDate.now();
+    final Duration duration = Duration.ofMinutes(234);
+    assertTrue(
+        new DefaultIssueTimeTracking(session, this.issue("createWithDateAndDuration"))
+        .create(date, duration)
+        .stream()
+        .anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration()))
+    );
+  }
+
   private Issue issue(String description) throws Exception {
     return new DefaultYouTrack(session)
         .projects()

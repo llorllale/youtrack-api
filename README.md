@@ -4,6 +4,7 @@
 [![codecov](https://codecov.io/gh/llorllale/youtrack-api/branch/master/graph/badge.svg)](https://codecov.io/gh/llorllale/youtrack-api)
 [![Build Status](https://travis-ci.org/llorllale/youtrack-api.svg?branch=master)](https://travis-ci.org/llorllale/youtrack-api)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.llorllale/youtrack-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.llorllale/youtrack-api)
+[![Javadocs](http://javadoc.io/badge/org.llorllale/youtrack-api.svg?color=blue)](http://javadoc.io/doc/org.llorllale/youtrack-api)
 
 `youtrack-api` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/). Visit the [project's site](https://llorllale.github.io/youtrack-api) for more info. It has just one dependency: Apache's [HttpClient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) version `4.5.x`.
 
