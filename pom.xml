@@ -11,7 +11,7 @@
 
   <name>youtrack-api</name>
   <description>Fluent, object-oriented Java API for YouTrack.</description>
-  <url>https://github.com/llorllale/fieldsyoutrack-api</url>
+  <url>https://github.com/llorllale/youtrack-api</url>
   <inceptionYear>2017</inceptionYear>
 
   <organization>
