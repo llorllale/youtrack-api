@@ -85,7 +85,7 @@ To see if time tracking is enabled for a project:
 You can then safely create a `TimeTrackEntry` on an `Issue`:
 
     if (issue.project().timetracking().enabled()) {
-      issue.timetracking().create(new EntrySpec(Duration.ofMinutes(45)));
+      issue.timetracking().create(Duration.ofMinutes(45));
     }
 
 To collect all time track entries for the issue:
