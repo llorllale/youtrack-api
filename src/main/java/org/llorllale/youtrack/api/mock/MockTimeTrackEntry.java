@@ -42,7 +42,7 @@ public final class MockTimeTrackEntry implements TimeTrackEntry {
    * @param issue the associated issue
    * @param date the date this entry was created
    * @param duration the duration of this entry
-   * @param description this entry's description (may be {@code null})
+   * @param description this entry's description
    * @param type this entry's type (may be {@code null})
    * @since 1.0.0
    */
@@ -101,8 +101,8 @@ public final class MockTimeTrackEntry implements TimeTrackEntry {
   }
 
   @Override
-  public Optional<String> description() {
-    return Optional.ofNullable(this.description);
+  public String description() {
+    return this.description;
   }
 
   @Override

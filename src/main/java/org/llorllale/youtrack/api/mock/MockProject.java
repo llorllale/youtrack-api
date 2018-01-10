@@ -132,9 +132,9 @@ public final class MockProject implements Project {
    * 
    * <p>Assumes default values:
    * <ul>
-   *    <li>id -> ""</li>
-   *    <li>name -> ""</li>
-   *    <li>description -> ""</li> 
+   *    <li>id -&gt; ""</li>
+   *    <li>name -&gt; ""</li>
+   *    <li>description -&gt; ""</li> 
    * </ul>
    * 
    * @since 0.4.0

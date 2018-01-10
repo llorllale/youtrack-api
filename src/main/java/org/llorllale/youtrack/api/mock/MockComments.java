@@ -19,7 +19,6 @@ package org.llorllale.youtrack.api.mock;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Random;
 import java.util.stream.Stream;
 import org.llorllale.youtrack.api.Comment;
 import org.llorllale.youtrack.api.Comments;
@@ -57,7 +56,7 @@ public final class MockComments implements Comments {
   public Comments post(String text) throws IOException, UnauthorizedException {
     this.comments.add(
         new MockComment(
-            String.valueOf(new Random(System.currentTimeMillis()).nextInt()), 
+            String.valueOf(System.currentTimeMillis()), 
             Instant.now(), 
             text, 
             this.issue()

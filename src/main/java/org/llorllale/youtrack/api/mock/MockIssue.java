@@ -226,7 +226,7 @@ public final class MockIssue implements Issue {
 
   @Override
   public IssueTimeTracking timetracking() {
-    return new MockIssueTimeTracking(this.entries);
+    return new MockIssueTimeTracking(this, this.entries);
   }
 
   @Override

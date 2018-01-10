@@ -19,9 +19,12 @@ package org.llorllale.youtrack.api.mock;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Stream;
+import org.llorllale.youtrack.api.Field;
+import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.Project;
@@ -67,15 +70,26 @@ public final class MockIssues implements Issues {
   }
 
   @Override
-  public Issue create(IssueSpec spec) throws IOException, UnauthorizedException {
+  public Issue create(String summary, String description) 
+      throws IOException, UnauthorizedException {
+    return this.create(summary, description, Collections.emptyMap());
+  }
+
+  @Override
+  public Issue create(String summary, String description, Map<Field, FieldValue> fields) 
+      throws IOException, UnauthorizedException {
     final Issue issue = new MockIssue(
-        this.project(), 
-        String.valueOf(new Random(System.currentTimeMillis()).nextInt()), 
-        Instant.now(), 
-        spec.summary(), 
-        spec.description().orElse(null), 
-        spec.fields(),
-        new MockUser("MockUser", "mockuser@test.com", "mock")
+        this.project(),
+        this.project().id() + System.currentTimeMillis(), 
+        Instant.now(),
+        summary, 
+        description, 
+        fields, 
+        null, 
+        null, 
+        null, 
+        Collections.emptyList(), 
+        Collections.emptyList()
     );
     this.issues.add(issue);
     return issue;

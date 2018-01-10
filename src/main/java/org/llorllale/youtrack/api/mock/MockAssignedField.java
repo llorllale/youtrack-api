@@ -24,8 +24,6 @@ import org.llorllale.youtrack.api.Project;
 /**
  * Mock implementation of {@link AssignedField} suitable for tests.
  * 
- * <p>Note: the {@link #change()} operation is not supported.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */

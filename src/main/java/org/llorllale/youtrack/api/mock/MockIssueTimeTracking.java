@@ -17,11 +17,14 @@
 package org.llorllale.youtrack.api.mock;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.stream.Stream;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.IssueTimeTracking;
 import org.llorllale.youtrack.api.TimeTrackEntry;
+import org.llorllale.youtrack.api.TimeTrackEntryType;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -31,15 +34,19 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @since 1.0.0
  */
 public final class MockIssueTimeTracking implements IssueTimeTracking {
+  private static final String DEFAULT_DESCRIPTION = "";
+  private final Issue issue;
   private final Collection<TimeTrackEntry> entries;
 
   /**
    * Primary ctor.
    * 
+   * @param issue the associated issue
    * @param entries entries to configure for this issue's {@link Issue#timetracking() timetracking}
    * @since 1.0.0
    */
-  public MockIssueTimeTracking(Collection<TimeTrackEntry> entries) {
+  public MockIssueTimeTracking(Issue issue, Collection<TimeTrackEntry> entries) {
+    this.issue = issue;
     this.entries = entries;
   }
 
@@ -49,7 +56,56 @@ public final class MockIssueTimeTracking implements IssueTimeTracking {
   }
 
   @Override
-  public IssueTimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO
+  public IssueTimeTracking create(
+      LocalDate date, 
+      Duration duration, 
+      String description, 
+      TimeTrackEntryType type
+  ) throws IOException, UnauthorizedException {
+    this.entries.add(
+        new MockTimeTrackEntry(
+            this.issue, 
+            date, 
+            duration, 
+            description, 
+            type
+        )
+    );
+    return this;
+  }
+
+  @Override
+  public IssueTimeTracking create(Duration duration) throws IOException, UnauthorizedException {
+    return this.create(duration, DEFAULT_DESCRIPTION);
+  }
+
+  @Override
+  public IssueTimeTracking create(Duration duration, String description) 
+      throws IOException, UnauthorizedException {
+    return this.create(duration, description, null);
+  }
+
+  @Override
+  public IssueTimeTracking create(LocalDate date, Duration duration) 
+      throws IOException, UnauthorizedException {
+    return this.create(date, duration, DEFAULT_DESCRIPTION);
+  }
+
+  @Override
+  public IssueTimeTracking create(Duration duration, TimeTrackEntryType type) 
+      throws IOException, UnauthorizedException {
+    return this.create(duration, DEFAULT_DESCRIPTION, type);
+  }
+
+  @Override
+  public IssueTimeTracking create(Duration duration, String description, TimeTrackEntryType type) 
+      throws IOException, UnauthorizedException {
+    return this.create(LocalDate.now(), duration, description, type);
+  }
+
+  @Override
+  public IssueTimeTracking create(LocalDate date, Duration duration, String description) 
+      throws IOException, UnauthorizedException {
+    return this.create(date, duration, description, null);
   }
 }
