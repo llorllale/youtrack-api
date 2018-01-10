@@ -17,7 +17,6 @@
 package org.llorllale.youtrack.api;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,8 +24,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
-import org.llorllale.youtrack.api.mock.MockAssignedField;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
@@ -98,38 +95,6 @@ public class XmlIssueTest {
     assertThat(
         new XmlIssue(new MockProject(), new MockSession(), xml).fields().size(),
         is(3)
-    );
-  }
-
-  /**
-   * {@link XmlIssue#spec()} should describe issue accurately.
-   * 
-   * @since 1.0.0
-   */
-  @Test
-  public void spec() {
-    assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).spec(),
-        is(new IssueSpec(
-            "summary", 
-            "description",
-            xml.children("//field[count(valueId) > 0]")
-                .stream()
-                .map(x -> 
-                    new MockAssignedField(
-                        x.textOf("@name").get(), 
-                        new MockIssue(new MockProject(), "HBR-63", null, null, null), 
-                        x.textOf("value").get()
-                    )
-                ).collect(Collectors.toMap(
-                    f -> f,
-                    f -> f.value()
-            ))
-        ))
     );
   }
 

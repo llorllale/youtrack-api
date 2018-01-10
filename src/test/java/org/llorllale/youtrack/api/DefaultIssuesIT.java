@@ -19,7 +19,6 @@ package org.llorllale.youtrack.api;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
@@ -46,9 +45,7 @@ public class DefaultIssuesIT {
   @Test
   public void testStream() throws Exception {
     final Issue issue = new DefaultIssues(project, session)
-        .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testStream"), "description")
-        );
+        .create(DefaultIssuesIT.class.getSimpleName().concat(".testStream"), "description");
 
     assertTrue(
         new DefaultIssues(project, session)
@@ -60,9 +57,7 @@ public class DefaultIssuesIT {
   @Test
   public void createAndGetIssue() throws Exception {
     final Issue issue = new DefaultIssues(project, session)
-        .create(
-            new IssueSpec(DefaultIssuesIT.class.getSimpleName().concat(".testGet"), "description")
-        );
+        .create(DefaultIssuesIT.class.getSimpleName().concat(".testGet"), "description");
 
     assertTrue(
         new DefaultIssues(

@@ -27,7 +27,7 @@ $h4 Snippet
         .filter(p -> p.id().equals("project_id"))
         .get()
         .issues()                                 
-        .create(new IssueSpec("summary", "description")) //create issue for the selected project
+        .create("summary", "description") //create issue for the selected project
         .comments()
         .post("This is my first comment!");              //posts a comment to the newly created issue
 

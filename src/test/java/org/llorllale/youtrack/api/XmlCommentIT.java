@@ -46,7 +46,7 @@ public class XmlCommentIT {
         .findAny()
         .get()
         .issues()
-        .create(new Issues.IssueSpec(XmlCommentIT.class.getSimpleName()));
+        .create(XmlCommentIT.class.getSimpleName(), "");
   }
 
   /**

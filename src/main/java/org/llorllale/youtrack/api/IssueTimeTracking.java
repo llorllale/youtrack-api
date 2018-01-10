@@ -19,7 +19,6 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.llorllale.youtrack.api.session.Session;
@@ -51,175 +50,104 @@ public interface IssueTimeTracking {
   /**
    * Creates a new {@link TimeTrackEntry entry}.
    * 
-   * @param spec the entry's {@link EntrySpec spec}
-   * @return the newly-created {@link TimeTrackEntry entry}
+   * @param date the date when the entry was worked
+   * @param duration the work's duration
+   * @param description description for the work entry
+   * @param type the work type (eg. "Development")
+   * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
    *     operation
-   * @since 0.4.0
+   * @since 1.0.0
    */
-  IssueTimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException;
+  IssueTimeTracking create(
+      LocalDate date, 
+      Duration duration, 
+      String description, 
+      TimeTrackEntryType type
+  ) throws IOException, UnauthorizedException;
 
   /**
-   * <p>Specifications for creating a {@link TimeTrackEntry} on an {@link Issue}.</p>
+   * Creates a new {@link TimeTrackEntry entry} with all other fields unspecified.
    * 
-   * <p>The new entry will always be created on the {@link Issue} attached to this 
-   * {@link IssueTimeTracking}.</p>
-   * 
-   * @since 0.4.0
+   * @param duration the work's duration
+   * @return {@link IssueTimeTracking}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 1.0.0
    */
-  final class EntrySpec {
-    private final LocalDate date;
-    private final Duration duration;
-    private final String description;
-    private final TimeTrackEntryType type;
+  IssueTimeTracking create(Duration duration) throws IOException, UnauthorizedException;
 
-    /**
-     * Primary ctor.
-     * 
-     * @param date the date when the entry was worked
-     * @param duration the duration for the work
-     * @param description description for the work
-     * @param type the work type (eg. "Development") (may be {@code null})
-     * @since 0.4.0
-     */
-    public EntrySpec(
-        LocalDate date, 
-        Duration duration, 
-        String description, 
-        TimeTrackEntryType type
-    ) {
-      this.date = date;
-      this.duration = duration;
-      this.description = description;
-      this.type = type;
-    }
+  /**
+   * Creates a new {@link TimeTrackEntry entry} with a duration and description.
+   * 
+   * @param duration the work's duration
+   * @param description descriptive text
+   * @return {@link IssueTimeTracking}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 1.0.0
+   */
+  IssueTimeTracking create(Duration duration, String description) 
+      throws IOException, UnauthorizedException;
 
-    /**
-     * Assumes that the date is <em>now</em>, the description is empty, and the type is empty.
-     * 
-     * @param duration the work's duration
-     * @since 0.4.0
-     */
-    public EntrySpec(Duration duration) {
-      this(LocalDate.now(), duration, null, null);
-    }
+  /**
+   * Creates a new {@link TimeTrackEntry entry} with a duration and a date.
+   * 
+   * @param date the date when the entry was worked
+   * @param duration the work's duration
+   * @return {@link IssueTimeTracking}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 1.0.0
+   */
+  IssueTimeTracking create(LocalDate date, Duration duration) 
+      throws IOException, UnauthorizedException;
 
-    /**
-     * Assumes the date is <em>now</em> and {@code type} is empty.
-     * 
-     * @param duration the work's duration
-     * @param description descriptive text
-     * @since 1.0.0
-     */
-    public EntrySpec(Duration duration, String description) {
-      this(LocalDate.now(), duration, description, null);
-    }
+  /**
+   * Creates a new {@link TimeTrackEntry entry} with a duration and a type.
+   * 
+   * @param duration the work's duration
+   * @param type the work type (eg. "Development")
+   * @return {@link IssueTimeTracking}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 1.0.0
+   */
+  IssueTimeTracking create(Duration duration, TimeTrackEntryType type) 
+      throws IOException, UnauthorizedException;
 
-    /**
-     * Assumes an empty description and type.
-     * 
-     * @param date the date when the work took place
-     * @param duration  the work's duration
-     * @since 1.0.0
-     */
-    public EntrySpec(LocalDate date, Duration duration) {
-      this(date, duration, null, null);
-    }
+  /**
+   * Creates a new {@link TimeTrackEntry entry} with a duration, description, and a type.
+   * 
+   * @param duration the work's duration
+   * @param description descriptive text
+   * @param type the work type (eg. "Development")
+   * @return {@link IssueTimeTracking}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 1.0.0
+   */
+  IssueTimeTracking create(Duration duration, String description, TimeTrackEntryType type) 
+      throws IOException, UnauthorizedException;
 
-    /**
-     * Assumes the date is <em>now</em> and an empty description.
-     * 
-     * @param duration the work's duration
-     * @param type the work type
-     * @since 1.0.0
-     */
-    public EntrySpec(Duration duration, TimeTrackEntryType type) {
-      this(LocalDate.now(), duration, null, type);
-    }
-
-    /**
-     * Assumes the date is <em>now</em>.
-     * 
-     * @param duration the work's duration
-     * @param description descriptive text
-     * @param type the work type
-     * @since 1.0.0
-     */
-    public EntrySpec(Duration duration, String description, TimeTrackEntryType type) {
-      this(LocalDate.now(), duration, description, type);
-    }
-
-    /**
-     * Assumes the {@code type} is {@code null}.
-     * 
-     * @param date the date when the work was performed
-     * @param duration the work's duration
-     * @param description descriptive text
-     * @since 1.0.0
-     */
-    public EntrySpec(LocalDate date, Duration duration, String description) {
-      this(date, duration, description, null);
-    }
-
-    /**
-     * A view of this {@link EntrySpec} as an {@link Xml}.
-     * 
-     * @return a view of this spec as an xml
-     * @since 1.0.0
-     */
-    public Xml asXml() {
-      final StringBuilder xmlBuilder = new StringBuilder("<workItem>")
-          .append("<date>")
-          .append(String.valueOf(
-                      this.date.atStartOfDay()
-                          .atZone(YouTrack.ZONE_ID)
-                          .toInstant()
-                          .toEpochMilli()
-                  )
-          ).append("</date>")
-          .append("<duration>")
-          .append(String.valueOf(this.duration.toMinutes()))
-          .append("</duration>")
-          .append("<description>")
-          .append(this.description)
-          .append("</description>");
-
-      Optional.ofNullable(this.type).ifPresent(t -> 
-          xmlBuilder
-              .append("<worktype>")
-                  .append("<name>")
-                      .append(t.asString())
-                  .append("</name>")
-              .append("</worktype>")
-      );
-
-      xmlBuilder.append("</workItem>");
-
-      return new XmlOf(
-          new StringAsDocument(
-              xmlBuilder.toString()
-          )
-      );
-    }
-
-    @Override
-    public int hashCode() {
-      return this.duration.hashCode() 
-          ^ this.date.hashCode()
-          ^ this.description.hashCode()
-          ^ Optional.ofNullable(this.type).hashCode();
-    }
-
-    @Override
-    @SuppressWarnings("checkstyle:NPathComplexity")
-    public boolean equals(Object object) {
-      if (!(object instanceof EntrySpec)) {
-        return false;
-      }
-
-      final EntrySpec other = (EntrySpec) object;
-      return this.asXml().node().isEqualNode(other.asXml().node());
-    }
-  }
+  /**
+   * Creates a new {@link TimeTrackEntry entry} with a duration, date, and description.
+   * 
+   * @param date the date when the entry was worked
+   * @param duration the work's duration
+   * @param description descriptive text
+   * @return {@link IssueTimeTracking}
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   *     operation
+   * @since 1.0.0
+   */
+  IssueTimeTracking create(LocalDate date, Duration duration, String description)
+      throws IOException, UnauthorizedException;
 }

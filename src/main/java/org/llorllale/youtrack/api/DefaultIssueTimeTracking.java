@@ -17,6 +17,10 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -92,14 +96,54 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
   }
 
   @Override
-  public IssueTimeTracking create(EntrySpec spec) throws IOException, UnauthorizedException {
+  public IssueTimeTracking create(Duration duration) throws IOException, UnauthorizedException {
+    return this.create(LocalDate.now(), duration, null, null);
+  }
+
+  @Override
+  public IssueTimeTracking create(Duration duration, String description) 
+      throws IOException, UnauthorizedException {
+    return this.create(LocalDate.now(), duration, description, null);
+  }
+
+  @Override
+  public IssueTimeTracking create(LocalDate date, Duration duration) 
+      throws IOException, UnauthorizedException {
+    return this.create(date, duration, null, null);
+  }
+
+  @Override
+  public IssueTimeTracking create(Duration duration, TimeTrackEntryType type) 
+      throws IOException, UnauthorizedException {
+    return this.create(LocalDate.now(), duration, null, type);
+  }
+
+  @Override
+  public IssueTimeTracking create(Duration duration, String description, TimeTrackEntryType type) 
+      throws IOException, UnauthorizedException {
+    return this.create(LocalDate.now(), duration, description, type);
+  }
+
+  @Override
+  public IssueTimeTracking create(LocalDate date, Duration duration, String description) 
+      throws IOException, UnauthorizedException {
+    return this.create(date, duration, description, null);
+  }
+
+  @Override
+  public IssueTimeTracking create(
+      LocalDate date,
+      Duration duration,
+      String description,
+      TimeTrackEntryType type
+  ) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
         this.httpClient.execute(
             new HttpRequestWithSession(
                 this.session, 
                 new HttpRequestWithEntity(
                     new StringEntity(
-                        spec.asXml().asString(),
+                        this.toXmlString(date, duration, description, type),
                         ContentType.APPLICATION_XML
                     ),
                     new HttpPost(
@@ -112,5 +156,51 @@ class DefaultIssueTimeTracking implements IssueTimeTracking {
     ).httpResponse();
 
     return new DefaultIssueTimeTracking(this.session, this.issue);
+  }
+
+  /**
+   * Returns the XML payload to be sent to YouTrack in order to create timetrack entries for the 
+   * issue.
+   * 
+   * @param date the entry's date
+   * @param duration the entry's duration
+   * @param description the entry's description
+   * @param type the entry's type
+   * @return the XML payload to be set as the HTTP request's entity
+   */
+  private String toXmlString(
+      LocalDate date, 
+      Duration duration, 
+      String description, 
+      TimeTrackEntryType type
+  ) {
+    final StringBuilder xmlBuilder = new StringBuilder("<workItem>")
+        .append("<date>")
+        .append(
+            String.valueOf(
+                date.atStartOfDay()
+                    .atZone(ZoneId.systemDefault())
+                    .toInstant()
+                    .toEpochMilli()
+            )
+        ).append("</date>")
+        .append("<duration>")
+        .append(String.valueOf(duration.toMinutes()))
+        .append("</duration>")
+        .append("<description>")
+        .append(Optional.ofNullable(description).orElse(""))
+        .append("</description>");
+
+    Optional.ofNullable(type).ifPresent(t -> 
+        xmlBuilder
+            .append("<worktype>")
+                .append("<name>")
+                    .append(t.asString())
+                .append("</name>")
+            .append("</worktype>")
+    );
+
+    xmlBuilder.append("</workItem>");
+    return xmlBuilder.toString();
   }
 }
