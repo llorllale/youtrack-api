@@ -27,7 +27,7 @@ import org.w3c.dom.Node;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public interface Xml {
+interface Xml {
   /**
    * Returns the text content of the element selected with {@code xpath} if it exists, 
    * otherwise an empty optional.
@@ -66,12 +66,4 @@ public interface Xml {
    * @since 1.0.0
    */
   Node node();
-
-  /**
-   * A string representation of this {@link Xml}.
-   * 
-   * @return a string representation of this {@link Xml}
-   * @since 1.0.0
-   */
-  String asString();
 }
