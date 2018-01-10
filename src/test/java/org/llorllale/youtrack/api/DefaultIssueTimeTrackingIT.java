@@ -68,7 +68,7 @@ public class DefaultIssueTimeTrackingIT {
     assertTrue(
         itt.stream()
             .anyMatch(e -> 
-                description.equals(e.description().get()) 
+                description.equals(e.description()) 
                     && duration.equals(e.duration())
             )
     );
@@ -109,7 +109,7 @@ public class DefaultIssueTimeTrackingIT {
     assertTrue(
         itt.stream().anyMatch(e -> 
             duration.equals(e.duration()) 
-                && description.equals(e.description().get()) 
+                && description.equals(e.description()) 
                 && type.equals(e.type().get())
         )
     );
@@ -127,7 +127,7 @@ public class DefaultIssueTimeTrackingIT {
         itt.stream().anyMatch(e -> 
             date.equals(e.date())
                 && duration.equals(e.duration())
-                && description.equals(e.description().get())
+                && description.equals(e.description())
         )
     );
   }

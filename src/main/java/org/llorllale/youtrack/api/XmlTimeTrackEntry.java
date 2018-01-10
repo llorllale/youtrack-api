@@ -64,8 +64,8 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
   }
 
   @Override
-  public Optional<String> description() {
-    return this.xml.textOf("description");
+  public String description() {
+    return this.xml.textOf("description").get();
   }
 
   @Override
