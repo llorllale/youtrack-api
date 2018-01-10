@@ -79,7 +79,7 @@ public interface IssueTimeTracking {
      * 
      * @param date the date when the entry was worked
      * @param duration the duration for the work
-     * @param description description for the work (may be {@code null})
+     * @param description description for the work
      * @param type the work type (eg. "Development") (may be {@code null})
      * @since 0.4.0
      */
@@ -182,7 +182,7 @@ public interface IssueTimeTracking {
           .append(String.valueOf(this.duration.toMinutes()))
           .append("</duration>")
           .append("<description>")
-          .append(Optional.ofNullable(this.description).orElse(""))
+          .append(this.description)
           .append("</description>");
 
       Optional.ofNullable(this.type).ifPresent(t -> 
@@ -207,7 +207,7 @@ public interface IssueTimeTracking {
     public int hashCode() {
       return this.duration.hashCode() 
           ^ this.date.hashCode()
-          ^ Optional.ofNullable(this.description).hashCode()
+          ^ this.description.hashCode()
           ^ Optional.ofNullable(this.type).hashCode();
     }
 
