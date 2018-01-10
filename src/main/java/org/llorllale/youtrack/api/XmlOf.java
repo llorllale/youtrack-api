@@ -17,13 +17,8 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Optional;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -117,22 +112,5 @@ final class XmlOf implements Xml {
   @Override
   public Node node() {
     return this.xml;
-  }
-
-  @Override
-  public String asString() {
-    try {
-      final StringWriter writer = new StringWriter();
-      TransformerFactory 
-          .newInstance()
-          .newTransformer()
-          .transform(
-              new DOMSource(this.node()), 
-              new StreamResult(writer)
-        );
-      return writer.toString(); 
-    } catch(TransformerException e) {
-      throw new UncheckedException(e);
-    }
   }
 }

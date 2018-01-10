@@ -18,7 +18,6 @@ package org.llorllale.youtrack.api;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.ZoneId;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -50,13 +49,16 @@ public class XmlTimeTrackEntryTest {
     );
   }
 
+  /**
+   * @see <a href="https://github.com/llorllale/youtrack-api/issues/133">#133</a>
+   */
   @Test
   public void testDate() {
     assertThat(
         new XmlTimeTrackEntry(issue(), xml).date(),
         is(
             Instant.ofEpochMilli(1480204800000L)
-                .atZone(ZoneId.systemDefault())
+                .atZone(YouTrack.ZONE_ID)
                 .toLocalDate()
         )
     );
@@ -73,7 +75,7 @@ public class XmlTimeTrackEntryTest {
   @Test
   public void testDescription() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), xml).description().get(),
+        new XmlTimeTrackEntry(issue(), xml).description(),
         is("first work item")
 );
   }

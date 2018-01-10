@@ -18,12 +18,8 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -125,21 +121,6 @@ class XmlIssue implements Issue {
                 x
             ),
         this.xml.children("//field[count(valueId) > 0]")
-    );
-  }
-
-  @Override
-  public IssueSpec spec() {
-    return new IssueSpec(
-        this.summary(), 
-        this.description().orElse(null), 
-        this.fields()
-            .stream()
-            .map(f -> new AbstractMap.SimpleImmutableEntry<>(f, f.value()))
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue
-            ))
     );
   }
 

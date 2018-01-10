@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 
 import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -136,12 +135,4 @@ public interface Issue {
    * @since 0.8.0
    */
   Collection<AssignedField> fields();
-
-  /**
-   * An {@link IssueSpec} serving as a blueprint for this {@link Issue}.
-   * 
-   * @return a new {@link IssueSpec} describing this issue
-   * @since 1.0.0
-   */
-  IssueSpec spec();
 }

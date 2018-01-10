@@ -17,6 +17,8 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -119,7 +121,14 @@ class DefaultIssues implements Issues {
   }
 
   @Override
-  public Issue create(IssueSpec spec) throws IOException, UnauthorizedException {
+  public Issue create(String summary, String description) 
+      throws IOException, UnauthorizedException {
+    return this.create(summary, description, Collections.emptyMap());
+  }
+
+  @Override
+  public Issue create(String summary, String description, Map<Field, FieldValue> fields) 
+      throws IOException, UnauthorizedException {
     return this.get(
         new SubstringAfterLast(
             new HttpResponseAsResponse(
@@ -130,8 +139,8 @@ class DefaultIssues implements Issues {
                             new UncheckedUriBuilder(
                                 this.session.baseUrl().toString().concat("/issue")
                             ).param("project", this.project().id())
-                                .param("summary", spec.summary())
-                                .paramIfPresent("description", spec.description())
+                                .param("summary", summary)
+                                .paramIfPresent("description", Optional.ofNullable(description))
                                 .build()
                         )
                     )
@@ -139,6 +148,6 @@ class DefaultIssues implements Issues {
             ).httpResponse().getFirstHeader("Location").getValue(),
             "/"
         ).get()
-    ).get().update().fields(spec.fields());
+    ).get().update().fields(fields);
   }
 }

@@ -10,7 +10,7 @@ $h3 About
 
 **Note:** the API is currently unstable as we approach our [first milestone](https://github.com/llorllale/youtrack-api/milestone/1).
 
-View the [usage](./usage.html) and the [javadoc](./apidocs/index.html) resources for additional details.
+View the [usage](./usage.html) and the [javadoc](http://javadoc.io/doc/org.llorllale/youtrack-api) resources for additional details.
 
 For bugs or enhancements, please use our [issue tracker](${project.url}/issues).
 
@@ -27,7 +27,7 @@ $h4 Snippet
         .filter(p -> p.id().equals("project_id"))
         .get()
         .issues()                                 
-        .create(new IssueSpec("summary", "description")) //create issue for the selected project
+        .create("summary", "description") //create issue for the selected project
         .comments()
         .post("This is my first comment!");              //posts a comment to the newly created issue
 

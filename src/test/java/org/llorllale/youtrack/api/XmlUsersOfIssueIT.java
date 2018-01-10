@@ -20,7 +20,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.mock.MockUser;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
@@ -97,11 +96,6 @@ public class XmlUsersOfIssueIT {
         .findFirst()
         .get()
         .issues()
-        .create(
-            new IssueSpec(
-                name, 
-                "integration tests"
-            )
-        );
+        .create(name,"integration tests");
   }
 }

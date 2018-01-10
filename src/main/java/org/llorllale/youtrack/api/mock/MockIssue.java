@@ -31,7 +31,6 @@ import org.llorllale.youtrack.api.Field;
 import org.llorllale.youtrack.api.FieldValue;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.IssueTimeTracking;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.TimeTrackEntry;
 import org.llorllale.youtrack.api.UpdateIssue;
@@ -255,18 +254,5 @@ public final class MockIssue implements Issue {
   @Override
   public UpdateIssue update() {
     return new MockUpdateIssue(this);
-  }
-
-  @Override
-  public IssueSpec spec() {
-    return new IssueSpec(
-        this.summary(),
-        this.description().orElse(null),
-        this.fields().stream()
-            .collect(Collectors.toMap(
-                f -> f,
-                f -> f.value()
-            ))
-    );
   }
 }

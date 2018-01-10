@@ -19,10 +19,8 @@ package org.llorllale.youtrack.api;
 import java.util.Random;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.Issues.IssueSpec;
 import org.llorllale.youtrack.api.session.PermanentTokenLogin;
 import org.llorllale.youtrack.api.session.Session;
 
@@ -51,7 +49,7 @@ public class DefaultCommentsIT {
         .findFirst()
         .get()
         .issues()
-        .create(new IssueSpec(DefaultCommentsIT.class.getSimpleName(), "Description"));
+        .create(DefaultCommentsIT.class.getSimpleName(), "Description");
   }
 
   @Test
