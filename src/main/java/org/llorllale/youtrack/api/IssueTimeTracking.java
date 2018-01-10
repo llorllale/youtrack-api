@@ -19,7 +19,6 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -174,7 +173,7 @@ public interface IssueTimeTracking {
           .append("<date>")
           .append(String.valueOf(
                       this.date.atStartOfDay()
-                          .atZone(ZoneId.systemDefault())
+                          .atZone(YouTrack.ZONE_ID)
                           .toInstant()
                           .toEpochMilli()
                   )
