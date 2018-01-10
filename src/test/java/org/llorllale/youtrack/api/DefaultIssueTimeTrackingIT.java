@@ -58,6 +58,13 @@ public class DefaultIssueTimeTrackingIT {
     );
   }
 
+  /**
+   * Creates a new entry with a duration and a description and expects to find it in the 
+   * entry stream.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
   @Test
   public void createWithDurationAndDescription() throws Exception {
     final Issue issue = this.issue(".createWithDurationAndDescription");
@@ -74,6 +81,13 @@ public class DefaultIssueTimeTrackingIT {
     );
   }
 
+  /**
+   * Creates a new entry with a duration and a type and expects to find it in the 
+   * entry stream.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
   @Test
   public void createWithDurationAndType() throws Exception {
     final Issue issue = this.issue(".createWithDurationAndType");
@@ -86,6 +100,13 @@ public class DefaultIssueTimeTrackingIT {
     );
   }
 
+  /**
+   * Creates a new entry with a date and a duration and expects to find it in the 
+   * entry stream.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
   @Test
   public void createWithDateAndDuration() throws Exception {
     final Issue issue = this.issue(".createWithDateAndDuration");
@@ -98,6 +119,13 @@ public class DefaultIssueTimeTrackingIT {
     );
   }
 
+  /**
+   * Creates a new entry with a duration, a description, and a type, and expects to find it in the 
+   * entry stream.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
   @Test
   public void createWithDurationAndDescriptionAndType() throws Exception {
     final Issue issue = this.issue(".createWithDurationAndDescriptionAndType");
@@ -115,6 +143,13 @@ public class DefaultIssueTimeTrackingIT {
     );
   }
 
+  /**
+   * Creates a new entry with a date, a duration, and a description, and expects to find it in the 
+   * entry stream.
+   * 
+   * @throws Exception 
+   * @since 1.0.0
+   */
   @Test
   public void createWithDateAndDurationAndDescription() throws Exception {
     final Issue issue = this.issue(".createWithDateAndDurationAndDescription");
