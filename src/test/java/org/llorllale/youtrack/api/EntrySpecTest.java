@@ -58,7 +58,7 @@ public class EntrySpecTest {
     assertThat(
         new EntrySpec(LocalDate.now(), Duration.ZERO).asXml().textOf("/workItem/date"),
         is(Optional.of(String.valueOf(
-            LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+            LocalDate.now().atStartOfDay().atZone(YouTrack.ZONE_ID).toInstant().toEpochMilli()
         )))
     );
   }

@@ -50,13 +50,16 @@ public class XmlTimeTrackEntryTest {
     );
   }
 
+  /**
+   * @see <a href="https://github.com/llorllale/youtrack-api/issues/133">#133</a>
+   */
   @Test
   public void testDate() {
     assertThat(
         new XmlTimeTrackEntry(issue(), xml).date(),
         is(
             Instant.ofEpochMilli(1480204800000L)
-                .atZone(ZoneId.systemDefault())
+                .atZone(YouTrack.ZONE_ID)
                 .toLocalDate()
         )
     );

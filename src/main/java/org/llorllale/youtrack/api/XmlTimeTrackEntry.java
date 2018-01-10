@@ -19,7 +19,6 @@ package org.llorllale.youtrack.api;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Optional;
 
 /**
@@ -55,7 +54,7 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
         Long.parseLong(
             this.xml.textOf("date").get()
         )
-    ).atZone(ZoneId.systemDefault())
+    ).atZone(YouTrack.ZONE_ID)
         .toLocalDate();
   }
 

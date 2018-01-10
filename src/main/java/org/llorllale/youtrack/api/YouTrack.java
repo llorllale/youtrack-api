@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api;
 
+import java.time.ZoneId;
+
 /**
  * Entry point for the YouTrack API.
  * 
@@ -23,6 +25,13 @@ package org.llorllale.youtrack.api;
  * @since 0.4.0
  */
 public interface YouTrack {
+  /**
+   * All date/time fields in YouTrack's API are expressed relative to this ZoneId.
+   * 
+   * @since 1.0.0
+   */
+  ZoneId ZONE_ID = ZoneId.of("GMT+0");
+
   /**
    * Access to the {@link Project projects} API.
    * 

@@ -17,8 +17,10 @@
 package org.llorllale.youtrack.api;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.Issues.IssueSpec;
@@ -34,7 +36,6 @@ import org.llorllale.youtrack.api.session.Session;
 public class DefaultIssueTimeTrackingIT {
   private static IntegrationTestsConfig config;
   private static Session session;
-  private static Issue issue;
 
   @BeforeClass
   public static void setup() throws Exception {
@@ -44,25 +45,46 @@ public class DefaultIssueTimeTrackingIT {
         config.youtrackUrl(), 
         config.youtrackUserToken()
     ).login();
-
-    issue = new DefaultYouTrack(session)
-        .projects()
-        .stream()
-        .findFirst()
-        .get()
-        .issues()
-        .create(new IssueSpec(DefaultIssueTimeTrackingIT.class.getSimpleName(), "Description"));
   }
 
   @Test
   public void createAndCountAll() throws Exception {
     assertThat(
-        new DefaultIssueTimeTracking(session, issue)
+        new DefaultIssueTimeTracking(session, this.issue("createAndCountAll"))
             .create(new EntrySpec(Duration.ofMinutes(45)))
             .create(new EntrySpec(Duration.ofHours(1)))
             .stream()
             .count(),
         is(2L)
     );
+  }
+
+  /**
+   * Creates an entry with date and duration, and reads it back.
+   * 
+   * @throws Exception 
+   * @see <a href="https://github.com/llorllale/youtrack-api/issues/133">#133</a>
+   * @since 1.0.0
+   */
+  @Test
+  public void createWithDateAndDuration() throws Exception {
+    final LocalDate date = LocalDate.now();
+    final Duration duration = Duration.ofMinutes(234);
+    assertTrue(
+        new DefaultIssueTimeTracking(session, this.issue("createWithDateAndDuration"))
+        .create(new EntrySpec(date, duration))
+        .stream()
+        .anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration()))
+    );
+  }
+
+  private Issue issue(String description) throws Exception {
+    return new DefaultYouTrack(session)
+        .projects()
+        .stream()
+        .findFirst()
+        .get()
+        .issues()
+        .create(new IssueSpec(DefaultIssueTimeTrackingIT.class.getSimpleName(), description));
   }
 }
