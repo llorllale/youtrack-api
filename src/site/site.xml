@@ -61,7 +61,7 @@ limitations under the License.
 
     <menu name="Documentation">
       <item name="Usage" href="./usage.html"/>
-      <item name="JavaDocs ${project.version}" href="./apidocs/index.html"/>
+      <item name="JavaDocs ${project.version}" href="http://javadoc.io/doc/org.llorllale/youtrack-api"/>
     </menu>
 
     <menu name="Project">
