@@ -26,7 +26,7 @@ import org.llorllale.youtrack.api.session.Session;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.2.0
  */
-class XmlProject implements Project {
+final class XmlProject implements Project {
   private final YouTrack youtrack;
   private final Session session;
   private final Xml xml;

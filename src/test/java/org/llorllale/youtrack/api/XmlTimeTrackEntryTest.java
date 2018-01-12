@@ -58,7 +58,7 @@ public class XmlTimeTrackEntryTest {
         new XmlTimeTrackEntry(issue(), xml).date(),
         is(
             Instant.ofEpochMilli(1480204800000L)
-                .atZone(YouTrack.ZONE_ID)
+                .atZone(new YouTrackZoneId().toZoneId())
                 .toLocalDate()
         )
     );

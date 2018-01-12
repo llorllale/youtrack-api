@@ -22,7 +22,7 @@ package org.llorllale.youtrack.api;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class XmlFieldValue implements FieldValue {
+final class XmlFieldValue implements FieldValue {
   private final Xml xml;
   private final Field field;
 

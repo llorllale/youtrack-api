@@ -28,7 +28,7 @@ import java.util.List;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-class DefaultSession implements Session {
+final class DefaultSession implements Session {
   private final URL youtrackUrl;
   private final List<Cookie> cookies;
 

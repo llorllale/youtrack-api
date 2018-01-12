@@ -32,7 +32,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  */
 //current MethodCount: 14
 @SuppressWarnings("checkstyle:MethodCount")
-class XmlIssue implements Issue {
+final class XmlIssue implements Issue {
   private final Project project;
   private final Session session;
   private final Xml xml;
