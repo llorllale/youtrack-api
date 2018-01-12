@@ -40,9 +40,9 @@ integration-tests if applicable.
 Coverage is reported via [CodeCov.io](https://codecov.io/gh/llorllale/youtrack-api)
 and also the [project's site](https://llorllale.github.io/youtrack-api/cobertura/).
 
-**The current minimum target coverage is 80%.**
+**The current minimum target coverage is 90%.**
 
 #### Run the tests
-To run the unit tests simply run `mvn test`. To run the integration tests run
-`mvn -P integration-tests clean verify` (make sure your docker environment is
-setup as mentioned before).
+* To run the unit tests simply run `mvn test`. 
+* To run the integration tests run `mvn -P integration-tests clean cobertura:check-integration-test` 
+(make sure your docker environment is setup as mentioned before).
