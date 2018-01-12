@@ -32,7 +32,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.9.0
  */
-class XmlUsersOfProject implements UsersOfProject {
+final class XmlUsersOfProject implements UsersOfProject {
   private final Project project;
   private final Session session;
   private final Xml xml;

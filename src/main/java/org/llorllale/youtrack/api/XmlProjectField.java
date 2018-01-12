@@ -32,7 +32,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class XmlProjectField implements ProjectField {
+final class XmlProjectField implements ProjectField {
   private final Xml xml;
   private final Project project;
   private final Session session;

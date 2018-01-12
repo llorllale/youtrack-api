@@ -32,7 +32,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class DefaultProjectTimeTracking implements ProjectTimeTracking {
+final class DefaultProjectTimeTracking implements ProjectTimeTracking {
   private static final String PATH_TEMPLATE = "/admin/project/%s/timetracking";
   private final Project project;
   private final Session session;

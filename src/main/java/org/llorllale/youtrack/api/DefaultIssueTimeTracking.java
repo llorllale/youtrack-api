@@ -39,7 +39,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-class DefaultIssueTimeTracking implements IssueTimeTracking {
+final class DefaultIssueTimeTracking implements IssueTimeTracking {
   private static final String PATH_TEMPLATE = "/issue/%s/timetracking/workitem";
   private final Session session;
   private final Issue issue;

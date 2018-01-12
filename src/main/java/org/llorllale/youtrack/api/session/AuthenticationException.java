@@ -25,7 +25,7 @@ import java.io.IOException;
  * @see Login
  * @since 0.1.0
  */
-public class AuthenticationException extends IOException {
+public final class AuthenticationException extends IOException {
   private static final long serialVersionUID = -6585053905710875326L;
   
   /**

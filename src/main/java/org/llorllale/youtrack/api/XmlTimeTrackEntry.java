@@ -27,7 +27,7 @@ import java.util.Optional;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
-class XmlTimeTrackEntry implements TimeTrackEntry {
+final class XmlTimeTrackEntry implements TimeTrackEntry {
   private final Issue issue;
   private final Xml xml;
 
