@@ -54,7 +54,7 @@ class XmlTimeTrackEntry implements TimeTrackEntry {
         Long.parseLong(
             this.xml.textOf("date").get()
         )
-    ).atZone(YouTrack.ZONE_ID)
+    ).atZone(new YouTrackZoneId().toZoneId())
         .toLocalDate();
   }
 
