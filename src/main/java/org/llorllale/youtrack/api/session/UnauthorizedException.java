@@ -26,7 +26,7 @@ import org.apache.http.HttpResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class UnauthorizedException extends IOException {
+public final class UnauthorizedException extends IOException {
   private static final long serialVersionUID = -2245180199390157205L;
 
   private final HttpResponse httpResponse;

@@ -75,6 +75,18 @@
       <property name="onCommentFormat" value="@checkstyle.ON\: [\w\|]+"/>
     </module>
 
+    <!-- 
+      Disallow non-final non-abstract classes.
+      Inheritance is the strongest form of class coupling/dependency.
+      See http://rcardin.github.io/programming/oop/software-engineering/2017/04/10/dependency-dot.html.
+    -->
+    <module name="Regexp">
+      <property name="message" value="All non-abstract classes must be final."/>
+      <property name="illegalPattern" value="true"/>
+      <property name="format" value="^((?!final)(?!abstract).)*class"/>
+      <property name="ignoreComments" value="true"/>
+    </module>
+
     <!-- Annotations -->
     <module name="AnnotationLocation"/>
     <module name="AnnotationUseStyle"/>

@@ -35,7 +35,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-class DefaultComments implements Comments {
+final class DefaultComments implements Comments {
   private static final String BASE_PATH = "/issue/";
 
   private final Session session;

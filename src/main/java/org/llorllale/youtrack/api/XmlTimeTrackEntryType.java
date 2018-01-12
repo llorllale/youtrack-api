@@ -22,7 +22,7 @@ package org.llorllale.youtrack.api;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class XmlTimeTrackEntryType implements TimeTrackEntryType {
+final class XmlTimeTrackEntryType implements TimeTrackEntryType {
   private final Xml xml;
 
   /**

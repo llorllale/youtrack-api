@@ -33,7 +33,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-class DefaultProjects implements Projects {
+final class DefaultProjects implements Projects {
   private final YouTrack youtrack;
   private final Session session;
   private final HttpClient httpClient;

@@ -22,7 +22,7 @@ package org.llorllale.youtrack.api;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class BasicFieldValue implements FieldValue {
+final class BasicFieldValue implements FieldValue {
   private final String value;
   private final Field field;
 

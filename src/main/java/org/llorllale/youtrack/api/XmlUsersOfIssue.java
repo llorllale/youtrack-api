@@ -27,7 +27,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
-class XmlUsersOfIssue implements UsersOfIssue {
+final class XmlUsersOfIssue implements UsersOfIssue {
   private final Issue issue;
   private final Xml xml;
 

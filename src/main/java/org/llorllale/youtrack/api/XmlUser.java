@@ -22,7 +22,7 @@ package org.llorllale.youtrack.api;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
-class XmlUser implements User {
+final class XmlUser implements User {
   private final Xml xml;
 
   /**

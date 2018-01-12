@@ -31,7 +31,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
-class DefaultFields implements Fields {
+final class DefaultFields implements Fields {
   private final Session session;
   private final Project project;
   private final HttpClient httpClient;

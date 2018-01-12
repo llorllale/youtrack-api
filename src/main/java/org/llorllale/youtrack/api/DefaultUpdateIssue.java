@@ -38,7 +38,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.9.0
  */
-class DefaultUpdateIssue implements UpdateIssue {
+final class DefaultUpdateIssue implements UpdateIssue {
   private static final String PATH_TEMPLATE = "/issue/%s";
   private final Issue issue;
   private final Session session;
