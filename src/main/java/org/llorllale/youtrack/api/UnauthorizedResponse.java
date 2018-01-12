@@ -45,10 +45,7 @@ final class UnauthorizedResponse implements Response {
   @Override
   public HttpResponse httpResponse() throws UnauthorizedException, IOException {
     if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-      throw new UnauthorizedException(
-          "401: Unauthorized", 
-          this.base.httpResponse()
-      );
+      throw new UnauthorizedException("401: Unauthorized");
     } else {
       return this.base.httpResponse();
     }
