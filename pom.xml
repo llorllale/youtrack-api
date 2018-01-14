@@ -75,7 +75,7 @@
     <youtrack.test.user>root</youtrack.test.user>
     <youtrack.test.user.token>perm:cm9vdA==.eW91dHJhY2stYXBpLXRlc3Q=.nOe5IYpv520S120tK18hc2tkm8oCI4</youtrack.test.user.token>
     <youtrack.test.pwd>youtrack</youtrack.test.pwd>
-    <youtrack.test.baseUrl>http://192.168.99.100:18080</youtrack.test.baseUrl>
+    <youtrack.test.baseUrl>http://localhost:18080</youtrack.test.baseUrl>
     <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
     <youtrack.test.project.id>TP</youtrack.test.project.id>
   </properties>
@@ -423,13 +423,13 @@
           <version>2.7</version>
           <configuration>
             <check>
-              <branchRate>90</branchRate>
-              <lineRate>90</lineRate>
+              <branchRate>0</branchRate>
+              <lineRate>85</lineRate>
               <haltOnFailure>true</haltOnFailure>
-              <totalBranchRate>90</totalBranchRate>
-              <totalLineRate>90</totalLineRate>
-              <packageLineRate>90</packageLineRate>
-              <packageBranchRate>90</packageBranchRate>
+              <totalBranchRate>85</totalBranchRate>
+              <totalLineRate>85</totalLineRate>
+              <packageLineRate>85</packageLineRate>
+              <packageBranchRate>85</packageBranchRate>
             </check>
             <formats>
               <format>html</format>

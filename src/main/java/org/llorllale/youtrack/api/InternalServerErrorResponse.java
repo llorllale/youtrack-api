@@ -47,12 +47,7 @@ final class InternalServerErrorResponse implements Response {
   public HttpResponse httpResponse() throws IOException, UnauthorizedException {
     if (this.base.httpResponse().getStatusLine().getStatusCode() 
         == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-      throw new IOException(
-          String.format("500 Internal Server error. Payload: %s", 
-              new InputStreamAsString().apply(this.base.httpResponse().getEntity().getContent()
-              )
-          )
-      );
+      throw new IOException("500 Internal Server error");
     }
 
     return this.base.httpResponse();

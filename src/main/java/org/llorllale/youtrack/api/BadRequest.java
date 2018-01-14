@@ -47,13 +47,7 @@ final class BadRequest implements Response {
   @Override
   public HttpResponse httpResponse() throws IOException, UnauthorizedException {
     if (this.response.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
-      throw new IOException(
-          String.format("Server returned 400 Bad Request. Payload: %s",
-              new InputStreamAsString().apply(
-                  this.response.httpResponse().getEntity().getContent()
-              )
-          )
-      );
+      throw new IOException("400 BadRequest");
     }
 
     return this.response.httpResponse();

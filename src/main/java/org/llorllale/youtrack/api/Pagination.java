@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpUriRequest;
@@ -37,7 +38,7 @@ import org.apache.http.client.methods.HttpUriRequest;
  * @since 0.7.0
  */
 final class Pagination<T> implements Iterator<T> {
-  private final PageUri pageRequest;
+  private final Supplier<HttpUriRequest> pageRequest;
   private final ExceptionalFunction<Response, Collection<T>, IOException> mapper;
   private final HttpClient httpClient;
 
@@ -52,7 +53,7 @@ final class Pagination<T> implements Iterator<T> {
    * @since 0.7.0
    */
   Pagination(
-      PageUri pageRequest,
+      Supplier<HttpUriRequest> pageRequest,
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
       HttpClient httpClient
   ) {
