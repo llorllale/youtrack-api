@@ -422,7 +422,15 @@
           <artifactId>cobertura-maven-plugin</artifactId>
           <version>2.7</version>
           <configuration>
-            <check/>
+            <check>
+              <branchRate>0</branchRate>
+              <lineRate>85</lineRate>
+              <haltOnFailure>true</haltOnFailure>
+              <totalBranchRate>85</totalBranchRate>
+              <totalLineRate>85</totalLineRate>
+              <packageLineRate>85</packageLineRate>
+              <packageBranchRate>85</packageBranchRate>
+            </check>
             <formats>
               <format>html</format>
               <format>xml</format>
