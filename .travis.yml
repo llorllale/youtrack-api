@@ -17,7 +17,7 @@ jobs:
   - if: type = pull_request
     script:
     - mvn -P release-profile -DskipTests=true clean install
-    - mvn -P integration-tests clean cobertura:check-integration-test
+    - mvn -P integration-tests clean cobertura:cobertura-integration-test && mvn -DskipTests=true cobertura:check-integration-test
     - bash <(curl -s https://codecov.io/bash)
   - if: type = push AND tag IS present
     script:
@@ -36,7 +36,7 @@ jobs:
         branch: master
   - if: type = push AND NOT tag IS present AND branch = master
     script:
-    - mvn -P integration-tests clean cobertura:check-integration-test
+    - mvn -P integration-tests clean cobertura:cobertura-integration-test && mvn -DskipTests=true cobertura:check-integration-test
     - bash <(curl -s https://codecov.io/bash)
     - mvn -P release-profile -DskipTests=true clean install
     - openssl aes-256-cbc -K $encrypted_af28e35ab9a0_key -iv $encrypted_af28e35ab9a0_iv
