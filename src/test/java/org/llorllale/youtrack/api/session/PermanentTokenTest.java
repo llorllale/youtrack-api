@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 George Aristy.
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,20 +18,41 @@ package org.llorllale.youtrack.api.session;
 
 import java.net.URL;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Unit tests for {@link AnonymousLogin}.
+ * Unit tests for {@link PermanentToken}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class AnonymousLoginTest {
+public class PermanentTokenTest {
   @Test
   public void login() throws Exception {
+    final String token = "abc123";
     assertNotNull(
-        new AnonymousLogin(
-            new URL("http://some.url")
+        new PermanentToken(
+            new URL("http://some.url"), 
+            token
         ).login()
+    );
+  }
+
+  @Test
+  public void loginHeader() throws Exception {
+    final String token = "abc123";
+
+    assertTrue(
+        new PermanentToken(
+            new URL("http://some.url"), 
+            token
+        ).login()
+            .cookies()
+            .stream()
+            .allMatch(
+                c -> "Authorization".equals(c.name()) && 
+                     "Bearer ".concat(token).equals(c.value())
+            )
     );
   }
 }

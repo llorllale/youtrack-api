@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 George Aristy.
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,38 +18,37 @@ package org.llorllale.youtrack.api.session;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 
 /**
- * A {@link Login} that makes use of YouTrack's <em>permanent tokens</em> feature to authorize 
- * 3rd party application integrations.
+ * <p>
+ * A {@link Login} for anonymous sessions if your YouTrack supports it (ie. the
+ * "guest" user is not banned).
+ * </p>
+ * 
+ * <p>
+ * Calling {@link #login() login()} on an {@code AnonymousLogin} is 
+ * guaranteed to always succeed.
+ * </p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.3.0
+ * @since 0.1.0
  */
-public final class PermanentTokenLogin implements Login {
+public final class Anonymous implements Login {
   private final URL youtrackUrl;
-  private final String token;
 
   /**
    * Ctor.
    * 
-   * @param youtrackUrl the YouTrack API's url
-   * @param token the YouTrack user's permanent token
-   * @since 0.3.0
+   * @param youtrackUrl the YouTrack API's url.
+   * @since 0.1.0
    */
-  public PermanentTokenLogin(URL youtrackUrl, String token) {
+  public Anonymous(URL youtrackUrl) {
     this.youtrackUrl = youtrackUrl;
-    this.token = token;
   }
-
+  
   @Override
   public Session login() throws AuthenticationException, IOException {
-    return new DefaultSession(
-        this.youtrackUrl, 
-        new DefaultCookie(
-            "Authorization", 
-            "Bearer ".concat(this.token)
-        )
-    );
+    return new DefaultSession(this.youtrackUrl, Collections.emptyList());
   }
 }

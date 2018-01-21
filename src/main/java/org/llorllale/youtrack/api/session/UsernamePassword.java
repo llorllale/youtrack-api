@@ -1,11 +1,11 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import org.apache.http.impl.client.HttpClients;
  * @see Login
  * @since 0.1.0
  */
-public final class UsernamePasswordLogin implements Login {
+public final class UsernamePassword implements Login {
   private final URL youtrackUrl;
   private final HttpClient httpClient;
   private final String username;
@@ -50,7 +50,7 @@ public final class UsernamePasswordLogin implements Login {
    * @param httpClient http client to use to call the remote API
    * @since 0.1.0
    */
-  UsernamePasswordLogin(
+  UsernamePassword(
           final URL youtrackUrl, 
           String username, 
           char[] password, 
@@ -68,10 +68,10 @@ public final class UsernamePasswordLogin implements Login {
    * @param youtrackUrl the URL of the YouTrack API endpoint
    * @param username the principal
    * @param password the credentials
-   * @see #UsernamePasswordLogin(URL, String, char[], HttpClient) 
+   * @see #UsernamePassword(URL, String, char[], HttpClient) 
    * @since 0.1.0
    */
-  public UsernamePasswordLogin(
+  public UsernamePassword(
           final URL youtrackUrl,
           String username, 
           char[] password

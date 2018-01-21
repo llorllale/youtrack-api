@@ -1,11 +1,11 @@
-/* 
- * Copyright 2017 George Aristy (george.aristy@gmail.com).
+/*
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,10 +45,7 @@ final class UnauthorizedResponse implements Response {
   @Override
   public HttpResponse httpResponse() throws UnauthorizedException, IOException {
     if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_UNAUTHORIZED) {
-      throw new UnauthorizedException(
-          "401: Unauthorized", 
-          this.base.httpResponse()
-      );
+      throw new UnauthorizedException("401: Unauthorized");
     } else {
       return this.base.httpResponse();
     }
