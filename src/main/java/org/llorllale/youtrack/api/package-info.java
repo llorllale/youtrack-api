@@ -26,7 +26,7 @@
  * </ul> 
  * 
  * <p><strong>Example:</strong> 
- * {@code final Session session = new PermanentTokenLogin(youtrackUrl, myToken).login();}<br>
+ * {@code final Session session = new PermanentToken(youtrackUrl, myToken).login();}<br>
  * See the {@link org.llorllale.youtrack.api.session} package for more info.
  * 
  * <h2>Main Entry Point</h2>

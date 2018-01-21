@@ -45,7 +45,7 @@ public class UsernamePasswordIT {
   }
 
   /**
-   * Fix #126: UsernamePasswordLogin: NPE when login() multiple times
+   * Fix #126: UsernamePassword: NPE when login() multiple times
    * 
    * @throws Exception 
    * @since 1.0.0
