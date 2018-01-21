@@ -29,3 +29,7 @@ Please direct any questions, feature requests or bugs to the [issue tracker](htt
 
 ## How do I contribute?
 Please view our guidelines for contributing [here](./CONTRIBUTING.md).
+
+## License
+`youtrack-api` is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). A copy of the license has been included
+in [LICENSE](./LICENSE).

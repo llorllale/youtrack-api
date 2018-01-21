@@ -1,0 +1,32 @@
+YouTrack API
+Copyright 2017 George Aristy
+https://llorllale.github.io/youtrack-api/
+
+Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License. You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
+specific language governing permissions and limitations
+under the License.
+
+
+YouTrack™ is a trademark owned by Jetbrains s.r.o.
+
+
+This project includes:
+
+  Apache Commons Codec under The Apache Software License, Version 2.0
+  Apache Commons Logging under The Apache Software License, Version 2.0
+  Apache HttpClient under Apache License, Version 2.0
+  Apache HttpCore under Apache License, Version 2.0
+  Hamcrest Core under New BSD License
+  Hamcrest library under New BSD License
+  JUnit under Eclipse Public License 1.0
+  youtrack-api under Apache License 2.0
+
