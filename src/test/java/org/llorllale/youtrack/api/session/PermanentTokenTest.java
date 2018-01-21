@@ -22,16 +22,16 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
- * Unit tests for {@link PermanentTokenLogin}.
+ * Unit tests for {@link PermanentToken}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class PermanentTokenLoginTest {
+public class PermanentTokenTest {
   @Test
   public void login() throws Exception {
     final String token = "abc123";
     assertNotNull(
-        new PermanentTokenLogin(
+        new PermanentToken(
             new URL("http://some.url"), 
             token
         ).login()
@@ -43,7 +43,7 @@ public class PermanentTokenLoginTest {
     final String token = "abc123";
 
     assertTrue(
-        new PermanentTokenLogin(
+        new PermanentToken(
             new URL("http://some.url"), 
             token
         ).login()

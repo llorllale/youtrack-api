@@ -24,17 +24,17 @@ import org.junit.Test;
 import org.llorllale.youtrack.api.IntegrationTestsConfig;
 
 /**
- * Integration tests for {@link UsernamePasswordLogin}.
+ * Integration tests for {@link UsernamePassword}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class UsernamePasswordLoginIT {
+public class UsernamePasswordIT {
   @Test
   public void login() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
 
     assertThat(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             config.youtrackUrl(), 
             config.youtrackUser(), 
             config.youtrackPwd()
@@ -53,7 +53,7 @@ public class UsernamePasswordLoginIT {
   @Test
   public void multipleLogins() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
-    final Login login = new UsernamePasswordLogin(
+    final Login login = new UsernamePassword(
         config.youtrackUrl(), 
         config.youtrackUser(), 
         config.youtrackPwd()

@@ -35,7 +35,7 @@ import org.apache.http.impl.client.HttpClients;
  * @see Login
  * @since 0.1.0
  */
-public final class UsernamePasswordLogin implements Login {
+public final class UsernamePassword implements Login {
   private final URL youtrackUrl;
   private final HttpClient httpClient;
   private final String username;
@@ -50,7 +50,7 @@ public final class UsernamePasswordLogin implements Login {
    * @param httpClient http client to use to call the remote API
    * @since 0.1.0
    */
-  UsernamePasswordLogin(
+  UsernamePassword(
           final URL youtrackUrl, 
           String username, 
           char[] password, 
@@ -71,7 +71,7 @@ public final class UsernamePasswordLogin implements Login {
    * @see #UsernamePasswordLogin(URL, String, char[], HttpClient) 
    * @since 0.1.0
    */
-  public UsernamePasswordLogin(
+  public UsernamePassword(
           final URL youtrackUrl,
           String username, 
           char[] password

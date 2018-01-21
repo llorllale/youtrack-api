@@ -19,7 +19,7 @@ package org.llorllale.youtrack.api;
 import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.llorllale.youtrack.api.session.PermanentTokenLogin;
+import org.llorllale.youtrack.api.session.PermanentToken;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
@@ -35,7 +35,7 @@ public class DefaultIssuesIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentTokenLogin(
+    session = new PermanentToken(
         config.youtrackUrl(), 
         config.youtrackUserToken()
     ).login();

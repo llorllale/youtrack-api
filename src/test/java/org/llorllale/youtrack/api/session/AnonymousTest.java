@@ -21,15 +21,15 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 
 /**
- * Unit tests for {@link AnonymousLogin}.
+ * Unit tests for {@link Anonymous}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class AnonymousLoginTest {
+public class AnonymousTest {
   @Test
   public void login() throws Exception {
     assertNotNull(
-        new AnonymousLogin(
+        new Anonymous(
             new URL("http://some.url")
         ).login()
     );

@@ -26,7 +26,7 @@ import java.net.URL;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.3.0
  */
-public final class PermanentTokenLogin implements Login {
+public final class PermanentToken implements Login {
   private final URL youtrackUrl;
   private final String token;
 
@@ -37,7 +37,7 @@ public final class PermanentTokenLogin implements Login {
    * @param token the YouTrack user's permanent token
    * @since 0.3.0
    */
-  public PermanentTokenLogin(URL youtrackUrl, String token) {
+  public PermanentToken(URL youtrackUrl, String token) {
     this.youtrackUrl = youtrackUrl;
     this.token = token;
   }

@@ -26,11 +26,11 @@ import org.llorllale.youtrack.api.mock.http.response.MockForbiddenResponse;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
- * Unit tests for {@link UsernamePasswordLogin}.
+ * Unit tests for {@link UsernamePassword}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class UsernamePasswordLoginTest {
+public class UsernamePasswordTest {
 
   /**
    * Login should be successful if remote API response is 200
@@ -41,7 +41,7 @@ public class UsernamePasswordLoginTest {
   @Test
   public void successfulLogin() throws Exception {
     assertNotNull(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             new URL("http://some.url"),
             "test",
             "123".toCharArray(),
@@ -62,7 +62,7 @@ public class UsernamePasswordLoginTest {
    */
   @Test(expected = AuthenticationException.class)
   public void authenticationError() throws Exception {
-    new UsernamePasswordLogin(
+    new UsernamePassword(
         new URL("http://some.url"),
         "test",
         "123".toCharArray(),
@@ -80,7 +80,7 @@ public class UsernamePasswordLoginTest {
   @Test
   public void correctHandlingOfCookieNames() throws Exception {
     assertTrue(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             new URL("http://some.url"),
             "test",
             "test123".toCharArray(),
@@ -111,7 +111,7 @@ public class UsernamePasswordLoginTest {
   @Test
   public void correctHandlingOfCookieValues() throws Exception {
     assertTrue(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             new URL("http://some.url"),
             "test",
             "test123".toCharArray(),
