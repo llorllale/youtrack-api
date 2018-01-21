@@ -15,7 +15,7 @@ Here's a snippet of its usage:
 
 ```java
 final YouTrack youtrack = new DefaultYouTrack(
-    new PermanentTokenLogin("token").login()
+    new PermanentToken("token").login()
 );
 youtrack.projects().get("project_id").get()
     .issues()

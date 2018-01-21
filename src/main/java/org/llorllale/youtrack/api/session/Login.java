@@ -30,7 +30,7 @@ import java.io.IOException;
  * </p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
- * @see UsernamePasswordLogin
+ * @see UsernamePassword
  * @see AnonymousLogin
  * @since 0.1.0
  */

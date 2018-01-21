@@ -12,16 +12,16 @@ YouTrack's API supports several authentication strategies:
 
 From the `org.llorllale.youtrack.api.session` package you have:
 
-* `UsernamePasswordLogin`
-* `PermanentTokenLogin` 
-* `AnonymousLogin`
+* `UsernamePassword`
+* `PermanentToken` 
+* `Anonymous`
 
 Each implements the `Login` interface and each produces a valid `Session` object 
 that can be readily used by all other aspects of the API.
 
 The use of *permanent tokens* is **recommended**:
 
-    final Session session = new PermanentTokenLogin("your_token").login();
+    final Session session = new PermanentToken("your_token").login();
 
 A generic `IOException` may be thrown if the YouTrack server is unreachable,
 while an `AuthenticationException` - a more specific IOException - is thrown if

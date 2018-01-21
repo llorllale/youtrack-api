@@ -68,7 +68,7 @@ public final class UsernamePassword implements Login {
    * @param youtrackUrl the URL of the YouTrack API endpoint
    * @param username the principal
    * @param password the credentials
-   * @see #UsernamePasswordLogin(URL, String, char[], HttpClient) 
+   * @see #UsernamePassword(URL, String, char[], HttpClient) 
    * @since 0.1.0
    */
   public UsernamePassword(
