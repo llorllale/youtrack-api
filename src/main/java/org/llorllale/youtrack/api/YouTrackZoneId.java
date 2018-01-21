@@ -36,7 +36,7 @@ final class YouTrackZoneId {
    * @return the {@link ZoneId} relative to which YouTrack stores and returns datetimes
    * @since 1.0.0
    */
-  ZoneId toZoneId() {
+  public ZoneId toZoneId() {
     return ZoneId.of("GMT+0");
   }
 }
