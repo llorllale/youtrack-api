@@ -34,7 +34,7 @@ import java.util.Collections;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public final class AnonymousLogin implements Login {
+public final class Anonymous implements Login {
   private final URL youtrackUrl;
 
   /**
@@ -43,7 +43,7 @@ public final class AnonymousLogin implements Login {
    * @param youtrackUrl the YouTrack API's url.
    * @since 0.1.0
    */
-  public AnonymousLogin(URL youtrackUrl) {
+  public Anonymous(URL youtrackUrl) {
     this.youtrackUrl = youtrackUrl;
   }
   
