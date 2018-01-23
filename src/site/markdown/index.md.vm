@@ -56,7 +56,7 @@ The goals of this project include:
 * Provide a fluent interface to access YouTrack's features.
 * Implement the best OOP design practices.
 * High quality by providing extensive test coverage and documentation.
-* Give back to the community by open-sourcing this project (we use [Apache License v2.0](LICENSE)).
+* Give back to the community by open-sourcing this project (we've applied the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)).
 
 It is worth noting that **performance is not a goal** of this project.
 
