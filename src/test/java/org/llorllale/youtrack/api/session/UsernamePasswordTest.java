@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 George Aristy.
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.llorllale.youtrack.api.session;
 
 import java.net.URL;
@@ -25,11 +26,11 @@ import org.llorllale.youtrack.api.mock.http.response.MockForbiddenResponse;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
- * Unit tests for {@link UsernamePasswordLogin}.
+ * Unit tests for {@link UsernamePassword}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class UsernamePasswordLoginTest {
+public class UsernamePasswordTest {
 
   /**
    * Login should be successful if remote API response is 200
@@ -40,7 +41,7 @@ public class UsernamePasswordLoginTest {
   @Test
   public void successfulLogin() throws Exception {
     assertNotNull(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             new URL("http://some.url"),
             "test",
             "123".toCharArray(),
@@ -61,7 +62,7 @@ public class UsernamePasswordLoginTest {
    */
   @Test(expected = AuthenticationException.class)
   public void authenticationError() throws Exception {
-    new UsernamePasswordLogin(
+    new UsernamePassword(
         new URL("http://some.url"),
         "test",
         "123".toCharArray(),
@@ -79,7 +80,7 @@ public class UsernamePasswordLoginTest {
   @Test
   public void correctHandlingOfCookieNames() throws Exception {
     assertTrue(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             new URL("http://some.url"),
             "test",
             "test123".toCharArray(),
@@ -110,7 +111,7 @@ public class UsernamePasswordLoginTest {
   @Test
   public void correctHandlingOfCookieValues() throws Exception {
     assertTrue(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             new URL("http://some.url"),
             "test",
             "test123".toCharArray(),

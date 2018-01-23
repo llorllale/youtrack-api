@@ -1,11 +1,11 @@
 /*
- * Copyright 2017 George Aristy.
+ * Copyright 2017 George Aristy
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,17 +24,17 @@ import org.junit.Test;
 import org.llorllale.youtrack.api.IntegrationTestsConfig;
 
 /**
- * Integration tests for {@link UsernamePasswordLogin}.
+ * Integration tests for {@link UsernamePassword}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class UsernamePasswordLoginIT {
+public class UsernamePasswordIT {
   @Test
   public void login() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
 
     assertThat(
-        new UsernamePasswordLogin(
+        new UsernamePassword(
             config.youtrackUrl(), 
             config.youtrackUser(), 
             config.youtrackPwd()
@@ -45,7 +45,7 @@ public class UsernamePasswordLoginIT {
   }
 
   /**
-   * Fix #126: UsernamePasswordLogin: NPE when login() multiple times
+   * Fix #126: UsernamePassword: NPE when login() multiple times
    * 
    * @throws Exception 
    * @since 1.0.0
@@ -53,7 +53,7 @@ public class UsernamePasswordLoginIT {
   @Test
   public void multipleLogins() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
-    final Login login = new UsernamePasswordLogin(
+    final Login login = new UsernamePassword(
         config.youtrackUrl(), 
         config.youtrackUser(), 
         config.youtrackPwd()
