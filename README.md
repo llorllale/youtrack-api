@@ -1,5 +1,4 @@
-
-# youtrack-api
+# youtrack-api ![icon](/src/site/resources/images/icon_32.png)
 
 [![codecov](https://codecov.io/gh/llorllale/youtrack-api/branch/master/graph/badge.svg)](https://codecov.io/gh/llorllale/youtrack-api)
 [![Build Status](https://travis-ci.org/llorllale/youtrack-api.svg?branch=master)](https://travis-ci.org/llorllale/youtrack-api)
@@ -33,3 +32,7 @@ Please view our guidelines for contributing [here](./CONTRIBUTING.md).
 ## License
 `youtrack-api` is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). A copy of the license has been included
 in [LICENSE](./LICENSE).
+
+<br/>
+
+<div>Icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC BY 3.0</a></div>

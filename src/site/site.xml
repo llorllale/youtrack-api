@@ -34,6 +34,11 @@
       <highlightJsTheme>sunburst</highlightJsTheme>
       <toc>sidebar</toc>
       <brand>
+        <name>
+          <![CDATA[
+            <img src="images/icon_16.png"/> youtrack-api
+          ]]>
+        </name>
         <href>./index.html</href>
       </brand>
       <bottomNav maxSpan="8">
