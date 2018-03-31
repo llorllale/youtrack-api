@@ -16,10 +16,12 @@
 
 package org.llorllale.youtrack.api.session;
 
-import java.net.URL;
-import org.apache.http.message.BasicHeader;
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.net.URL;
+import org.apache.http.message.BasicHeader;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
 import org.llorllale.youtrack.api.mock.http.response.MockForbiddenResponse;
@@ -29,13 +31,13 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
  * Unit tests for {@link UsernamePassword}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
+ * @checkstyle MultipleStringLiterals (500 lines)
+ * @checkstyle MethodName (500 lines)
  */
-public class UsernamePasswordTest {
-
+public final class UsernamePasswordTest {
   /**
-   * Login should be successful if remote API response is 200
-   *
-   * @throws Exception
+   * Login should be successful if remote API response is 200.
+   * @throws Exception unexpected
    * @since 0.1.0
    */
   @Test
@@ -55,9 +57,8 @@ public class UsernamePasswordTest {
   }
 
   /**
-   * Authentication error if remote API response is different from 200
-   *
-   * @throws Exception
+   * Authentication error if remote API response is different from 200.
+   * @throws Exception unexpected
    * @since 0.1.0
    */
   @Test(expected = AuthenticationException.class)
@@ -73,66 +74,69 @@ public class UsernamePasswordTest {
   }
 
   /**
-   * Fix for issue 13: Incorrect handling of session cookies
-   *
+   * Fix for issue 13: Incorrect handling of session cookies.
+   * @throws Exception unexpected
    * @since 0.1.0
    */
   @Test
   public void correctHandlingOfCookieNames() throws Exception {
     assertTrue(
-        new UsernamePassword(
-            new URL("http://some.url"),
-            "test",
-            "test123".toCharArray(),
-            new MockHttpClient(
-                new MockOkResponse(
-                    new BasicHeader(
-                        "Set-Cookie",
-                        "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"
-                    ),
-                    new BasicHeader(
-                        "Set-Cookie",
-                        "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT"
-                    )
-                )
+      new UsernamePassword(
+        new URL("http://some.url"),
+        "test",
+        "test123".toCharArray(),
+        new MockHttpClient(
+          new MockOkResponse(
+            new BasicHeader(
+              "Set-Cookie",
+              "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"
+            ),
+            new BasicHeader(
+              "Set-Cookie",
+              // @checkstyle LineLength (1 line)
+              "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT"
             )
-        ).login()
-            .cookies()
-            .stream()
-            .allMatch(c -> "Cookie".equals(c.name()))
+          )
+        )
+      ).login()
+        .cookies()
+        .stream()
+        .allMatch(c -> "Cookie".equals(c.name()))
     );
   }
 
   /**
-   * Fix for issue 13: Incorrect handling of session cookies
-   *
+   * Fix for issue 13: Incorrect handling of session cookies.
+   * @throws Exception unexpected
    * @since 0.1.0
    */
   @Test
   public void correctHandlingOfCookieValues() throws Exception {
     assertTrue(
-        new UsernamePassword(
-            new URL("http://some.url"),
-            "test",
-            "test123".toCharArray(),
-            new MockHttpClient(
-                new MockOkResponse(
-                    new BasicHeader(
-                        "Set-Cookie",
-                        "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"
-                    ),
-                    new BasicHeader(
-                        "Set-Cookie",
-                        "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT"
-                    )
-                )
+      new UsernamePassword(
+        new URL("http://some.url"),
+        "test",
+        "test123".toCharArray(),
+        new MockHttpClient(
+          new MockOkResponse(
+            new BasicHeader(
+              "Set-Cookie",
+              "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61;Path=/;HttpOnly"
+            ),
+            new BasicHeader(
+              "Set-Cookie",
+              // @checkstyle LineLength (1 line)
+              "jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290;Path=/;Expires=Wed, 15-Aug-2018 18:54:08 GMT"
             )
-        ).login()
-            .cookies()
-            .stream()
-            .allMatch(
-                c -> "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61; jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290".equals(c.value())
-            )
+          )
+        )
+      ).login()
+        .cookies()
+        .stream()
+        .allMatch(
+          // @checkstyle LineLength (1 line)
+          c -> "YTSESSIONID=1pjvfsojr5pch12i3cx6509n61; jetbrains.charisma.main.security.PRINCIPAL=OTE1ZGZmMzRiMDEwY2MzMzhiNmZiMTM5Y2IwYzM1NTUzNzQ3MWRjMmJlNmNkM2QxNmViNmYzZTNkYmIwNDQ1NTpyb290".equals(c.value())
+        )
     );
   }
 }

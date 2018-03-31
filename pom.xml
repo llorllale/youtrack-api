@@ -200,9 +200,9 @@
               <linkXRef>false</linkXRef>
               <violationSeverity>info</violationSeverity>
               <!--
-              @todo #168 Continued: <sourceDirectory> should be '${basedir}/src' in order to include
+              @todo #171 <sourceDirectory> should be '${basedir}/src' in order to include
                test sources in the checks, but there are MANY failures triggered there.
-               Will need to fix those step by step.
+               Will need to fix those step by step. Keep going.
               -->
               <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
             </configuration>
