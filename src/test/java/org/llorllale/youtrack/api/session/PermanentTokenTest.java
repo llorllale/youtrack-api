@@ -16,43 +16,53 @@
 
 package org.llorllale.youtrack.api.session;
 
-import java.net.URL;
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.net.URL;
 import org.junit.Test;
 
 /**
  * Unit tests for {@link PermanentToken}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
+ * @checkstyle MultipleStringLiterals (500 lines)
  */
-public class PermanentTokenTest {
+public final class PermanentTokenTest {
+  /**
+   * Returns session upon login.
+   * @throws Exception unexpected
+   */
   @Test
   public void login() throws Exception {
     final String token = "abc123";
     assertNotNull(
-        new PermanentToken(
-            new URL("http://some.url"), 
-            token
-        ).login()
+      new PermanentToken(
+        new URL("http://some.url"), 
+        token
+      ).login()
     );
   }
 
+  /**
+   * Session has Authorization header after login.
+   * @throws Exception unexpected
+   */
   @Test
   public void loginHeader() throws Exception {
     final String token = "abc123";
-
     assertTrue(
-        new PermanentToken(
-            new URL("http://some.url"), 
-            token
-        ).login()
-            .cookies()
-            .stream()
-            .allMatch(
-                c -> "Authorization".equals(c.name()) && 
-                     "Bearer ".concat(token).equals(c.value())
-            )
+      new PermanentToken(
+        new URL("http://some.url"), 
+          token
+      ).login()
+        .cookies()
+        .stream()
+        .allMatch(
+          c -> "Authorization".equals(c.name())
+            && "Bearer ".concat(token).equals(c.value())
+        )
     );
   }
 }

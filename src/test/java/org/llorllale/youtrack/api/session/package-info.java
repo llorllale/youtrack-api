@@ -14,30 +14,8 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.session;
-
-// @checkstyle AvoidStaticImport (1 line)
-import static org.junit.Assert.assertNotNull;
-
-import java.net.URL;
-import org.junit.Test;
-
 /**
- * Unit tests for {@link Anonymous}.
- * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * Unit/integration tests.
+ * @since 1.0.0
  */
-public final class AnonymousTest {
-  /**
-   * Returns session after login.
-   * @throws Exception unexpected
-   */
-  @Test
-  public void login() throws Exception {
-    assertNotNull(
-      new Anonymous(
-        new URL("http://some.url")
-      ).login()
-    );
-  }
-}
+package org.llorllale.youtrack.api.session;

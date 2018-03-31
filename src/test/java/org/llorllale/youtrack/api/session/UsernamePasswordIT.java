@@ -16,10 +16,12 @@
 
 package org.llorllale.youtrack.api.session;
 
+// @checkstyle AvoidStaticImport (5 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 import org.llorllale.youtrack.api.IntegrationTestsConfig;
 
@@ -27,41 +29,44 @@ import org.llorllale.youtrack.api.IntegrationTestsConfig;
  * Integration tests for {@link UsernamePassword}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
+ * @checkstyle AbbreviationAsWordInName (500 lines)
  */
-public class UsernamePasswordIT {
+public final class UsernamePasswordIT {
+  /**
+   * Returns Session when logging in.
+   * @throws Exception unexpected
+   */
   @Test
   public void login() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
-
     assertThat(
-        new UsernamePassword(
-            config.youtrackUrl(), 
-            config.youtrackUser(), 
-            config.youtrackPwd()
-        ).login()
-            .cookies(),
-        is(not(empty()))
+      new UsernamePassword(
+        config.youtrackUrl(), 
+        config.youtrackUser(), 
+        config.youtrackPwd()
+      ).login()
+        .cookies(),
+      is(not(empty()))
     );
   }
 
   /**
-   * Fix #126: UsernamePassword: NPE when login() multiple times
-   * 
-   * @throws Exception 
+   * Fix #126: UsernamePassword: NPE when login() multiple times.
+   * @throws Exception unexpected
    * @since 1.0.0
    */
   @Test
   public void multipleLogins() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
     final Login login = new UsernamePassword(
-        config.youtrackUrl(), 
-        config.youtrackUser(), 
-        config.youtrackPwd()
+      config.youtrackUrl(), 
+      config.youtrackUser(), 
+      config.youtrackPwd()
     );
     login.login();
     assertThat(
-        login.login().cookies(),
-        is(not(empty()))
+      login.login().cookies(),
+      is(not(empty()))
     );
   }
 }
