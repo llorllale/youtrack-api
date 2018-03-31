@@ -76,26 +76,26 @@ final class DefaultIssues implements Issues {
   public Stream<Issue> stream() throws IOException, UnauthorizedException {
     final int pageSize = 10;
     return new StreamOf<>(
-        new Pagination<>(
-            pageSize,
-            n -> new HttpRequestWithSession(
-                this.session, 
-                new HttpGet(
-                    new UncheckedUriBuilder(
-                        this.session.baseUrl().toString()
-                            .concat("/issue/byproject/")
-                            .concat(this.project().id())
-                    ).param("after", String.valueOf(n))
-                        .build()
-                )
-            ),
-            resp -> 
-                new MappedCollection<>(
-                    xml -> new XmlIssue(this.project(), this.session, xml),
-                    new XmlsOf("/issues/issue", resp)
-                ),
-            this.httpClient
-        )
+      new Pagination<>(
+        pageSize,
+        n -> new HttpRequestWithSession(
+          this.session, 
+          new HttpGet(
+            new UncheckedUriBuilder(
+              this.session.baseUrl().toString()
+                .concat("/issue/byproject/")
+                .concat(this.project().id())
+            ).param("after", String.valueOf(n))
+              .build()
+          )
+        ),
+        resp -> 
+          new MappedCollection<>(
+            xml -> new XmlIssue(this.project(), this.session, xml),
+            new XmlsOf("/issues/issue", resp)
+          ),
+        this.httpClient
+      )
     );
   }
 
@@ -104,20 +104,20 @@ final class DefaultIssues implements Issues {
     //when the issueId does not exist, YouTrack returns a 404 response with an error XML
     //in the payload
     return Optional.of(
-        new XmlOf(
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString().concat("/issue/").concat(issueId)
-                        )
-                    )
-                )
+      new XmlOf(
+        new HttpResponseAsResponse(
+          this.httpClient.execute(
+            new HttpRequestWithSession(
+              this.session, 
+              new HttpGet(
+                this.session.baseUrl().toString().concat("/issue/").concat(issueId)
+              )
             )
+          )
         )
+      )
     ).filter(x -> !x.child("//error").isPresent())
-        .map(x -> new XmlIssue(this.project(), this.session, x));
+      .map(x -> new XmlIssue(this.project(), this.session, x));
   }
 
   @Override
@@ -130,24 +130,24 @@ final class DefaultIssues implements Issues {
   public Issue create(String summary, String description, Map<Field, FieldValue> fields) 
       throws IOException, UnauthorizedException {
     return this.get(
-        new SubstringAfterLast(
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpPut(
-                            new UncheckedUriBuilder(
-                                this.session.baseUrl().toString().concat("/issue")
-                            ).param("project", this.project().id())
-                                .param("summary", summary)
-                                .paramIfPresent("description", Optional.ofNullable(description))
-                                .build()
-                        )
-                    )
-                )
-            ).httpResponse().getFirstHeader("Location").getValue(),
-            "/"
-        ).get()
+      new SubstringAfterLast(
+        new HttpResponseAsResponse(
+          this.httpClient.execute(
+            new HttpRequestWithSession(
+              this.session, 
+              new HttpPut(
+                new UncheckedUriBuilder(
+                  this.session.baseUrl().toString().concat("/issue")
+                ).param("project", this.project().id())
+                  .param("summary", summary)
+                  .paramIfPresent("description", Optional.ofNullable(description))
+                  .build()
+              )
+            )
+          )
+        ).httpResponse().getFirstHeader("Location").getValue(),
+        "/"
+      ).get()
     ).get().update().fields(fields);
   }
 }

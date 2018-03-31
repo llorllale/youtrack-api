@@ -63,9 +63,9 @@ final class XmlIssue implements Issue {
   @Override
   public Instant creationDate() {
     return Instant.ofEpochMilli(
-        Long.parseLong(
-            this.xml.textOf("//field[@name = 'created']/value").get()
-        )
+      Long.parseLong(
+        this.xml.textOf("//field[@name = 'created']/value").get()
+      )
     );
   }
 
@@ -102,8 +102,8 @@ final class XmlIssue implements Issue {
   @Override
   public Issue refresh() throws IOException, UnauthorizedException {
     return this.project().issues()
-        .get(this.id())
-        .get();
+      .get(this.id())
+      .get();
   }
 
   @Override
@@ -114,13 +114,12 @@ final class XmlIssue implements Issue {
   @Override
   public Collection<AssignedField> fields() {
     return new MappedCollection<>(
-        x -> 
-            new XmlAssignedField(
-                new BasicField(x.textOf("@name").get(), this.project()),
-                this,
-                x
-            ),
-        this.xml.children("//field[count(valueId) > 0]")
+      x -> new XmlAssignedField(
+          new BasicField(x.textOf("@name").get(), this.project()),
+          this,
+          x
+      ),
+      this.xml.children("//field[count(valueId) > 0]")
     );
   }
 
