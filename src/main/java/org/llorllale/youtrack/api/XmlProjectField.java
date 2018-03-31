@@ -66,47 +66,46 @@ final class XmlProjectField implements ProjectField {
   @Override
   public Stream<FieldValue> values() throws IOException, UnauthorizedException {
     final String bundleName = new XmlsOf(
-        "/projectCustomField/param",
-        new HttpResponseAsResponse(
-            this.httpClient.execute(
-                new HttpRequestWithSession(
-                    this.session, 
-                    new HttpGet(
-                        this.session.baseUrl().toString()
-                            .concat("/admin/project/")
-                            .concat(this.project().id())
-                            .concat("/customfield/")
-                            .concat(new SubstringAfterLast(
-                                    this.xml.textOf("@url").get(), 
-                                    "/"
-                                ).get()
-                            )
-                    )
-                )
+      "/projectCustomField/param",
+      new HttpResponseAsResponse(
+        this.httpClient.execute(
+          new HttpRequestWithSession(
+            this.session, 
+            new HttpGet(
+              this.session.baseUrl().toString()
+                .concat("/admin/project/")
+                .concat(this.project().id())
+                .concat("/customfield/")
+                .concat(new SubstringAfterLast(
+                  this.xml.textOf("@url").get(), 
+                  "/"
+                ).get())
             )
+          )
         )
+      )
     ).stream().findAny().get().textOf("@value").get();
 
     return new StreamOf<>(
-        new MappedCollection<>(
-            x -> new XmlFieldValue(x, new XmlProjectField(this.xml, this.project, this.session)),
-            new XmlsOf(
-                "/enumeration/value",
-                new HttpResponseAsResponse(
-                    this.httpClient.execute(
-                        new HttpRequestWithSession(
-                            this.session, 
-                            new HttpGet(
-                                new UncheckedUriBuilder(
-                                    this.session.baseUrl(),
-                                    "/admin/customfield/bundle/".concat(bundleName)
-                                ).build()
-                            )
-                        )
-                    )
+      new MappedCollection<>(
+        x -> new XmlFieldValue(x, new XmlProjectField(this.xml, this.project, this.session)),
+        new XmlsOf(
+          "/enumeration/value",
+          new HttpResponseAsResponse(
+            this.httpClient.execute(
+              new HttpRequestWithSession(
+                this.session, 
+                new HttpGet(
+                  new UncheckedUriBuilder(
+                    this.session.baseUrl(),
+                    "/admin/customfield/bundle/".concat(bundleName)
+                  ).build()
                 )
+              )
             )
+          )
         )
+      )
     );
   }
 

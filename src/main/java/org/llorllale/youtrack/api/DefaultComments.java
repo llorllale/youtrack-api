@@ -72,25 +72,25 @@ final class DefaultComments implements Comments {
   @Override
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<>(
-            xml -> new XmlComment(this.issue(), this.session, xml),
-            new XmlsOf(
-                "//comment",
-                new HttpResponseAsResponse(
-                    this.httpClient.execute(
-                        new HttpRequestWithSession(
-                            this.session, 
-                            new HttpGet(
-                                this.session.baseUrl().toString()
-                                    .concat(BASE_PATH)
-                                    .concat(this.issue().id())
-                                    .concat("/comment")
-                            )
-                        )
-                    )
+      new MappedCollection<>(
+        xml -> new XmlComment(this.issue(), this.session, xml),
+        new XmlsOf(
+          "//comment",
+          new HttpResponseAsResponse(
+            this.httpClient.execute(
+              new HttpRequestWithSession(
+                this.session, 
+                new HttpGet(
+                  this.session.baseUrl().toString()
+                    .concat(BASE_PATH)
+                    .concat(this.issue().id())
+                    .concat("/comment")
                 )
+              )
             )
+          )
         )
+      )
     );
   }
 

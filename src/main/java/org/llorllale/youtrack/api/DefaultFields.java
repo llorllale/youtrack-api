@@ -68,25 +68,25 @@ final class DefaultFields implements Fields {
   @Override
   public Stream<ProjectField> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<>(
-            x -> new XmlProjectField(x, this.project(), this.session),
-            new XmlsOf(
-                "/projectCustomFieldRefs/projectCustomField",
-                new HttpResponseAsResponse(
-                    this.httpClient.execute(
-                        new HttpRequestWithSession(
-                            this.session,
-                            new HttpGet(
-                                this.session.baseUrl().toString()
-                                    .concat("/admin/project/")
-                                    .concat(this.project().id())
-                                    .concat("/customfield")
-                            )
-                        )
-                    )
-                 )
+      new MappedCollection<>(
+        x -> new XmlProjectField(x, this.project(), this.session),
+        new XmlsOf(
+          "/projectCustomFieldRefs/projectCustomField",
+          new HttpResponseAsResponse(
+            this.httpClient.execute(
+              new HttpRequestWithSession(
+                this.session,
+                new HttpGet(
+                  this.session.baseUrl().toString()
+                    .concat("/admin/project/")
+                    .concat(this.project().id())
+                    .concat("/customfield")
+                )
+              )
             )
+          )
         )
+      )
     );
   }
 }
