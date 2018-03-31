@@ -16,30 +16,40 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import org.llorllale.youtrack.api.session.AuthenticationException;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
- * Default implementation of {@link YouTrack}.
+ * Reuses {@link Session sessions} if already authenticated.
+ *
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
- * @todo #161 Modify ctor to accept the Login interface. This interface must
- *  be propagated to collaborators through their ctors. Wrap the given login
- *  in the new CachedLogin implementation.
+ * @since 1.0.0
  */
-public final class DefaultYouTrack implements YouTrack {
-  private final Session session;
+final class CachedLogin implements Login {
+  private final Login origin;
+  private final List<Session> cache = new ArrayList<>(0);
 
   /**
-   * Primary ctor.
-   * @param session the user's {@link Session}
-   * @since 0.4.0
+   * Ctor.
+   * 
+   * @param origin decorated login
+   * @since 1.0.0
    */
-  public DefaultYouTrack(Session session) {
-    this.session = session;
+  CachedLogin(Login origin) {
+    this.origin = origin;
   }
 
   @Override
-  public Projects projects() {
-    return new DefaultProjects(this, this.session);
+  public Session login() throws AuthenticationException, IOException {
+    synchronized (this.cache) {
+      if (this.cache.isEmpty()) {
+        this.cache.add(this.origin.login());
+      }
+    }
+    return this.cache.get(0);
   }
 }
