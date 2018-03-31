@@ -520,6 +520,7 @@ limitations under the License.</inlineHeader>
               <exclude>release/codesigning.asc.enc</exclude>
               <exclude>release/codesigning.asc</exclude>
               <exclude>pom.xml.versionsBackup</exclude>
+              <exclude>.pdd</exclude>
             </excludes>
             <headerDefinitions>
               <headerDefinition>license_header_format.xml</headerDefinition>
