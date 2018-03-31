@@ -68,44 +68,44 @@ final class DefaultProjects implements Projects {
   @Override
   public Stream<Project> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<>(
-            xml -> new XmlProject(this.youtrack, this.session, xml),
-            new XmlsOf(
-                "/projects/project",
-                new HttpResponseAsResponse(
-                    this.httpClient.execute(
-                        new HttpRequestWithSession(
-                            this.session, 
-                            new HttpGet(
-                                this.session.baseUrl().toString().concat("/project/all")
-                            )
-                        )
-                    )
+      new MappedCollection<>(
+        xml -> new XmlProject(this.youtrack, this.session, xml),
+        new XmlsOf(
+          "/projects/project",
+          new HttpResponseAsResponse(
+            this.httpClient.execute(
+              new HttpRequestWithSession(
+                this.session, 
+                new HttpGet(
+                  this.session.baseUrl().toString().concat("/project/all")
                 )
+              )
             )
+          )
         )
+      )
     );
   }
 
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
     return new MappedCollection<Xml, Project>(
-        xml -> new XmlProject(this.youtrack, this.session, xml),
-        new XmlsOf(
-            "/project",
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString()
-                                .concat("/admin/project/")
-                                .concat(id)
-                        )
-                    )
+      xml -> new XmlProject(this.youtrack, this.session, xml),
+      new XmlsOf(
+        "/project",
+        new HttpResponseAsResponse(
+          this.httpClient.execute(
+            new HttpRequestWithSession(
+              this.session, 
+                new HttpGet(
+                  this.session.baseUrl().toString()
+                    .concat("/admin/project/")
+                    .concat(id)
                 )
             )
+          )
         )
+      )
     ).stream().findAny();
   }
 }

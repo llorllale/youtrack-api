@@ -74,29 +74,29 @@ final class XmlUsersOfProject implements UsersOfProject {
   @Override
   public User user(String login) throws IOException, UnauthorizedException {
     return new XmlUser(
-        new XmlsOf(
-            "/user",
-            new HttpResponseAsResponse(
-                this.httpClient.execute(
-                    new HttpRequestWithSession(
-                        this.session, 
-                        new HttpGet(
-                            this.session.baseUrl().toString().concat("/user/").concat(login)
-                        )
-                    )
-                )
+      new XmlsOf(
+        "/user",
+        new HttpResponseAsResponse(
+          this.httpClient.execute(
+            new HttpRequestWithSession(
+              this.session, 
+              new HttpGet(
+                this.session.baseUrl().toString().concat("/user/").concat(login)
+              )
             )
-        ).stream().findAny().get()
+          )
+        )
+      ).stream().findAny().get()
     );
   }
 
   @Override
   public Stream<User> assignees() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<>(
-            () -> x -> this.user(x.textOf("@value").get()),
-            this.xml.children("//assigneesLogin/sub")
-        )
+      new MappedCollection<>(
+        () -> x -> this.user(x.textOf("@value").get()),
+        this.xml.children("//assigneesLogin/sub")
+      )
     );
   }
 }

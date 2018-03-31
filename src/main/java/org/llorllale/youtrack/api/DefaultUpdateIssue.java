@@ -82,34 +82,34 @@ final class DefaultUpdateIssue implements UpdateIssue {
   public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
     final String separator = " ";
     new HttpResponseAsResponse(
-        HttpClients.createDefault().execute(
-            new HttpRequestWithSession(
-                this.session, 
-                new HttpRequestWithEntity(
-                    new UrlEncodedFormEntity(
-                        Arrays.asList(
-                            new BasicNameValuePair(
-                                "command", 
-                                fields.entrySet().stream()
-                                    .map(
-                                        e -> String.join(
-                                            separator, 
-                                            e.getKey().name(), 
-                                            e.getValue().asString()
-                                        )
-                                    ).collect(Collectors.joining(separator))
-                            )
-                        ),
-                        StandardCharsets.UTF_8
-                    ),
-                    new HttpPost(
-                        this.session.baseUrl().toString()
-                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
-                            .concat("/execute")
-                    )
+      HttpClients.createDefault().execute(
+        new HttpRequestWithSession(
+          this.session, 
+          new HttpRequestWithEntity(
+            new UrlEncodedFormEntity(
+              Arrays.asList(
+                new BasicNameValuePair(
+                  "command", 
+                  fields.entrySet().stream()
+                    .map(
+                      e -> String.join(
+                        separator, 
+                        e.getKey().name(), 
+                        e.getValue().asString()
+                      )
+                    ).collect(Collectors.joining(separator))
                 )
+              ),
+              StandardCharsets.UTF_8
+            ),
+            new HttpPost(
+              this.session.baseUrl().toString()
+                .concat(String.format(PATH_TEMPLATE, this.issue.id()))
+                .concat("/execute")
             )
+          )
         )
+      )
     ).httpResponse();
 
     return this.issue.refresh();
@@ -127,19 +127,19 @@ final class DefaultUpdateIssue implements UpdateIssue {
   private Issue updateSmmryDesc(String summary, String description) 
       throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-        HttpClients.createDefault().execute(
-            new HttpRequestWithSession(
-                this.session, 
-                new HttpPost(
-                    new UncheckedUriBuilder(
-                        this.session.baseUrl().toString()
-                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
-                    ).param("summary", summary)
-                        .paramIfPresent("description", Optional.ofNullable(description))
-                        .build()
-                )
-            )
+      HttpClients.createDefault().execute(
+        new HttpRequestWithSession(
+          this.session, 
+          new HttpPost(
+            new UncheckedUriBuilder(
+              this.session.baseUrl().toString()
+                .concat(String.format(PATH_TEMPLATE, this.issue.id()))
+            ).param("summary", summary)
+              .paramIfPresent("description", Optional.ofNullable(description))
+              .build()
+          )
         )
+      )
     ).httpResponse();
 
     return this.issue.refresh();

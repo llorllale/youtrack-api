@@ -75,23 +75,23 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
   @Override
   public Stream<TimeTrackEntry> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<>(
-            xml -> new XmlTimeTrackEntry(this.issue, xml),
-            new XmlsOf(
-                "/workItems/workItem",
-                new HttpResponseAsResponse(
-                    this.httpClient.execute(
-                        new HttpRequestWithSession(
-                            this.session, 
-                            new HttpGet(
-                                this.session.baseUrl().toString()
-                                    .concat(String.format(PATH_TEMPLATE, this.issue.id()))
-                            )
-                        )
-                    )
+      new MappedCollection<>(
+        xml -> new XmlTimeTrackEntry(this.issue, xml),
+        new XmlsOf(
+          "/workItems/workItem",
+          new HttpResponseAsResponse(
+            this.httpClient.execute(
+              new HttpRequestWithSession(
+                this.session, 
+                new HttpGet(
+                  this.session.baseUrl().toString()
+                    .concat(String.format(PATH_TEMPLATE, this.issue.id()))
                 )
+              )
             )
+          )
         )
+      )
     );
   }
 
