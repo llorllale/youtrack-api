@@ -16,12 +16,14 @@
 
 package org.llorllale.youtrack.api;
 
+// @checkstyle AvoidStaticImport (5 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.llorllale.youtrack.api.session.PermanentToken;
 import org.llorllale.youtrack.api.session.Session;
 
@@ -30,11 +32,16 @@ import org.llorllale.youtrack.api.session.Session;
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
+ * @checkstyle AbbreviationAsWordInName (2 lines)
  */
-public class DefaultProjectTimeTrackingIT {
+public final class DefaultProjectTimeTrackingIT {
   private static Session session;
   private static Project project;
 
+  /**
+   * Setup.
+   * @throws Exception unexpected
+   */
   @BeforeClass
   public static void setup() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
@@ -42,16 +49,28 @@ public class DefaultProjectTimeTrackingIT {
     project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 
+  /**
+   * Pre-configured project must have timetracking enabled.
+   * 
+   * @throws Exception unexpected
+   */
   @Test
   public void testEnabled() throws Exception {
-    assertTrue(new DefaultProjectTimeTracking(project, session).enabled()
+    assertTrue(
+      new DefaultProjectTimeTracking(project, session).enabled()
     );
   }
 
+  /**
+   * Pre-configured project has timetracking types configured.
+   * 
+   * @throws Exception unexpected
+   */
   @Test
   public void testTypes() throws Exception {
-    assertThat(new DefaultProjectTimeTracking(project, session).types().count(),
-        is(greaterThan(0L))
+    assertThat(
+      new DefaultProjectTimeTracking(project, session).types().count(),
+      is(greaterThan(0L))
     );
   }
 }

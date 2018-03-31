@@ -16,11 +16,13 @@
 
 package org.llorllale.youtrack.api;
 
-import java.time.Instant;
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.hamcrest.CoreMatchers.is;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+
+import java.time.Instant;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockSession;
@@ -32,51 +34,80 @@ import org.llorllale.youtrack.api.session.Session;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class XmlCommentTest {
+@SuppressWarnings({"checkstyle:MethodName", "checkstyle:MultipleStringLiterals"})
+public final class XmlCommentTest {
+  private static final String XML =
+    "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+    // @checkstyle LineLength (1 line)
+    + "<comment id=\"42-307\" author=\"root\" issueId=\"HBR-63\" deleted=\"false\" text=\"comment 2?\" shownForIssueAuthor=\"false\"\n"
+    + "         created=\"1267030238721\" updated=\"1267030230127\">\n"
+    + "  <replies/>\n"
+    + "</comment>";
+
   private static Xml xmlObject;
 
+  /**
+   * Setup.
+   * @throws Exception unexpected
+   */
   @BeforeClass
   public static void setup() throws Exception {
     xmlObject = new XmlOf(new StringAsDocument(XML));
   }
 
+  /**
+   * Returns this comment's id.
+   * @throws Exception unexpected
+   */
   @Test
   public void testId() throws Exception {
     assertThat(
-        new XmlComment(issue(), session(), xmlObject).id(),
+        new XmlComment(this.issue(), this.session(), xmlObject).id(),
         is("42-307")
     );
   }
 
+  /**
+   * Returns the comment's creation date.
+   * @throws Exception unexpected
+   */
   @Test
   public void testCreationDate() throws Exception {
     assertThat(
-        new XmlComment(issue(), session(), xmlObject).creationDate(),
-        is(Instant.ofEpochMilli(1267030238721L))
+      new XmlComment(this.issue(), this.session(), xmlObject).creationDate(),
+      // @checkstyle MagicNumber (1 line)
+      is(Instant.ofEpochMilli(1267030238721L))
     );
   }
 
+  /**
+   * Returns the comment's text.
+   * 
+   * @throws Exception unexpected
+   */
   @Test
   public void testText() throws Exception {
     assertThat(
-        new XmlComment(issue(), session(), xmlObject).text(),
-        is("comment 2?")
+      new XmlComment(this.issue(), this.session(), xmlObject).text(),
+      is("comment 2?")
     );
   }
 
+  /**
+   * An issue.
+   * 
+   * @return an issue
+   */
   private Issue issue() {
     return new MockIssue(new MockProject("PR-1", "", ""))
-        .withId("I-23");
+      .withId("I-23");
   }
 
+  /**
+   * A session.
+   * @return a session
+   */
   private Session session() {
     return new MockSession();
   }
-
-  private static final String XML =
-"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-"<comment id=\"42-307\" author=\"root\" issueId=\"HBR-63\" deleted=\"false\" text=\"comment 2?\" shownForIssueAuthor=\"false\"\n" +
-"         created=\"1267030238721\" updated=\"1267030230127\">\n" +
-"  <replies/>\n" +
-"</comment>";
 }

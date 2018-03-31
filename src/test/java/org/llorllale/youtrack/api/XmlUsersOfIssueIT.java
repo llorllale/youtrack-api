@@ -16,8 +16,10 @@
 
 package org.llorllale.youtrack.api;
 
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockUser;
@@ -28,74 +30,103 @@ import org.llorllale.youtrack.api.session.Session;
  * Integration tests for {@link XmlUsersOfIssue}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
+ * @checkstyle AbbreviationAsWordInName (500 lines)
+ * @checkstyle MethodName (500 lines)
+ * @checkstyle MultipleStringLiterals (500 lines)
  */
-public class XmlUsersOfIssueIT {
+public final class XmlUsersOfIssueIT {
   private static IntegrationTestsConfig config;
   private static Session session;
 
+  /**
+   * Setup.
+   * @throws Exception unexpected
+   */
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
 
     session = new PermanentToken(
-        config.youtrackUrl(), 
-        config.youtrackUserToken()
+      config.youtrackUrl(), 
+      config.youtrackUserToken()
     ).login();
   }
 
+  /**
+   * Returns the issue's creator.
+   * @throws Exception unexpected
+   */
   @Test
   public void testCreator() throws Exception {
     final XmlUsersOfIssue test = 
-        (XmlUsersOfIssue) issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testCreator")).users();
+      (XmlUsersOfIssue) this.issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testCreator"))
+        .users();
 
     assertThat(
-        test.creator().loginName(),
-        is(config.youtrackUser())
+      test.creator().loginName(),
+      is(config.youtrackUser())
     );
   }
 
+  /**
+   * Returns the issue's new updater.
+   * @throws Exception unexpected
+   */
   @Test
   public void testAssignToAndUpdater() throws Exception {
     final Issue issue = 
-        ((XmlUsersOfIssue) issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndUpdater"))
-            .users())
-                .assignTo(
-                    new MockUser(
-                        config.youtrackUser(),
-                        "test@test.com",
-                        config.youtrackUser()
-                    )
-                ).issue();
+      this.issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndUpdater"))
+        .users()
+        .assignTo(
+          new MockUser(
+            config.youtrackUser(),
+            "test@test.com",
+            config.youtrackUser()
+          )
+        ).issue();
 
-    assertThat(((XmlUsersOfIssue) issue.users()).updater().get().name(),
-        is(config.youtrackUser())
+    assertThat(
+      ((XmlUsersOfIssue) issue.users()).updater().get().name(),
+      is(config.youtrackUser())
     );
   }
 
+  /**
+   * Returns the issue's new assignee.
+   * @throws Exception unexpected
+   */
   @Test
   public void testAssignToAndAssignee() throws Exception {
     final Issue issue = 
-        ((XmlUsersOfIssue) issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndAssignee")).users())
-            .assignTo(
-                new MockUser(
-                    config.youtrackUser(),
-                    "test@test.com",
-                    config.youtrackUser()
-                )
-            ).issue();
+      this.issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testAssignToAndAssignee"))
+        .users()
+        .assignTo(
+          new MockUser(
+            config.youtrackUser(),
+            "test@test.com",
+            config.youtrackUser()
+          )
+      ).issue();
 
-    assertThat(((XmlUsersOfIssue) issue.users()).assignee().get().name(),
-        is(config.youtrackUser())
+    assertThat(
+      ((XmlUsersOfIssue) issue.users()).assignee().get().name(),
+      is(config.youtrackUser())
     );
   }
 
+  /**
+   * Creates a new issue.
+   * @param name the issue's name.
+   * @return the newly created issue
+   * @throws Exception unexpected
+   */
   private Issue issue(String name) throws Exception {
     return new DefaultYouTrack(session)
-        .projects()
-        .stream()
-        .findFirst()
-        .get()
-        .issues()
-        .create(name,"integration tests");
+      .projects()
+      .stream()
+      .findFirst()
+      .get()
+      .issues()
+      .create(name, "integration tests");
   }
 }
