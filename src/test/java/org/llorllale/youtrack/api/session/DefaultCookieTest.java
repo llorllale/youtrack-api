@@ -16,42 +16,42 @@
 
 package org.llorllale.youtrack.api.session;
 
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 
 /**
- * Unit tests for {@link DefaultCookie}
- *
+ * Unit tests for {@link DefaultCookie}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class DefaultCookieTest {
+public final class DefaultCookieTest {
   /**
    * {@link DefaultCookie#name()} should return the name passed through constructor.
-   * 
    * @since 1.0.0
+   * @checkstyle MultipleStringLiterals (500 lines)
    */
   @Test
   public void testName() {
     final String name = "SomeName";
     assertThat(
-        new DefaultCookie(name, "").name(),
-        is(name)
+      new DefaultCookie(name, "").name(),
+      is(name)
     );
   }
 
   /**
    * {@link DefaultCookie#value()} must return the value passed through the constructor.
-   * 
    * @since 1.0.0
    */
   @Test
   public void testValue() {
     final String value = "SomeValue";
     assertThat(
-        new DefaultCookie("", value).value(),
-        is(value)
+      new DefaultCookie("", value).value(),
+      is(value)
     );
   }
 }
