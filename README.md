@@ -3,6 +3,7 @@
 [![codecov](https://codecov.io/gh/llorllale/youtrack-api/branch/master/graph/badge.svg)](https://codecov.io/gh/llorllale/youtrack-api)
 [![Build Status](https://travis-ci.org/llorllale/youtrack-api.svg?branch=master)](https://travis-ci.org/llorllale/youtrack-api)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.llorllale/youtrack-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.llorllale/youtrack-api)
+[![PDD status](http://www.0pdd.com/svg?name=llorllale/youtrack-api)](http://www.0pdd.com/p?name=llorllale/youtrack-api)
 [![Javadocs](http://javadoc.io/badge/org.llorllale/youtrack-api.svg?color=blue)](http://javadoc.io/doc/org.llorllale/youtrack-api)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://llorllale.github.io/youtrack-api/license.html)
 
