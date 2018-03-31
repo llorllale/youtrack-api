@@ -1,0 +1,9 @@
+--source=.
+--verbose
+--exclude target/**/*
+--exclude src/site/resources/**/*
+--exclude checkstyle.xml
+--exclude release/**/*
+--rule min-words:20
+--rule min-estimate:0
+--rule max-estimate:0
