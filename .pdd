@@ -4,6 +4,7 @@
 --exclude src/site/resources/**/*
 --exclude checkstyle.xml
 --exclude release/**/*
+--exclude src/test/resources/docker/**/*
 --rule min-words:20
 --rule min-estimate:0
 --rule max-estimate:0
