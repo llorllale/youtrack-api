@@ -1,4 +1,5 @@
 # youtrack-api ![icon](/src/site/resources/images/icon_32.png)
+[![EO principles respected here](http://www.elegantobjects.org/badge.svg)](http://www.elegantobjects.org)
 
 [![codecov](https://codecov.io/gh/llorllale/youtrack-api/branch/master/graph/badge.svg)](https://codecov.io/gh/llorllale/youtrack-api)
 [![Build Status](https://travis-ci.org/llorllale/youtrack-api.svg?branch=master)](https://travis-ci.org/llorllale/youtrack-api)
