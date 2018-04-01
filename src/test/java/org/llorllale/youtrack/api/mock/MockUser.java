@@ -23,36 +23,36 @@ import org.llorllale.youtrack.api.User;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.5.0
  */
-public class MockUser implements User {
+public final class MockUser implements User {
   private final String name;
   private final String email;
   private final String loginName;
 
   /**
    * Ctor.
-   * @param name
-   * @param email
-   * @param loginName 
+   * @param name username
+   * @param email user's email
+   * @param login user's login
    * @since 0.5.0
    */
-  public MockUser(String name, String email, String loginName) {
+  public MockUser(String name, String email, String login) {
     this.name = name;
     this.email = email;
-    this.loginName = loginName;
+    this.loginName = login;
   }
 
   @Override
   public String name() {
-    return name;
+    return this.name;
   }
 
   @Override
   public String email() {
-    return email;
+    return this.email;
   }
 
   @Override
   public String loginName() {
-    return loginName;
+    return this.loginName;
   }
 }

@@ -21,17 +21,15 @@ import org.llorllale.youtrack.api.FieldValue;
 
 /**
  * Mock implementation of {@link FieldValue} suitable for tests.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockFieldValue implements FieldValue {
+public final class MockFieldValue implements FieldValue {
   private final Field field;
   private final String value;
 
   /**
    * Primary ctor.
-   * 
    * @param field the {@link #field() field}
    * @param value the {@link #asString() value}
    * @since 1.0.0

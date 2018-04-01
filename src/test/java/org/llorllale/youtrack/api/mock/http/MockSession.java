@@ -30,12 +30,12 @@ import org.llorllale.youtrack.api.session.Session;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class MockSession implements Session {
+public final class MockSession implements Session {
   @Override
   public URL baseUrl() {
-    try{
+    try {
       return new URL("http://some.url");
-    }catch(MalformedURLException e){
+    } catch (MalformedURLException e) {
       throw new RuntimeException(e);
     }
   }
