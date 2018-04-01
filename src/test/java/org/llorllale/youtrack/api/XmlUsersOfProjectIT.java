@@ -16,25 +16,31 @@
 
 package org.llorllale.youtrack.api;
 
+// @checkstyle AvoidStaticImport (3 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.llorllale.youtrack.api.session.PermanentToken;
 import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link XmlUsersOfProject}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
+ * @checkstyle AbbreviationAsWordInName (2 lines)
  */
-public class XmlUsersOfProjectIT {
+public final class XmlUsersOfProjectIT {
   private static IntegrationTestsConfig config;
   private static Session session;
   private static Project project;
 
+  /**
+   * Setup.
+   * @throws Exception unexpected
+   */
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
@@ -42,35 +48,52 @@ public class XmlUsersOfProjectIT {
     project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 
+  /**
+   * Returns the pre-configured user.
+   * @throws Exception unexpected
+   */
   @Test
   public void testUser() throws Exception {
-    assertThat(new XmlUsersOfProject(project, session, this.xmlObject("random"))
-            .user(config.youtrackUser())
-            .loginName(),
-        is(config.youtrackUser())
+    assertThat(
+      new XmlUsersOfProject(project, session, this.xmlObject("random"))
+        .user(config.youtrackUser())
+        .loginName(),
+      is(config.youtrackUser())
     );
   }
 
+  /**
+   * Returns the pre-configured assignee.
+   * @throws Exception unexpected
+   */
   @Test
   public void testAssignees() throws Exception {
-    assertTrue(new XmlUsersOfProject(project, session, this.xmlObject(config.youtrackUser()))
-            .assignees()
-            .anyMatch(a -> config.youtrackUser().equals(a.loginName()))
+    assertTrue(
+      new XmlUsersOfProject(project, session, this.xmlObject(config.youtrackUser()))
+        .assignees()
+        .anyMatch(a -> config.youtrackUser().equals(a.loginName()))
     );
   }
 
+  /**
+   * Mock XML.
+   * @param assigneeLogin mock assignee login name
+   * @return mock XML
+   * @throws Exception unexpected
+   */
   private Xml xmlObject(String assigneeLogin) throws Exception {
-    final String TEMPLATE = 
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-        "<project>\n" +
-        "  <assigneesLogin>\n" +
-        "    <sub value=\"%s\"/>\n" +
-        "  </assigneesLogin>\n" +
-        "</project>";
     return new XmlOf(
-        new StringAsDocument(
-            String.format(TEMPLATE, assigneeLogin)
+      new StringAsDocument(
+        String.format(
+          "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+          + "<project>\n"
+          + "  <assigneesLogin>\n"
+          + "    <sub value=\"%s\"/>\n"
+          + "  </assigneesLogin>\n"
+          + "</project>",
+          assigneeLogin
         )
+      )
     );
   }
 }
