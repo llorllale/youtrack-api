@@ -29,19 +29,20 @@ import org.llorllale.youtrack.api.Fields;
 import org.llorllale.youtrack.api.Issues;
 import org.llorllale.youtrack.api.Project;
 import org.llorllale.youtrack.api.ProjectField;
-import org.llorllale.youtrack.api.UsersOfProject;
-import org.llorllale.youtrack.api.YouTrack;
 import org.llorllale.youtrack.api.ProjectTimeTracking;
 import org.llorllale.youtrack.api.User;
+import org.llorllale.youtrack.api.UsersOfProject;
+import org.llorllale.youtrack.api.YouTrack;
 
 /**
  * Mock implementation of {@link Project} suitable for unit tests.
- * 
- * Note: {@link  #issues()} throws an UnsupportedOperationException.
+ *
+ * <p>Note: {@link  #issues()} throws an UnsupportedOperationException.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class MockProject implements Project {
+@SuppressWarnings({"checkstyle:MethodCount", "checkstyle:MultipleStringLiterals"})
+public final class MockProject implements Project {
   private final String id;
   private final String name;
   private final Optional<String> description;
@@ -50,7 +51,6 @@ public class MockProject implements Project {
 
   /**
    * Primary ctor.
-   * 
    * @param id the mock project's id
    * @param name the mock project's name
    * @param description the mock project's description
@@ -66,78 +66,76 @@ public class MockProject implements Project {
 
   /**
    * Ctor.
-   * 
+   *
    * <p>Assumes default values:
    * <ul>
-   *    <li>id -> ""</li>
-   *    <li>name -> ""</li>
-   *    <li>description -> ""</li> 
+   * <li>id -> ""</li>
+   * <li>name -> ""</li>
+   * <li>description -> ""</li>
    * </ul>
-   * 
    * @since 0.4.0
    */
   public MockProject() {
     this("", "", "");
   }
-  
+
   /**
    * Add {@code field} to this project's collection of configured {@link ProjectField fields}.
-   * 
-   * @param field
-   * @return 
+   * @param field field to configure for this project
+   * @return this project
    * @since 1.0.0
    */
   public MockProject withField(MockProjectField field) {
     this.fields.merge(
-        field, 
-        field.values().collect(Collectors.toList()), 
-        (a, b) -> {a.addAll(b); return a;}
+      field,
+      field.values().collect(Collectors.toList()),
+      (first, second) -> {
+        first.addAll(second);
+        return first;
+      }
     );
     return this;
   }
 
   /**
-   * Shorthand for {@link #withField(org.llorllale.youtrack.api.ProjectField)}. Equivalent to
-   * doing:
+   * Shorthand for {@link #withField(org.llorllale.youtrack.api.ProjectField)}. Equivalent to doing:
    * <pre>
-   * {@code 
+   * {@code
    * final MockProject project = ...;
    * final String fieldName = ...;
    * final String fieldValue = ...;
    * project.withField(
    *    new MockProjectField(
-   *        fieldName, 
-   *        project, 
+   *        fieldName,
+   *        project,
    *        new MockFieldValue(
-   *            new MockField(fieldName, project), 
+   *            new MockField(fieldName, project),
    *            fieldValue
    *        )
    *    )
    * );
    * }
    * </pre>
-   * 
-   * @param name
-   * @param value
-   * @return 
+   * @param fieldName name of field
+   * @param fieldValue value of field
+   * @return this project
    * @since 1.0.0
    */
-  public MockProject withFieldValue(String name, String value) {
+  public MockProject withFieldValue(String fieldName, String fieldValue) {
     return this.withField(
-        new MockProjectField(
-            name, 
-            this, 
-            new MockFieldValue(
-                new MockField(name, this), 
-                value
-            )
+      new MockProjectField(
+        fieldName,
+        this,
+        new MockFieldValue(
+          new MockField(fieldName, this),
+          fieldValue
         )
+      )
     );
   }
 
   /**
    * Adds {@code user} to the collection of configured {@link User users} for this project.
-   * 
    * @param user the user to add
    * @return this object
    * @since 1.0.0
@@ -164,7 +162,7 @@ public class MockProject implements Project {
 
   @Override
   public Issues issues() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
@@ -184,28 +182,28 @@ public class MockProject implements Project {
 
   @Override
   public YouTrack youtrack() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public Fields fields() {
     return new MockFields(
-        this, 
-        Collections.unmodifiableCollection(
-            this.fields.entrySet().stream().map(entry -> 
-                new MockProjectField(
-                    entry.getKey().name(), 
-                    entry.getKey().project(), 
-                    entry.getValue().toArray(new FieldValue[]{})
-                )
-            ).collect(Collectors.toList())
+      this,
+      Collections.unmodifiableCollection(
+        this.fields.entrySet().stream().map(entry
+          -> new MockProjectField(
+          entry.getKey().name(),
+          entry.getKey().project(),
+          entry.getValue().toArray(new FieldValue[] {})
         )
+        ).collect(Collectors.toList())
+      )
     );
   }
 
   @Override
   public ProjectTimeTracking timetracking() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override

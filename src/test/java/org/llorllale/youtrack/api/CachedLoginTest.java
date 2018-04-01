@@ -16,9 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import java.io.IOException;
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.session.AuthenticationException;
@@ -27,14 +29,13 @@ import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Unit tests for {@link CachedLogin}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
+ * @checkstyle MethodName (500 lines)
  */
 public final class CachedLoginTest {
   /**
    * Must return the same cached session object.
-   * 
    * @throws Exception unexpected
    */
   @Test
@@ -53,21 +54,23 @@ public final class CachedLoginTest {
 
   /**
    * Propagates the origin's authentication error.
-   * 
    * @throws Exception auth error
    */
   @Test(expected = AuthenticationException.class)
   public void propagatesAuthException() throws Exception {
-    new CachedLogin(() -> { throw new AuthenticationException(""); }).login();
+    new CachedLogin(() -> {
+      throw new AuthenticationException(null);
+    }).login();
   }
 
   /**
    * Propagates the origin's io error.
-   * 
    * @throws Exception io error
    */
   @Test(expected = IOException.class)
   public void propagatesIoException() throws Exception {
-    new CachedLogin(() -> { throw new IOException(""); }).login();
+    new CachedLogin(() -> {
+      throw new IOException();
+    }).login();
   }
 }
