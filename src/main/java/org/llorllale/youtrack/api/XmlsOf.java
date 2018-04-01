@@ -83,13 +83,13 @@ final class XmlsOf extends AbstractCollection<Xml> {
    */
   XmlsOf(String xpath, Response response) throws IOException, UncheckedException {
     this.base = 
-        new XmlOf(
-            new StringAsDocument(
-                new InputStreamAsString().apply(
-                    response.httpResponse().getEntity().getContent()
-                )
-            )
-        ).children(xpath);
+      new XmlOf(
+        new StringAsDocument(
+          new InputStreamAsString().apply(
+            response.httpResponse().getEntity().getContent()
+          )
+        )
+      ).children(xpath);
   }
 
   @Override

@@ -200,7 +200,7 @@
               <linkXRef>false</linkXRef>
               <violationSeverity>info</violationSeverity>
               <!--
-              @todo #175 <sourceDirectory> should be '${basedir}/src' in order to include
+              @todo #177 <sourceDirectory> should be '${basedir}/src' in order to include
                test sources in the checks, but there are MANY failures triggered there.
                Will need to fix those step by step. Keep going.
               -->
