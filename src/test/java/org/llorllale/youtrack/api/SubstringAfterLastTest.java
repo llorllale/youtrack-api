@@ -16,22 +16,26 @@
 
 package org.llorllale.youtrack.api;
 
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 
 /**
  * Unit tests for {@link SubstringAfterLast}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class SubstringAfterLastTest {
+public final class SubstringAfterLastTest {
+  /**
+   * Returns the substring after last occurrence of the given delimiter.
+   */
   @Test
   public void testGet() {
     assertThat(
-        new SubstringAfterLast("http://some.host.com:8080/some/path/to/some/resource", "/").get(),
-        is("resource")
+      new SubstringAfterLast("http://some.host.com:8080/some/path/to/some/resource", "/").get(),
+      is("resource")
     );
   }
 }
