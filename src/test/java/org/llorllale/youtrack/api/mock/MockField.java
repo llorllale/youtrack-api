@@ -25,13 +25,13 @@ import org.llorllale.youtrack.api.Project;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockField implements Field {
+public final class MockField implements Field {
   private final String name;
   private final Project project;
 
   /**
    * Ctor.
-   * 
+   *
    * @param name the field's name
    * @param project the project to which this field belongs to
    * @since 1.0.0

@@ -25,13 +25,13 @@ import org.llorllale.youtrack.api.mock.http.response.MockInternalErrorResponse;
  *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
+ * @checkstyle MethodName (50 lines)
  */
-public class InternalServerErrorResponseTest {
-
+public final class InternalServerErrorResponseTest {
   /**
    * Should throw an {@link IOException} if the YouTrack server returns an HTTP response with
    * code 500.
-   * 
+   * @throws Exception unexpected
    * @since 1.0.0
    */
   @Test(expected = IOException.class)
