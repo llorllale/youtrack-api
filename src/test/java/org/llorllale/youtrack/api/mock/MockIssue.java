@@ -24,19 +24,22 @@ import java.util.Optional;
 import org.llorllale.youtrack.api.AssignedField;
 import org.llorllale.youtrack.api.Comments;
 import org.llorllale.youtrack.api.Issue;
+import org.llorllale.youtrack.api.IssueTimeTracking;
 import org.llorllale.youtrack.api.Project;
+import org.llorllale.youtrack.api.UpdateIssue;
 import org.llorllale.youtrack.api.UsersOfIssue;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
-import org.llorllale.youtrack.api.IssueTimeTracking;
-import org.llorllale.youtrack.api.UpdateIssue;
 
 /**
  * Mock implementation of {@link Issue} suitable for unit tests.
- * 
+ *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class MockIssue implements Issue {
+@SuppressWarnings(
+  {"checkstyle:MethodCount", "checkstyle:MultipleStringLiterals", "checkstyle:MethodName"}
+)
+public final class MockIssue implements Issue {
   private final Project project;
   private final String id;
   private final Instant creationDate;
@@ -45,20 +48,21 @@ public class MockIssue implements Issue {
 
   /**
    * Primary ctor.
-   * 
-   * @param project
-   * @param id
-   * @param creationDate
-   * @param summary
-   * @param description 
+   *
+   * @param project the project
+   * @param id the issue's id
+   * @param creationDate issue's creation date
+   * @param summary issue's summary
+   * @param description issue's description
    * @since 0.4.0
    */
+  @SuppressWarnings("checkstyle:ParameterNumber")
   public MockIssue(
-      Project project, 
-      String id, 
-      Instant creationDate, 
-      String summary, 
-      String description
+    Project project,
+    String id,
+    Instant creationDate,
+    String summary,
+    String description
   ) {
     this.project = project;
     this.id = id;
@@ -68,57 +72,77 @@ public class MockIssue implements Issue {
   }
 
   /**
-   * 
-   * @param project 
+   * Ctor.
+   * @param project the project
    * @since 0.4.0
    */
   public MockIssue(Project project) {
     this(
-        project, 
-        "", 
-        Instant.now(), 
-        "", 
-        ""
+      project,
+      "",
+      Instant.now(),
+      "",
+      ""
     );
   }
 
-  public MockIssue withId(String id) {
+  /**
+   * Sets this issue's id.
+   * @param issueId id for this issue
+   * @return this issue
+   */
+  public MockIssue withId(String issueId) {
     return new MockIssue(
-        this.project, 
-        id, 
-        this.creationDate, 
-        this.summary, 
-        this.description
+      this.project,
+      issueId,
+      this.creationDate,
+      this.summary,
+      this.description
     );
   }
 
-  public MockIssue withCreationDate(Instant creationDate) {
+  /**
+   * Sets this issue's creation date.
+   * @param date creation date
+   * @return this issue
+   */
+  public MockIssue withCreationDate(Instant date) {
     return new MockIssue(
-        this.project, 
-        this.id,
-        creationDate, 
-        this.summary, 
-        this.description
+      this.project,
+      this.id,
+      date,
+      this.summary,
+      this.description
     );
   }
 
-  public MockIssue withSummary(String summary) {
+  /**
+   * Sets this issue's summary.
+   * @param text summary text
+   * @return this issue
+   */
+  public MockIssue withSummary(String text) {
     return new MockIssue(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        summary, 
-        this.description
+      this.project,
+      this.id,
+      this.creationDate,
+      text,
+      this.description
     );
   }
 
-  public MockIssue withDescription(String description) {
+  /**
+   * Sets this issue's description.
+   * @param text descriptive text
+   * @return this issue
+   */
+  public MockIssue withDescription(String text) {
     return new MockIssue(
-        this.project, 
-        this.id,
-        this.creationDate, 
-        this.summary, 
-        description
+      this.project,
+      this.id,
+      this.creationDate,
+      this.summary,
+      text
     );
   }
 
@@ -142,42 +166,42 @@ public class MockIssue implements Issue {
 
   @Override
   public Project project() {
-    return project;
+    return this.project;
   }
 
   @Override
   public String id() {
-    return id;
+    return this.id;
   }
 
   @Override
   public Instant creationDate() {
-    return creationDate;
+    return this.creationDate;
   }
 
   @Override
   public String summary() {
-    return summary;
+    return this.summary;
   }
 
   @Override
   public Optional<String> description() {
-    return Optional.of(description);
+    return Optional.ofNullable(this.description);
   }
 
   @Override
   public Comments comments() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public IssueTimeTracking timetracking() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public UsersOfIssue users() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
@@ -187,11 +211,11 @@ public class MockIssue implements Issue {
 
   @Override
   public List<AssignedField> fields() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public UpdateIssue update() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

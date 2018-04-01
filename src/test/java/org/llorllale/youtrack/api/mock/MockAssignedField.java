@@ -25,18 +25,16 @@ import org.llorllale.youtrack.api.Project;
  * Mock implementation of {@link AssignedField} suitable for tests.
  * 
  * <p>Note: the {@link #change()} operation is not supported.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockAssignedField implements AssignedField {
+public final class MockAssignedField implements AssignedField {
   private final String name;
   private final Issue issue;
   private final String value;
 
   /**
    * Primary ctor.
-   * 
    * @param name this field's name
    * @param issue the issue this field is assigned to
    * @param value this field's {@link MockFieldValue value}
@@ -70,7 +68,7 @@ public class MockAssignedField implements AssignedField {
 
   @Override
   public boolean equals(Object object) {
-    if(!(object instanceof AssignedField)) {
+    if (!(object instanceof AssignedField)) {
       return false;
     }
 
