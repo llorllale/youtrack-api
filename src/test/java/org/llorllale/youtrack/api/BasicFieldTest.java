@@ -16,76 +16,98 @@
 
 package org.llorllale.youtrack.api;
 
+// @checkstyle AvoidStaticImport (4 lines)
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.llorllale.youtrack.api.mock.MockField;
 import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
  * Unit tests for {@link BasicField}.
- * 
+ *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
+ * @checkstyle MultipleStringLiterals (500 lines)
+ * @checkstyle MethodName (500 lines)
  */
-public class BasicFieldTest {
+public final class BasicFieldTest {
+  /**
+   * Must return the given name.
+   */
   @Test
   public void testName() {
     final String name = "test";
-
     assertThat(
-        new BasicField(name, null).name(),
-        is(name)
+      new BasicField(name, null).name(),
+      is(name)
     );
   }
 
+  /**
+   * Must be equal to itself.
+   */
   @Test
   public void equalsItself() {
     final Field field = new BasicField("field", new MockProject());
-
     assertTrue(
-        field.equals(field)
+      field.equals(field)
     );
   }
 
+  /**
+   * Must equal another field with the same name and belonging to the same project.
+   */
   @Test
   public void equalsOtherField() {
     assertTrue(
-        new BasicField(
-            "field", 
-            new MockProject()
-        ).equals(
-            new MockField(
-                "field", 
-                new MockProject()
-            )
+      new BasicField(
+        "field",
+        new MockProject()
+      ).equals(
+        new MockField(
+          "field",
+          new MockProject()
         )
+      )
     );
   }
 
+  /**
+   * Cannot be equal to null.
+   */
   @Test
   public void notEqualsNull() {
     assertFalse(
-        new BasicField("field", new MockProject()).equals(null)
+      new BasicField("field", new MockProject()).equals(null)
     );
   }
 
+  /**
+   * Cannot be equal to another field with the same name but belong to a different project.
+   */
   @Test
   public void notEqualsDiffProjects() {
     assertFalse(
-        new BasicField(
-            "field", 
-            new MockProject("p1", "p1", "")
-        ).equals(
-            new MockField("field", new MockProject("p2", "p2", ""))
-        )
+      new BasicField(
+        "field",
+        new MockProject("p1", "p1", "")
+      ).equals(
+        new MockField("field", new MockProject("p2", "p2", ""))
+      )
     );
   }
 
+  /**
+   * Cannot be equal to another type.
+   */
   @Test
   public void notEqualsObject() {
     assertFalse(
-        new BasicField("field", new MockProject()).equals(new Object())
+      new BasicField("field", new MockProject()).equals(new Object())
     );
   }
 }

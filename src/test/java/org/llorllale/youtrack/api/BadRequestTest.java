@@ -21,15 +21,16 @@ import org.junit.Test;
 import org.llorllale.youtrack.api.mock.http.response.MockBadRequestResponse;
 
 /**
- *
+ * Unit tests for {@link BadRequest}.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 1.0.0-SNAPSHOT
+ * @since 1.0.0
+ * @checkstyle MethodName (500 lines)
  */
-public class BadRequestTest {
+public final class BadRequestTest {
 
   /**
    * Should throw {@link IOException} if server returns error code 400.
-   * 
+   * @throws Exception unexpected
    * @since 1.0.0
    */
   @Test(expected = IOException.class)
