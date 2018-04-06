@@ -16,9 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-import java.util.Random;
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Random;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.PermanentToken;
@@ -28,58 +30,64 @@ import org.llorllale.youtrack.api.session.Session;
  * Integration tests for {@link DefaultProjects}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.6.0
+ * @checkstyle MethodName (500 lines)
+ * @checkstyle AbbreviationAsWordInName (2 lines)
  */
-public class DefaultProjectsIT {
+public final class DefaultProjectsIT {
   private static IntegrationTestsConfig config;
   private static Session session;
 
+  /**
+   * Setup.
+   * @throws Exception unexpected
+   */
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
     session = new PermanentToken(
-        config.youtrackUrl(), 
-        config.youtrackUserToken()
+      config.youtrackUrl(),
+      config.youtrackUserToken()
     ).login();
   }
 
   /**
    * Checks that stream works insofar as to include the pre-existing project.
-   * @throws Exception 
+   * @throws Exception unexpected
    * @since 0.6.0
    */
   @Test
   public void testStream() throws Exception {
     assertTrue(
-        new DefaultProjects(null, session).stream()
-            .anyMatch(p -> config.youtrackTestProjectId().equals(p.id()))
+      new DefaultProjects(null, session).stream()
+        .anyMatch(p -> config.youtrackTestProjectId().equals(p.id()))
     );
   }
 
   /**
    * Should return pre-existing project.
-   * @throws Exception 
+   * @throws Exception unexpected
    * @since 0.6.0
    */
   @Test
   public void testGetExistingProject() throws Exception {
     assertTrue(
-        new DefaultProjects(null, session)
-            .get(config.youtrackTestProjectId())
-            .isPresent()
+      new DefaultProjects(null, session)
+        .get(config.youtrackTestProjectId())
+        .isPresent()
     );
   }
 
   /**
    * Should return an empty optional for an input that has not issues.
-   * @throws Exception 
+   * @throws Exception unexpected
    * @since 0.6.0
    */
   @Test
   public void testGetNonExistingProject() throws Exception {
     assertFalse(
-        new DefaultProjects(null, session)
-            .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
-            .isPresent()
+      new DefaultProjects(null, session)
+        .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
+        .isPresent()
     );
   }
 }
