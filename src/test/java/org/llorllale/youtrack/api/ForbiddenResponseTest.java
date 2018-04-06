@@ -22,15 +22,16 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Unit tests for {@link ForbiddenResponse}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
+ * @checkstyle MethodName (500 lines)
  */
-public class ForbiddenResponseTest {
+public final class ForbiddenResponseTest {
 
   /**
-   * Should throw {@link UnauthorizedException} if server returns error code 403.
-   * 
+   * Should throw {@link UnauthorizedException} if server returns error code
+   * 403.
+   * @throws Exception unexpected
    * @since 1.0.0
    */
   @Test(expected = UnauthorizedException.class)

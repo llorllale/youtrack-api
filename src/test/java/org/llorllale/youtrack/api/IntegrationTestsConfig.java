@@ -27,12 +27,17 @@ import java.util.Properties;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
  */
-public class IntegrationTestsConfig {
-  private static final String CONFIG_FILE = "/integration-tests-config.properties";
+public final class IntegrationTestsConfig {
+  private static final String CONFIG_FILE
+    = "/integration-tests-config.properties";
   private static final Properties CONFIG = new Properties();
 
+  /**
+   * Loads test config from a properties file.
+   */
   private static synchronized void loadConfig() {
     if (CONFIG.isEmpty()) {
+      // @checkstyle LineLength (1 line)
       try (InputStream input = IntegrationTestsConfig.class.getResourceAsStream(CONFIG_FILE)) {
         CONFIG.load(input);
       } catch (IOException e) {
@@ -66,18 +71,18 @@ public class IntegrationTestsConfig {
    * @since 0.1.0
    */
   public URL youtrackUrl() {
+    final String property = "youtrack.test.url";
     loadConfig();
-
     try {
-      return new URL(CONFIG.getProperty("youtrack.test.url"));
+      return new URL(CONFIG.getProperty(property));
     } catch (MalformedURLException e) {
-      throw new RuntimeException("Malformed URL: " + CONFIG.getProperty("youtrack.test.url"));
+      throw new RuntimeException("Malformed URL: " + CONFIG.getProperty(property));
     }
   }
 
   /**
    * The permanent token for the {@link #youtrackUser() user}.
-   * @return 
+   * @return the user's token
    * @since 0.3.0
    */
   public String youtrackUserToken() {
@@ -87,9 +92,10 @@ public class IntegrationTestsConfig {
 
   /**
    * The ID of the pre-created YouTrack project.
-   * @return 
+   * @return the pre-configured project's id
    * @since 0.3.0
    */
+  @SuppressWarnings("checkstyle:MethodName")
   public String youtrackTestProjectId() {
     loadConfig();
     return CONFIG.getProperty("youtrack.test.project.id");
