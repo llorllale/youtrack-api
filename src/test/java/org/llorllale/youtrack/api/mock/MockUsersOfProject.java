@@ -27,17 +27,15 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Mock implementation of {@link UsersOfProject} suitable for tests.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockUsersOfProject implements UsersOfProject {
+public final class MockUsersOfProject implements UsersOfProject {
   private final Project project;
   private final List<User> users;
 
   /**
    * Primary ctor.
-   * 
    * @param project the associated project
    * @param users the users to configure for this mock project
    * @since 1.0.0
@@ -55,9 +53,9 @@ public class MockUsersOfProject implements UsersOfProject {
   @Override
   public User user(String login) throws IOException, UnauthorizedException {
     return this.users.stream()
-        .filter(user -> login.equals(user.loginName()))
-        .findAny()
-        .orElseThrow(() -> new IOException(String.format("User login %s not found.", login)));
+      .filter(user -> login.equals(user.loginName()))
+      .findAny()
+      .orElseThrow(() -> new IOException(String.format("User login %s not found.", login)));
   }
 
   @Override

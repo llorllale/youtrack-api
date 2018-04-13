@@ -25,17 +25,15 @@ import org.llorllale.youtrack.api.ProjectField;
 
 /**
  * Mock implementation of {@link Fields} suitable for tests.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockFields implements Fields {
+public final class MockFields implements Fields {
   private final Project project;
   private final Stream<ProjectField> stream;
 
   /**
    * Primary ctor.
-   * 
    * @param project the associated project
    * @param fields the {@link ProjectField fields} to be produced by {@link #stream()}
    * @since 1.0.0
@@ -49,7 +47,6 @@ public class MockFields implements Fields {
    * Ctor.
    * 
    * <p>Same as calling {@code new MockFields(project, Arrays.asList(fields))}.
-   * 
    * @param project the associated project
    * @param fields the {@link ProjectField fields} to be produced by {@link #stream()}
    * @since 1.0.0

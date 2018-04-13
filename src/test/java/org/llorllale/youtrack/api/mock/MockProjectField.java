@@ -25,18 +25,16 @@ import org.llorllale.youtrack.api.ProjectField;
 
 /**
  * Mock implementation of {@link ProjectField} suitable for tests.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public class MockProjectField implements ProjectField {
+public final class MockProjectField implements ProjectField {
   private final String name;
   private final Project project;
   private final Stream<FieldValue> values;
 
   /**
    * Primary ctor.
-   * 
    * @param name this field's name
    * @param project the associated project
    * @param values this project field's set of possible values
@@ -47,7 +45,6 @@ public class MockProjectField implements ProjectField {
     this.project = project;
     this.values = Arrays.asList(values).stream();
   }
-
 
   @Override
   public Stream<FieldValue> values() {
