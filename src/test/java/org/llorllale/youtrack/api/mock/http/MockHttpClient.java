@@ -33,26 +33,26 @@ import org.apache.http.protocol.HttpContext;
 
 /**
  * Mock implementation of {@link HttpClient} suitable for unit tests.
- * 
+ *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public class MockHttpClient implements HttpClient {
+public final class MockHttpClient implements HttpClient {
   private final HttpResponse finalResponse;
   private final Deque<HttpResponse> intermediateResponses;
 
   /**
    * Primary ctor.
-   * 
-   * <p>Each call to {@link #execute(org.apache.http.client.methods.HttpUriRequest)} will return 
-   * one of the {@code intermediateResponses}, in the encountered order, after which 
-   * {@code finalResponse} will be consistently returned on all subsequent calls. 
-   * This is useful for testing the <em>streaming</em> functionalities.
-   * 
-   * @param finalResponse the response to return after all intermediate responses have been
-   *     exhausted
-   * @param intermediateResponses the mock {@link HttpResponse responses} to return before the
-   *     {@code finalResponse}
+   *
+   * <p>Each call to
+   * {@link #execute(org.apache.http.client.methods.HttpUriRequest)} will return
+   * one of the {@code intermediateResponses}, in the encountered order, after
+   * which {@code finalResponse} will be consistently returned on all subsequent
+   * calls. This is useful for testing the <em>streaming</em> functionalities.
+   * @param finalResponse the response to return after all intermediate
+   * responses have been exhausted
+   * @param intermediateResponses the mock {@link HttpResponse responses} to
+   * return before the {@code finalResponse}
    * @since 0.4.0
    */
   public MockHttpClient(HttpResponse finalResponse, HttpResponse... intermediateResponses) {
@@ -62,59 +62,72 @@ public class MockHttpClient implements HttpClient {
 
   @Override
   public HttpParams getParams() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public ClientConnectionManager getConnectionManager() {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public HttpResponse execute(HttpUriRequest request) throws IOException, ClientProtocolException {
     final HttpResponse response;
-
     if (!this.intermediateResponses.isEmpty()) {
       response = this.intermediateResponses.pop();
     } else {
       response = this.finalResponse;
     }
-
     return response;
   }
 
   @Override
-  public HttpResponse execute(HttpUriRequest request, HttpContext context) throws IOException, ClientProtocolException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public HttpResponse execute(
+    HttpUriRequest request, HttpContext context
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public HttpResponse execute(HttpHost target, HttpRequest request) throws IOException, ClientProtocolException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public HttpResponse execute(
+    HttpHost target, HttpRequest request
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public HttpResponse execute(HttpHost target, HttpRequest request, HttpContext context) throws IOException, ClientProtocolException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public HttpResponse execute(
+    HttpHost target, HttpRequest request, HttpContext context
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler) throws IOException, ClientProtocolException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public <T> T execute(
+    HttpUriRequest request, ResponseHandler<? extends T> responseHandler
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public <T> T execute(HttpUriRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException, ClientProtocolException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public <T> T execute(
+    HttpUriRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler) throws IOException, ClientProtocolException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public <T> T execute(
+    HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public <T> T execute(HttpHost target, HttpRequest request, ResponseHandler<? extends T> responseHandler, HttpContext context) throws IOException, ClientProtocolException {
-    throw new UnsupportedOperationException("Not supported yet."); //TODO implement
+  public <T> T execute(
+    HttpHost target, HttpRequest request,
+    ResponseHandler<? extends T> responseHandler, HttpContext context
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

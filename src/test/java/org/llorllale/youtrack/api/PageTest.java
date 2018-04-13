@@ -16,9 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
+// @checkstyle AvoidStaticImport (1 line)
+import static org.junit.Assert.assertFalse;
+
 import java.util.Collections;
 import java.util.NoSuchElementException;
-import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
 import org.llorllale.youtrack.api.mock.http.MockThrowingHttpClient;
@@ -26,54 +28,50 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
  * Unit tests for {@link Page}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
+ * @checkstyle MethodName (500 lines)
  */
-public class PageTest {
+public final class PageTest {
   /**
    * Ctor must wrap IOExceptions in UncheckedException.
-   * 
    * @since 1.0.0
    */
   @Test(expected = UncheckedException.class)
   public void ctorUncheckedExceptionThrow() {
     new Page<>(
-        null,
-        r -> Collections.<String>emptyList(),
-        new MockThrowingHttpClient()
+      null,
+      r -> Collections.<String>emptyList(),
+      new MockThrowingHttpClient()
     );
   }
 
   /**
    * next() must throw NoSuchElementException if contents is empty.
-   * 
    * @since 1.0.0
    */
   @Test(expected = NoSuchElementException.class)
   public void nextNoSuchElementException() {
     new Page<>(
-        null,
-        r -> Collections.<String>emptyList(),
-        new MockHttpClient(new MockOkResponse())
+      null,
+      r -> Collections.<String>emptyList(),
+      new MockHttpClient(new MockOkResponse())
     ).next();
   }
 
   /**
    * Page.Empty.hasNext() should always return {@code false}.
-   * 
    * @since 1.0.0
    */
   @Test
   public void emptyHasNextAlwaysFalse() {
     assertFalse(
-        new Page.Empty<>().hasNext()
+      new Page.Empty<>().hasNext()
     );
   }
 
   /**
    * Page.Empty.next() should always throw {@link NoSuchElementException}.
-   * 
    * @since 1.0.0
    */
   @Test(expected = NoSuchElementException.class)

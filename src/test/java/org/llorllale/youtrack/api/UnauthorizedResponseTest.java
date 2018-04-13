@@ -22,15 +22,14 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Unit tests for {@link UnauthorizedResponse}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
+ * @checkstyle MethodName (500 lines)
  */
-public class UnauthorizedResponseTest {
-
+public final class UnauthorizedResponseTest {
   /**
    * Should throw {@link UnauthorizedException} when an "unauthorized" response is received.
-   * 
+   * @throws Exception the UnauthorizedException
    * @since 1.0.0
    */
   @Test(expected = UnauthorizedException.class)
