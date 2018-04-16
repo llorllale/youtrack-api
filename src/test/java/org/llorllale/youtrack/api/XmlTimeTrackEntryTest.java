@@ -16,81 +16,125 @@
 
 package org.llorllale.youtrack.api;
 
+// @checkstyle AvoidStaticImport (2 lines)
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.time.Duration;
 import java.time.Instant;
-import static org.hamcrest.CoreMatchers.is;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockProject;
 
 /**
  * Unit tests for {@link XmlTimeTrackEntry}.
- * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
+ * @checkstyle MultipleStringLiterals (500 lines)
+ * @checkstyle MethodName (500 lines)
  */
-public class XmlTimeTrackEntryTest {
-  private static Xml xml;
-
-  @BeforeClass
-  public static void setup() throws Exception {
-    xml = new XmlOf(new StringAsDocument(XML));
-  }
-
+public final class XmlTimeTrackEntryTest {
+  /**
+   * Returns the parent issue.
+   */
   @Test
   public void testIssue() {
-    final Issue issue = issue();
-
+    final Issue issue = this.issue();
     assertThat(
-        new XmlTimeTrackEntry(issue, xml).issue(),
-        is(issue)
+      new XmlTimeTrackEntry(
+        issue,
+        new XmlOf(new StringAsDocument(
+          "<workItem>\n"
+            + "  <id>101-1</id>\n"
+            + "  <date>1480204800000</date>\n"
+            + "  <duration>240</duration>\n"
+            + "  <description>first work item</description>\n"
+            + "  <author login=\"root\"/>\n"
+            + "</workItem>"
+        ))
+      ).issue(),
+      is(issue)
     );
   }
 
   /**
+   * Must localize the date correctly.
    * @see <a href="https://github.com/llorllale/youtrack-api/issues/133">#133</a>
    */
   @Test
   public void testDate() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), xml).date(),
-        is(
-            Instant.ofEpochMilli(1480204800000L)
-                .atZone(new YouTrackZoneId().toZoneId())
-                .toLocalDate()
-        )
+      new XmlTimeTrackEntry(
+        this.issue(),
+        new XmlOf(new StringAsDocument(
+          "<workItem>\n"
+            + "  <id>101-1</id>\n"
+            + "  <date>1480204800000</date>\n"
+            + "  <duration>240</duration>\n"
+            + "  <description>first work item</description>\n"
+            + "  <author login=\"root\"/>\n"
+            + "</workItem>"
+        ))
+      ).date(),
+      is(
+        // @checkstyle MagicNumber (1 line)
+        Instant.ofEpochMilli(1480204800000L)
+          .atZone(new YouTrackZoneId().toZoneId())
+          .toLocalDate()
+      )
     );
   }
 
+  /**
+   * Returns the duration.
+   */
   @Test
   public void testDuration() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), xml).duration(),
-        is(Duration.ofMinutes(240))
+      new XmlTimeTrackEntry(
+        this.issue(),
+        new XmlOf(new StringAsDocument(
+          "<workItem>\n"
+            + "  <id>101-1</id>\n"
+            + "  <date>1480204800000</date>\n"
+            + "  <duration>240</duration>\n"
+            + "  <description>first work item</description>\n"
+            + "  <author login=\"root\"/>\n"
+            + "</workItem>"
+        ))
+      ).duration(),
+      // @checkstyle MagicNumber (1 line)
+      is(Duration.ofMinutes(240))
     );
   }
 
+  /**
+   * Returns the description.
+   */
   @Test
   public void testDescription() {
     assertThat(
-        new XmlTimeTrackEntry(issue(), xml).description(),
-        is("first work item")
-);
+      new XmlTimeTrackEntry(
+        this.issue(),
+        new XmlOf(new StringAsDocument(
+          "<workItem>\n"
+            + "  <id>101-1</id>\n"
+            + "  <date>1480204800000</date>\n"
+            + "  <duration>240</duration>\n"
+            + "  <description>first work item</description>\n"
+            + "  <author login=\"root\"/>\n"
+            + "</workItem>"
+        ))
+      ).description(),
+      is("first work item")
+    );
   }
 
+  /**
+   * Mock issue.
+   * @return a mock issue for use in these tests
+   */
   private Issue issue() {
     return new MockIssue(new MockProject("PR-X", "", "")).withId("ISSUE-1");
   }
-
-  private static final String XML =
-"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-"<workItem url=\"http://unit-258.labs.intellij.net:8080/charisma/rest/issue/HBR-63/timetracking/workitem/101-1\">\n" +
-"  <id>101-1</id>\n" +
-"  <date>1480204800000</date>\n" +
-"  <duration>240</duration>\n" +
-"  <description>first work item</description>\n" +
-"  <author login=\"root\" url=\"http://unit-258.labs.intellij.net:8080/charisma/rest/admin/user/root\"/>\n" +
-"</workItem>";
 }
