@@ -21,14 +21,13 @@ import org.junit.Test;
 
 /**
  * Unit tests for {@link UncheckedUriBuilder}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
+ * @checkstyle MethodName (500 lines)
  */
-public class UncheckedUriBuilderTest {
+public final class UncheckedUriBuilderTest {
   /**
    * Invalid URIs should be wrapped in an {@link UncheckedException}.
-   * 
    * @since 1.0.0
    */
   @Test(expected = UncheckedException.class)
@@ -38,7 +37,7 @@ public class UncheckedUriBuilderTest {
 
   /**
    * Invalid URIs should be wrapped in an {@link UncheckedException}.
-   * 
+   * @throws Exception unexpected
    * @since 1.0.0
    */
   @Test(expected = UncheckedException.class)
