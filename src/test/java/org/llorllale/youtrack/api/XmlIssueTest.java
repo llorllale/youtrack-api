@@ -16,13 +16,14 @@
 
 package org.llorllale.youtrack.api;
 
-import java.time.Instant;
+// @checkstyle AvoidStaticImport (5 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
-import org.junit.BeforeClass;
+
+import java.time.Instant;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -30,270 +31,230 @@ import org.llorllale.youtrack.api.mock.http.MockSession;
 
 /**
  * Unit tests for {@link XmlIssue}.
- * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
+ * @checkstyle MultipleStringLiterals (500 lines)
+ * @checkstyle MethodName (500 lines)
  */
-public class XmlIssueTest {
-  private static Xml xml;
-
-  @BeforeClass
-  public static void setup() throws Exception {
-    xml = new XmlOf(new StringAsDocument(XML_ISSUE));
-  }
-
+public final class XmlIssueTest {
+  /**
+   * Returns the issue's id.
+   */
   @Test
   public void testId() {
     assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).id(),
-        is("HBR-63")
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+      ).id(),
+      is("HBR-63")
     );
   }
 
+  /**
+   * Returns the issue's creation date.
+   */
   @Test
   public void testCreationDate() {
     assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).creationDate(),
-        is(Instant.ofEpochMilli(1262171005630L))
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument(
+            "<issue id=\"HBR-63\">\n"
+            + "    <field name=\"created\">\n"
+            + "        <value>1262171005630</value>\n"
+            + "    </field>\n"
+            + "</issue>"
+        ))
+      ).creationDate(),
+      // @checkstyle MagicNumber (1 line)
+      is(Instant.ofEpochMilli(1262171005630L))
     );
   }
 
+  /**
+   * Returns the issue's summary text.
+   */
   @Test
   public void testSummary() {
     assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).summary(),
-        is("summary")
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument(
+          "<issue id=\"HBR-63\">\n"
+          + "    <field name=\"summary\">\n"
+          + "        <value>summary text</value>\n"
+          + "    </field>\n"
+          + "</issue>"
+        ))
+      ).summary(),
+      is("summary text")
     );
   }
 
+  /**
+   * Returns the issue's description.
+   */
   @Test
   public void testDescription() {
     assertThat(
-        new XmlIssue(
-            new MockProject(),
-            new MockSession(),
-            xml
-        ).description().get(),
-        is("description")
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument(
+          "<issue id=\"HBR-63\">\n"
+          + "    <field name=\"description\">\n"
+          + "        <value>descriptive text</value>\n"
+          + "    </field>\n"
+          + "</issue>"
+        ))
+      ).description().get(),
+      is("descriptive text")
     );
   }
 
+  /**
+   * Correctly counts the issue's fields. The fields to be included are the ones with the
+   * 'valueId' child element.
+   */
   @Test
   public void testFields() {
     assertThat(
-        new XmlIssue(new MockProject(), new MockSession(), xml).fields().size(),
-        is(3)
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument(
+          "<issue id=\"HBR-63\">\n"
+            // @checkstyle LineLength (1 line)
+            + "    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n"
+            + "      <value>Normal</value>\n"
+            + "      <valueId>Normal</valueId>\n"
+            + "      <color>\n"
+            + "        <bg>#e6f6cf</bg>\n"
+            + "        <fg>#4da400</fg>\n"
+            + "      </color>\n"
+            + "    </field>\n"
+            // @checkstyle LineLength (1 line)
+            + "    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Type\">\n"
+            + "      <value>Task</value>\n"
+            + "      <valueId>Task</valueId>\n"
+            + "    </field>\n"
+            // @checkstyle LineLength (1 line)
+            + "    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"State\">\n"
+            + "      <value>Open</value>\n"
+            + "      <valueId>Open</valueId>\n"
+            + "    </field>"
+            + "</issue>"
+        ))
+      ).fields().size(),
+      // @checkstyle MagicNumber (1 line)
+      is(3)
     );
   }
 
   /**
    * {@link XmlIssue#hashCode()} must be equal to it's ID's hashCode.
-   * 
    * @since 1.0.0
    */
   @Test
   public void testHashCode() {
     assertThat(
-        new XmlIssue(new MockProject(), new MockSession(), xml).id().hashCode(),
-        is("HBR-63".hashCode())
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+      ).id().hashCode(),
+      is("HBR-63".hashCode())
     );
   }
 
   /**
    * Two issues are equal if both their IDs and projects are equal.
-   * 
    * @since 1.0.0
    */
   @Test
   public void equals() {
     final Project project = new MockProject("PR-1", "name", "description");
     assertEquals(
-        new XmlIssue(project, new MockSession(), xml),
-        new MockIssue(project, "HBR-63", null, null, null)
+      new XmlIssue(
+        project,
+        new MockSession(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+      ),
+      new MockIssue(project, "HBR-63")
     );
   }
 
   /**
    * An {@link XmlIssue} cannot be equal to {@code null}.
-   * 
    * @since 1.0.0
    */
   @Test
   public void equalsNullIsFalse() {
     assertFalse(
-        new XmlIssue(new MockProject(), new MockSession(), xml).equals(null)
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+      ).equals(null)
     );
   }
 
   /**
    * An {@link XmlIssue} cannot be equal to a type other than another {@link Issue}.
-   * 
    * @since 1.0.0
    */
   @Test
   public void equalsObjectIsFalse() {
     assertFalse(
-        new XmlIssue(new MockProject(), new MockSession(), xml).equals(new Object())
+      new XmlIssue(
+        new MockProject(),
+        new MockSession(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+      ).equals(new Object())
     );
   }
 
   /**
-   * An issue cannot be equal to an issue that belongs to another project, even if both their 
-   * ids are the same.
-   * 
+   * An issue cannot be equal to an issue that belongs to another project, even if both their ids
+   * are the same.
    * @since 1.0.0
    */
-  @Test 
+  @Test
   public void equalsWithDifferentProjectIsFalse() {
-    assertNotEquals( 
-        new XmlIssue(
-            new MockProject("PR-1", "name", "description"), 
-            new MockSession(), 
-            xml
-        ),
-        new MockIssue(
-            new MockProject("PR-2", "name", "description"), 
-            "HBR-63", 
-            null, 
-            null, 
-            null
-        )
+    assertNotEquals(
+      new XmlIssue(
+        new MockProject("PR-1", "name", "description"),
+        new MockSession(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+      ),
+      new MockIssue(
+        new MockProject("PR-2", "name", "description"),
+        "HBR-63"
+      )
     );
   }
 
   /**
-   * An issue cannot be equal to another issue with a different ID, even if both belong to the 
-   * same project.
-   * 
+   * An issue cannot be equal to another issue with a different ID, even if both belong to the same
+   * project.
    * @since 1.0.0
    */
   @Test
   public void equalsWithDifferentIssueIdIsFalse() {
-    assertNotEquals( 
-        new XmlIssue(
-            new MockProject("PR-1", "name", "description"), 
-            new MockSession(), 
-            xml
-        ),
-        new MockIssue(
-            new MockProject("PR-1", "name", "description"), 
-            "HBR-64", 
-            null, 
-            null, 
-            null
-        )
+    assertNotEquals(
+      new XmlIssue(
+        new MockProject("PR-1", "name", "description"),
+        new MockSession(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+      ),
+      new MockIssue(
+        new MockProject("PR-1", "name", "description"),
+        "HBR-64"
+      )
     );
   }
-
-  private static final String XML_ISSUE =
-"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-"<issue id=\"HBR-63\">\n" +
-"    <field name=\"attachments\">\n" +
-"        <value url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=true\">uploadFile.html</value>\n" +
-"    </field>\n" +
-"    <comment id=\"42-306\" author=\"root\" issueId=\"HBR-63\" deleted=\"false\" text=\"comment 1!\" shownForIssueAuthor=\"false\"\n" +
-"             created=\"1267030230127\">\n" +
-"        <replies/>\n" +
-"    </comment>\n" +
-"    <comment id=\"42-307\" author=\"root\" issueId=\"HBR-63\" deleted=\"false\" text=\"comment 2?\" shownForIssueAuthor=\"false\"\n" +
-"             created=\"1267030238721\" updated=\"1267030230127\">\n" +
-"        <replies/>\n" +
-"    </comment>\n" +
-"    <field name=\"Priority\">\n" +
-"        <value>Normal</value>\n" +
-"    </field>\n" +
-"    <field name=\"Type\">\n" +
-"        <value>Bug</value>\n" +
-"    </field>\n" +
-"    <field name=\"State\">\n" +
-"        <value>Won't fix</value>\n" +
-"    </field>\n" +
-"    <field name=\"Assignee\">\n" +
-"        <value>beto</value>\n" +
-"    </field>\n" +
-"    <field name=\"Subsystem\">\n" +
-"        <value>Configuration</value>\n" +
-"    </field>\n" +
-"    <field name=\"Fix versions\">\n" +
-"        <value>2.0</value>\n" +
-"        <value>2.0.5</value>\n" +
-"        <value>2.0.7</value>\n" +
-"    </field>\n" +
-"    <field name=\"cf\">\n" +
-"        <value>0</value>\n" +
-"        <value>!</value>\n" +
-"    </field>\n" +
-"    <field name=\"scf\">\n" +
-"        <value>1265835603000</value>\n" +
-"    </field>\n" +
-"    <field name=\"links\">\n" +
-"        <value type=\"Depend\" role=\"depends on\">HBR-62</value>\n" +
-"        <value type=\"Duplicate\" role=\"duplicates\">HBR-57</value>\n" +
-"        <value type=\"Duplicate\" role=\"is duplicated by\">HBR-54</value>\n" +
-"        <value type=\"Relates\" role=\"relates to\">HBR-49</value>\n" +
-"        <value type=\"Relates\" role=\"is related to\">HBR-51</value>\n" +
-"        <value type=\"Depend\" role=\"is required for\">HBR-49</value>\n" +
-"    </field>\n" +
-"    <field name=\"projectShortName\">\n" +
-"        <value>HBR</value>\n" +
-"    </field>\n" +
-"    <field name=\"numberInProject\">\n" +
-"        <value>63</value>\n" +
-"    </field>\n" +
-"    <field name=\"summary\">\n" +
-"        <value>summary</value>\n" +
-"    </field>\n" +
-"    <field name=\"description\">\n" +
-"        <value>description</value>\n" +
-"    </field>\n" +
-"    <field name=\"created\">\n" +
-"        <value>1262171005630</value>\n" +
-"    </field>\n" +
-"    <field name=\"updated\">\n" +
-"        <value>1267630833573</value>\n" +
-"    </field>\n" +
-"    <field name=\"updaterName\">\n" +
-"        <value>root</value>\n" +
-"    </field>\n" +
-"    <field name=\"resolved\">\n" +
-"        <value>1267030108251</value>\n" +
-"    </field>\n" +
-"    <field name=\"reporterName\">\n" +
-"        <value>root</value>\n" +
-"    </field>\n" +
-"    <field name=\"commentsCount\">\n" +
-"        <value>2</value>\n" +
-"    </field>\n" +
-"    <field name=\"votes\">\n" +
-"        <value>0</value>\n" +
-"    </field>\n" +
-"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Priority\">\n" +
-"      <value>Normal</value>\n" +
-"      <valueId>Normal</valueId>\n" +
-"      <color>\n" +
-"        <bg>#e6f6cf</bg>\n" +
-"        <fg>#4da400</fg>\n" +
-"      </color>\n" +
-"    </field>\n" +
-"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"Type\">\n" +
-"      <value>Task</value>\n" +
-"      <valueId>Task</valueId>\n" +
-"    </field>\n" +
-"    <field xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CustomFieldValue\" name=\"State\">\n" +
-"      <value>Open</value>\n" +
-"      <valueId>Open</valueId>\n" +
-"    </field>" +
-"</issue>";
 }

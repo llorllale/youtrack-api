@@ -87,6 +87,17 @@ public final class MockIssue implements Issue {
   }
 
   /**
+   * Ctor.
+   * @param project the project
+   * @param id this issue's id
+   */
+  public MockIssue(Project project, String id) {
+    this(
+      project, id, Instant.now(), "", ""
+    );
+  }
+
+  /**
    * Sets this issue's id.
    * @param issueId id for this issue
    * @return this issue
