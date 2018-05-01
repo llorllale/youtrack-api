@@ -23,8 +23,8 @@ import static org.junit.Assert.assertThat;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockUser;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link XmlUsersOfIssue}.
@@ -36,7 +36,7 @@ import org.llorllale.youtrack.api.session.Session;
  */
 public final class XmlUsersOfIssueIT {
   private static IntegrationTestsConfig config;
-  private static Session session;
+  private static Login login;
 
   /**
    * Setup.
@@ -45,11 +45,10 @@ public final class XmlUsersOfIssueIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-
-    session = new PermanentToken(
+    login = new PermanentToken(
       config.youtrackUrl(), 
       config.youtrackUserToken()
-    ).session();
+    );
   }
 
   /**
@@ -61,7 +60,6 @@ public final class XmlUsersOfIssueIT {
     final XmlUsersOfIssue test = 
       (XmlUsersOfIssue) this.issue(XmlUsersOfIssueIT.class.getSimpleName().concat(".testCreator"))
         .users();
-
     assertThat(
       test.creator().loginName(),
       is(config.youtrackUser())
@@ -84,7 +82,6 @@ public final class XmlUsersOfIssueIT {
             config.youtrackUser()
           )
         ).issue();
-
     assertThat(
       ((XmlUsersOfIssue) issue.users()).updater().get().name(),
       is(config.youtrackUser())
@@ -107,7 +104,6 @@ public final class XmlUsersOfIssueIT {
             config.youtrackUser()
           )
       ).issue();
-
     assertThat(
       ((XmlUsersOfIssue) issue.users()).assignee().get().name(),
       is(config.youtrackUser())
@@ -121,7 +117,7 @@ public final class XmlUsersOfIssueIT {
    * @throws Exception unexpected
    */
   private Issue issue(String name) throws Exception {
-    return new DefaultYouTrack(session)
+    return new DefaultYouTrack(login)
       .projects()
       .stream()
       .findFirst()

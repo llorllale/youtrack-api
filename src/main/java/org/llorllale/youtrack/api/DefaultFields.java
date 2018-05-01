@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -32,19 +32,19 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @since 0.8.0
  */
 final class DefaultFields implements Fields {
-  private final Session session;
+  private final Login login;
   private final Project project;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
    * 
-   * @param session the user's {@link Session}
+   * @param session the user's {@link Login}
    * @param project the parent {@link Project}
    * @param httpClient the {@link HttpClient} to use
    */
-  DefaultFields(Session session, Project project, HttpClient httpClient) {
-    this.session = session;
+  DefaultFields(Login session, Project project, HttpClient httpClient) {
+    this.login = session;
     this.project = project;
     this.httpClient = httpClient;
   }
@@ -52,12 +52,12 @@ final class DefaultFields implements Fields {
   /**
    * Ctor.
    * 
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param project the parent {@link Project}
    * @since 0.8.0
    */
-  DefaultFields(Session session, Project project) {
-    this(session, project, HttpClients.createDefault());
+  DefaultFields(Login login, Project project) {
+    this(login, project, HttpClients.createDefault());
   }
 
   @Override
@@ -69,15 +69,17 @@ final class DefaultFields implements Fields {
   public Stream<ProjectField> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
       new MappedCollection<>(
-        x -> new XmlProjectField(x, this.project(), this.session),
+        new UncheckedIoFunction<>(
+          x -> new XmlProjectField(x, this.project(), this.login.session())
+        ),
         new XmlsOf(
           "/projectCustomFieldRefs/projectCustomField",
           new HttpResponseAsResponse(
             this.httpClient.execute(
               new HttpRequestWithSession(
-                this.session,
+                this.login.session(),
                 new HttpGet(
-                  this.session.baseUrl().toString()
+                  this.login.session().baseUrl().toString()
                     .concat("/admin/project/")
                     .concat(this.project().id())
                     .concat("/customfield")

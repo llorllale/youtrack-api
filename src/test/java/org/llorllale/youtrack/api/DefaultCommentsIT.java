@@ -23,8 +23,8 @@ import static org.junit.Assert.assertThat;
 import java.util.Random;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link DefaultComments}.
@@ -35,7 +35,7 @@ import org.llorllale.youtrack.api.session.Session;
  */
 public final class DefaultCommentsIT {
   private static IntegrationTestsConfig config;
-  private static Session session;
+  private static Login login;
   private static Issue issue;
 
   /**
@@ -45,19 +45,17 @@ public final class DefaultCommentsIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-
-    session = new PermanentToken(
-        config.youtrackUrl(), 
-        config.youtrackUserToken()
-    ).session();
-
-    issue = new DefaultYouTrack(session)
-        .projects()
-        .stream()
-        .findFirst()
-        .get()
-        .issues()
-        .create(DefaultCommentsIT.class.getSimpleName(), "Description");
+    login = new PermanentToken(
+      config.youtrackUrl(), 
+      config.youtrackUserToken()
+    );
+    issue = new DefaultYouTrack(login)
+      .projects()
+      .stream()
+      .findFirst()
+      .get()
+      .issues()
+      .create(DefaultCommentsIT.class.getSimpleName(), "Description");
   }
 
   /**
@@ -69,7 +67,7 @@ public final class DefaultCommentsIT {
     final String first = "First comment " + new Random(System.currentTimeMillis()).nextInt();
     final String second = "Second comment " + new Random(System.currentTimeMillis()).nextInt();
     assertThat(
-      new DefaultComments(session, issue)
+      new DefaultComments(login.session(), issue)
         .post(first)
         .post(second)
         .stream()

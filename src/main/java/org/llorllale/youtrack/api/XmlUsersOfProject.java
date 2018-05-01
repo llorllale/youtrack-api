@@ -22,8 +22,8 @@ import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -34,7 +34,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  */
 final class XmlUsersOfProject implements UsersOfProject {
   private final Project project;
-  private final Session session;
+  private final Login login;
   private final Xml xml;
   private final HttpClient httpClient;
 
@@ -42,14 +42,14 @@ final class XmlUsersOfProject implements UsersOfProject {
    * Primary ctor.
    * 
    * @param project the {@link Project} in scope
-   * @param session the users's {@link Session}
+   * @param login the users's {@link Login}
    * @param xml the xml object received from YouTrack for this {@link #project() project}
    * @param httpClient the {@link HttpClient} to use
    * @since 0.9.0
    */
-  XmlUsersOfProject(Project project, Session session, Xml xml, HttpClient httpClient) {
+  XmlUsersOfProject(Project project, Login login, Xml xml, HttpClient httpClient) {
     this.project = project;
-    this.session = session;
+    this.login = login;
     this.xml = xml;
     this.httpClient = httpClient;
   }
@@ -58,12 +58,12 @@ final class XmlUsersOfProject implements UsersOfProject {
    * Ctor.
    * 
    * @param project the {@link Project} in scope
-   * @param session the users's {@link Session}
+   * @param login the users's {@link Login}
    * @param xml the xml object received from YouTrack for this {@link #project() project}
    * @since 1.0.0
    */
-  XmlUsersOfProject(Project project, Session session, Xml xml) {
-    this(project, session, xml, HttpClients.createDefault());
+  XmlUsersOfProject(Project project, Login login, Xml xml) {
+    this(project, login, xml, HttpClients.createDefault());
   }
 
   @Override
@@ -72,16 +72,16 @@ final class XmlUsersOfProject implements UsersOfProject {
   }
 
   @Override
-  public User user(String login) throws IOException, UnauthorizedException {
+  public User user(String userLogin) throws IOException, UnauthorizedException {
     return new XmlUser(
       new XmlsOf(
         "/user",
         new HttpResponseAsResponse(
           this.httpClient.execute(
             new HttpRequestWithSession(
-              this.session, 
+              this.login.session(),
               new HttpGet(
-                this.session.baseUrl().toString().concat("/user/").concat(login)
+                this.login.session().baseUrl().toString().concat("/user/").concat(userLogin)
               )
             )
           )

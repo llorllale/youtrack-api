@@ -23,9 +23,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Collectors;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
@@ -44,7 +44,7 @@ public final class DefaultProjectTimeTrackingTest {
   public void project() {
     final Project project = new MockProject();
     assertThat(
-      new DefaultProjectTimeTracking(project, new MockSession()).project(),
+      new DefaultProjectTimeTracking(project, new MockLogin()).project(),
       is(project)
     );
   }
@@ -60,7 +60,7 @@ public final class DefaultProjectTimeTrackingTest {
     assertThat(
       new DefaultProjectTimeTracking(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -90,7 +90,7 @@ public final class DefaultProjectTimeTrackingTest {
     assertThat(
       new DefaultProjectTimeTracking(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -120,7 +120,7 @@ public final class DefaultProjectTimeTrackingTest {
     assertThat(
       new DefaultProjectTimeTracking(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -147,7 +147,7 @@ public final class DefaultProjectTimeTrackingTest {
     assertThat(
       new DefaultProjectTimeTracking(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -174,7 +174,7 @@ public final class DefaultProjectTimeTrackingTest {
     assertThat(
       new DefaultProjectTimeTracking(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -198,7 +198,7 @@ public final class DefaultProjectTimeTrackingTest {
     assertThat(
       new DefaultProjectTimeTracking(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\"?>\n"

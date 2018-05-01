@@ -21,8 +21,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link DefaultIssues}.
@@ -34,7 +34,7 @@ import org.llorllale.youtrack.api.session.Session;
  */
 public final class DefaultIssuesIT {
   private static IntegrationTestsConfig config;
-  private static Session session;
+  private static Login login;
   private static Project project;
 
   /**
@@ -44,11 +44,11 @@ public final class DefaultIssuesIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentToken(
+    login = new PermanentToken(
       config.youtrackUrl(), 
       config.youtrackUserToken()
-    ).session();
-    project = new DefaultYouTrack(session).projects().stream().findAny().get();
+    );
+    project = new DefaultYouTrack(login).projects().stream().findAny().get();
   }
 
   /**
@@ -57,10 +57,10 @@ public final class DefaultIssuesIT {
    */
   @Test
   public void testStream() throws Exception {
-    final Issue issue = new DefaultIssues(project, session)
+    final Issue issue = new DefaultIssues(project, login)
       .create(DefaultIssuesIT.class.getSimpleName().concat(".testStream"), "description");
     assertTrue(
-      new DefaultIssues(project, session)
+      new DefaultIssues(project, login)
         .stream()
         .anyMatch(i -> i.id().equals(issue.id()))
     );
@@ -72,12 +72,12 @@ public final class DefaultIssuesIT {
    */
   @Test
   public void createAndGetIssue() throws Exception {
-    final Issue issue = new DefaultIssues(project, session)
+    final Issue issue = new DefaultIssues(project, login)
       .create(DefaultIssuesIT.class.getSimpleName().concat(".testGet"), "description");
     assertTrue(
       new DefaultIssues(
         project,
-        session
+        login
       ).get(issue.id()).isPresent()
     );
   }

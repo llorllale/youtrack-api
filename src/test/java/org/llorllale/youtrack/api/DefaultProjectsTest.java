@@ -24,8 +24,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.mock.http.response.MockNotFoundResponse;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
@@ -93,7 +93,7 @@ public final class DefaultProjectsTest {
     assertThat(
       new DefaultProjects(
         null,
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             new StringEntity(ALL_PROJECTS_RESPONSE)
@@ -114,7 +114,7 @@ public final class DefaultProjectsTest {
     assertTrue(
       new DefaultProjects(
         null,
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(ONE_PROJECT_RESPONSE)
         )
@@ -132,7 +132,7 @@ public final class DefaultProjectsTest {
     assertFalse(
       new DefaultProjects(
         null,
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockNotFoundResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"

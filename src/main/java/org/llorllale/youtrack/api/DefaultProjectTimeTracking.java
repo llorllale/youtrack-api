@@ -22,45 +22,42 @@ import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
  * Default impl of {@link ProjectTimeTracking}.
- *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.8.0
  */
 final class DefaultProjectTimeTracking implements ProjectTimeTracking {
   private static final String PATH_TEMPLATE = "/admin/project/%s/timetracking";
   private final Project project;
-  private final Session session;
+  private final Login login;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
-   * 
    * @param project the parent {@link Project}
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param httpClient the {@link HttpClient} to use
    * @since 1.0.0
    */
-  DefaultProjectTimeTracking(Project project, Session session, HttpClient httpClient) {
+  DefaultProjectTimeTracking(Project project, Login login, HttpClient httpClient) {
     this.project = project;
-    this.session = session;
+    this.login = login;
     this.httpClient = httpClient;
   }
 
   /**
    * Ctor.
-   * 
    * @param project the parent {@link Project}
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @since 0.8.0
    */
-  DefaultProjectTimeTracking(Project project, Session session) {
-    this(project, session, HttpClients.createDefault());
+  DefaultProjectTimeTracking(Project project, Login login) {
+    this(project, login, HttpClients.createDefault());
   }
   
   @Override
@@ -71,46 +68,45 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
   @Override
   public boolean enabled() throws IOException, UnauthorizedException {
     final Xml settings = new XmlsOf(
-        "/settings",
-        new HttpResponseAsResponse(
-            this.httpClient.execute(
-                new HttpRequestWithSession(
-                    this.session, 
-                    new HttpGet(
-                        this.session.baseUrl().toString()
-                            .concat(String.format(PATH_TEMPLATE, this.project().id()))
-                    )
-                )
+      "/settings",
+      new HttpResponseAsResponse(
+        this.httpClient.execute(
+          new HttpRequestWithSession(
+            this.login.session(),
+            new HttpGet(
+              this.login.session().baseUrl().toString()
+                .concat(String.format(PATH_TEMPLATE, this.project().id()))
             )
+          )
         )
+      )
     ).stream().findAny().get();
-
     return Boolean.parseBoolean(settings.textOf("@enabled").get())
-        && settings.child("estimation").isPresent()
-        && settings.child("spentTime").isPresent();
+      && settings.child("estimation").isPresent()
+      && settings.child("spentTime").isPresent();
   }
 
   @Override
   public Stream<TimeTrackEntryType> types() throws IOException, UnauthorizedException {
     return new StreamOf<>(
-        new MappedCollection<>(
-            XmlTimeTrackEntryType::new,
-            new XmlsOf(
-                "/workItemTypes/workType",
-                new HttpResponseAsResponse(
-                    this.httpClient.execute(
-                        new HttpRequestWithSession(
-                            this.session, 
-                            new HttpGet(
-                                this.session.baseUrl().toString()
-                                    .concat(String.format(PATH_TEMPLATE, this.project().id()))
-                                    .concat("/worktype")
-                            )
-                        )
-                    )
+      new MappedCollection<>(
+        XmlTimeTrackEntryType::new,
+        new XmlsOf(
+          "/workItemTypes/workType",
+          new HttpResponseAsResponse(
+            this.httpClient.execute(
+              new HttpRequestWithSession(
+                this.login.session(),
+                new HttpGet(
+                  this.login.session().baseUrl().toString()
+                    .concat(String.format(PATH_TEMPLATE, this.project().id()))
+                    .concat("/worktype")
                 )
+              )
             )
+          )
         )
+      )
     );
   }
 }

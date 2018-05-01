@@ -23,8 +23,8 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -35,49 +35,45 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  */
 final class DefaultProjects implements Projects {
   private final YouTrack youtrack;
-  private final Session session;
+  private final Login login;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
-   * 
    * @param youtrack the parent {@link YouTrack}
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultProjects(YouTrack youtrack, Session session, HttpClient httpClient) {
+  DefaultProjects(YouTrack youtrack, Login login, HttpClient httpClient) {
     this.youtrack = youtrack;
-    this.session = session;
+    this.login = login;
     this.httpClient = httpClient;
   }
 
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
-   * 
    * @param youtrack the parent {@link YouTrack}
-   * @param session the user's {@link Session}
-   * @see #DefaultProjects(org.llorllale.youtrack.api.session.Session, 
-   *     org.apache.http.client.HttpClient) 
+   * @param login the user's {@link Login}
    * @since 0.4.0
    */
-  DefaultProjects(YouTrack youtrack, Session session) {
-    this(youtrack, session, HttpClients.createDefault());
+  DefaultProjects(YouTrack youtrack, Login login) {
+    this(youtrack, login, HttpClients.createDefault());
   }
 
   @Override
   public Stream<Project> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
       new MappedCollection<>(
-        xml -> new XmlProject(this.youtrack, this.session, xml),
+        xml -> new XmlProject(this.youtrack, this.login, xml),
         new XmlsOf(
           "/projects/project",
           new HttpResponseAsResponse(
             this.httpClient.execute(
               new HttpRequestWithSession(
-                this.session, 
+                this.login.session(), 
                 new HttpGet(
-                  this.session.baseUrl().toString().concat("/project/all")
+                  this.login.session().baseUrl().toString().concat("/project/all")
                 )
               )
             )
@@ -90,18 +86,18 @@ final class DefaultProjects implements Projects {
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
     return new MappedCollection<Xml, Project>(
-      xml -> new XmlProject(this.youtrack, this.session, xml),
+      xml -> new XmlProject(this.youtrack, this.login, xml),
       new XmlsOf(
         "/project",
         new HttpResponseAsResponse(
           this.httpClient.execute(
             new HttpRequestWithSession(
-              this.session, 
-                new HttpGet(
-                  this.session.baseUrl().toString()
-                    .concat("/admin/project/")
-                    .concat(id)
-                )
+              this.login.session(), 
+              new HttpGet(
+                this.login.session().baseUrl().toString()
+                  .concat("/admin/project/")
+                  .concat(id)
+              )
             )
           )
         )

@@ -23,8 +23,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Random;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link DefaultProjects}.
@@ -35,7 +35,7 @@ import org.llorllale.youtrack.api.session.Session;
  */
 public final class DefaultProjectsIT {
   private static IntegrationTestsConfig config;
-  private static Session session;
+  private static Login login;
 
   /**
    * Setup.
@@ -44,10 +44,10 @@ public final class DefaultProjectsIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentToken(
+    login = new PermanentToken(
       config.youtrackUrl(),
       config.youtrackUserToken()
-    ).session();
+    );
   }
 
   /**
@@ -58,7 +58,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testStream() throws Exception {
     assertTrue(
-      new DefaultProjects(null, session).stream()
+      new DefaultProjects(null, login).stream()
         .anyMatch(p -> config.youtrackTestProjectId().equals(p.id()))
     );
   }
@@ -71,7 +71,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testGetExistingProject() throws Exception {
     assertTrue(
-      new DefaultProjects(null, session)
+      new DefaultProjects(null, login)
         .get(config.youtrackTestProjectId())
         .isPresent()
     );
@@ -85,7 +85,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testGetNonExistingProject() throws Exception {
     assertFalse(
-      new DefaultProjects(null, session)
+      new DefaultProjects(null, login)
         .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
         .isPresent()
     );

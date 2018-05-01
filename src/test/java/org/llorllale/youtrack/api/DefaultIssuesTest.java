@@ -24,9 +24,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.mock.http.response.MockNotFoundResponse;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
@@ -380,7 +380,7 @@ public final class DefaultIssuesTest {
     assertThat(
       new DefaultIssues(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><issues></issues>"
@@ -402,7 +402,7 @@ public final class DefaultIssuesTest {
     assertTrue(
       new DefaultIssues(
         new MockProject("ID1", "Name", "Desc"),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockOkResponse(ONE_ISSUE)
         )
@@ -419,7 +419,7 @@ public final class DefaultIssuesTest {
     assertFalse(
       new DefaultIssues(
         new MockProject("ID1", "Name", "Desc"),
-        new MockSession(),
+        new MockLogin(),
         new MockHttpClient(
           new MockNotFoundResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
