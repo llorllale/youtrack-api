@@ -23,8 +23,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link XmlUsersOfProject}.
@@ -34,7 +34,7 @@ import org.llorllale.youtrack.api.session.Session;
  */
 public final class XmlUsersOfProjectIT {
   private static IntegrationTestsConfig config;
-  private static Session session;
+  private static Login login;
   private static Project project;
 
   /**
@@ -44,8 +44,8 @@ public final class XmlUsersOfProjectIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentToken(config.youtrackUrl(), config.youtrackUserToken()).session();
-    project = new DefaultYouTrack(session).projects().stream().findAny().get();
+    login = new PermanentToken(config.youtrackUrl(), config.youtrackUserToken());
+    project = new DefaultYouTrack(login).projects().stream().findAny().get();
   }
 
   /**
@@ -55,7 +55,7 @@ public final class XmlUsersOfProjectIT {
   @Test
   public void testUser() throws Exception {
     assertThat(
-      new XmlUsersOfProject(project, session, this.xmlObject("random"))
+      new XmlUsersOfProject(project, login, this.xmlObject("random"))
         .user(config.youtrackUser())
         .loginName(),
       is(config.youtrackUser())
@@ -69,7 +69,7 @@ public final class XmlUsersOfProjectIT {
   @Test
   public void testAssignees() throws Exception {
     assertTrue(
-      new XmlUsersOfProject(project, session, this.xmlObject(config.youtrackUser()))
+      new XmlUsersOfProject(project, login, this.xmlObject(config.youtrackUser()))
         .assignees()
         .anyMatch(a -> config.youtrackUser().equals(a.loginName()))
     );

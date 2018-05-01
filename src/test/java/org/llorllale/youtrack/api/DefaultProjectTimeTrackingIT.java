@@ -24,8 +24,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link DefaultProjectTimeTracking}.
@@ -35,7 +35,7 @@ import org.llorllale.youtrack.api.session.Session;
  * @checkstyle AbbreviationAsWordInName (2 lines)
  */
 public final class DefaultProjectTimeTrackingIT {
-  private static Session session;
+  private static Login login;
   private static Project project;
 
   /**
@@ -45,8 +45,8 @@ public final class DefaultProjectTimeTrackingIT {
   @BeforeClass
   public static void setup() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
-    session = new PermanentToken(config.youtrackUrl(), config.youtrackUserToken()).session();
-    project = new DefaultYouTrack(session).projects().stream().findAny().get();
+    login = new PermanentToken(config.youtrackUrl(), config.youtrackUserToken());
+    project = new DefaultYouTrack(login).projects().stream().findAny().get();
   }
 
   /**
@@ -57,7 +57,7 @@ public final class DefaultProjectTimeTrackingIT {
   @Test
   public void testEnabled() throws Exception {
     assertTrue(
-      new DefaultProjectTimeTracking(project, session).enabled()
+      new DefaultProjectTimeTracking(project, login).enabled()
     );
   }
 
@@ -69,7 +69,7 @@ public final class DefaultProjectTimeTrackingIT {
   @Test
   public void testTypes() throws Exception {
     assertThat(
-      new DefaultProjectTimeTracking(project, session).types().count(),
+      new DefaultProjectTimeTracking(project, login).types().count(),
       is(greaterThan(0L))
     );
   }

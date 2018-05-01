@@ -22,8 +22,8 @@ import static org.junit.Assert.assertNotEquals;
 import java.util.HashMap;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link DefaultUpdateIssue}.
@@ -34,7 +34,7 @@ import org.llorllale.youtrack.api.session.Session;
  */
 public final class DefaultUpdateIssueIT {
   private static IntegrationTestsConfig config;
-  private static Session session;
+  private static Login login;
   private static Issue issue;
 
   /**
@@ -44,11 +44,11 @@ public final class DefaultUpdateIssueIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentToken(
+    login = new PermanentToken(
       config.youtrackUrl(),
       config.youtrackUserToken()
-    ).session();
-    issue = new DefaultYouTrack(session).projects().stream()
+    );
+    issue = new DefaultYouTrack(login).projects().stream()
       .findAny()
       .get()
       .issues()
@@ -67,7 +67,7 @@ public final class DefaultUpdateIssueIT {
     final String newSummary = DefaultUpdateIssueIT.class.getSimpleName()
       .concat(".testSummary");
     assertNotEquals(
-      new DefaultUpdateIssue(issue, session).summary(newSummary).summary(),
+      new DefaultUpdateIssue(issue, login.session()).summary(newSummary).summary(),
       issue.summary()
     );
   }
@@ -81,7 +81,7 @@ public final class DefaultUpdateIssueIT {
     final String newDesc = DefaultUpdateIssueIT.class.getSimpleName()
       .concat("testDescription");
     assertNotEquals(
-      new DefaultUpdateIssue(issue, session)
+      new DefaultUpdateIssue(issue, login.session())
         .description(newDesc)
         .description(),
       issue.description()
@@ -98,7 +98,7 @@ public final class DefaultUpdateIssueIT {
       .concat("testSummaryAndDesc_summ");
     final String newDesc = DefaultUpdateIssueIT.class.getSimpleName()
       .concat("testSummaryAndDesc_desc");
-    final Issue newIssue = new DefaultUpdateIssue(issue, session)
+    final Issue newIssue = new DefaultUpdateIssue(issue, login.session())
       .summaryAndDesc(newSummary, newDesc);
     assertNotEquals(issue.summary(), newIssue.summary());
     assertNotEquals(issue.description(), newIssue.description());
@@ -120,7 +120,7 @@ public final class DefaultUpdateIssueIT {
       .filter(v -> !v.equals(oldValue))
       .findAny().get();
     assertNotEquals(
-      new DefaultUpdateIssue(issue, session)
+      new DefaultUpdateIssue(issue, login.session())
         .field(field, newValue).fields()
         .stream()
         .filter(f -> f.isSameField(field))
@@ -154,7 +154,7 @@ public final class DefaultUpdateIssueIT {
       .values()
       .filter(v -> !v.equals(secondOldVal))
       .findAny().get();
-    new DefaultUpdateIssue(issue, session).fields(
+    new DefaultUpdateIssue(issue, login.session()).fields(
       new HashMap<Field, FieldValue>() {
         {
           put(firstField, firstNewVal);

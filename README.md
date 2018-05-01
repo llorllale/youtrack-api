@@ -16,7 +16,7 @@ Here's a snippet of its usage:
 
 ```java
 final YouTrack youtrack = new DefaultYouTrack(
-    new PermanentToken("token").session()
+    new PermanentToken(new URL("http://youtrack"), "your_token")
 );
 youtrack.projects().get("project_id").get()
     .issues()

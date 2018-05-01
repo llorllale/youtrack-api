@@ -17,8 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.util.Optional;
-
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 
 /**
  * Adapter {@link org.llorllale.youtrack.api.issues.jaxb.Project} -> {@link Project}.
@@ -28,24 +27,24 @@ import org.llorllale.youtrack.api.session.Session;
  */
 final class XmlProject implements Project {
   private final YouTrack youtrack;
-  private final Session session;
+  private final Login login;
   private final Xml xml;
 
   /**
    * Ctor.
    * 
    * @param youtrack the parent {@link YouTrack}
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param xml the XML object received from YouTrack to be adapted into {@link Project}
    * @since 0.2.0
    */
   XmlProject(
       YouTrack youtrack, 
-      Session session, 
+      Login login, 
       Xml xml
   ) {
     this.youtrack = youtrack;
-    this.session = session;
+    this.login = login;
     this.xml = xml;
   }
 
@@ -68,7 +67,7 @@ final class XmlProject implements Project {
 
   @Override
   public Issues issues() {
-    return new DefaultIssues(this, this.session);
+    return new DefaultIssues(this, this.login);
   }
 
   @Override
@@ -78,12 +77,12 @@ final class XmlProject implements Project {
 
   @Override
   public Fields fields() {
-    return new DefaultFields(this.session, this);
+    return new DefaultFields(this.login, this);
   }
 
   @Override
   public ProjectTimeTracking timetracking() {
-    return new DefaultProjectTimeTracking(this, this.session);
+    return new DefaultProjectTimeTracking(this, this.login);
   }
 
   @Override
@@ -103,6 +102,6 @@ final class XmlProject implements Project {
 
   @Override
   public UsersOfProject users() {
-    return new XmlUsersOfProject(this, this.session, this.xml);
+    return new XmlUsersOfProject(this, this.login, this.xml);
   }
 }

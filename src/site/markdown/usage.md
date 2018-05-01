@@ -21,7 +21,7 @@ that can be readily used by all other aspects of the API.
 
 The use of *permanent tokens* is **recommended**:
 
-    final Session session = new PermanentToken("your_token").session();
+    final Login login = new PermanentToken(new URL("http://youtrack"), "your_token");
 
 A generic `IOException` may be thrown if the YouTrack server is unreachable,
 while an `AuthenticationException` - a more specific IOException - is thrown if
@@ -30,7 +30,7 @@ the credentials provided are invalid.
 #### YouTrack (interface)
 The `YouTrack` interface is the entry point to the rest of the API:
 
-    final YouTrack youtrack = new DefaultYouTrack(session);
+    final YouTrack youtrack = new DefaultYouTrack(login);
 
 #### Projects
 You can fetch projects with the `Projects` interface. If you have a project's ID

@@ -16,30 +16,29 @@
 
 package org.llorllale.youtrack.api;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 
 /**
  * Default implementation of {@link YouTrack}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
- * @todo #161 Modify ctor to accept the Login interface. This interface must
- *  be propagated to collaborators through their ctors. Wrap the given login
- *  in the new CachedLogin implementation.
+ * @todo #166 Continue making all implementations accept a Login instead of a Session.
+ *  Wrap the given login in the new CachedLogin implementation.
  */
 public final class DefaultYouTrack implements YouTrack {
-  private final Session session;
+  private final Login login;
 
   /**
    * Primary ctor.
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @since 0.4.0
    */
-  public DefaultYouTrack(Session session) {
-    this.session = session;
+  public DefaultYouTrack(Login login) {
+    this.login = new CachedLogin(login);
   }
 
   @Override
   public Projects projects() {
-    return new DefaultProjects(this, this.session);
+    return new DefaultProjects(this, this.login);
   }
 }

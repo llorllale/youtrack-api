@@ -23,8 +23,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Integration tests for {@link DefaultFields}.
@@ -33,7 +33,7 @@ import org.llorllale.youtrack.api.session.Session;
  * @checkstyle AbbreviationAsWordInName (2 lines)
  */
 public final class DefaultFieldsIT {
-  private static Session session;
+  private static Login login;
   private static Project project;
 
   /**
@@ -43,10 +43,10 @@ public final class DefaultFieldsIT {
   @BeforeClass
   public static void setup() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
-    session = new PermanentToken(
+    login = new PermanentToken(
       config.youtrackUrl(), config.youtrackUserToken()
-    ).session();
-    project = new DefaultYouTrack(session).projects().stream().findAny().get();
+    );
+    project = new DefaultYouTrack(login).projects().stream().findAny().get();
   }
 
   /**
@@ -56,7 +56,7 @@ public final class DefaultFieldsIT {
   @Test
   public void testStream() throws Exception {
     assertThat(
-      new DefaultFields(session, project).stream().count(),
+      new DefaultFields(login, project).stream().count(),
       is(greaterThan(0L))
     );
   }

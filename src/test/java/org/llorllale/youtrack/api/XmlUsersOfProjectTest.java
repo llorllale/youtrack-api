@@ -23,9 +23,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Collectors;
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
@@ -60,7 +60,7 @@ public final class XmlUsersOfProjectTest {
     assertThat(
       new XmlUsersOfProject(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         null,
         new MockHttpClient(
           new MockOkResponse(
@@ -91,7 +91,7 @@ public final class XmlUsersOfProjectTest {
     assertThat(
       new XmlUsersOfProject(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2]\" name=\"Hibero\" shortName=\"HBR\" description=\"Test project.\" isImporting=\"false\">\n"

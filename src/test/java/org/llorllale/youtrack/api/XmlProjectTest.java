@@ -23,8 +23,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 
 /**
  * Unit tests for {@link XmlProject}.
@@ -42,7 +42,7 @@ public final class XmlProjectTest {
     assertThat(
       new XmlProject(
         null,
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" shortName=\"HBR\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"
@@ -61,7 +61,7 @@ public final class XmlProjectTest {
     assertThat(
       new XmlProject(
         null,
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" id=\"IT-TEST\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"
@@ -79,7 +79,7 @@ public final class XmlProjectTest {
     assertThat(
       new XmlProject(
         null,
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" id=\"IT-TEST\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"
@@ -97,7 +97,7 @@ public final class XmlProjectTest {
     assertThat(
       new XmlProject(
         null,
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" id=\"IT-TEST\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"

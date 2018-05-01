@@ -26,8 +26,8 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -38,33 +38,30 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  */
 final class DefaultIssues implements Issues {
   private final Project project;
-  private final Session session;
+  private final Login login;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
-   * 
    * @param project the parent {@link Project}
-   * @param session the user {@link Session}
+   * @param login the user's {@link Login}
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultIssues(Project project, Session session, HttpClient httpClient) {
+  DefaultIssues(Project project, Login login, HttpClient httpClient) {
     this.project = project;
-    this.session = session;
+    this.login = login;
     this.httpClient = httpClient;
   }
 
   /**
    * Uses the {@link HttpClients#createDefault() default} httpClient.
-   * 
    * @param project the parent {@link Project}
-   * @param session the user {@link Session}
-   * @see #DefaultIssues(Project, Session, HttpClient) 
+   * @param login the user's {@link Login}
    * @since 0.4.0
    */
-  DefaultIssues(Project project, Session session) {
-    this(project, session, HttpClients.createDefault());
+  DefaultIssues(Project project, Login login) {
+    this(project, login, HttpClients.createDefault());
   }
 
   @Override
@@ -78,20 +75,24 @@ final class DefaultIssues implements Issues {
     return new StreamOf<>(
       new Pagination<>(
         pageSize,
-        n -> new HttpRequestWithSession(
-          this.session, 
-          new HttpGet(
-            new UncheckedUriBuilder(
-              this.session.baseUrl().toString()
-                .concat("/issue/byproject/")
-                .concat(this.project().id())
-            ).param("after", String.valueOf(n))
-              .build()
+        new UncheckedIoFunction<>(n ->
+          new HttpRequestWithSession(
+            this.login.session(), 
+            new HttpGet(
+              new UncheckedUriBuilder(
+                this.login.session().baseUrl().toString()
+                  .concat("/issue/byproject/")
+                  .concat(this.project().id())
+              ).param("after", String.valueOf(n))
+                .build()
+            )
           )
         ),
         resp -> 
           new MappedCollection<>(
-            xml -> new XmlIssue(this.project(), this.session, xml),
+            new UncheckedIoFunction<>(
+              xml -> new XmlIssue(this.project(), this.login.session(), xml)
+            ),
             new XmlsOf("/issues/issue", resp)
           ),
         this.httpClient
@@ -101,23 +102,23 @@ final class DefaultIssues implements Issues {
 
   @Override
   public Optional<Issue> get(String issueId) throws IOException, UnauthorizedException {
-    //when the issueId does not exist, YouTrack returns a 404 response with an error XML
-    //in the payload
     return Optional.of(
       new XmlOf(
         new HttpResponseAsResponse(
           this.httpClient.execute(
             new HttpRequestWithSession(
-              this.session, 
+              this.login.session(), 
               new HttpGet(
-                this.session.baseUrl().toString().concat("/issue/").concat(issueId)
+                this.login.session().baseUrl().toString().concat("/issue/").concat(issueId)
               )
             )
           )
         )
       )
     ).filter(x -> !x.child("//error").isPresent())
-      .map(x -> new XmlIssue(this.project(), this.session, x));
+      .map(new UncheckedIoFunction<>(
+        x -> new XmlIssue(this.project(), this.login.session(), x)
+      ));
   }
 
   @Override
@@ -134,10 +135,10 @@ final class DefaultIssues implements Issues {
         new HttpResponseAsResponse(
           this.httpClient.execute(
             new HttpRequestWithSession(
-              this.session, 
+              this.login.session(),
               new HttpPut(
                 new UncheckedUriBuilder(
-                  this.session.baseUrl().toString().concat("/issue")
+                  this.login.session().baseUrl().toString().concat("/issue")
                 ).param("project", this.project().id())
                   .param("summary", summary)
                   .paramIfPresent("description", Optional.ofNullable(description))

@@ -21,6 +21,7 @@ import java.util.function.Function;
 /**
  * Generic function that can throw an {@link Exception}.
  * 
+ * <p>To suppress checked exceptions, wrap this in an {@link UncheckedIoFunction}.
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the input parameter type
  * @param <R> the output parameter type

@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api.session;
+package org.llorllale.youtrack.api.mock;
 
-import java.net.URL;
-import java.util.List;
+import java.io.IOException;
+import org.llorllale.youtrack.api.mock.http.MockSession;
+import org.llorllale.youtrack.api.session.AuthenticationException;
+import org.llorllale.youtrack.api.session.Login;
+import org.llorllale.youtrack.api.session.Session;
 
 /**
- * A {@code Session} object encapsulates all the state required for conducting
- * further transactions with the remote YouTrack API.
+ * A mock {@link Login} suitable for tests.
  * @author George Aristy (george.aristy@gmail.com)
- * @see Login
- * @since 0.1.0
+ * @since 1.0.0
  */
-public interface Session {
-  /**
-   * The base endpoint URL of the remote YouTrack API.
-   * @return The base endpoint URL of the remote YouTrack API.
-   * @since 0.1.0
-   */
-  URL baseUrl();
-
-  /**
-   * Session state.
-   * @return The session's state.
-   * @since 0.1.0
-   */
-  List<Cookie> cookies();
+public final class MockLogin implements Login {
+  @Override
+  public Session session() throws AuthenticationException, IOException {
+    return new MockSession();
+  }
 }
