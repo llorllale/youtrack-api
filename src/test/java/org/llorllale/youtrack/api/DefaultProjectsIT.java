@@ -47,7 +47,7 @@ public final class DefaultProjectsIT {
     session = new PermanentToken(
       config.youtrackUrl(),
       config.youtrackUserToken()
-    ).login();
+    ).session();
   }
 
   /**

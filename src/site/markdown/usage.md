@@ -21,7 +21,7 @@ that can be readily used by all other aspects of the API.
 
 The use of *permanent tokens* is **recommended**:
 
-    final Session session = new PermanentToken("your_token").login();
+    final Session session = new PermanentToken("your_token").session();
 
 A generic `IOException` may be thrown if the YouTrack server is unreachable,
 while an `AuthenticationException` - a more specific IOException - is thrown if

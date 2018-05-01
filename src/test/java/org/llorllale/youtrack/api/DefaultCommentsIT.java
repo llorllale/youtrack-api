@@ -49,7 +49,7 @@ public final class DefaultCommentsIT {
     session = new PermanentToken(
         config.youtrackUrl(), 
         config.youtrackUserToken()
-    ).login();
+    ).session();
 
     issue = new DefaultYouTrack(session)
         .projects()

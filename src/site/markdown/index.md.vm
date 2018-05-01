@@ -34,7 +34,7 @@ For bugs or enhancements, please use our [issue tracker](${project.url}/issues).
 $h4 Snippet
 
     final YouTrack youtrack = new DefaultYouTrack(
-        new PermanentToken("your_token").login()   //login
+        new PermanentToken("your_token").session()   //login
     );
     
     youtrack.projects()

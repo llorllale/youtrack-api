@@ -47,7 +47,7 @@ public final class DefaultIssuesIT {
     session = new PermanentToken(
       config.youtrackUrl(), 
       config.youtrackUserToken()
-    ).login();
+    ).session();
     project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 

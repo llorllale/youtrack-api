@@ -80,7 +80,7 @@ public final class UsernamePassword implements Login {
   }
   
   @Override
-  public Session login() throws AuthenticationException, IOException {
+  public Session session() throws AuthenticationException, IOException {
     try {
       final HttpResponse response = this.httpClient.execute(
           new HttpPost(
