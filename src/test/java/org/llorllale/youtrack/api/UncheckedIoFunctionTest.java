@@ -17,10 +17,10 @@
 package org.llorllale.youtrack.api;
 
 // @checkstyle AvoidStaticImport (2 lines)
-import java.io.IOException;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
 import java.io.UncheckedIOException;
 import org.junit.Test;
 
@@ -28,6 +28,8 @@ import org.junit.Test;
  * Unit tests for {@link UncheckedIoFunction}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
+ * @checkstyle MultipleStringLiterals (200 lines)
+ * @checkstyle MethodName (200 lines)
  */
 public final class UncheckedIoFunctionTest {
   /**
@@ -37,6 +39,7 @@ public final class UncheckedIoFunctionTest {
   @Test
   public void returnsResult() {
     assertThat(
+      // @checkstyle MagicNumber (2 lines)
       new UncheckedIoFunction<>(e -> 123).apply("test"),
       is(123)
     );
@@ -48,8 +51,8 @@ public final class UncheckedIoFunctionTest {
    */
   @Test(expected = UncheckedIOException.class)
   public void wrapsUnchecksIoException() {
-    new UncheckedIoFunction<>(
-      e -> { throw new IOException(); }
-    ).apply("test");
+    new UncheckedIoFunction<>(e -> {
+      throw new IOException();
+    }).apply("test");
   }
 }
