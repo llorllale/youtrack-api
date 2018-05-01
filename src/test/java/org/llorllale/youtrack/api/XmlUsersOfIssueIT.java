@@ -49,7 +49,7 @@ public final class XmlUsersOfIssueIT {
     session = new PermanentToken(
       config.youtrackUrl(), 
       config.youtrackUserToken()
-    ).login();
+    ).session();
   }
 
   /**

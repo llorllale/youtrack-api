@@ -44,7 +44,7 @@ public final class UsernamePasswordIT {
         config.youtrackUrl(), 
         config.youtrackUser(), 
         config.youtrackPwd()
-      ).login()
+      ).session()
         .cookies(),
       is(not(empty()))
     );
@@ -63,9 +63,9 @@ public final class UsernamePasswordIT {
       config.youtrackUser(), 
       config.youtrackPwd()
     );
-    login.login();
+    login.session();
     assertThat(
-      login.login().cookies(),
+      login.session().cookies(),
       is(not(empty()))
     );
   }

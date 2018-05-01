@@ -44,10 +44,10 @@ final class CachedLogin implements Login {
   }
 
   @Override
-  public Session login() throws AuthenticationException, IOException {
+  public Session session() throws AuthenticationException, IOException {
     synchronized (this.cache) {
       if (this.cache.isEmpty()) {
-        this.cache.add(this.origin.login());
+        this.cache.add(this.origin.session());
       }
     }
     return this.cache.get(0);

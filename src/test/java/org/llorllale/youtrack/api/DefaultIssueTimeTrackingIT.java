@@ -50,7 +50,7 @@ public final class DefaultIssueTimeTrackingIT {
     session = new PermanentToken(
       config.youtrackUrl(),
       config.youtrackUserToken()
-    ).login();
+    ).session();
   }
 
   /**

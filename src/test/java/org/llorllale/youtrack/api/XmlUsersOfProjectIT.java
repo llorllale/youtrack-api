@@ -44,7 +44,7 @@ public final class XmlUsersOfProjectIT {
   @BeforeClass
   public static void setup() throws Exception {
     config = new IntegrationTestsConfig();
-    session = new PermanentToken(config.youtrackUrl(), config.youtrackUserToken()).login();
+    session = new PermanentToken(config.youtrackUrl(), config.youtrackUserToken()).session();
     project = new DefaultYouTrack(session).projects().stream().findAny().get();
   }
 

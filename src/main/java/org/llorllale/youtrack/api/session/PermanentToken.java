@@ -43,7 +43,7 @@ public final class PermanentToken implements Login {
   }
 
   @Override
-  public Session login() throws AuthenticationException, IOException {
+  public Session session() throws AuthenticationException, IOException {
     return new DefaultSession(
         this.youtrackUrl, 
         new DefaultCookie(

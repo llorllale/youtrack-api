@@ -27,7 +27,7 @@ import java.util.Collections;
  * </p>
  * 
  * <p>
- * Calling {@link #login() login()} on an {@code AnonymousLogin} is 
+ * Calling {@link #session() session()} on an {@code AnonymousLogin} is 
  * guaranteed to always succeed.
  * </p>
  * 
@@ -48,7 +48,7 @@ public final class Anonymous implements Login {
   }
   
   @Override
-  public Session login() throws AuthenticationException, IOException {
+  public Session session() throws AuthenticationException, IOException {
     return new DefaultSession(this.youtrackUrl, Collections.emptyList());
   }
 }

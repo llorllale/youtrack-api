@@ -41,7 +41,7 @@ public final class PermanentTokenTest {
       new PermanentToken(
         new URL("http://some.url"), 
         token
-      ).login()
+      ).session()
     );
   }
 
@@ -56,7 +56,7 @@ public final class PermanentTokenTest {
       new PermanentToken(
         new URL("http://some.url"), 
           token
-      ).login()
+      ).session()
         .cookies()
         .stream()
         .allMatch(

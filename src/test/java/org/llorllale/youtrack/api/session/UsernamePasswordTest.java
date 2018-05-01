@@ -52,7 +52,7 @@ public final class UsernamePasswordTest {
                     new BasicHeader("Set-Cookie", "123")
                 )
             )
-        ).login()
+        ).session()
     );
   }
 
@@ -70,7 +70,7 @@ public final class UsernamePasswordTest {
         new MockHttpClient(
             new MockForbiddenResponse()
         )
-    ).login();
+    ).session();
   }
 
   /**
@@ -98,7 +98,7 @@ public final class UsernamePasswordTest {
             )
           )
         )
-      ).login()
+      ).session()
         .cookies()
         .stream()
         .allMatch(c -> "Cookie".equals(c.name()))
@@ -130,7 +130,7 @@ public final class UsernamePasswordTest {
             )
           )
         )
-      ).login()
+      ).session()
         .cookies()
         .stream()
         .allMatch(

@@ -43,11 +43,11 @@ public final class CachedLoginTest {
     final Session session = new MockSession();
     final Login login = new CachedLogin(() -> session);
     assertThat(
-      login.login(),
+      login.session(),
       is(session)
     );
     assertThat(
-      login.login(),
+      login.session(),
       is(session)
     );
   }
@@ -60,7 +60,7 @@ public final class CachedLoginTest {
   public void propagatesAuthException() throws Exception {
     new CachedLogin(() -> {
       throw new AuthenticationException(null);
-    }).login();
+    }).session();
   }
 
   /**
@@ -71,6 +71,6 @@ public final class CachedLoginTest {
   public void propagatesIoException() throws Exception {
     new CachedLogin(() -> {
       throw new IOException();
-    }).login();
+    }).session();
   }
 }

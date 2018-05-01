@@ -20,24 +20,24 @@ import java.io.IOException;
 
 /**
  * <p>
- * Performs the {@link #login() login}.
+ * A YouTrack login.
  * </p>
  * 
  * <p>
  * YouTrack supports different authentication strategies (username/password, token, 
  * etc.), hence it's up to implementations to know what to do with 
- * {@link #login() login()}.
+ * {@link #session() session()}.
  * </p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @see UsernamePassword
- * @see AnonymousLogin
+ * @see Anonymous
+ * @see PermanentToken
  * @since 0.1.0
  */
 public interface Login {
   /**
-   * Performs the login function and returns a {@link Session} with sufficient
-   * state to allow further transactions with YouTrack.
+   * A {@link Session} for this {@link Login}.
    * 
    * @return a session object with state usable for further transactions.
    * @throws AuthenticationException if the login process fails due to invalid
@@ -45,5 +45,5 @@ public interface Login {
    * @throws IOException if the YouTrack endpoint is unreachable
    * @since 0.1.0
    */
-  Session login() throws AuthenticationException, IOException;
+  Session session() throws AuthenticationException, IOException;
 }

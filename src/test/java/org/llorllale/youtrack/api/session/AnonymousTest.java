@@ -37,7 +37,7 @@ public final class AnonymousTest {
     assertNotNull(
       new Anonymous(
         new URL("http://some.url")
-      ).login()
+      ).session()
     );
   }
 }

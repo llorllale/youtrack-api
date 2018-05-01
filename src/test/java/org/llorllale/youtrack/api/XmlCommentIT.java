@@ -47,7 +47,7 @@ public final class XmlCommentIT {
     session = new PermanentToken(
       config.youtrackUrl(),
       config.youtrackUserToken()
-    ).login();
+    ).session();
     issue = new DefaultYouTrack(session)
       .projects()
       .stream()
