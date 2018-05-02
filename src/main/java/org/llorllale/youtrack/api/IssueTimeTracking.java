@@ -21,7 +21,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -41,7 +41,7 @@ public interface IssueTimeTracking {
    * @return a {@link Stream} with all available {@link TimeTrackEntry work entries} for the 
    *     {@link Issue}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.4.0
    */
@@ -56,7 +56,7 @@ public interface IssueTimeTracking {
    * @param type the work type (eg. "Development")
    * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 1.0.0
    */
@@ -73,7 +73,7 @@ public interface IssueTimeTracking {
    * @param duration the work's duration
    * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 1.0.0
    */
@@ -86,7 +86,7 @@ public interface IssueTimeTracking {
    * @param description descriptive text
    * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 1.0.0
    */
@@ -100,7 +100,7 @@ public interface IssueTimeTracking {
    * @param duration the work's duration
    * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 1.0.0
    */
@@ -114,7 +114,7 @@ public interface IssueTimeTracking {
    * @param type the work type (eg. "Development")
    * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 1.0.0
    */
@@ -129,7 +129,7 @@ public interface IssueTimeTracking {
    * @param type the work type (eg. "Development")
    * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 1.0.0
    */
@@ -144,7 +144,7 @@ public interface IssueTimeTracking {
    * @param description descriptive text
    * @return {@link IssueTimeTracking}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 1.0.0
    */

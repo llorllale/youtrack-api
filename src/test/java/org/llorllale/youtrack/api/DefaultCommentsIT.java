@@ -67,7 +67,7 @@ public final class DefaultCommentsIT {
     final String first = "First comment " + new Random(System.currentTimeMillis()).nextInt();
     final String second = "Second comment " + new Random(System.currentTimeMillis()).nextInt();
     assertThat(
-      new DefaultComments(login.session(), issue)
+      new DefaultComments(login, issue)
         .post(first)
         .post(second)
         .stream()

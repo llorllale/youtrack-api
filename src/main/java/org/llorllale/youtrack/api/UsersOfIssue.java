@@ -19,7 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -34,7 +34,7 @@ public interface UsersOfIssue {
    * 
    * @return the {@link Issue issue's} creator
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.5.0
    */
@@ -45,7 +45,7 @@ public interface UsersOfIssue {
    * 
    * @return the {@link User user} that updated the {@link Issue issue}, if any
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.5.0
    */
@@ -56,7 +56,7 @@ public interface UsersOfIssue {
    * 
    * @return the {@link User user} assigned to the {@link Issue issue}, if any
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.5.0
    */
@@ -68,7 +68,7 @@ public interface UsersOfIssue {
    * @param user the {@link User} to assign the issue to
    * @return this object
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @see #assignee() 
    * @since 0.5.0

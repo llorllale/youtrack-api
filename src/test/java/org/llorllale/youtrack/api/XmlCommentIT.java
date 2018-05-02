@@ -65,13 +65,13 @@ public final class XmlCommentIT {
   public void testUpdate() throws Exception {
     final String initialText = "Comment_" + new Random(System.currentTimeMillis()).nextInt();
     final String finalText = "UpdatedComment_" + new Random(System.currentTimeMillis()).nextInt();
-    final Comment comment = new DefaultComments(login.session(), issue)
+    final Comment comment = new DefaultComments(login, issue)
       .post(initialText)
       .stream()
       .filter(c -> initialText.equals(c.text()))
       .findFirst()
       .get();
-    new XmlComment(issue, login.session(), this.xmlObject(comment)).update(finalText);
+    new XmlComment(issue, login, this.xmlObject(comment)).update(finalText);
     assertTrue(
       issue.comments().stream().noneMatch(c -> initialText.equals(c.text()))
     );
@@ -84,13 +84,13 @@ public final class XmlCommentIT {
   @Test
   public void testDelete() throws Exception {
     final String initialText = "Comment_" + new Random(System.currentTimeMillis()).nextInt();
-    final Comment comment = new DefaultComments(login.session(), issue)
+    final Comment comment = new DefaultComments(login, issue)
       .post(initialText)
       .stream()
       .filter(c -> initialText.equals(c.text()))
       .findFirst()
       .get();
-    new XmlComment(issue, login.session(), this.xmlObject(comment)).delete();
+    new XmlComment(issue, login, this.xmlObject(comment)).delete();
     assertTrue(
       issue.comments().stream().noneMatch(c -> comment.id().equals(c.id()))
     );

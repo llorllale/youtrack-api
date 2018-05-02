@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.apache.http.HttpResponse;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -35,7 +35,7 @@ interface Response {
    * 
    * @return The httpResponse received in the API's response.
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform some
+   * @throws UnauthorizedException if the user's {@link Login} is unauthorized to perform some
    *     operation
    * @since 0.1.0
    */

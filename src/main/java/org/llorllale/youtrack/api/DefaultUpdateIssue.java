@@ -29,7 +29,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -41,18 +41,18 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class DefaultUpdateIssue implements UpdateIssue {
   private static final String PATH_TEMPLATE = "/issue/%s";
   private final Issue issue;
-  private final Session session;
+  private final Login login;
 
   /**
    * Primary ctor.
    * 
    * @param issue the issue to update
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @since 0.9.0
    */
-  DefaultUpdateIssue(Issue issue, Session session) {
+  DefaultUpdateIssue(Issue issue, Login login) {
     this.issue = issue;
-    this.session = session;
+    this.login = login;
   }
 
   @Override
@@ -84,7 +84,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
     new HttpResponseAsResponse(
       HttpClients.createDefault().execute(
         new HttpRequestWithSession(
-          this.session, 
+          this.login.session(),
           new HttpRequestWithEntity(
             new UrlEncodedFormEntity(
               Arrays.asList(
@@ -103,7 +103,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
               StandardCharsets.UTF_8
             ),
             new HttpPost(
-              this.session.baseUrl().toString()
+              this.login.session().baseUrl().toString()
                 .concat(String.format(PATH_TEMPLATE, this.issue.id()))
                 .concat("/execute")
             )
@@ -111,13 +111,11 @@ final class DefaultUpdateIssue implements UpdateIssue {
         )
       )
     ).httpResponse();
-
     return this.issue.refresh();
   }
 
   /**
    * Updates just the summary and description of the issue.
-   * 
    * @param summary the issue's summary
    * @param description the issue's description (may be {@code null})
    * @return a new instance of the same issue after being refreshed
@@ -129,10 +127,10 @@ final class DefaultUpdateIssue implements UpdateIssue {
     new HttpResponseAsResponse(
       HttpClients.createDefault().execute(
         new HttpRequestWithSession(
-          this.session, 
+          this.login.session(),
           new HttpPost(
             new UncheckedUriBuilder(
-              this.session.baseUrl().toString()
+              this.login.session().baseUrl().toString()
                 .concat(String.format(PATH_TEMPLATE, this.issue.id()))
             ).param("summary", summary)
               .paramIfPresent("description", Optional.ofNullable(description))
@@ -141,7 +139,6 @@ final class DefaultUpdateIssue implements UpdateIssue {
         )
       )
     ).httpResponse();
-
     return this.issue.refresh();
   }
 }

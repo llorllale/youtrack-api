@@ -61,7 +61,7 @@ public final class DefaultIssueTimeTrackingIT {
   public void createAndCountAll() throws Exception {
     final Issue issue = this.issue(".createAndCountAll");
     assertThat(
-      new DefaultIssueTimeTracking(login.session(), issue)
+      new DefaultIssueTimeTracking(login, issue)
         .create(Duration.ofMinutes(45))
         .create(Duration.ofHours(1))
         .stream()
@@ -81,7 +81,7 @@ public final class DefaultIssueTimeTrackingIT {
     final Issue issue = this.issue(".createWithDurationAndDescription");
     final String description = issue.id() + "_duration_description";
     final Duration duration = Duration.ofMinutes(100);
-    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login.session(), issue)
+    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(duration, description);
     assertTrue(
       itt.stream()
@@ -103,7 +103,7 @@ public final class DefaultIssueTimeTrackingIT {
     final Issue issue = this.issue(".createWithDurationAndType");
     final Duration duration = Duration.ofMinutes(123);
     final TimeTrackEntryType type = issue.project().timetracking().types().findAny().get();
-    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login.session(), issue)
+    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(duration, type);
     assertTrue(
       itt.stream().anyMatch(e -> duration.equals(e.duration()) && type.equals(e.type().get()))
@@ -121,7 +121,7 @@ public final class DefaultIssueTimeTrackingIT {
     final Issue issue = this.issue(".createWithDateAndDuration");
     final LocalDate date = LocalDate.now();
     final Duration duration = Duration.ofMinutes(345);
-    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login.session(), issue)
+    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(date, duration);
     assertTrue(
       itt.stream().anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration()))
@@ -140,7 +140,7 @@ public final class DefaultIssueTimeTrackingIT {
     final Duration duration = Duration.ofMinutes(512);
     final String description = issue.id() + "_duration_description_type";
     final TimeTrackEntryType type = issue.project().timetracking().types().findAny().get();
-    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login.session(), issue)
+    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(duration, description, type);
     assertTrue(
       itt.stream().anyMatch(e
@@ -163,7 +163,7 @@ public final class DefaultIssueTimeTrackingIT {
     final LocalDate date = LocalDate.now();
     final Duration duration = Duration.ofMinutes(828);
     final String description = issue.id() + "_date_duration_description";
-    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login.session(), issue)
+    final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(date, duration, description);
     assertTrue(
       itt.stream().anyMatch(e
@@ -185,7 +185,7 @@ public final class DefaultIssueTimeTrackingIT {
     final LocalDate date = LocalDate.now();
     final Duration duration = Duration.ofMinutes(234);
     assertTrue(
-      new DefaultIssueTimeTracking(login.session(), this.issue("createWithDateAndDuration"))
+      new DefaultIssueTimeTracking(login, this.issue("createWithDateAndDuration"))
         .create(date, duration)
         .stream()
         .anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration()))

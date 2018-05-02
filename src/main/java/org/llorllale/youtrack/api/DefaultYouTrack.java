@@ -22,8 +22,6 @@ import org.llorllale.youtrack.api.session.Login;
  * Default implementation of {@link YouTrack}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
- * @todo #166 Continue making all implementations accept a Login instead of a Session.
- *  Wrap the given login in the new CachedLogin implementation.
  */
 public final class DefaultYouTrack implements YouTrack {
   private final Login login;

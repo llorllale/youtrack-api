@@ -19,7 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -43,12 +43,12 @@ public interface UsersOfProject {
    * <p><strong>Note:</strong><br>
    * Unfortunately, {@code YouTrack}'s response - {@code 403 Forbidden} - does not allow clients 
    * to differentiate between cases when {@code login} is not found vs. cases when the user's 
-   * {@link Session} is not authorized to read the user's information.
+   * {@link Login} is not authorized to read the user's information.
    * 
    * @param login the user's {@link User#loginName() login}
    * @return the {@link User} with the given {@code login}
    * @throws IOException if the server is unreachable 
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform 
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform 
    *     this operation <strong>or if the given {@code login} does not exist</strong>
    * @since 0.9.0
    */
@@ -60,7 +60,7 @@ public interface UsersOfProject {
    * 
    * @return a stream of all {@link User users} to which {@link Issue issues} can be assigned.
    * @throws IOException if the server is unreachable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform 
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform 
    *     this operation
    * @since 0.9.0
    */

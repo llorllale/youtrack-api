@@ -49,21 +49,21 @@ final class XmlUsersOfIssue implements UsersOfIssue {
   @Override
   public User creator() throws IOException, UnauthorizedException {
     return this.issue().project().users().user(
-        this.xml.textOf("//field[@name = 'reporterName']/value").get()
+      this.xml.textOf("//field[@name = 'reporterName']/value").get()
     );
   }
 
   @Override
   public Optional<User> updater() throws IOException, UnauthorizedException {
     return this.user(
-        this.xml.textOf("//field[@name = 'updaterName']/value")
+      this.xml.textOf("//field[@name = 'updaterName']/value")
     );
   }
 
   @Override
   public Optional<User> assignee() throws IOException, UnauthorizedException {
     return this.user(
-        this.xml.textOf("//field[@name = 'Assignee']/value")
+      this.xml.textOf("//field[@name = 'Assignee']/value")
     );
   }
 
@@ -71,8 +71,8 @@ final class XmlUsersOfIssue implements UsersOfIssue {
   public UsersOfIssue assignTo(User user) throws IOException, UnauthorizedException {
     final Field field = new BasicField("Assignee", this.issue().project());
     return this.issue().update().field(
-        field,
-        new BasicFieldValue(user.loginName(), field)
+      field,
+      new BasicFieldValue(user.loginName(), field)
     ).users();
   }
 
@@ -92,13 +92,11 @@ final class XmlUsersOfIssue implements UsersOfIssue {
    */
   private Optional<User> user(Optional<String> login) throws UnauthorizedException, IOException {
     final Optional<User> user;
-
     if (login.isPresent()) {
       user = Optional.of(this.issue().project().users().user(login.get()));
     } else {
       user = Optional.empty();
     }
-
     return user;
   }
 }

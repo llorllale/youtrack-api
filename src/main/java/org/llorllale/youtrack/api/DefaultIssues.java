@@ -91,7 +91,7 @@ final class DefaultIssues implements Issues {
         resp -> 
           new MappedCollection<>(
             new UncheckedIoFunction<>(
-              xml -> new XmlIssue(this.project(), this.login.session(), xml)
+              xml -> new XmlIssue(this.project(), this.login, xml)
             ),
             new XmlsOf("/issues/issue", resp)
           ),
@@ -107,7 +107,7 @@ final class DefaultIssues implements Issues {
         new HttpResponseAsResponse(
           this.httpClient.execute(
             new HttpRequestWithSession(
-              this.login.session(), 
+              this.login.session(),
               new HttpGet(
                 this.login.session().baseUrl().toString().concat("/issue/").concat(issueId)
               )
@@ -117,7 +117,7 @@ final class DefaultIssues implements Issues {
       )
     ).filter(x -> !x.child("//error").isPresent())
       .map(new UncheckedIoFunction<>(
-        x -> new XmlIssue(this.project(), this.login.session(), x)
+        x -> new XmlIssue(this.project(), this.login, x)
       ));
   }
 
