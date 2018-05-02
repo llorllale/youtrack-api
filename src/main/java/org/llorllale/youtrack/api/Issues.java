@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -44,7 +44,7 @@ public interface Issues {
    * 
    * @return a {@link Stream} with all {@link Issue issues} for this {@link #project() project}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to access this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to access this
    *     resource
    * @since 0.4.0
    */
@@ -56,7 +56,7 @@ public interface Issues {
    * @param id the {@link Issue#id() issue's id}
    * @return The {@link Issue} with the given {@code id}, if it exists.
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is unauthorized to perform this
    *     operation
    * @since 0.4.0
    */
@@ -69,7 +69,7 @@ public interface Issues {
    * @param description the issue's description
    * @return the newly-created {@link Issue}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is unauthorized to perform this
    *     operation
    * @since 1.0.0
    */
@@ -84,7 +84,7 @@ public interface Issues {
    * @param fields the issue's fields
    * @return the newly-created {@link Issue}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is unauthorized to perform this
    *     operation
    * @since 1.0.0
    */

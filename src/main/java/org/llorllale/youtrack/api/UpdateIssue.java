@@ -19,7 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.util.Map;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -35,7 +35,7 @@ public interface UpdateIssue {
    * @param summary the new text for the issue's summary
    * @return a new instance of the {@link Issue} reflecting the changes
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.9.0
    */
@@ -47,7 +47,7 @@ public interface UpdateIssue {
    * @param description the new text for the issue's description
    * @return a new instance of the {@link Issue} reflecting the changes
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.9.0
    */
@@ -61,7 +61,7 @@ public interface UpdateIssue {
    * @param description the new text for the issue's description
    * @return a new instance of the {@link Issue} reflecting the changes
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.9.0
    */
@@ -76,7 +76,7 @@ public interface UpdateIssue {
    * @param value the field's {@link FieldValue value}
    * @return a new instance of the {@link Issue} reflecting the changes
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @see Issue#fields() 
    * @since 0.9.0
@@ -90,7 +90,7 @@ public interface UpdateIssue {
    * @param fields the collection of fields and their values to update
    * @return a new instance of the {@link Issue} reflecting the changes
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.9.0
    */

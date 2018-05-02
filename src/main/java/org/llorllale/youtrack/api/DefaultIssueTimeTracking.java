@@ -29,8 +29,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -41,20 +41,20 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  */
 final class DefaultIssueTimeTracking implements IssueTimeTracking {
   private static final String PATH_TEMPLATE = "/issue/%s/timetracking/workitem";
-  private final Session session;
+  private final Login login;
   private final Issue issue;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
    * 
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param issue the {@link Issue} to which this {@link IssueTimeTracking} is attached to
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultIssueTimeTracking(Session session, Issue issue, HttpClient httpClient) {
-    this.session = session;
+  DefaultIssueTimeTracking(Login login, Issue issue, HttpClient httpClient) {
+    this.login = login;
     this.issue = issue;
     this.httpClient = httpClient;
   }
@@ -62,14 +62,12 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
    * 
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param issue the {@link Issue} to which this {@link IssueTimeTracking} is attached to
-   * @see #DefaultTimeTracking(org.llorllale.youtrack.api.session.Session, 
-   *     org.llorllale.youtrack.api.Issue, org.apache.http.client.HttpClient) 
    * @since 0.4.0
    */
-  DefaultIssueTimeTracking(Session session, Issue issue) {
-    this(session, issue, HttpClients.createDefault());
+  DefaultIssueTimeTracking(Login login, Issue issue) {
+    this(login, issue, HttpClients.createDefault());
   }
 
   @Override
@@ -82,9 +80,9 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
           new HttpResponseAsResponse(
             this.httpClient.execute(
               new HttpRequestWithSession(
-                this.session, 
+                this.login.session(),
                 new HttpGet(
-                  this.session.baseUrl().toString()
+                  this.login.session().baseUrl().toString()
                     .concat(String.format(PATH_TEMPLATE, this.issue.id()))
                 )
               )
@@ -138,30 +136,28 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
       TimeTrackEntryType type
   ) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-        this.httpClient.execute(
-            new HttpRequestWithSession(
-                this.session, 
-                new HttpRequestWithEntity(
-                    new StringEntity(
-                        this.toXmlString(date, duration, description, type),
-                        ContentType.APPLICATION_XML
-                    ),
-                    new HttpPost(
-                        this.session.baseUrl().toString()
-                            .concat(String.format(PATH_TEMPLATE, this.issue.id()))
-                    )
-                )
+      this.httpClient.execute(
+        new HttpRequestWithSession(
+          this.login.session(),
+          new HttpRequestWithEntity(
+            new StringEntity(
+              this.toXmlString(date, duration, description, type),
+              ContentType.APPLICATION_XML
+            ),
+            new HttpPost(
+              this.login.session().baseUrl().toString()
+                .concat(String.format(PATH_TEMPLATE, this.issue.id()))
             )
+          )
         )
+      )
     ).httpResponse();
-
-    return new DefaultIssueTimeTracking(this.session, this.issue);
+    return new DefaultIssueTimeTracking(this.login, this.issue);
   }
 
   /**
-   * Returns the XML payload to be sent to YouTrack in order to create timetrack entries for the 
+   * The XML payload to be sent to YouTrack in order to create timetrack entries for the 
    * issue.
-   * 
    * @param date the entry's date
    * @param duration the entry's duration
    * @param description the entry's description
@@ -175,31 +171,29 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
       TimeTrackEntryType type
   ) {
     final StringBuilder xmlBuilder = new StringBuilder("<workItem>")
-        .append("<date>")
-        .append(
-            String.valueOf(
-                date.atStartOfDay()
-                    .atZone(ZoneId.systemDefault())
-                    .toInstant()
-                    .toEpochMilli()
-            )
-        ).append("</date>")
-        .append("<duration>")
-        .append(String.valueOf(duration.toMinutes()))
-        .append("</duration>")
-        .append("<description>")
-        .append(Optional.ofNullable(description).orElse(""))
-        .append("</description>");
-
+      .append("<date>")
+      .append(
+        String.valueOf(
+          date.atStartOfDay()
+            .atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+        )
+      ).append("</date>")
+      .append("<duration>")
+      .append(String.valueOf(duration.toMinutes()))
+      .append("</duration>")
+      .append("<description>")
+      .append(Optional.ofNullable(description).orElse(""))
+      .append("</description>");
     Optional.ofNullable(type).ifPresent(t -> 
-        xmlBuilder
-            .append("<worktype>")
-                .append("<name>")
-                    .append(t.asString())
-                .append("</name>")
-            .append("</worktype>")
+      xmlBuilder
+        .append("<worktype>")
+          .append("<name>")
+            .append(t.asString())
+          .append("</name>")
+        .append("</worktype>")
     );
-
     xmlBuilder.append("</workItem>");
     return xmlBuilder.toString();
   }

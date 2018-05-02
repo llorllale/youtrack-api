@@ -26,8 +26,8 @@ import static org.junit.Assert.assertThat;
 import java.time.Instant;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 
 /**
  * Unit tests for {@link XmlIssue}.
@@ -45,7 +45,7 @@ public final class XmlIssueTest {
     assertThat(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
       ).id(),
       is("HBR-63")
@@ -60,7 +60,7 @@ public final class XmlIssueTest {
     assertThat(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
             "<issue id=\"HBR-63\">\n"
             + "    <field name=\"created\">\n"
@@ -82,7 +82,7 @@ public final class XmlIssueTest {
     assertThat(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           "<issue id=\"HBR-63\">\n"
           + "    <field name=\"summary\">\n"
@@ -103,7 +103,7 @@ public final class XmlIssueTest {
     assertThat(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           "<issue id=\"HBR-63\">\n"
           + "    <field name=\"description\">\n"
@@ -125,7 +125,7 @@ public final class XmlIssueTest {
     assertThat(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument(
           "<issue id=\"HBR-63\">\n"
             // @checkstyle LineLength (1 line)
@@ -164,7 +164,7 @@ public final class XmlIssueTest {
     assertThat(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
       ).id().hashCode(),
       is("HBR-63".hashCode())
@@ -181,7 +181,7 @@ public final class XmlIssueTest {
     assertEquals(
       new XmlIssue(
         project,
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
       ),
       new MockIssue(project, "HBR-63")
@@ -197,7 +197,7 @@ public final class XmlIssueTest {
     assertFalse(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
       ).equals(null)
     );
@@ -212,7 +212,7 @@ public final class XmlIssueTest {
     assertFalse(
       new XmlIssue(
         new MockProject(),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
       ).equals(new Object())
     );
@@ -228,7 +228,7 @@ public final class XmlIssueTest {
     assertNotEquals(
       new XmlIssue(
         new MockProject("PR-1", "name", "description"),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
       ),
       new MockIssue(
@@ -248,7 +248,7 @@ public final class XmlIssueTest {
     assertNotEquals(
       new XmlIssue(
         new MockProject("PR-1", "name", "description"),
-        new MockSession(),
+        new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
       ),
       new MockIssue(

@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -35,7 +35,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class XmlProjectField implements ProjectField {
   private final Xml xml;
   private final Project project;
-  private final Session session;
+  private final Login login;
   private final HttpClient httpClient;
 
   /**
@@ -43,13 +43,13 @@ final class XmlProjectField implements ProjectField {
    * 
    * @param xml the XML object received for this field from YouTrack
    * @param project the owner {@link Project}
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @since 0.8.0
    */
-  XmlProjectField(Xml xml, Project project, Session session) {
+  XmlProjectField(Xml xml, Project project, Login login) {
     this.xml = xml;
     this.project = project;
-    this.session = session;
+    this.login = login;
     this.httpClient = HttpClients.createDefault();
   }
 
@@ -70,9 +70,9 @@ final class XmlProjectField implements ProjectField {
       new HttpResponseAsResponse(
         this.httpClient.execute(
           new HttpRequestWithSession(
-            this.session, 
+            this.login.session(),
             new HttpGet(
-              this.session.baseUrl().toString()
+              this.login.session().baseUrl().toString()
                 .concat("/admin/project/")
                 .concat(this.project().id())
                 .concat("/customfield/")
@@ -85,19 +85,18 @@ final class XmlProjectField implements ProjectField {
         )
       )
     ).stream().findAny().get().textOf("@value").get();
-
     return new StreamOf<>(
       new MappedCollection<>(
-        x -> new XmlFieldValue(x, new XmlProjectField(this.xml, this.project, this.session)),
+        x -> new XmlFieldValue(x, new XmlProjectField(this.xml, this.project, this.login)),
         new XmlsOf(
           "/enumeration/value",
           new HttpResponseAsResponse(
             this.httpClient.execute(
               new HttpRequestWithSession(
-                this.session, 
+                this.login.session(),
                 new HttpGet(
                   new UncheckedUriBuilder(
-                    this.session.baseUrl(),
+                    this.login.session().baseUrl(),
                     "/admin/customfield/bundle/".concat(bundleName)
                   ).build()
                 )

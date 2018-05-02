@@ -22,9 +22,9 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
-import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
@@ -57,7 +57,7 @@ public final class DefaultCommentsTest {
   public void testStream() throws Exception {
     assertThat(
       new DefaultComments(
-        new MockSession(),
+        new MockLogin(),
         new MockIssue(
           new MockProject("", "", "")
         ),

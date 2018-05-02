@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -31,11 +31,11 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 public interface Projects {
   /**
    * Returns a {@link Stream} with all accessible {@link Project projects} by the user's 
-   * {@link Session}.
+   * {@link Login}.
    * @return a {@link Stream} with all accessible {@link Project projects} by the user's 
-   *     {@link Session}
+   *     {@link Login}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to access this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to access this
    *     resource
    * @since 0.4.0
    */
@@ -46,7 +46,7 @@ public interface Projects {
    * @param id the project's {@link Project#id() id}
    * @return the {@link Project} with the given {@code id}, if any
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.6.0
    */

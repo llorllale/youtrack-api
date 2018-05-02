@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -111,7 +111,7 @@ public interface Issue {
    * 
    * @return the same {@link Issue} after refreshing its data from the server
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.5.0
    */

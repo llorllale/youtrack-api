@@ -19,7 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -54,7 +54,7 @@ public interface ProjectTimeTracking {
    * @return {@code true} if timetracking is enabled for the {@link Project} according to the rules
    *     above, {@code false} otherwise
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.8.0
    */
@@ -67,7 +67,7 @@ public interface ProjectTimeTracking {
    * @return a stream of all {@link TimeTrackEntryType timetracking entry types}
    * @throws IOException if the server is unavailable, <strong>or if timetracking is not 
    *     {@link #enabled() enabled} for this {@link Project}</strong>
-   * @throws UnauthorizedException if the user's {@link Session} is not authorized to perform this
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
    * @since 0.8.0
    */

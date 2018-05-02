@@ -19,7 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import org.llorllale.youtrack.api.session.Session;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -34,7 +34,7 @@ public interface Comments {
    * 
    * @return A {@link Stream} with all comments for this {@link Issue}.
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to access this 
+   * @throws UnauthorizedException if the user's {@link Login} is unauthorized to access this 
    *     resource
    * @since 0.4.0
    */
@@ -46,7 +46,7 @@ public interface Comments {
    * @param text the comment's text
    * @return this {@link Comments}
    * @throws IOException if the server is unavailable
-   * @throws UnauthorizedException if the user's {@link Session} is unauthorized to perform this 
+   * @throws UnauthorizedException if the user's {@link Login} is unauthorized to perform this 
    *     operation
    * @since 0.4.0
    */

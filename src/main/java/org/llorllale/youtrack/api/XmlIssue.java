@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -34,24 +34,24 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 @SuppressWarnings("checkstyle:MethodCount")
 final class XmlIssue implements Issue {
   private final Project project;
-  private final Session session;
+  private final Login login;
   private final Xml xml;
 
   /**
    * Primary ctor.
    * 
    * @param project this {@link Issue issue's} {@link Project}
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param xml the xml object received from YouTrack
    * @since 0.1.0
    */
   XmlIssue(
       Project project, 
-      Session session, 
+      Login login, 
       Xml xml
   ) {
     this.project = project;
-    this.session = session;
+    this.login = login;
     this.xml = xml;
   }
 
@@ -86,12 +86,12 @@ final class XmlIssue implements Issue {
 
   @Override
   public Comments comments() {
-    return new DefaultComments(this.session, this);
+    return new DefaultComments(this.login, this);
   }
 
   @Override
   public IssueTimeTracking timetracking() {
-    return new DefaultIssueTimeTracking(this.session, this);
+    return new DefaultIssueTimeTracking(this.login, this);
   }
 
   @Override
@@ -108,7 +108,7 @@ final class XmlIssue implements Issue {
 
   @Override
   public UpdateIssue update() {
-    return new DefaultUpdateIssue(this, this.session);
+    return new DefaultUpdateIssue(this, this.login);
   }
 
   @Override

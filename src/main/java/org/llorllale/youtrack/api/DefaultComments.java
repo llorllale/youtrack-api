@@ -25,8 +25,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
+import org.llorllale.youtrack.api.session.Login;
 
-import org.llorllale.youtrack.api.session.Session;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -38,20 +38,20 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class DefaultComments implements Comments {
   private static final String BASE_PATH = "/issue/";
 
-  private final Session session;
+  private final Login login;
   private final Issue issue;
   private final HttpClient httpClient;
 
   /**
    * Primary ctor.
    * 
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param issue the {@link Issue} on which the comments are attached to
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultComments(Session session, Issue issue, HttpClient httpClient) {
-    this.session = session;
+  DefaultComments(Login login, Issue issue, HttpClient httpClient) {
+    this.login = login;
     this.issue = issue;
     this.httpClient = httpClient;
   }
@@ -59,29 +59,27 @@ final class DefaultComments implements Comments {
   /**
    * Uses the {@link HttpClients#createDefault() default} http client.
    * 
-   * @param session the user's {@link Session}
+   * @param login the user's {@link Login}
    * @param issue the {@link Issue} on which the comments are attached to
-   * @see #DefaultComments(org.llorllale.youtrack.api.session.Session, 
-   *     org.llorllale.youtrack.api.Issue, org.apache.http.client.HttpClient) 
    * @since 0.4.0
    */
-  DefaultComments(Session session, Issue issue) {
-    this(session, issue, HttpClients.createDefault());
+  DefaultComments(Login login, Issue issue) {
+    this(login, issue, HttpClients.createDefault());
   }
 
   @Override
   public Stream<Comment> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
       new MappedCollection<>(
-        xml -> new XmlComment(this.issue(), this.session, xml),
+        xml -> new XmlComment(this.issue(), this.login, xml),
         new XmlsOf(
           "//comment",
           new HttpResponseAsResponse(
             this.httpClient.execute(
               new HttpRequestWithSession(
-                this.session, 
+                this.login.session(), 
                 new HttpGet(
-                  this.session.baseUrl().toString()
+                  this.login.session().baseUrl().toString()
                     .concat(BASE_PATH)
                     .concat(this.issue().id())
                     .concat("/comment")
@@ -97,26 +95,25 @@ final class DefaultComments implements Comments {
   @Override
   public Comments post(String text) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-        this.httpClient.execute(
-            new HttpRequestWithSession(
-                this.session, 
-                new HttpRequestWithEntity(
-                    new StringEntity(
-                        "comment=".concat(text), 
-                        ContentType.APPLICATION_FORM_URLENCODED
-                    ),
-                    new HttpPost(
-                        this.session.baseUrl().toString()
-                            .concat(BASE_PATH)
-                            .concat(this.issue().id())
-                            .concat("/execute")
-                    )
-                )
+      this.httpClient.execute(
+        new HttpRequestWithSession(
+          this.login.session(),
+          new HttpRequestWithEntity(
+            new StringEntity(
+              "comment=".concat(text), 
+              ContentType.APPLICATION_FORM_URLENCODED
+            ),
+            new HttpPost(
+              this.login.session().baseUrl().toString()
+                .concat(BASE_PATH)
+                .concat(this.issue().id())
+                .concat("/execute")
             )
+          )
         )
+      )
     ).httpResponse();
-
-    return new DefaultComments(this.session, this.issue());
+    return new DefaultComments(this.login, this.issue());
   }
 
   @Override

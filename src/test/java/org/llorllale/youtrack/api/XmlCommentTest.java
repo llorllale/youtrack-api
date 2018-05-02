@@ -24,9 +24,8 @@ import java.time.Instant;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
-import org.llorllale.youtrack.api.mock.http.MockSession;
-import org.llorllale.youtrack.api.session.Session;
 
 /**
  * Unit tests for {@link XmlComment}.
@@ -62,8 +61,8 @@ public final class XmlCommentTest {
   @Test
   public void testId() throws Exception {
     assertThat(
-        new XmlComment(this.issue(), this.session(), xmlObject).id(),
-        is("42-307")
+      new XmlComment(this.issue(), new MockLogin(), xmlObject).id(),
+      is("42-307")
     );
   }
 
@@ -74,7 +73,7 @@ public final class XmlCommentTest {
   @Test
   public void testCreationDate() throws Exception {
     assertThat(
-      new XmlComment(this.issue(), this.session(), xmlObject).creationDate(),
+      new XmlComment(this.issue(), new MockLogin(), xmlObject).creationDate(),
       // @checkstyle MagicNumber (1 line)
       is(Instant.ofEpochMilli(1267030238721L))
     );
@@ -88,7 +87,7 @@ public final class XmlCommentTest {
   @Test
   public void testText() throws Exception {
     assertThat(
-      new XmlComment(this.issue(), this.session(), xmlObject).text(),
+      new XmlComment(this.issue(), new MockLogin(), xmlObject).text(),
       is("comment 2?")
     );
   }
@@ -101,13 +100,5 @@ public final class XmlCommentTest {
   private Issue issue() {
     return new MockIssue(new MockProject("PR-1", "", ""))
       .withId("I-23");
-  }
-
-  /**
-   * A session.
-   * @return a session
-   */
-  private Session session() {
-    return new MockSession();
   }
 }
