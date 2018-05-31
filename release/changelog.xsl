@@ -19,7 +19,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
   <xsl:output method="text"/>
   <xsl:variable name="newLine"><xsl:text>&#xa;</xsl:text></xsl:variable>
-  <xsl:template match="log"># CHANGELOG
+  <xsl:template match="log">## CHANGELOG
     <xsl:for-each select="commits/commit">
       <xsl:value-of select="$newLine"/>* <xsl:value-of select="message/short"/>
       <xsl:value-of select="$newLine"/>
