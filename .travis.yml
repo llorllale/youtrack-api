@@ -20,7 +20,8 @@ jobs:
             mvn -DskipTests=true cobertura:check-integration-test && 
             bash <(curl -s https://codecov.io/bash)
   - if: type = push AND branch = master
-    script: mvn -P release-profile clean install && 
+    script: git fetch --tags && 
+            mvn -P release-profile clean install && 
             mvn -P integration-tests clean cobertura:cobertura-integration-test && 
             mvn -DskipTests=true cobertura:check-integration-test && 
             bash <(curl -s https://codecov.io/bash) && 

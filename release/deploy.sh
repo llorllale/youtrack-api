@@ -52,13 +52,13 @@ is_snapshot()
 project_version=$(project_version)
 is_snapshot=$(is_snapshot)
 
-if [ $is_snapshot ]; then
+if [ $is_snapshot == 1 ]; then
   release_version=$(release_candidate_version)
   $MVN versions:set -DnewVersion=$release_version > /dev/null
 else
   release_version=$project_version
   $MVN loggit:changelog -Dloggit.startTag=$(git tag --list | tail -2 | head -1)
-  $MVN releasecat:upload -Dreleasecat.token=$site_token -Dreleasecat.tag=$TRAVIS_TAG -Dreleasecat.name=$TRAVIS_TAG
+  $MVN releasecat:upload -Dreleasecat.token=$site_token -Dreleasecat.tag=$release_version -Dreleasecat.name=$release_version
 fi
 
 echo project version: $project_version
