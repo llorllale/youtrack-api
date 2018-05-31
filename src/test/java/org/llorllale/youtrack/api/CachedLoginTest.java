@@ -32,6 +32,9 @@ import org.llorllale.youtrack.api.session.Session;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  * @checkstyle MethodName (500 lines)
+ * @todo #202 Continue using llorllale/cactoos-matchers for tests where ever possible. Also,
+ *  wherever possible, stop using static methods from Matcher and start using their object
+ *  counterparts.
  */
 public final class CachedLoginTest {
   /**

@@ -16,12 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (4 lines)
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
+// @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
+import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsNot;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockField;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -43,7 +42,7 @@ public final class BasicFieldTest {
     final String name = "test";
     assertThat(
       new BasicField(name, null).name(),
-      is(name)
+      new IsEqual<>(name)
     );
   }
 
@@ -53,8 +52,9 @@ public final class BasicFieldTest {
   @Test
   public void equalsItself() {
     final Field field = new BasicField("field", new MockProject());
-    assertTrue(
-      field.equals(field)
+    assertThat(
+      field.equals(field),
+      new IsEqual<>(true)
     );
   }
 
@@ -63,11 +63,12 @@ public final class BasicFieldTest {
    */
   @Test
   public void equalsOtherField() {
-    assertTrue(
+    assertThat(
       new BasicField(
         "field",
         new MockProject()
-      ).equals(
+      ),
+      new IsEqual<>(
         new MockField(
           "field",
           new MockProject()
@@ -81,8 +82,9 @@ public final class BasicFieldTest {
    */
   @Test
   public void notEqualsNull() {
-    assertFalse(
-      new BasicField("field", new MockProject()).equals(null)
+    assertThat(
+      new BasicField("field", new MockProject()),
+      new IsNot<>(new IsEqual<>(null))
     );
   }
 
@@ -91,12 +93,15 @@ public final class BasicFieldTest {
    */
   @Test
   public void notEqualsDiffProjects() {
-    assertFalse(
+    assertThat(
       new BasicField(
         "field",
         new MockProject("p1", "p1", "")
-      ).equals(
-        new MockField("field", new MockProject("p2", "p2", ""))
+      ),
+      new IsNot<>(
+        new IsEqual<>(
+          new MockField("field", new MockProject("p2", "p2", ""))
+        )
       )
     );
   }
@@ -106,8 +111,9 @@ public final class BasicFieldTest {
    */
   @Test
   public void notEqualsObject() {
-    assertFalse(
-      new BasicField("field", new MockProject()).equals(new Object())
+    assertThat(
+      new BasicField("field", new MockProject()),
+      new IsNot<>(new IsEqual<>(new Object()))
     );
   }
 }
