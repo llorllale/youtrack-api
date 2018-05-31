@@ -23,7 +23,7 @@
  * 
  * @since 0.1.0
  * @see org.llorllale.youtrack.api.session.UsernamePassword
- * @see org.llorllale.youtrack.api.session.AnonymousLogin
+ * @see org.llorllale.youtrack.api.session.Anonymous
  * @see org.llorllale.youtrack.api.session.PermanentToken
  */
 package org.llorllale.youtrack.api.session;
