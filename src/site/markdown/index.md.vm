@@ -23,8 +23,6 @@
 $h3 About
 `${project.artifactId}` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/), tested against version `${youtrackVersion}`. It has just one dependency: Apache's [HttpClient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) version `4.5.x`.
 
-**Note:** the API is currently unstable as we approach our [first milestone](https://github.com/llorllale/youtrack-api/milestone/1).
-
 View the [usage](./usage.html) and the [javadoc](http://javadoc.io/doc/org.llorllale/youtrack-api) resources for additional details.
 
 For bugs or enhancements, please use our [issue tracker](${project.url}/issues).
