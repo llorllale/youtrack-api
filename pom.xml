@@ -121,6 +121,12 @@
       <version>1.3</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.llorllale</groupId>
+      <artifactId>cactoos-matchers</artifactId>
+      <version>0.10</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>

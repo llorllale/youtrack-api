@@ -25,6 +25,7 @@ This project includes:
   Apache Commons Logging under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
+  cactoos-matchers under BSD
   Hamcrest Core under New BSD License
   Hamcrest library under New BSD License
   JUnit under Eclipse Public License 1.0
