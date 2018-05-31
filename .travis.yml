@@ -25,6 +25,8 @@ jobs:
       -in release/codesigning.asc.enc -out release/codesigning.asc -d
     - gpg --fast-import release/codesigning.asc
     - mvn --settings release/mvnsettings.xml -P deploy -DskipTests=true clean deploy
+    - mvn loggit:changelog -Dloggit.startTag=$(git tag --list | tail -2 | head -1)
+    - mvn releasecat:upload -Dreleasecat.token=$site_token -Dreleasecat.tag=$TRAVIS_TAG -Dreleasecat.name=$TRAVIS_TAG
     - mvn -P site clean compile site
     deploy:
       provider: pages

@@ -535,6 +535,26 @@ limitations under the License.</inlineHeader>
             <noticeTemplate>NOTICE.template</noticeTemplate>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.llorllale</groupId>
+          <artifactId>loggit-maven-plugin</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <outputFile>${project.build.directory}/changelog.md</outputFile>
+            <format>custom</format>
+            <customFormatFile>release/changelog.xsl</customFormatFile>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.llorllale</groupId>
+          <artifactId>releasecat-maven-plugin</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <user>llorllale</user>
+            <repo>${project.artifactId}</repo>
+            <descriptionFromFile>${project.build.directory}/changelog.md</descriptionFromFile>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
