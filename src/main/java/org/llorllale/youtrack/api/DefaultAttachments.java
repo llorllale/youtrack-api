@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.util.UUID;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -85,6 +86,8 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
       this.client.execute(
         new HttpRequestWithEntity(
           MultipartEntityBuilder.create()
+            .setContentType(ContentType.MULTIPART_FORM_DATA)
+            .setBoundary(UUID.randomUUID().toString())
             .addPart(
               FormBodyPartBuilder.create()
                 .setName(name)
