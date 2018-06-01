@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -36,6 +38,28 @@ final class XmlIssue implements Issue {
   private final Project project;
   private final Login login;
   private final Xml xml;
+  private final HttpClient client;
+
+  /**
+   * Primary ctor.
+   * 
+   * @param project this {@link Issue issue's} {@link Project}
+   * @param login the user's {@link Login}
+   * @param xml the xml object received from YouTrack
+   * @param client the Http client to use
+   * @since 0.1.0
+   */
+  XmlIssue(
+      Project project, 
+      Login login, 
+      Xml xml,
+      HttpClient client
+  ) {
+    this.project = project;
+    this.login = login;
+    this.xml = xml;
+    this.client = client;
+  }
 
   /**
    * Primary ctor.
@@ -50,9 +74,7 @@ final class XmlIssue implements Issue {
       Login login, 
       Xml xml
   ) {
-    this.project = project;
-    this.login = login;
-    this.xml = xml;
+    this(project, login, xml, HttpClients.createDefault());
   }
 
   @Override
@@ -136,5 +158,10 @@ final class XmlIssue implements Issue {
 
     final Issue other = (Issue) object;
     return this.id().equals(other.id()) && this.project().equals(other.project());
+  }
+
+  @Override
+  public Attachments attachments() throws IOException {
+    return new DefaultAttachments(this, this.login, this.client);
   }
 }

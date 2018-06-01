@@ -22,8 +22,6 @@ import java.util.stream.Stream;
  * Attachments of an {@link Issue}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.1.0
- * @todo #71 Implement Attachments interface. It is a stream (as anticipated in
- *  #200), and will in the future support creation of attachments.
  */
 public interface Attachments extends Stream<Attachment> {
   

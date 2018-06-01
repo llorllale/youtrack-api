@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.llorllale.youtrack.api.AssignedField;
+import org.llorllale.youtrack.api.Attachments;
 import org.llorllale.youtrack.api.Comments;
 import org.llorllale.youtrack.api.Issue;
 import org.llorllale.youtrack.api.IssueTimeTracking;
@@ -228,5 +229,10 @@ public final class MockIssue implements Issue {
   @Override
   public UpdateIssue update() {
     throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public Attachments attachments() throws IOException {
+    throw new UnsupportedOperationException();
   }
 }

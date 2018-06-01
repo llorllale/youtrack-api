@@ -132,4 +132,12 @@ public interface Issue {
    * @since 0.8.0
    */
   Collection<AssignedField> fields();
+
+  /**
+   * Attachments for this issue.
+   * @return attachments API
+   * @throws IOException if the server is unavailable
+   * @since 1.1.0
+   */
+  Attachments attachments() throws IOException;
 }
