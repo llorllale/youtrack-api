@@ -136,8 +136,7 @@ public interface Issue {
   /**
    * Attachments for this issue.
    * @return attachments API
-   * @throws IOException if the server is unavailable
    * @since 1.1.0
    */
-  Attachments attachments() throws IOException;
+  Attachments attachments();
 }

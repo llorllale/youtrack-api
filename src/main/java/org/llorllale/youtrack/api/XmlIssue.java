@@ -161,7 +161,7 @@ final class XmlIssue implements Issue {
   }
 
   @Override
-  public Attachments attachments() throws IOException {
+  public Attachments attachments() {
     return new DefaultAttachments(this, this.login, this.client);
   }
 }

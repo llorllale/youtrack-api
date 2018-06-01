@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.stream.Stream;
 
 /**
@@ -24,5 +26,14 @@ import java.util.stream.Stream;
  * @since 1.1.0
  */
 public interface Attachments extends Stream<Attachment> {
-  
+  /**
+   * Attaches {@code contents} to the issue.
+   * @param name preferred name for the attachment
+   * @param type content-type of the contents
+   * @param contents the contents
+   * @return this {@link Attachments}
+   * @throws IOException if the server is unavailable or if {@code contents} cannot be read
+   * @since 1.1.0
+   */
+  Attachments create(String name, String type, InputStream contents) throws IOException;
 }
