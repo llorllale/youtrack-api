@@ -24,10 +24,14 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
 import java.time.Instant;
+import org.hamcrest.core.IsNot;
+import org.hamcrest.core.IsNull;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
+import org.llorllale.youtrack.api.mock.http.MockHttpClient;
+import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
  * Unit tests for {@link XmlIssue}.
@@ -255,6 +259,29 @@ public final class XmlIssueTest {
         new MockProject("PR-1", "name", "description"),
         "HBR-64"
       )
+    );
+  }
+
+  /**
+   * XmlIssue returns the attachments API.
+   * @throws Exception unexpected
+   * @since 1.1.0
+   */
+  @Test
+  public void returnsAttachments() throws Exception {
+    assertThat(
+      new XmlIssue(
+        new MockProject("PR-1", "name", "description"),
+        new MockLogin(),
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        new MockHttpClient(new MockOkResponse(
+          "<fileUrls>\n"
+          // @checkstyle LineLength (1 line)
+          + "  <fileUrl url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=false\" name=\"uploadFile.html\"/>\n"
+          + "</fileUrls>"
+        ))
+      ).attachments(),
+      new IsNot<>(new IsNull<>())
     );
   }
 }
