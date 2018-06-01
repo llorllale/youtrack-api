@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (2 lines)
-import static org.hamcrest.CoreMatchers.is;
+// @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertThat;
 
 import java.util.Random;
+import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -73,7 +73,7 @@ public final class DefaultCommentsIT {
         .stream()
         .filter(c -> first.equals(c.text()) || second.equals(c.text()))
         .count(),
-      is(2L)
+      new IsEqual<>(2L)
     );
   }
 }

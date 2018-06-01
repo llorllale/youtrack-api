@@ -16,12 +16,13 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (3 lines)
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+// @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -43,7 +44,7 @@ public final class DefaultFieldsTest {
     final Project project = new MockProject();
     assertThat(
       new DefaultFields(null, project).project(),
-      is(project)
+      new IsEqual<>(project)
     );
   }
 
@@ -69,7 +70,12 @@ public final class DefaultFieldsTest {
           )
         )
       ).stream().map(ProjectField::name).collect(Collectors.toList()),
-      containsInAnyOrder("Pyatiletka", "Region")
+      new IsIterableContainingInAnyOrder<>(
+        Arrays.asList(
+          new IsEqual<>("Pyatiletka"),
+          new IsEqual<>("Region")
+        )
+      )
     );
   }
 }

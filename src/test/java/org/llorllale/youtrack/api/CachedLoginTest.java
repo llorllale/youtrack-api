@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (2 lines)
-import static org.hamcrest.CoreMatchers.is;
+// @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.http.MockSession;
 import org.llorllale.youtrack.api.session.AuthenticationException;
@@ -32,9 +32,6 @@ import org.llorllale.youtrack.api.session.Session;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  * @checkstyle MethodName (500 lines)
- * @todo #202 Continue using llorllale/cactoos-matchers for tests where ever possible. Also,
- *  wherever possible, stop using static methods from Matcher and start using their object
- *  counterparts.
  */
 public final class CachedLoginTest {
   /**
@@ -47,11 +44,11 @@ public final class CachedLoginTest {
     final Login login = new CachedLogin(() -> session);
     assertThat(
       login.session(),
-      is(session)
+      new IsEqual<>(session)
     );
     assertThat(
       login.session(),
-      is(session)
+      new IsEqual<>(session)
     );
   }
 

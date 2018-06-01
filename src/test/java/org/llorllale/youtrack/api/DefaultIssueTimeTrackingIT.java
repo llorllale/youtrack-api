@@ -16,13 +16,12 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (3 lines)
-import static org.hamcrest.CoreMatchers.is;
+// @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -66,7 +65,7 @@ public final class DefaultIssueTimeTrackingIT {
         .create(Duration.ofHours(1))
         .stream()
         .count(),
-      is(2L)
+      new IsEqual<>(2L)
     );
   }
 
@@ -83,12 +82,13 @@ public final class DefaultIssueTimeTrackingIT {
     final Duration duration = Duration.ofMinutes(100);
     final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(duration, description);
-    assertTrue(
+    assertThat(
       itt.stream()
         .anyMatch(e 
           -> description.equals(e.description())
             && duration.equals(e.duration())
-        )
+        ),
+      new IsEqual<>(true)
     );
   }
 
@@ -105,8 +105,9 @@ public final class DefaultIssueTimeTrackingIT {
     final TimeTrackEntryType type = issue.project().timetracking().types().findAny().get();
     final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(duration, type);
-    assertTrue(
-      itt.stream().anyMatch(e -> duration.equals(e.duration()) && type.equals(e.type().get()))
+    assertThat(
+      itt.stream().anyMatch(e -> duration.equals(e.duration()) && type.equals(e.type().get())),
+      new IsEqual<>(true)
     );
   }
 
@@ -123,8 +124,9 @@ public final class DefaultIssueTimeTrackingIT {
     final Duration duration = Duration.ofMinutes(345);
     final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(date, duration);
-    assertTrue(
-      itt.stream().anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration()))
+    assertThat(
+      itt.stream().anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration())),
+      new IsEqual<>(true)
     );
   }
 
@@ -142,12 +144,13 @@ public final class DefaultIssueTimeTrackingIT {
     final TimeTrackEntryType type = issue.project().timetracking().types().findAny().get();
     final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(duration, description, type);
-    assertTrue(
+    assertThat(
       itt.stream().anyMatch(e
         -> duration.equals(e.duration())
           && description.equals(e.description())
           && type.equals(e.type().get())
-      )
+      ),
+      new IsEqual<>(true)
     );
   }
 
@@ -165,12 +168,13 @@ public final class DefaultIssueTimeTrackingIT {
     final String description = issue.id() + "_date_duration_description";
     final IssueTimeTracking itt = new DefaultIssueTimeTracking(login, issue)
       .create(date, duration, description);
-    assertTrue(
+    assertThat(
       itt.stream().anyMatch(e
         -> date.equals(e.date())
           && duration.equals(e.duration())
           && description.equals(e.description())
-      )
+      ),
+      new IsEqual<>(true)
     );
   }
 
@@ -184,11 +188,12 @@ public final class DefaultIssueTimeTrackingIT {
   public void bug133() throws Exception {
     final LocalDate date = LocalDate.now();
     final Duration duration = Duration.ofMinutes(234);
-    assertTrue(
+    assertThat(
       new DefaultIssueTimeTracking(login, this.issue("createWithDateAndDuration"))
         .create(date, duration)
         .stream()
-        .anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration()))
+        .anyMatch(e -> date.equals(e.date()) && duration.equals(e.duration())),
+      new IsEqual<>(true)
     );
   }
 
