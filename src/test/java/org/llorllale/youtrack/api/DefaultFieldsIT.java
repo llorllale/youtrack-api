@@ -16,11 +16,11 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (3 lines)
-import static org.hamcrest.CoreMatchers.is;
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
+import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -57,7 +57,7 @@ public final class DefaultFieldsIT {
   public void testStream() throws Exception {
     assertThat(
       new DefaultFields(login, project).stream().count(),
-      is(greaterThan(0L))
+      new IsEqual<>(greaterThan(0L))
     );
   }
 }

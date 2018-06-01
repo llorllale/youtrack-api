@@ -17,9 +17,9 @@
 package org.llorllale.youtrack.api;
 
 // @checkstyle AvoidStaticImport (2 lines)
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockLogin;
@@ -65,7 +65,7 @@ public final class DefaultCommentsTest {
           new MockOkResponse(COMMENTS)
         )
       ).stream().count(),
-      is(2L)
+      new IsEqual<>(2L)
     );
   }
 }

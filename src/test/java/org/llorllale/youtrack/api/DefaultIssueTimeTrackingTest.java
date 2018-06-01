@@ -32,6 +32,9 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  * @checkstyle MultipleStringLiterals (500 lines)
+ * @todo #204 Continue using llorllale/cactoos-matchers for tests where ever possible. Also,
+ *  wherever possible, stop using static methods from Matcher and start using their object
+ *  counterparts.
  */
 public final class DefaultIssueTimeTrackingTest {
   private static final String WORKITEMS =
