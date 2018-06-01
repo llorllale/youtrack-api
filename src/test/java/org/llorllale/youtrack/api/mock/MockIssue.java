@@ -232,7 +232,7 @@ public final class MockIssue implements Issue {
   }
 
   @Override
-  public Attachments attachments() throws IOException {
+  public Attachments attachments() {
     throw new UnsupportedOperationException();
   }
 }
