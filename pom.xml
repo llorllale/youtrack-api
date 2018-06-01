@@ -472,14 +472,14 @@
               <ignores>
                 <ignore>org.llorllale.youtrack.api.HttpRequestWithEntity</ignore>
                 <ignore>org.llorllale.youtrack.api.HttpRequestWithSession</ignore>
-                <ignore>org.llorllale.youtrack.api.StreamOf</ignore>
                 <ignore>org.llorllale.youtrack.api.StringAsDocument</ignore>
+                <ignore>org.llorllale.youtrack.api.StreamEnvelope</ignore>
               </ignores>
               <excludes>
                 <exclude>org/llorllale/youtrack/api/HttpRequestWithEntity.class</exclude>
                 <exclude>org/llorllale/youtrack/api/HttpRequestWithSession.class</exclude>
-                <exclude>org/llorllale/youtrack/api/StreamOf.class</exclude>
                 <exclude>org/llorllale/youtrack/api/StringAsDocument.class</exclude>
+                <exclude>org/llorllale/youtrack/api/StreamEnvelope.class</exclude>
               </excludes>
             </instrumentation>
           </configuration>
