@@ -32,15 +32,27 @@ public interface Attachment {
   /**
    * This attachment's name.
    * @return name of attachment
+   * @since 1.1.0
    */
   String name();
 
   /**
-   * This attahment's creator.
+   * This attachment's creator.
    * @return the creator
    * @throws IOException if the server is unavailable
    * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
    *     operation
+   * @since 1.1.0
    */
   User creator() throws IOException, UnauthorizedException;
+
+  /**
+   * Delete this attachment.
+   * @return the {@link Attachments} API
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
+   *     operation
+   * @since 1.1.0
+   */
+  Attachments delete() throws IOException, UnauthorizedException;
 }

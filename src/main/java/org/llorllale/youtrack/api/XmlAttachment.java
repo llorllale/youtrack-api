@@ -17,6 +17,9 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -27,15 +30,22 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class XmlAttachment implements Attachment {
   private final Xml fileUrl;
   private final Issue issue;
+  private final Login login;
+  private final HttpClient client;
 
   /**
    * Ctor.
    * @param fileUrl the 'fileUrl' XML element
    * @param issue the issue of this attachment
+   * @param login the user's {@link Login}
+   * @param client the http client to use
+   * @since 1.1.0
    */
-  XmlAttachment(Xml fileUrl, Issue issue) {
+  XmlAttachment(Xml fileUrl, Issue issue, Login login, HttpClient client) {
     this.fileUrl = fileUrl;
     this.issue = issue;
+    this.login = login;
+    this.client = client;
   }
 
   @Override
@@ -48,5 +58,25 @@ final class XmlAttachment implements Attachment {
     return this.issue.project().users().user(
       this.fileUrl.textOf("@authorLogin").get()
     );
+  }
+
+  @Override
+  public Attachments delete() throws IOException, UnauthorizedException {
+    new HttpResponseAsResponse(
+      this.client.execute(
+        new HttpRequestWithSession(
+          this.login.session(),
+          new HttpDelete(
+            this.login.session().baseUrl().toString().concat(
+              String.format(
+                "/issue/%s/attachment/%s",
+                this.issue.id(), this.fileUrl.textOf("@id").get()
+              )
+            )
+          )
+        )
+      )
+    ).httpResponse();
+    return this.issue.attachments();
   }
 }
