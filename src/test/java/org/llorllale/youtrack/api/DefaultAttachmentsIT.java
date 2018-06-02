@@ -74,7 +74,7 @@ public final class DefaultAttachmentsIT {
     assertThat(
       new DefaultAttachments(issue, login, HttpClients.createDefault())
         .create(
-          "test", ContentType.TEXT_PLAIN.getMimeType(),
+          "test.txt", ContentType.TEXT_PLAIN.getMimeType(),
           new ByteArrayInputStream("This is a test attachment".getBytes())
         ).count(),
       new IsEqual<>(1L)

@@ -28,12 +28,12 @@ import java.util.stream.Stream;
 public interface Attachments extends Stream<Attachment> {
   /**
    * Attaches {@code contents} to the issue.
-   * @param name preferred name for the attachment
-   * @param type content-type of the contents
+   * @param filename the attachment's filename
+   * @param type content-type
    * @param contents the contents
    * @return this {@link Attachments}
    * @throws IOException if the server is unavailable or if {@code contents} cannot be read
    * @since 1.1.0
    */
-  Attachments create(String name, String type, InputStream contents) throws IOException;
+  Attachments create(String filename, String type, InputStream contents) throws IOException;
 }

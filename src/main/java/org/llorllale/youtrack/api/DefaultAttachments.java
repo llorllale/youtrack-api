@@ -24,9 +24,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.FormBodyPartBuilder;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.InputStreamBody;
 import org.llorllale.youtrack.api.session.Login;
 
 /**
@@ -81,19 +79,14 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
   }
 
   @Override
-  public Attachments create(String name, String type, InputStream contents) throws IOException {
+  public Attachments create(String filename, String type, InputStream contents) throws IOException {
     new HttpResponseAsResponse(
       this.client.execute(
         new HttpRequestWithEntity(
           MultipartEntityBuilder.create()
-            .setContentType(ContentType.MULTIPART_FORM_DATA)
             .setBoundary(UUID.randomUUID().toString())
-            .addPart(
-              FormBodyPartBuilder.create()
-                .setName(name)
-                .setBody(new InputStreamBody(contents, ContentType.create(type)))
-                .build()
-            ).build(),
+            .addBinaryBody(filename, contents, ContentType.create(type), filename)
+            .build(),
           new HttpRequestWithSession(
             this.login.session(),
             new HttpPost(
