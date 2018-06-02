@@ -8,9 +8,7 @@
 [![Javadocs](http://javadoc.io/badge/org.llorllale/youtrack-api.svg?color=blue)](http://javadoc.io/doc/org.llorllale/youtrack-api)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://llorllale.github.io/youtrack-api/license.html)
 
-`youtrack-api` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/). Visit the [project's site](https://llorllale.github.io/youtrack-api) for more info. It has just one dependency: Apache's [HttpClient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) version `4.5.x`.
-
-Java 8 or above is required.
+`youtrack-api` is a fluent, object-oriented Java API for [YouTrack](https://www.jetbrains.com/youtrack/). Visit the [project's site](https://llorllale.github.io/youtrack-api) for more info. 
 
 Here's a snippet of its usage:
 
@@ -24,6 +22,12 @@ youtrack.projects().get("project_id").get()
     .comments()
     .post("Hello World!");                  //posts comment to the issue
 ```
+
+## Dependencies
+
+* Java 8+.
+* Apache's [HttpClient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) version `4.5.x`.
+* Apache's [HttpClient HttpMime](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime) version `4.5.x`.
 
 ## Feedback
 Please direct any questions, feature requests or bugs to the [issue tracker](https://github.com/llorllale/youtrack-api/issues/).

@@ -46,6 +46,12 @@ $h4 Snippet
 
 <br/>
 
+$h4 Dependencies
+
+* Java 8+.
+* Apache's [HttpClient](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient) version `4.5.x`.
+* Apache's [HttpClient HttpMime](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpmime) version `4.5.x`.
+
 $h4 Goals
 The goals of this project include:
 

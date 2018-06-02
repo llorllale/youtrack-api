@@ -17,8 +17,14 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.UUID;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.llorllale.youtrack.api.session.Login;
 
 /**
@@ -27,7 +33,10 @@ import org.llorllale.youtrack.api.session.Login;
  * @since 1.1.0
  */
 final class DefaultAttachments extends StreamEnvelope<Attachment> implements Attachments {
+  private static final String ATTACHMENTS_PATH = "/issue/%s/attachment";
+
   private final Issue issue;
+  private final Login login;
   private final HttpClient client;
 
   /**
@@ -35,30 +44,60 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
    * @param issue owning issue
    * @param login the user's login
    * @param client the Http client to use
-   * @throws IOException If an I/O error occurs
    * @since 1.1.0
    */
-  DefaultAttachments(Issue issue, Login login, HttpClient client) throws IOException {
-    super(
-      new StreamOf<>(
-        new MappedCollection<>(
-          xml -> new XmlAttachment(xml, issue),
-          new XmlsOf(
-            "/fileUrls/fileUrl",
-            new HttpResponseAsResponse(
-              client.execute(
-                new HttpGet(
-                  login.session().baseUrl().toString().concat(
-                    String.format("/issue/%s/attachment", issue.id())
+  DefaultAttachments(Issue issue, Login login, HttpClient client) {
+    super(() -> {
+      try {
+        return new StreamOf<>(
+          new MappedCollection<>(
+            xml -> new XmlAttachment(xml, issue),
+            new XmlsOf(
+              "/fileUrls/fileUrl",
+              new HttpResponseAsResponse(
+                client.execute(
+                  new HttpRequestWithSession(
+                    login.session(),
+                    new HttpGet(
+                      login.session().baseUrl().toString().concat(
+                        String.format(ATTACHMENTS_PATH, issue.id())
+                      )
+                    )
                   )
                 )
               )
             )
           )
+        );
+      } catch (IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    });
+    this.issue = issue;
+    this.login = login;
+    this.client = client;
+  }
+
+  @Override
+  public Attachments create(String filename, String type, InputStream contents) throws IOException {
+    new HttpResponseAsResponse(
+      this.client.execute(
+        new HttpRequestWithEntity(
+          MultipartEntityBuilder.create()
+            .setBoundary(UUID.randomUUID().toString())
+            .addBinaryBody(filename, contents, ContentType.create(type), filename)
+            .build(),
+          new HttpRequestWithSession(
+            this.login.session(),
+            new HttpPost(
+              this.login.session().baseUrl().toString().concat(
+                String.format(ATTACHMENTS_PATH, this.issue.id())
+              )
+            )
+          )
         )
       )
-    );
-    this.issue = issue;
-    this.client = client;
+    ).httpResponse();
+    return new DefaultAttachments(this.issue, this.login, this.client);
   }
 }
