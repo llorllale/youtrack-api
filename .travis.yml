@@ -33,7 +33,6 @@ jobs:
       local_dir: target/site/
       github_token: "$site_token"
       on:
-        tags: true
         branch: master
 
 env:
