@@ -22,8 +22,10 @@ import static org.junit.Assert.assertThat;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
+import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.MockUser;
+import org.llorllale.youtrack.api.mock.http.MockHttpClient;
 
 /**
  * Unit tests for {@link XmlAttachment}.
@@ -41,7 +43,9 @@ public final class XmlAttachmentTest {
       new XmlAttachment(
         // @checkstyle LineLength (1 line)
         new XmlOf("<fileUrl url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=false\" name=\"uploadFile.html\"/>"),
-        new MockIssue(new MockProject())
+        new MockIssue(new MockProject()),
+        new MockLogin(),
+        new MockHttpClient()
       ).name(),
       new IsEqual<>("uploadFile.html")
     );
@@ -59,7 +63,9 @@ public final class XmlAttachmentTest {
       new XmlAttachment(
         // @checkstyle LineLength (1 line)
         new XmlOf("<fileUrl authorLogin=\"jrogan\" url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=false\" name=\"uploadFile.html\"/>"),
-        new MockIssue(new MockProject().withUser(creator))
+        new MockIssue(new MockProject().withUser(creator)),
+        new MockLogin(),
+        new MockHttpClient()
       ).creator(),
       new IsEqual<>(creator)
     );

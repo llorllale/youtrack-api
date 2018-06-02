@@ -51,7 +51,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
       try {
         return new StreamOf<>(
           new MappedCollection<>(
-            xml -> new XmlAttachment(xml, issue),
+            xml -> new XmlAttachment(xml, issue, login, client),
             new XmlsOf(
               "/fileUrls/fileUrl",
               new HttpResponseAsResponse(

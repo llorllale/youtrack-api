@@ -60,6 +60,16 @@ public final class MockHttpClient implements HttpClient {
     this.intermediateResponses = new ArrayDeque<>(Arrays.asList(intermediateResponses));
   }
 
+  /**
+   * Ctor.
+   * 
+   * <p>A null response will be returned.
+   * @since 1.1.0
+   */
+  public MockHttpClient() {
+    this(null);
+  }
+
   @Override
   public HttpParams getParams() {
     throw new UnsupportedOperationException("Not supported yet.");
