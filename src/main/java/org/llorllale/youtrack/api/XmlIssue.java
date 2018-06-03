@@ -31,8 +31,11 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
+ * @todo #208 The HTTP client configured for XmlIssue is the default one that only pools
+ *  2 connection that are not being released for reuse. Therefore the code hangs after
+ *  a few calls to issue.attachments() and everything else accessible from there. This
+ *  problem is probably present in the rest of the implementations.
  */
-//equals and hashCode tip the method count to just over the max allowed (12) to the actual 14
 @SuppressWarnings("checkstyle:MethodCount")
 final class XmlIssue implements Issue {
   private final Project project;
