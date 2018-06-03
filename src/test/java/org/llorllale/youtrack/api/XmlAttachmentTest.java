@@ -26,12 +26,14 @@ import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
 import org.llorllale.youtrack.api.mock.MockUser;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
+import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
 
 /**
  * Unit tests for {@link XmlAttachment}.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.1.0
  */
+@SuppressWarnings("checkstyle:MultipleStringLiterals")
 public final class XmlAttachmentTest {
   /**
    * XmlAttachment returns the value of the @name attribute.
@@ -68,6 +70,30 @@ public final class XmlAttachmentTest {
         new MockHttpClient()
       ).creator(),
       new IsEqual<>(creator)
+    );
+  }
+
+  /**
+   * XmlAttachment returns the contents.
+   * @throws Exception unexpected
+   * @since 1.1.0
+   */
+  @Test
+  public void returnsContents() throws Exception {
+    final String contents = "test content";
+    assertThat(
+      new InputStreamAsString().apply(
+        new XmlAttachment(
+          new XmlOf(
+            // @checkstyle LineLength (1 line)
+            "<fileUrl authorLogin=\"jrogan\" url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=false\" name=\"uploadFile.html\"/>"
+          ),
+          new MockIssue(new MockProject()),
+          new MockLogin(),
+          new MockHttpClient(new MockOkResponse(contents))
+        ).contents()
+      ),
+      new IsEqual<>(contents)
     );
   }
 }
