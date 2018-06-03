@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -24,9 +25,6 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * An attachment.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.1.0
- * @todo #71 Add an attribute to Attachment for its contents. This would return an
- *  InputStream with the attachment's contents. Add another attribute for the
- *  attachment's content-type.
  */
 public interface Attachment {
   /**
@@ -45,6 +43,14 @@ public interface Attachment {
    * @since 1.1.0
    */
   User creator() throws IOException, UnauthorizedException;
+
+  /**
+   * The contents of this attachment.
+   * @return the contents
+   * @throws IOException if the server is unavailable
+   * @since 1.1.0
+   */
+  InputStream contents() throws IOException;
 
   /**
    * Delete this attachment.

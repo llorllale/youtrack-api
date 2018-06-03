@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.util.UUID;
 import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
@@ -33,6 +34,7 @@ import org.llorllale.youtrack.api.session.PermanentToken;
  * @since 1.1.0
  * @checkstyle AbbreviationAsWordInName (3 lines)
  */
+@SuppressWarnings("checkstyle:MultipleStringLiterals")
 public final class XmlAttachmentIT {
   private static IntegrationTestsConfig config;
   private static Login login;
@@ -75,6 +77,33 @@ public final class XmlAttachmentIT {
         .delete()
         .anyMatch(att -> name.equals(att.name())),
       new IsEqual<>(false)
+    );
+  }
+
+  /**
+   * XmlAttachment can read the contents.
+   * @throws Exception unexpected
+   * @since 1.1.0
+   * @todo #208 The YouTrack API inside the test docker container is returning 'fileUrl/@url'
+   *  without the mapped port number for the docker container. This is probably because the
+   *  service inside uses port 80. Figure out a way to make it so that the returned
+   *  '@url' is a URL that can be readily accessed from outside the container, and then
+   *  un-ignore this test.
+   */
+  @Ignore
+  @Test
+  public void downloadsAttachment() throws Exception {
+    final String name = UUID.randomUUID().toString();
+    final String contents = UUID.randomUUID().toString();
+    assertThat(
+      new InputStreamAsString().apply(
+        issue.attachments().create(
+          name, "text/plain", new ByteArrayInputStream(contents.getBytes())
+        ).filter(att -> name.equals(att.name()))
+          .findAny().get()
+          .contents()
+        ),
+      new IsEqual<>(contents)
     );
   }
 }

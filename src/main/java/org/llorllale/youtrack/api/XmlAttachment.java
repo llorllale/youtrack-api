@@ -17,8 +17,10 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -58,6 +60,20 @@ final class XmlAttachment implements Attachment {
     return this.issue.project().users().user(
       this.fileUrl.textOf("@authorLogin").get()
     );
+  }
+
+  @Override
+  public InputStream contents() throws IOException {
+    return new HttpResponseAsResponse(
+      this.client.execute(
+        new HttpRequestWithSession(
+          this.login.session(),
+          new HttpGet(
+            this.fileUrl.textOf("@url").get()
+          )
+        )
+      )
+    ).httpResponse().getEntity().getContent();
   }
 
   @Override
