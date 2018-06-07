@@ -17,12 +17,12 @@
 package org.llorllale.youtrack.api;
 
 // @checkstyle AvoidStaticImport (4 lines)
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.http.entity.StringEntity;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.http.MockHttpClient;
@@ -100,7 +100,7 @@ public final class DefaultProjectsTest {
           )
         )
       ).stream().count(),
-      is(2L)
+      new IsEqual<>(2L)
     );
   }
 

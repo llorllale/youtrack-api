@@ -16,10 +16,10 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (2 lines)
-import static org.hamcrest.CoreMatchers.is;
+// @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertThat;
 
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
 import org.llorllale.youtrack.api.mock.MockLogin;
@@ -32,7 +32,7 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  * @checkstyle MultipleStringLiterals (500 lines)
- * @todo #204 Continue using llorllale/cactoos-matchers for tests where ever possible. Also,
+ * @todo #206 Continue using llorllale/cactoos-matchers for tests where ever possible. Also,
  *  wherever possible, stop using static methods from Matcher and start using their object
  *  counterparts.
  */
@@ -73,7 +73,7 @@ public final class DefaultIssueTimeTrackingTest {
         new MockIssue(new MockProject()),
         new MockHttpClient(new MockOkResponse(WORKITEMS))
       ).stream().count(),
-      is(2L)
+      new IsEqual<>(2L)
     );
   }
 }

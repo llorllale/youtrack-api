@@ -16,12 +16,12 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (3 lines)
-import static org.hamcrest.CoreMatchers.is;
+// @checkstyle AvoidStaticImport (2 lines)
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import java.util.stream.Collectors;
+import org.hamcrest.core.IsEqual;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -45,7 +45,7 @@ public final class DefaultProjectTimeTrackingTest {
     final Project project = new MockProject();
     assertThat(
       new DefaultProjectTimeTracking(project, new MockLogin()).project(),
-      is(project)
+      new IsEqual<>(project)
     );
   }
 
@@ -75,7 +75,7 @@ public final class DefaultProjectTimeTrackingTest {
           )
         )
       ).enabled(),
-      is(true)
+      new IsEqual<>(true)
     );
   }
 
@@ -105,7 +105,7 @@ public final class DefaultProjectTimeTrackingTest {
           )
         )
       ).enabled(),
-      is(false)
+      new IsEqual<>(false)
     );
   }
 
@@ -132,7 +132,7 @@ public final class DefaultProjectTimeTrackingTest {
           )
         )
       ).enabled(),
-      is(false)
+      new IsEqual<>(false)
     );
   }
 
@@ -159,7 +159,7 @@ public final class DefaultProjectTimeTrackingTest {
           )
         )
       ).enabled(),
-      is(false)
+      new IsEqual<>(false)
     );
   }
 
@@ -183,7 +183,7 @@ public final class DefaultProjectTimeTrackingTest {
           )
         )
       ).enabled(),
-      is(false)
+      new IsEqual<>(false)
     );
   }
 
