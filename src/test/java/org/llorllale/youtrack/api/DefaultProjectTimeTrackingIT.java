@@ -16,12 +16,9 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (3 lines)
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
+// @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertTrue;
 
-import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -68,9 +65,8 @@ public final class DefaultProjectTimeTrackingIT {
    */
   @Test
   public void testTypes() throws Exception {
-    assertThat(
-      new DefaultProjectTimeTracking(project, login).types().count(),
-      new IsEqual<>(greaterThan(0L))
+    assertTrue(
+      new DefaultProjectTimeTracking(project, login).types().count() > 0
     );
   }
 }
