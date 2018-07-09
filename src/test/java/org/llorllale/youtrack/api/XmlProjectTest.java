@@ -46,7 +46,8 @@ public final class XmlProjectTest {
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" shortName=\"HBR\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"
-        ))
+        )),
+        null
       ).id(),
       is("HBR")
     );
@@ -65,7 +66,8 @@ public final class XmlProjectTest {
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" id=\"IT-TEST\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"
-        ))
+        )),
+        null
       ).id(),
       is("IT-TEST")
     );
@@ -83,7 +85,8 @@ public final class XmlProjectTest {
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" id=\"IT-TEST\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"
-        ))
+        )),
+        null
       ).name(),
       is("Hibero")
     );
@@ -101,7 +104,8 @@ public final class XmlProjectTest {
         new XmlOf(new StringAsDocument(
           // @checkstyle LineLength (1 line)
           "<project versions=\"[2.0, 2.0.1, 2.0.2, 2.0.3, 2.0.4, 2.0.5, 2.0.6, 2.0.7, 2.0.8]\" name=\"Hibero\" id=\"IT-TEST\" description=\"Makes developing Hibernate applications a pleasure.\" isImporting=\"false\"/>"
-        ))
+        )),
+        null
       ).description().get(),
       is("Makes developing Hibernate applications a pleasure.")
     );
@@ -115,7 +119,8 @@ public final class XmlProjectTest {
     assertFalse(
       new XmlProject(
         null, null,
-        new XmlOf(new StringAsDocument("<project id=\"IT-TEST\"/>"))
+        new XmlOf(new StringAsDocument("<project id=\"IT-TEST\"/>")),
+        null
       ).equals(null)
     );
   }
@@ -128,7 +133,8 @@ public final class XmlProjectTest {
     assertFalse(
       new XmlProject(
         null, null,
-        new XmlOf(new StringAsDocument("<project id=\"IT-TEST\"/>"))
+        new XmlOf(new StringAsDocument("<project id=\"IT-TEST\"/>")),
+        null
       ).equals(new Object())
     );
   }
@@ -140,7 +146,8 @@ public final class XmlProjectTest {
   public void equalsItself() {
     final Project project = new XmlProject(
       null, null,
-      new XmlOf(new StringAsDocument("<project id=\"IT-TEST\"/>"))
+      new XmlOf(new StringAsDocument("<project id=\"IT-TEST\"/>")),
+      null
     );
     assertTrue(
       project.equals(project)
@@ -155,7 +162,8 @@ public final class XmlProjectTest {
     assertTrue(
       new XmlProject(
         null, null,
-        new XmlOf(new StringAsDocument("<project id=\"HBR\"/>"))
+        new XmlOf(new StringAsDocument("<project id=\"HBR\"/>")),
+        null
       ).equals(new MockProject("HBR", "", ""))
     );
   }
@@ -168,7 +176,8 @@ public final class XmlProjectTest {
     assertFalse(
       new XmlProject(
         null, null,
-        new XmlOf(new StringAsDocument("<project id=\"HBR\"/>"))
+        new XmlOf(new StringAsDocument("<project id=\"HBR\"/>")),
+        null
       ).equals(new MockProject("IT-TEST", "", ""))
     );
   }

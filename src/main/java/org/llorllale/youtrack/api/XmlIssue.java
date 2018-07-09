@@ -21,20 +21,15 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
- * JAXB implementation of {@link Issue}.
+ * Implementation of {@link Issue}.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
- * @todo #208 The HTTP client configured for XmlIssue is the default one that only pools
- *  2 connection that are not being released for reuse. Therefore the code hangs after
- *  a few calls to issue.attachments() and everything else accessible from there. This
- *  problem is probably present in the rest of the implementations.
  */
 @SuppressWarnings("checkstyle:MethodCount")
 final class XmlIssue implements Issue {
@@ -44,7 +39,7 @@ final class XmlIssue implements Issue {
   private final HttpClient client;
 
   /**
-   * Primary ctor.
+   * Ctor.
    * 
    * @param project this {@link Issue issue's} {@link Project}
    * @param login the user's {@link Login}
@@ -62,22 +57,6 @@ final class XmlIssue implements Issue {
     this.login = login;
     this.xml = xml;
     this.client = client;
-  }
-
-  /**
-   * Primary ctor.
-   * 
-   * @param project this {@link Issue issue's} {@link Project}
-   * @param login the user's {@link Login}
-   * @param xml the xml object received from YouTrack
-   * @since 0.1.0
-   */
-  XmlIssue(
-      Project project, 
-      Login login, 
-      Xml xml
-  ) {
-    this(project, login, xml, HttpClients.createDefault());
   }
 
   @Override

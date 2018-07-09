@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import org.apache.http.client.HttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 /**
@@ -25,18 +26,34 @@ import org.llorllale.youtrack.api.session.Login;
  */
 public final class DefaultYouTrack implements YouTrack {
   private final Login login;
+  private final HttpClient client;
 
   /**
-   * Primary ctor.
+   * Ctor. Uses the {@link DefaultClient} with a pool size of {@code 10}.
    * @param login the user's {@link Login}
    * @since 0.4.0
    */
   public DefaultYouTrack(Login login) {
-    this.login = new CachedLogin(login);
+    // @checkstyle MagicNumber (1 line)
+    this(login, new DefaultClient(10));
+  }
+
+  /**
+   * Ctor.
+   * @param login the user's {@link Login}
+   * @param httpClient the {@link HttpClient} to use
+   * @since 1.1.0
+   * @todo #216 DefaultYoutrack is now taking in an HttpClient as parameter, and this client
+   *  is being passed to some parts of the API implementations. Finish making all implementations
+   *  accept this client.
+   */
+  public DefaultYouTrack(Login login, HttpClient httpClient) {
+    this.login = login;
+    this.client = httpClient;
   }
 
   @Override
   public Projects projects() {
-    return new DefaultProjects(this, this.login);
+    return new DefaultProjects(this, this.login, this.client);
   }
 }

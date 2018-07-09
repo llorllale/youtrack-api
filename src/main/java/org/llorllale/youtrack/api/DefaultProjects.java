@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -51,21 +50,11 @@ final class DefaultProjects implements Projects {
     this.httpClient = httpClient;
   }
 
-  /**
-   * Uses the {@link HttpClients#createDefault() default} http client.
-   * @param youtrack the parent {@link YouTrack}
-   * @param login the user's {@link Login}
-   * @since 0.4.0
-   */
-  DefaultProjects(YouTrack youtrack, Login login) {
-    this(youtrack, login, HttpClients.createDefault());
-  }
-
   @Override
   public Stream<Project> stream() throws IOException, UnauthorizedException {
     return new StreamOf<>(
       new MappedCollection<>(
-        xml -> new XmlProject(this.youtrack, this.login, xml),
+        xml -> new XmlProject(this.youtrack, this.login, xml, this.httpClient),
         new XmlsOf(
           "/projects/project",
           new HttpResponseAsResponse(
@@ -86,7 +75,7 @@ final class DefaultProjects implements Projects {
   @Override
   public Optional<Project> get(String id) throws IOException, UnauthorizedException {
     return new MappedCollection<Xml, Project>(
-      xml -> new XmlProject(this.youtrack, this.login, xml),
+      xml -> new XmlProject(this.youtrack, this.login, xml, this.httpClient),
       new XmlsOf(
         "/project",
         new HttpResponseAsResponse(
