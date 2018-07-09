@@ -475,12 +475,14 @@
             </formats>
             <instrumentation>
               <ignores>
+                <ignore>org.llorllale.youtrack.api.HttpClientEnvelope</ignore>
                 <ignore>org.llorllale.youtrack.api.HttpRequestWithEntity</ignore>
                 <ignore>org.llorllale.youtrack.api.HttpRequestWithSession</ignore>
                 <ignore>org.llorllale.youtrack.api.StringAsDocument</ignore>
                 <ignore>org.llorllale.youtrack.api.StreamEnvelope</ignore>
               </ignores>
               <excludes>
+                <exclude>org/llorllale/youtrack/api/HttpClientEnvelope.class</exclude>
                 <exclude>org/llorllale/youtrack/api/HttpRequestWithEntity.class</exclude>
                 <exclude>org/llorllale/youtrack/api/HttpRequestWithSession.class</exclude>
                 <exclude>org/llorllale/youtrack/api/StringAsDocument.class</exclude>

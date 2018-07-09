@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 // @checkstyle AvoidStaticImport (1 line)
 import static org.junit.Assert.assertTrue;
 
+import org.apache.http.impl.client.HttpClients;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -57,10 +58,10 @@ public final class DefaultIssuesIT {
    */
   @Test
   public void testStream() throws Exception {
-    final Issue issue = new DefaultIssues(project, login)
+    final Issue issue = new DefaultIssues(project, login, HttpClients.createDefault())
       .create(DefaultIssuesIT.class.getSimpleName().concat(".testStream"), "description");
     assertTrue(
-      new DefaultIssues(project, login)
+      new DefaultIssues(project, login, HttpClients.createDefault())
         .stream()
         .anyMatch(i -> i.id().equals(issue.id()))
     );
@@ -72,12 +73,13 @@ public final class DefaultIssuesIT {
    */
   @Test
   public void createAndGetIssue() throws Exception {
-    final Issue issue = new DefaultIssues(project, login)
+    final Issue issue = new DefaultIssues(project, login, HttpClients.createDefault())
       .create(DefaultIssuesIT.class.getSimpleName().concat(".testGet"), "description");
     assertTrue(
       new DefaultIssues(
         project,
-        login
+        login,
+        HttpClients.createDefault()
       ).get(issue.id()).isPresent()
     );
   }

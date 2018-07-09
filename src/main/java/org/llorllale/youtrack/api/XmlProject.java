@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.util.Optional;
+import org.apache.http.client.HttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 /**
@@ -29,6 +30,7 @@ final class XmlProject implements Project {
   private final YouTrack youtrack;
   private final Login login;
   private final Xml xml;
+  private final HttpClient client;
 
   /**
    * Ctor.
@@ -36,16 +38,19 @@ final class XmlProject implements Project {
    * @param youtrack the parent {@link YouTrack}
    * @param login the user's {@link Login}
    * @param xml the XML object received from YouTrack to be adapted into {@link Project}
+   * @param client the {@link HttpClient} to use
    * @since 0.2.0
    */
   XmlProject(
       YouTrack youtrack, 
       Login login, 
-      Xml xml
+      Xml xml,
+      HttpClient client
   ) {
     this.youtrack = youtrack;
     this.login = login;
     this.xml = xml;
+    this.client = client;
   }
 
   @Override
@@ -67,7 +72,7 @@ final class XmlProject implements Project {
 
   @Override
   public Issues issues() {
-    return new DefaultIssues(this, this.login);
+    return new DefaultIssues(this, this.login, this.client);
   }
 
   @Override

@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -52,16 +51,6 @@ final class DefaultIssues implements Issues {
     this.project = project;
     this.login = login;
     this.httpClient = httpClient;
-  }
-
-  /**
-   * Uses the {@link HttpClients#createDefault() default} httpClient.
-   * @param project the parent {@link Project}
-   * @param login the user's {@link Login}
-   * @since 0.4.0
-   */
-  DefaultIssues(Project project, Login login) {
-    this(project, login, HttpClients.createDefault());
   }
 
   @Override
@@ -91,7 +80,7 @@ final class DefaultIssues implements Issues {
         resp -> 
           new MappedCollection<>(
             new UncheckedIoFunction<>(
-              xml -> new XmlIssue(this.project(), this.login, xml)
+              xml -> new XmlIssue(this.project(), this.login, xml, this.httpClient)
             ),
             new XmlsOf("/issues/issue", resp)
           ),
@@ -117,7 +106,7 @@ final class DefaultIssues implements Issues {
       )
     ).filter(x -> !x.child("//error").isPresent())
       .map(new UncheckedIoFunction<>(
-        x -> new XmlIssue(this.project(), this.login, x)
+        x -> new XmlIssue(this.project(), this.login, x, this.httpClient)
       ));
   }
 

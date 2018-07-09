@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -58,7 +59,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testStream() throws Exception {
     assertTrue(
-      new DefaultProjects(null, login).stream()
+      new DefaultProjects(null, login, HttpClients.createDefault()).stream()
         .anyMatch(p -> config.youtrackTestProjectId().equals(p.id()))
     );
   }
@@ -71,7 +72,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testGetExistingProject() throws Exception {
     assertTrue(
-      new DefaultProjects(null, login)
+      new DefaultProjects(null, login, HttpClients.createDefault())
         .get(config.youtrackTestProjectId())
         .isPresent()
     );
@@ -85,7 +86,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testGetNonExistingProject() throws Exception {
     assertFalse(
-      new DefaultProjects(null, login)
+      new DefaultProjects(null, login, HttpClients.createDefault())
         .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
         .isPresent()
     );

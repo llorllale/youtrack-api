@@ -50,7 +50,8 @@ public final class XmlIssueTest {
       new XmlIssue(
         new MockProject(),
         new MockLogin(),
-        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        null
       ).id(),
       is("HBR-63")
     );
@@ -71,7 +72,8 @@ public final class XmlIssueTest {
             + "        <value>1262171005630</value>\n"
             + "    </field>\n"
             + "</issue>"
-        ))
+        )),
+        null
       ).creationDate(),
       // @checkstyle MagicNumber (1 line)
       is(Instant.ofEpochMilli(1262171005630L))
@@ -93,7 +95,8 @@ public final class XmlIssueTest {
           + "        <value>summary text</value>\n"
           + "    </field>\n"
           + "</issue>"
-        ))
+        )),
+        null
       ).summary(),
       is("summary text")
     );
@@ -114,7 +117,8 @@ public final class XmlIssueTest {
           + "        <value>descriptive text</value>\n"
           + "    </field>\n"
           + "</issue>"
-        ))
+        )),
+        null
       ).description().get(),
       is("descriptive text")
     );
@@ -152,7 +156,8 @@ public final class XmlIssueTest {
             + "      <valueId>Open</valueId>\n"
             + "    </field>"
             + "</issue>"
-        ))
+        )),
+        null
       ).fields().size(),
       // @checkstyle MagicNumber (1 line)
       is(3)
@@ -169,7 +174,8 @@ public final class XmlIssueTest {
       new XmlIssue(
         new MockProject(),
         new MockLogin(),
-        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        null
       ).id().hashCode(),
       is("HBR-63".hashCode())
     );
@@ -186,7 +192,8 @@ public final class XmlIssueTest {
       new XmlIssue(
         project,
         new MockLogin(),
-        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        null
       ),
       new MockIssue(project, "HBR-63")
     );
@@ -202,7 +209,8 @@ public final class XmlIssueTest {
       new XmlIssue(
         new MockProject(),
         new MockLogin(),
-        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        null
       ).equals(null)
     );
   }
@@ -217,7 +225,8 @@ public final class XmlIssueTest {
       new XmlIssue(
         new MockProject(),
         new MockLogin(),
-        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        null
       ).equals(new Object())
     );
   }
@@ -233,7 +242,8 @@ public final class XmlIssueTest {
       new XmlIssue(
         new MockProject("PR-1", "name", "description"),
         new MockLogin(),
-        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        null
       ),
       new MockIssue(
         new MockProject("PR-2", "name", "description"),
@@ -253,7 +263,8 @@ public final class XmlIssueTest {
       new XmlIssue(
         new MockProject("PR-1", "name", "description"),
         new MockLogin(),
-        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>"))
+        new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
+        null
       ),
       new MockIssue(
         new MockProject("PR-1", "name", "description"),
