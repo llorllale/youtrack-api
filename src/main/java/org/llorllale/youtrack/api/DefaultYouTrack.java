@@ -43,7 +43,7 @@ public final class DefaultYouTrack implements YouTrack {
    * @param login the user's {@link Login}
    * @param httpClient the {@link HttpClient} to use
    * @since 1.1.0
-   * @todo #228 Continue making all implementations accept an HttpClient in order to enable
+   * @todo #231 Continue making all implementations accept an HttpClient in order to enable
    *  concurrency. Right now major parts of the API are hanging when multiple threads are
    *  accessing them.
    */

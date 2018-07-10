@@ -20,6 +20,7 @@ package org.llorllale.youtrack.api;
 import static org.junit.Assert.assertNotEquals;
 
 import java.util.HashMap;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -67,7 +68,9 @@ public final class DefaultUpdateIssueIT {
     final String newSummary = DefaultUpdateIssueIT.class.getSimpleName()
       .concat(".testSummary");
     assertNotEquals(
-      new DefaultUpdateIssue(issue, login).summary(newSummary).summary(),
+      new DefaultUpdateIssue(
+        issue, login, HttpClients.createDefault()
+      ).summary(newSummary).summary(),
       issue.summary()
     );
   }
@@ -81,7 +84,7 @@ public final class DefaultUpdateIssueIT {
     final String newDesc = DefaultUpdateIssueIT.class.getSimpleName()
       .concat("testDescription");
     assertNotEquals(
-      new DefaultUpdateIssue(issue, login)
+      new DefaultUpdateIssue(issue, login, HttpClients.createDefault())
         .description(newDesc)
         .description(),
       issue.description()
@@ -98,7 +101,7 @@ public final class DefaultUpdateIssueIT {
       .concat("testSummaryAndDesc_summ");
     final String newDesc = DefaultUpdateIssueIT.class.getSimpleName()
       .concat("testSummaryAndDesc_desc");
-    final Issue newIssue = new DefaultUpdateIssue(issue, login)
+    final Issue newIssue = new DefaultUpdateIssue(issue, login, HttpClients.createDefault())
       .summaryAndDesc(newSummary, newDesc);
     assertNotEquals(issue.summary(), newIssue.summary());
     assertNotEquals(issue.description(), newIssue.description());
@@ -120,7 +123,7 @@ public final class DefaultUpdateIssueIT {
       .filter(v -> !v.equals(oldValue))
       .findAny().get();
     assertNotEquals(
-      new DefaultUpdateIssue(issue, login)
+      new DefaultUpdateIssue(issue, login, HttpClients.createDefault())
         .field(field, newValue).fields()
         .stream()
         .filter(f -> f.isSameField(field))
@@ -154,7 +157,7 @@ public final class DefaultUpdateIssueIT {
       .values()
       .filter(v -> !v.equals(secondOldVal))
       .findAny().get();
-    new DefaultUpdateIssue(issue, login).fields(
+    new DefaultUpdateIssue(issue, login, HttpClients.createDefault()).fields(
       new HashMap<Field, FieldValue>() {
         {
           put(firstField, firstNewVal);

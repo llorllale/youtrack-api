@@ -112,7 +112,7 @@ final class XmlIssue implements Issue {
 
   @Override
   public UpdateIssue update() {
-    return new DefaultUpdateIssue(this, this.login);
+    return new DefaultUpdateIssue(this, this.login, this.client);
   }
 
   @Override

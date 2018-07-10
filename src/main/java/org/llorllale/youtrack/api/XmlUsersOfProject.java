@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -52,18 +51,6 @@ final class XmlUsersOfProject implements UsersOfProject {
     this.login = login;
     this.xml = xml;
     this.httpClient = httpClient;
-  }
-
-  /**
-   * Ctor.
-   * 
-   * @param project the {@link Project} in scope
-   * @param login the users's {@link Login}
-   * @param xml the xml object received from YouTrack for this {@link #project() project}
-   * @since 1.0.0
-   */
-  XmlUsersOfProject(Project project, Login login, Xml xml) {
-    this(project, login, xml, HttpClients.createDefault());
   }
 
   @Override

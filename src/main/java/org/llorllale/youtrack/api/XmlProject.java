@@ -107,6 +107,6 @@ final class XmlProject implements Project {
 
   @Override
   public UsersOfProject users() {
-    return new XmlUsersOfProject(this, this.login, this.xml);
+    return new XmlUsersOfProject(this, this.login, this.xml, this.client);
   }
 }
