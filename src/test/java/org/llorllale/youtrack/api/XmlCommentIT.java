@@ -20,6 +20,7 @@ package org.llorllale.youtrack.api;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -65,7 +66,7 @@ public final class XmlCommentIT {
   public void testUpdate() throws Exception {
     final String initialText = "Comment_" + new Random(System.currentTimeMillis()).nextInt();
     final String finalText = "UpdatedComment_" + new Random(System.currentTimeMillis()).nextInt();
-    final Comment comment = new DefaultComments(login, issue)
+    final Comment comment = new DefaultComments(login, issue, HttpClients.createDefault())
       .post(initialText)
       .stream()
       .filter(c -> initialText.equals(c.text()))
@@ -84,7 +85,7 @@ public final class XmlCommentIT {
   @Test
   public void testDelete() throws Exception {
     final String initialText = "Comment_" + new Random(System.currentTimeMillis()).nextInt();
-    final Comment comment = new DefaultComments(login, issue)
+    final Comment comment = new DefaultComments(login, issue, HttpClients.createDefault())
       .post(initialText)
       .stream()
       .filter(c -> initialText.equals(c.text()))

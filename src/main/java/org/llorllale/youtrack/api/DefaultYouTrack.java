@@ -43,9 +43,7 @@ public final class DefaultYouTrack implements YouTrack {
    * @param login the user's {@link Login}
    * @param httpClient the {@link HttpClient} to use
    * @since 1.1.0
-   * @todo #216 DefaultYoutrack is now taking in an HttpClient as parameter, and this client
-   *  is being passed to some parts of the API implementations. Finish making all implementations
-   *  accept this client.
+   * @todo #223 Continue making all implementations accept an HttpClients.
    */
   public DefaultYouTrack(Login login, HttpClient httpClient) {
     this.login = login;
