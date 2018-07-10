@@ -18,12 +18,12 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.time.Instant;
+import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -36,47 +36,25 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  */
 final class XmlComment implements Comment {
   private static final String PATH_TEMPLATE = "/issue/%s/comment/%s";
-  private final String id;
-  private final long creationDate;
-  private final String text;
   private final Issue issue;
   private final Login login;
-
-  /**
-   * Primary ctor.
-   * 
-   * @param id the comment's id
-   * @param creationDate the date when the comment was created (epoch time)
-   * @param text the comment's text
-   * @param issue the issue to which the comment is attached
-   * @param login the user's {@link Login}
-   * @since 0.9.0
-   */
-  @SuppressWarnings("checkstyle:ParameterNumber")
-  XmlComment(String id, long creationDate, String text, Issue issue, Login login) {
-    this.id = id;
-    this.creationDate = creationDate;
-    this.text = text;
-    this.issue = issue;
-    this.login = login;
-  }
+  private final Xml xml;
+  private final HttpClient http;
 
   /**
    * Extracts {@code id}, {@code creationDate}, and {@code text} from {@code jaxbComment}.
    * @param issue the {@link Issue} to which this comment is attached
    * @param login the user's session
    * @param xml comment's XML object received from YouTrack
+   * @param client the Http client to use
    * @throws UncheckedException from {@link XmlOf#textOf(String)}
-   * @since 1.0.0
+   * @since 1.1.0
    */
-  XmlComment(Issue issue, Login login, Xml xml) throws UncheckedException {
-    this(
-      xml.textOf("//@id").get(), 
-      Long.parseLong(xml.textOf("//@created").get()), 
-      xml.textOf("//@text").get(), 
-      issue, 
-      login
-    );
+  XmlComment(Issue issue, Login login, Xml xml, HttpClient client) throws UncheckedException {
+    this.issue = issue;
+    this.login = login;
+    this.xml = xml;
+    this.http = client;
   }
 
   @Override
@@ -86,23 +64,25 @@ final class XmlComment implements Comment {
 
   @Override
   public String id() {
-    return this.id;
+    return this.xml.textOf("//@id").get();
   }
 
   @Override
   public Instant creationDate() {
-    return Instant.ofEpochMilli(this.creationDate);
+    return Instant.ofEpochMilli(
+      Long.parseLong(this.xml.textOf("//@created").get())
+    );
   }
 
   @Override
   public String text() {
-    return this.text;
+    return this.xml.textOf("//@text").get();
   }
 
   @Override
   public Comment update(String txt) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      HttpClients.createDefault().execute(
+      this.http.execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpRequestWithEntity(
@@ -122,13 +102,13 @@ final class XmlComment implements Comment {
         )
       )
     ).httpResponse();
-    return new XmlComment(this.id, this.creationDate, txt, this.issue(), this.login);
+    return new XmlComment(this.issue, this.login, this.xml, this.http);
   }
 
   @Override
   public Issue delete() throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      HttpClients.createDefault().execute(
+      this.http.execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpDelete(

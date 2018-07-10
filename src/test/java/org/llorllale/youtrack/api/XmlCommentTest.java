@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.time.Instant;
+import org.apache.http.impl.client.HttpClients;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockIssue;
@@ -61,7 +62,9 @@ public final class XmlCommentTest {
   @Test
   public void testId() throws Exception {
     assertThat(
-      new XmlComment(this.issue(), new MockLogin(), xmlObject).id(),
+      new XmlComment(
+        this.issue(), new MockLogin(), xmlObject, HttpClients.createDefault()
+      ).id(),
       is("42-307")
     );
   }
@@ -73,7 +76,9 @@ public final class XmlCommentTest {
   @Test
   public void testCreationDate() throws Exception {
     assertThat(
-      new XmlComment(this.issue(), new MockLogin(), xmlObject).creationDate(),
+      new XmlComment(
+        this.issue(), new MockLogin(), xmlObject, HttpClients.createDefault()
+      ).creationDate(),
       // @checkstyle MagicNumber (1 line)
       is(Instant.ofEpochMilli(1267030238721L))
     );
@@ -87,7 +92,9 @@ public final class XmlCommentTest {
   @Test
   public void testText() throws Exception {
     assertThat(
-      new XmlComment(this.issue(), new MockLogin(), xmlObject).text(),
+      new XmlComment(
+        this.issue(), new MockLogin(), xmlObject, HttpClients.createDefault()
+      ).text(),
       is("comment 2?")
     );
   }

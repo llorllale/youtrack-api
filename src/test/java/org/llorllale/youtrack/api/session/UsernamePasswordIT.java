@@ -16,12 +16,13 @@
 
 package org.llorllale.youtrack.api.session;
 
-// @checkstyle AvoidStaticImport (5 lines)
+// @checkstyle AvoidStaticImport (4 lines)
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
 
+import org.apache.http.impl.client.HttpClients;
 import org.junit.Test;
 import org.llorllale.youtrack.api.IntegrationTestsConfig;
 
@@ -43,7 +44,8 @@ public final class UsernamePasswordIT {
       new UsernamePassword(
         config.youtrackUrl(), 
         config.youtrackUser(), 
-        config.youtrackPwd()
+        config.youtrackPwd(),
+        HttpClients.createDefault()
       ).session()
         .cookies(),
       is(not(empty()))
@@ -61,7 +63,8 @@ public final class UsernamePasswordIT {
     final Login login = new UsernamePassword(
       config.youtrackUrl(), 
       config.youtrackUser(), 
-      config.youtrackPwd()
+      config.youtrackPwd(),
+      HttpClients.createDefault()
     );
     login.session();
     assertThat(
