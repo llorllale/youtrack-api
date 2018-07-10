@@ -44,7 +44,7 @@ public final class DefaultProjectTimeTrackingTest {
   public void project() {
     final Project project = new MockProject();
     assertThat(
-      new DefaultProjectTimeTracking(project, new MockLogin()).project(),
+      new DefaultProjectTimeTracking(project, new MockLogin(), null).project(),
       new IsEqual<>(project)
     );
   }

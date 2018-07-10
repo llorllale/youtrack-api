@@ -87,7 +87,7 @@ final class XmlProject implements Project {
 
   @Override
   public ProjectTimeTracking timetracking() {
-    return new DefaultProjectTimeTracking(this, this.login);
+    return new DefaultProjectTimeTracking(this, this.login, this.client);
   }
 
   @Override
