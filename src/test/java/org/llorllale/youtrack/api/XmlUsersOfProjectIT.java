@@ -21,6 +21,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.http.impl.client.HttpClients;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -55,8 +56,9 @@ public final class XmlUsersOfProjectIT {
   @Test
   public void testUser() throws Exception {
     assertThat(
-      new XmlUsersOfProject(project, login, this.xmlObject("random"))
-        .user(config.youtrackUser())
+      new XmlUsersOfProject(
+        project, login, this.xmlObject("random"), HttpClients.createDefault()
+      ).user(config.youtrackUser())
         .loginName(),
       is(config.youtrackUser())
     );
@@ -69,8 +71,9 @@ public final class XmlUsersOfProjectIT {
   @Test
   public void testAssignees() throws Exception {
     assertTrue(
-      new XmlUsersOfProject(project, login, this.xmlObject(config.youtrackUser()))
-        .assignees()
+      new XmlUsersOfProject(
+        project, login, this.xmlObject(config.youtrackUser()), HttpClients.createDefault()
+      ).assignees()
         .anyMatch(a -> config.youtrackUser().equals(a.loginName()))
     );
   }

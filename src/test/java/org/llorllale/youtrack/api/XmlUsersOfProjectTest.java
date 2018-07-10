@@ -44,7 +44,7 @@ public final class XmlUsersOfProjectTest {
   public void project() {
     final Project project = new MockProject();
     assertThat(
-      new XmlUsersOfProject(project, null, null).project(),
+      new XmlUsersOfProject(project, null, null, null).project(),
       is(project)
     );
   }

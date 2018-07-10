@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
 import org.llorllale.youtrack.api.session.Login;
@@ -42,17 +42,20 @@ final class DefaultUpdateIssue implements UpdateIssue {
   private static final String PATH_TEMPLATE = "/issue/%s";
   private final Issue issue;
   private final Login login;
+  private final HttpClient client;
 
   /**
    * Primary ctor.
    * 
    * @param issue the issue to update
    * @param login the user's {@link Login}
-   * @since 0.9.0
+   * @param client the {@link HttpClient} to use
+   * @since 1.1.0
    */
-  DefaultUpdateIssue(Issue issue, Login login) {
+  DefaultUpdateIssue(Issue issue, Login login, HttpClient client) {
     this.issue = issue;
     this.login = login;
+    this.client = client;
   }
 
   @Override
@@ -82,7 +85,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
   public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
     final String separator = " ";
     new HttpResponseAsResponse(
-      HttpClients.createDefault().execute(
+      this.client.execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpRequestWithEntity(
@@ -125,7 +128,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
   private Issue updateSmmryDesc(String summary, String description) 
       throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      HttpClients.createDefault().execute(
+      this.client.execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpPost(
