@@ -90,12 +90,12 @@ final class XmlIssue implements Issue {
 
   @Override
   public Comments comments() {
-    return new DefaultComments(this.login, this);
+    return new DefaultComments(this.login, this, this.client);
   }
 
   @Override
   public IssueTimeTracking timetracking() {
-    return new DefaultIssueTimeTracking(this.login, this);
+    return new DefaultIssueTimeTracking(this.login, this, this.client);
   }
 
   @Override

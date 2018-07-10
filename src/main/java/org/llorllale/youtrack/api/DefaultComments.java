@@ -24,7 +24,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -43,8 +42,7 @@ final class DefaultComments implements Comments {
   private final HttpClient httpClient;
 
   /**
-   * Primary ctor.
-   * 
+   * Ctor.
    * @param login the user's {@link Login}
    * @param issue the {@link Issue} on which the comments are attached to
    * @param httpClient the {@link HttpClient} to use
@@ -54,17 +52,6 @@ final class DefaultComments implements Comments {
     this.login = login;
     this.issue = issue;
     this.httpClient = httpClient;
-  }
-
-  /**
-   * Uses the {@link HttpClients#createDefault() default} http client.
-   * 
-   * @param login the user's {@link Login}
-   * @param issue the {@link Issue} on which the comments are attached to
-   * @since 0.4.0
-   */
-  DefaultComments(Login login, Issue issue) {
-    this(login, issue, HttpClients.createDefault());
   }
 
   @Override
@@ -113,7 +100,7 @@ final class DefaultComments implements Comments {
         )
       )
     ).httpResponse();
-    return new DefaultComments(this.login, this.issue());
+    return new DefaultComments(this.login, this.issue(), this.httpClient);
   }
 
   @Override

@@ -43,7 +43,7 @@ public final class DefaultFieldsTest {
   public void project() {
     final Project project = new MockProject();
     assertThat(
-      new DefaultFields(null, project).project(),
+      new DefaultFields(null, project, null).project(),
       new IsEqual<>(project)
     );
   }

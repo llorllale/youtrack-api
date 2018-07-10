@@ -82,7 +82,7 @@ final class XmlProject implements Project {
 
   @Override
   public Fields fields() {
-    return new DefaultFields(this.login, this);
+    return new DefaultFields(this.login, this, this.client);
   }
 
   @Override

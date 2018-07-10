@@ -20,6 +20,7 @@ package org.llorllale.youtrack.api;
 import static org.junit.Assert.assertThat;
 
 import java.util.Random;
+import org.apache.http.impl.client.HttpClients;
 import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,7 +68,7 @@ public final class DefaultCommentsIT {
     final String first = "First comment " + new Random(System.currentTimeMillis()).nextInt();
     final String second = "Second comment " + new Random(System.currentTimeMillis()).nextInt();
     assertThat(
-      new DefaultComments(login, issue)
+      new DefaultComments(login, issue, HttpClients.createDefault())
         .post(first)
         .post(second)
         .stream()

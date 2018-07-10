@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 // @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertThat;
 
+import org.apache.http.impl.client.HttpClients;
 import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,7 +56,9 @@ public final class DefaultFieldsIT {
   @Test
   public void testStream() throws Exception {
     assertThat(
-      new DefaultFields(login, project).stream().count() > 0,
+      new DefaultFields(
+        login, project, HttpClients.createDefault()
+      ).stream().count() > 0,
       new IsEqual<>(true)
     );
   }
