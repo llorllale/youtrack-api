@@ -26,7 +26,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.HttpClients;
 
 /**
  * <p>A login for the simple username/password use case.</p>
@@ -42,8 +41,7 @@ public final class UsernamePassword implements Login {
   private final char[] password;
 
   /**
-   * Primary constructor.
-   * 
+   * Ctor.
    * @param youtrackUrl the URL of the YouTrack API endpoint
    * @param username the principal
    * @param password the credentials
@@ -62,23 +60,6 @@ public final class UsernamePassword implements Login {
     this.password = Arrays.copyOf(password, password.length);
   }
 
-  /**
-   * Ctor.
-   * 
-   * @param youtrackUrl the URL of the YouTrack API endpoint
-   * @param username the principal
-   * @param password the credentials
-   * @see #UsernamePassword(URL, String, char[], HttpClient) 
-   * @since 0.1.0
-   */
-  public UsernamePassword(
-          final URL youtrackUrl,
-          String username, 
-          char[] password
-  ) {
-    this(youtrackUrl, username, password, HttpClients.createDefault());
-  }
-  
   @Override
   public Session session() throws AuthenticationException, IOException {
     try {

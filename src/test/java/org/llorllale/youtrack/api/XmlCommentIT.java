@@ -72,7 +72,9 @@ public final class XmlCommentIT {
       .filter(c -> initialText.equals(c.text()))
       .findFirst()
       .get();
-    new XmlComment(issue, login, this.xmlObject(comment)).update(finalText);
+    new XmlComment(
+      issue, login, this.xmlObject(comment), HttpClients.createDefault()
+    ).update(finalText);
     assertTrue(
       issue.comments().stream().noneMatch(c -> initialText.equals(c.text()))
     );
@@ -91,7 +93,9 @@ public final class XmlCommentIT {
       .filter(c -> initialText.equals(c.text()))
       .findFirst()
       .get();
-    new XmlComment(issue, login, this.xmlObject(comment)).delete();
+    new XmlComment(
+      issue, login, this.xmlObject(comment), HttpClients.createDefault()
+    ).delete();
     assertTrue(
       issue.comments().stream().noneMatch(c -> comment.id().equals(c.id()))
     );
