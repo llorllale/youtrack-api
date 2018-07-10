@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 // @checkstyle AvoidStaticImport (1 lines)
 import static org.junit.Assert.assertTrue;
 
+import org.apache.http.impl.client.HttpClients;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -54,7 +55,9 @@ public final class DefaultProjectTimeTrackingIT {
   @Test
   public void testEnabled() throws Exception {
     assertTrue(
-      new DefaultProjectTimeTracking(project, login).enabled()
+      new DefaultProjectTimeTracking(
+        project, login, HttpClients.createDefault()
+      ).enabled()
     );
   }
 
@@ -66,7 +69,9 @@ public final class DefaultProjectTimeTrackingIT {
   @Test
   public void testTypes() throws Exception {
     assertTrue(
-      new DefaultProjectTimeTracking(project, login).types().count() > 0
+      new DefaultProjectTimeTracking(
+        project, login, HttpClients.createDefault()
+      ).types().count() > 0
     );
   }
 }

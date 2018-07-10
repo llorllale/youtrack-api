@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -50,16 +49,6 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
     this.httpClient = httpClient;
   }
 
-  /**
-   * Ctor.
-   * @param project the parent {@link Project}
-   * @param login the user's {@link Login}
-   * @since 0.8.0
-   */
-  DefaultProjectTimeTracking(Project project, Login login) {
-    this(project, login, HttpClients.createDefault());
-  }
-  
   @Override
   public Project project() {
     return this.project;

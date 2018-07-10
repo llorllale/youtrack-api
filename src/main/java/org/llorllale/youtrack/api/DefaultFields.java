@@ -57,7 +57,7 @@ final class DefaultFields implements Fields {
     return new StreamOf<>(
       new MappedCollection<>(
         new UncheckedIoFunction<>(
-          x -> new XmlProjectField(x, this.project(), this.login)
+          x -> new XmlProjectField(x, this.project(), this.login, this.httpClient)
         ),
         new XmlsOf(
           "/projectCustomFieldRefs/projectCustomField",

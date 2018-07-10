@@ -57,7 +57,7 @@ public final class XmlProjectFieldTest {
   @Test
   public void testName() {
     assertThat(
-      new XmlProjectField(xml, new MockProject(), new MockLogin()).name(),
+      new XmlProjectField(xml, new MockProject(), new MockLogin(), null).name(),
       is("Priority")
     );
   }
@@ -67,7 +67,7 @@ public final class XmlProjectFieldTest {
    */
   @Test
   public void equalsItself() {
-    final Field field = new XmlProjectField(xml, new MockProject(), new MockLogin());
+    final Field field = new XmlProjectField(xml, new MockProject(), new MockLogin(), null);
     assertTrue(
       field.equals(field)
     );
@@ -82,7 +82,8 @@ public final class XmlProjectFieldTest {
       new XmlProjectField(
         xml, 
         new MockProject(), 
-        new MockLogin()
+        new MockLogin(),
+        null
       ).equals(
         new MockField("Priority", new MockProject())
       )
@@ -98,7 +99,8 @@ public final class XmlProjectFieldTest {
       new XmlProjectField(
         xml, 
         new MockProject(), 
-        new MockLogin()
+        new MockLogin(),
+        null
       ).equals(null)
     );
   }
@@ -112,7 +114,8 @@ public final class XmlProjectFieldTest {
       new XmlProjectField(
         xml, 
         new MockProject(), 
-        new MockLogin()
+        new MockLogin(),
+        null
       ).equals(new Object())
     );
   }
@@ -130,7 +133,8 @@ public final class XmlProjectFieldTest {
           "<projectCustomField name=\"name1\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"
         )), 
         new MockProject(), 
-        new MockLogin()
+        new MockLogin(),
+        null
       ).equals(
         new MockField("name2", new MockProject())
       )
@@ -150,7 +154,8 @@ public final class XmlProjectFieldTest {
           "<projectCustomField name=\"name\" url=\"http://localhost/rest/admin/project/TP/customfield/Priority\"/>"
         )), 
         new MockProject("p1", "p1", ""), 
-        new MockLogin()
+        new MockLogin(),
+        null
       ).equals(
         new MockField("name", new MockProject("p2", "p2", ""))
       )

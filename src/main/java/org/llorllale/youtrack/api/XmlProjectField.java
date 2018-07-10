@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClients;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -44,13 +43,14 @@ final class XmlProjectField implements ProjectField {
    * @param xml the XML object received for this field from YouTrack
    * @param project the owner {@link Project}
    * @param login the user's {@link Login}
-   * @since 0.8.0
+   * @param client the {@link HttpClient} to use
+   * @since 1.1.0
    */
-  XmlProjectField(Xml xml, Project project, Login login) {
+  XmlProjectField(Xml xml, Project project, Login login, HttpClient client) {
     this.xml = xml;
     this.project = project;
     this.login = login;
-    this.httpClient = HttpClients.createDefault();
+    this.httpClient = client;
   }
 
   @Override
@@ -87,7 +87,9 @@ final class XmlProjectField implements ProjectField {
     ).stream().findAny().get().textOf("@value").get();
     return new StreamOf<>(
       new MappedCollection<>(
-        x -> new XmlFieldValue(x, new XmlProjectField(this.xml, this.project, this.login)),
+        x -> new XmlFieldValue(
+          x, new XmlProjectField(this.xml, this.project, this.login, this.httpClient)
+        ),
         new XmlsOf(
           "/enumeration/value",
           new HttpResponseAsResponse(
