@@ -57,7 +57,7 @@ public final class DefaultFieldsIT {
   public void testStream() throws Exception {
     assertThat(
       new DefaultFields(
-        login, project, HttpClients.createDefault()
+        login, project, HttpClients::createDefault
       ).stream().count() > 0,
       new IsEqual<>(true)
     );

@@ -63,7 +63,7 @@ public final class XmlCommentTest {
   public void testId() throws Exception {
     assertThat(
       new XmlComment(
-        this.issue(), new MockLogin(), xmlObject, HttpClients.createDefault()
+        this.issue(), new MockLogin(), xmlObject, HttpClients::createDefault
       ).id(),
       is("42-307")
     );
@@ -77,7 +77,7 @@ public final class XmlCommentTest {
   public void testCreationDate() throws Exception {
     assertThat(
       new XmlComment(
-        this.issue(), new MockLogin(), xmlObject, HttpClients.createDefault()
+        this.issue(), new MockLogin(), xmlObject, HttpClients::createDefault
       ).creationDate(),
       // @checkstyle MagicNumber (1 line)
       is(Instant.ofEpochMilli(1267030238721L))
@@ -93,7 +93,7 @@ public final class XmlCommentTest {
   public void testText() throws Exception {
     assertThat(
       new XmlComment(
-        this.issue(), new MockLogin(), xmlObject, HttpClients.createDefault()
+        this.issue(), new MockLogin(), xmlObject, HttpClients::createDefault
       ).text(),
       is("comment 2?")
     );

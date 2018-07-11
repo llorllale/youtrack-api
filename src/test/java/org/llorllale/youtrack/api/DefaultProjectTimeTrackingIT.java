@@ -56,7 +56,7 @@ public final class DefaultProjectTimeTrackingIT {
   public void testEnabled() throws Exception {
     assertTrue(
       new DefaultProjectTimeTracking(
-        project, login, HttpClients.createDefault()
+        project, login, HttpClients::createDefault
       ).enabled()
     );
   }
@@ -70,7 +70,7 @@ public final class DefaultProjectTimeTrackingIT {
   public void testTypes() throws Exception {
     assertTrue(
       new DefaultProjectTimeTracking(
-        project, login, HttpClients.createDefault()
+        project, login, HttpClients::createDefault
       ).types().count() > 0
     );
   }

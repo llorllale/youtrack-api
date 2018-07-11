@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -38,7 +39,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class DefaultIssues implements Issues {
   private final Project project;
   private final Login login;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   /**
    * Primary ctor.
@@ -47,7 +48,7 @@ final class DefaultIssues implements Issues {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultIssues(Project project, Login login, HttpClient httpClient) {
+  DefaultIssues(Project project, Login login, Supplier<HttpClient> httpClient) {
     this.project = project;
     this.login = login;
     this.httpClient = httpClient;
@@ -94,7 +95,7 @@ final class DefaultIssues implements Issues {
     return Optional.of(
       new XmlOf(
         new HttpResponseAsResponse(
-          this.httpClient.execute(
+          this.httpClient.get().execute(
             new HttpRequestWithSession(
               this.login.session(),
               new HttpGet(
@@ -122,7 +123,7 @@ final class DefaultIssues implements Issues {
     return this.get(
       new SubstringAfterLast(
         new HttpResponseAsResponse(
-          this.httpClient.execute(
+          this.httpClient.get().execute(
             new HttpRequestWithSession(
               this.login.session(),
               new HttpPut(

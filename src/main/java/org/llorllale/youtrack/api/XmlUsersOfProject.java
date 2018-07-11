@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 
@@ -35,7 +36,7 @@ final class XmlUsersOfProject implements UsersOfProject {
   private final Project project;
   private final Login login;
   private final Xml xml;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   /**
    * Primary ctor.
@@ -46,7 +47,7 @@ final class XmlUsersOfProject implements UsersOfProject {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.9.0
    */
-  XmlUsersOfProject(Project project, Login login, Xml xml, HttpClient httpClient) {
+  XmlUsersOfProject(Project project, Login login, Xml xml, Supplier<HttpClient> httpClient) {
     this.project = project;
     this.login = login;
     this.xml = xml;
@@ -64,7 +65,7 @@ final class XmlUsersOfProject implements UsersOfProject {
       new XmlsOf(
         "/user",
         new HttpResponseAsResponse(
-          this.httpClient.execute(
+          this.httpClient.get().execute(
             new HttpRequestWithSession(
               this.login.session(),
               new HttpGet(

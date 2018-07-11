@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -42,7 +43,7 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
   private static final String PATH_TEMPLATE = "/issue/%s/timetracking/workitem";
   private final Login login;
   private final Issue issue;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   /**
    * Ctor.
@@ -52,7 +53,7 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultIssueTimeTracking(Login login, Issue issue, HttpClient httpClient) {
+  DefaultIssueTimeTracking(Login login, Issue issue, Supplier<HttpClient> httpClient) {
     this.login = login;
     this.issue = issue;
     this.httpClient = httpClient;
@@ -66,7 +67,7 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
         new XmlsOf(
           "/workItems/workItem",
           new HttpResponseAsResponse(
-            this.httpClient.execute(
+            this.httpClient.get().execute(
               new HttpRequestWithSession(
                 this.login.session(),
                 new HttpGet(
@@ -124,7 +125,7 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
       TimeTrackEntryType type
   ) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      this.httpClient.execute(
+      this.httpClient.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpRequestWithEntity(

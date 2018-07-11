@@ -46,7 +46,7 @@ public final class DefaultAttachmentsTest {
       new DefaultAttachments(
         new MockIssue(new MockProject()),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<fileUrls>\n"
             // @checkstyle LineLength (3 lines)

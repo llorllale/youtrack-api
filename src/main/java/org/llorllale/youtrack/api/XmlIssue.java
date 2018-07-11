@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
@@ -36,7 +37,7 @@ final class XmlIssue implements Issue {
   private final Project project;
   private final Login login;
   private final Xml xml;
-  private final HttpClient client;
+  private final Supplier<HttpClient> client;
 
   /**
    * Ctor.
@@ -51,7 +52,7 @@ final class XmlIssue implements Issue {
       Project project, 
       Login login, 
       Xml xml,
-      HttpClient client
+      Supplier<HttpClient> client
   ) {
     this.project = project;
     this.login = login;

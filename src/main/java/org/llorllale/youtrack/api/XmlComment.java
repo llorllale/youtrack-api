@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpDelete;
@@ -39,7 +40,7 @@ final class XmlComment implements Comment {
   private final Issue issue;
   private final Login login;
   private final Xml xml;
-  private final HttpClient http;
+  private final Supplier<HttpClient> http;
 
   /**
    * Extracts {@code id}, {@code creationDate}, and {@code text} from {@code jaxbComment}.
@@ -50,7 +51,9 @@ final class XmlComment implements Comment {
    * @throws UncheckedException from {@link XmlOf#textOf(String)}
    * @since 1.1.0
    */
-  XmlComment(Issue issue, Login login, Xml xml, HttpClient client) throws UncheckedException {
+  XmlComment(
+    Issue issue, Login login, Xml xml, Supplier<HttpClient> client
+  ) throws UncheckedException {
     this.issue = issue;
     this.login = login;
     this.xml = xml;
@@ -82,7 +85,7 @@ final class XmlComment implements Comment {
   @Override
   public Comment update(String txt) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      this.http.execute(
+      this.http.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpRequestWithEntity(
@@ -108,7 +111,7 @@ final class XmlComment implements Comment {
   @Override
   public Issue delete() throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      this.http.execute(
+      this.http.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpDelete(

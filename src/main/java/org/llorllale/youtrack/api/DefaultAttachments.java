@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.UUID;
+import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -37,7 +38,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
 
   private final Issue issue;
   private final Login login;
-  private final HttpClient client;
+  private final Supplier<HttpClient> client;
 
   /**
    * Ctor.
@@ -46,7 +47,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
    * @param client the Http client to use
    * @since 1.1.0
    */
-  DefaultAttachments(Issue issue, Login login, HttpClient client) {
+  DefaultAttachments(Issue issue, Login login, Supplier<HttpClient> client) {
     super(() -> {
       try {
         return new StreamOf<>(
@@ -55,7 +56,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
             new XmlsOf(
               "/fileUrls/fileUrl",
               new HttpResponseAsResponse(
-                client.execute(
+                client.get().execute(
                   new HttpRequestWithSession(
                     login.session(),
                     new HttpGet(
@@ -81,7 +82,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
   @Override
   public Attachments create(String filename, String type, InputStream contents) throws IOException {
     new HttpResponseAsResponse(
-      this.client.execute(
+      this.client.get().execute(
         new HttpRequestWithEntity(
           MultipartEntityBuilder.create()
             .setBoundary(UUID.randomUUID().toString())

@@ -24,6 +24,8 @@ import java.util.UUID;
 import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.http.Client;
+import org.llorllale.youtrack.api.http.Pooled;
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
 
@@ -51,7 +53,8 @@ public final class XmlAttachmentIT {
       config.youtrackUrl(), 
       config.youtrackUserToken()
     );
-    issue = new DefaultYouTrack(login)
+    // @checkstyle MagicNumber (1 line)
+    issue = new DefaultYouTrack(login, new Pooled(10, new Client()))
       .projects()
       .stream()
       .findFirst()

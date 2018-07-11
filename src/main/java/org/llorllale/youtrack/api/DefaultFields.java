@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -33,7 +34,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class DefaultFields implements Fields {
   private final Login login;
   private final Project project;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   /**
    * Ctor.
@@ -41,7 +42,7 @@ final class DefaultFields implements Fields {
    * @param project the parent {@link Project}
    * @param httpClient the {@link HttpClient} to use
    */
-  DefaultFields(Login session, Project project, HttpClient httpClient) {
+  DefaultFields(Login session, Project project, Supplier<HttpClient> httpClient) {
     this.login = session;
     this.project = project;
     this.httpClient = httpClient;
@@ -62,7 +63,7 @@ final class DefaultFields implements Fields {
         new XmlsOf(
           "/projectCustomFieldRefs/projectCustomField",
           new HttpResponseAsResponse(
-            this.httpClient.execute(
+            this.httpClient.get().execute(
               new HttpRequestWithSession(
                 this.login.session(),
                 new HttpGet(

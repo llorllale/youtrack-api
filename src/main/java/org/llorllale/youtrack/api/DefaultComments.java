@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -39,7 +40,7 @@ final class DefaultComments implements Comments {
 
   private final Login login;
   private final Issue issue;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   /**
    * Ctor.
@@ -48,7 +49,7 @@ final class DefaultComments implements Comments {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultComments(Login login, Issue issue, HttpClient httpClient) {
+  DefaultComments(Login login, Issue issue, Supplier<HttpClient> httpClient) {
     this.login = login;
     this.issue = issue;
     this.httpClient = httpClient;
@@ -62,7 +63,7 @@ final class DefaultComments implements Comments {
         new XmlsOf(
           "//comment",
           new HttpResponseAsResponse(
-            this.httpClient.execute(
+            this.httpClient.get().execute(
               new HttpRequestWithSession(
                 this.login.session(), 
                 new HttpGet(
@@ -82,7 +83,7 @@ final class DefaultComments implements Comments {
   @Override
   public Comments post(String text) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      this.httpClient.execute(
+      this.httpClient.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpRequestWithEntity(

@@ -47,7 +47,7 @@ public final class XmlAttachmentTest {
         new XmlOf("<fileUrl url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=false\" name=\"uploadFile.html\"/>"),
         new MockIssue(new MockProject()),
         new MockLogin(),
-        new MockHttpClient()
+        () -> new MockHttpClient()
       ).name(),
       new IsEqual<>("uploadFile.html")
     );
@@ -67,7 +67,7 @@ public final class XmlAttachmentTest {
         new XmlOf("<fileUrl authorLogin=\"jrogan\" url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=false\" name=\"uploadFile.html\"/>"),
         new MockIssue(new MockProject().withUser(creator)),
         new MockLogin(),
-        new MockHttpClient()
+        () -> new MockHttpClient()
       ).creator(),
       new IsEqual<>(creator)
     );
@@ -90,7 +90,7 @@ public final class XmlAttachmentTest {
           ),
           new MockIssue(new MockProject()),
           new MockLogin(),
-          new MockHttpClient(new MockOkResponse(contents))
+          () -> new MockHttpClient(new MockOkResponse(contents))
         ).contents()
       ),
       new IsEqual<>(contents)

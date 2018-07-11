@@ -21,6 +21,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
 import org.apache.http.entity.StringEntity;
 import org.hamcrest.core.IsEqual;
 import org.junit.Test;
@@ -94,11 +95,17 @@ public final class DefaultProjectsTest {
       new DefaultProjects(
         null,
         new MockLogin(),
-        new MockHttpClient(
-          new MockOkResponse(
-            new StringEntity(ALL_PROJECTS_RESPONSE)
-          )
-        )
+        () -> {
+          try {
+            return new MockHttpClient(
+              new MockOkResponse(
+                new StringEntity(ALL_PROJECTS_RESPONSE)
+              )
+            );
+          } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+          }
+        }
       ).stream().count(),
       new IsEqual<>(2L)
     );
@@ -115,7 +122,7 @@ public final class DefaultProjectsTest {
       new DefaultProjects(
         null,
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(ONE_PROJECT_RESPONSE)
         )
       ).get("ID").isPresent()
@@ -133,7 +140,7 @@ public final class DefaultProjectsTest {
       new DefaultProjects(
         null,
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockNotFoundResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<error>Project not found.</error>"

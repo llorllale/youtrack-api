@@ -19,40 +19,34 @@ package org.llorllale.youtrack.api;
 import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.llorllale.youtrack.api.http.Client;
-import org.llorllale.youtrack.api.session.Login;
 
 /**
- * Default implementation of {@link YouTrack}.
+ * Cached supplier of clients.
  * @author George Aristy (george.aristy@gmail.com)
- * @since 0.4.0
+ * @since 1.1.0
  */
-public final class DefaultYouTrack implements YouTrack {
-  private final Login login;
-  private final Supplier<HttpClient> client;
+final class Cached implements Supplier<HttpClient> {
+  private final Supplier<HttpClientBuilder> source;
+  private volatile HttpClient cached;
 
   /**
    * Ctor.
-   * @param login the user's {@link Login}
-   * @since 0.4.0
-   */
-  public DefaultYouTrack(Login login) {
-    this(login, new Client());
-  }
-
-  /**
-   * Ctor.
-   * @param login the user's {@link Login}
-   * @param httpClient the {@link HttpClient} to use
+   * @param source source
    * @since 1.1.0
    */
-  public DefaultYouTrack(Login login, Supplier<HttpClientBuilder> httpClient) {
-    this.login = login;
-    this.client = new Cached(httpClient);
+  Cached(Supplier<HttpClientBuilder> source) {
+    this.source = source;
   }
 
   @Override
-  public Projects projects() {
-    return new DefaultProjects(this, this.login, this.client);
+  public HttpClient get() {
+    if (this.cached == null) {
+      synchronized(this.source) {
+        if (this.cached == null) {
+          this.cached = this.source.get().build();
+        }
+      }
+    }
+    return this.cached;
   }
 }

@@ -285,7 +285,7 @@ public final class XmlIssueTest {
         new MockProject("PR-1", "name", "description"),
         new MockLogin(),
         new XmlOf(new StringAsDocument("<issue id=\"HBR-63\"/>")),
-        new MockHttpClient(new MockOkResponse(
+        () -> new MockHttpClient(new MockOkResponse(
           "<fileUrls>\n"
           // @checkstyle LineLength (1 line)
           + "  <fileUrl url=\"/_persistent/uploadFile.html?file=45-46&amp;v=0&amp;c=false\" name=\"uploadFile.html\"/>\n"

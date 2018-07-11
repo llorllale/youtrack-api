@@ -72,7 +72,7 @@ public final class DefaultAttachmentsIT {
   @Test
   public void createsAttachment() throws Exception {
     assertThat(
-      new DefaultAttachments(issue, login, HttpClients.createDefault())
+      new DefaultAttachments(issue, login, HttpClients::createDefault)
         .create(
           "test.txt", ContentType.TEXT_PLAIN.getMimeType(),
           new ByteArrayInputStream("This is a test attachment".getBytes())
@@ -90,7 +90,7 @@ public final class DefaultAttachmentsIT {
   public void createsAttachmentWithName() throws Exception {
     final String name = UUID.randomUUID().toString();
     assertThat(
-      new DefaultAttachments(issue, login, HttpClients.createDefault())
+      new DefaultAttachments(issue, login, HttpClients::createDefault)
         .create(
           name, ContentType.TEXT_PLAIN.getMimeType(),
           new ByteArrayInputStream("This is a test attachment".getBytes())
@@ -108,7 +108,7 @@ public final class DefaultAttachmentsIT {
   public void createsTheAttachmentWithTheUser() throws Exception {
     final String name = UUID.randomUUID().toString();
     assertThat(
-      new DefaultAttachments(issue, login, HttpClients.createDefault())
+      new DefaultAttachments(issue, login, HttpClients::createDefault)
         .create(
           name, ContentType.TEXT_PLAIN.getMimeType(),
           new ByteArrayInputStream("This is a test attachment".getBytes())

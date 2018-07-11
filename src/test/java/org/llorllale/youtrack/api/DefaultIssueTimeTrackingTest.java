@@ -71,7 +71,7 @@ public final class DefaultIssueTimeTrackingTest {
       new DefaultIssueTimeTracking(
         new MockLogin(),
         new MockIssue(new MockProject()),
-        new MockHttpClient(new MockOkResponse(WORKITEMS))
+        () -> new MockHttpClient(new MockOkResponse(WORKITEMS))
       ).stream().count(),
       new IsEqual<>(2L)
     );
