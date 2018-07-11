@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 // @checkstyle AvoidStaticImport (1 line)
 import static org.junit.Assert.assertFalse;
 
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import org.junit.Test;
@@ -34,10 +35,10 @@ import org.llorllale.youtrack.api.mock.http.response.MockOkResponse;
  */
 public final class PageTest {
   /**
-   * Ctor must wrap IOExceptions in UncheckedException.
+   * Ctor must wrap IOExceptions in UncheckedIOException.
    * @since 1.0.0
    */
-  @Test(expected = UncheckedException.class)
+  @Test(expected = UncheckedIOException.class)
   public void ctorUncheckedExceptionThrow() {
     new Page<>(
       null,

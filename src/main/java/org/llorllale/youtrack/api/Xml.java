@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.Optional;
 import javax.xml.xpath.XPathExpressionException;
@@ -34,30 +35,31 @@ interface Xml {
    * 
    * @param xpath the xpath expression
    * @return the string obtained by applying {@code xpath} on the xml
-   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java's xpath
+   * @throws UncheckedIOException wrapping any {@link XPathExpressionException} thrown by
+   *    java's xpath
    * @since 1.0.0
    */
-  Optional<String> textOf(String xpath) throws UncheckedException;
+  Optional<String> textOf(String xpath) throws UncheckedIOException;
 
   /**
    * Returns the first {@link Xml} node selected with {@code xpath}.
    * 
    * @param xpath the xpath expression that identifies the child node desired
    * @return the first {@link Xml} node selected with {@code xpath}
-   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java
+   * @throws UncheckedIOException wrapping any {@link XPathExpressionException} thrown by java
    * @since 1.0.0
    */
-  Optional<Xml> child(String xpath) throws UncheckedException;
+  Optional<Xml> child(String xpath) throws UncheckedIOException;
 
   /**
    * Returns all descendant {@link Xml} nodes selected with {@code xpath}.
    * 
    * @param xpath the xpath expression that identifies the child nodes desired
    * @return a collection of descendant {@link Xml} nodes selected with {@code xpath}
-   * @throws UncheckedException wrapping any {@link XPathExpressionException} thrown by java
+   * @throws UncheckedIOException wrapping any {@link XPathExpressionException} thrown by java
    * @since 1.0.0
    */
-  Collection<Xml> children(String xpath) throws UncheckedException;
+  Collection<Xml> children(String xpath) throws UncheckedIOException;
 
   /**
    * The {@link Node} encapsulated by this {@link Xml}.

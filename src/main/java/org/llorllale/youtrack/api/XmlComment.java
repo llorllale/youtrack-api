@@ -48,12 +48,9 @@ final class XmlComment implements Comment {
    * @param login the user's session
    * @param xml comment's XML object received from YouTrack
    * @param client the Http client to use
-   * @throws UncheckedException from {@link XmlOf#textOf(String)}
    * @since 1.1.0
    */
-  XmlComment(
-    Issue issue, Login login, Xml xml, Supplier<HttpClient> client
-  ) throws UncheckedException {
+  XmlComment(Issue issue, Login login, Xml xml, Supplier<HttpClient> client) {
     this.issue = issue;
     this.login = login;
     this.xml = xml;

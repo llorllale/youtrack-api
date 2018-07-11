@@ -16,6 +16,7 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.UncheckedIOException;
 import java.net.URL;
 import org.junit.Test;
 
@@ -27,20 +28,20 @@ import org.junit.Test;
  */
 public final class UncheckedUriBuilderTest {
   /**
-   * Invalid URIs should be wrapped in an {@link UncheckedException}.
+   * Invalid URIs should be wrapped in an {@link UncheckedIOException}.
    * @since 1.0.0
    */
-  @Test(expected = UncheckedException.class)
+  @Test(expected = UncheckedIOException.class)
   public void ctorStringUncheckedThrowWithInvalidUri() {
     new UncheckedUriBuilder("invalid.uri.\"");
   }
 
   /**
-   * Invalid URIs should be wrapped in an {@link UncheckedException}.
+   * Invalid URIs should be wrapped in an {@link UncheckedIOException}.
    * @throws Exception unexpected
    * @since 1.0.0
    */
-  @Test(expected = UncheckedException.class)
+  @Test(expected = UncheckedIOException.class)
   public void ctorUrlPathUncheckedThrowWithInvalidUri() throws Exception {
     new UncheckedUriBuilder(new URL("http://localhost"), "invalid");
   }

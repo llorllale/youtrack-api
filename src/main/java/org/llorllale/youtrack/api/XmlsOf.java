@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,14 +75,14 @@ final class XmlsOf extends AbstractCollection<Xml> {
    * @param xpath the xpath expression used to add Xml nodes to this collection
    * @param response the response object to encapsulate
    * @throws IOException if there's an error reading the response's entity's contents
-   * @throws UncheckedException if there's an error parsing the xml payload into a document node or
-   *    if there's an error while appyling {@code xpath}
+   * @throws UncheckedIOException if there's an error parsing the xml payload into a document node
+   *    or if there's an error while appyling {@code xpath}
    * @see InputStreamAsString
    * @see StringAsDocument
    * @see Xml
    * @since 1.0.0
    */
-  XmlsOf(String xpath, Response response) throws IOException, UncheckedException {
+  XmlsOf(String xpath, Response response) throws IOException, UncheckedIOException {
     this.base = 
       new XmlOf(
         new StringAsDocument(

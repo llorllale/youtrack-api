@@ -16,6 +16,8 @@
 
 package org.llorllale.youtrack.api;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -26,7 +28,7 @@ import org.apache.http.client.utils.URIBuilder;
  * <p>Hides all {@link URISyntaxException}s.</p>
  * 
  * <p>This class uses the {@link URIBuilder} internally but does not expose the aforementioned 
- * exception. A {@link UncheckedException} is thrown if the internal {@link URIBuilder} throws 
+ * exception. A {@link UncheckedIOException} is thrown if the internal {@link URIBuilder} throws 
  * {@link URISyntaxException}.</p>
  * 
  * <p>The main motivator for this class is to reduce all the {@code try...catch} noise in the 
@@ -42,16 +44,18 @@ final class UncheckedUriBuilder {
    * Constructs the internal {@link URIBuilder} with the given {@code baseUrl}.
    * 
    * @param baseUrl an initial url
-   * @throws UncheckedException wrapping any internal {@link URISyntaxException}
+   * @throws UncheckedIOException wrapping any internal {@link URISyntaxException}
    * @since 0.1.0
    */
-  UncheckedUriBuilder(String baseUrl) throws UncheckedException {
+  UncheckedUriBuilder(String baseUrl) throws UncheckedIOException {
     try {
       this.builder = new URIBuilder(baseUrl);
     } catch (URISyntaxException e) {
-      throw new UncheckedException(
+      throw new UncheckedIOException(
+        new IOException(
           String.format("This should not have happened: syntax issue with URL: %s", baseUrl),
           e
+        )
       );
     }
   }
@@ -61,11 +65,11 @@ final class UncheckedUriBuilder {
    * 
    * @param baseUrl the URL for the YouTrack RESTful endpoint API
    * @param path the resource's sub-path
-   * @throws UncheckedException wrapping any internal {@link URISyntaxException}
+   * @throws UncheckedIOException wrapping any internal {@link URISyntaxException}
    * @see <a href="https://stackoverflow.com/a/724764/1623885">StackOverflow</a>
    * @since 1.0.0
    */
-  UncheckedUriBuilder(URL baseUrl, String path) throws UncheckedException {
+  UncheckedUriBuilder(URL baseUrl, String path) throws UncheckedIOException {
     try {
       this.builder = new URIBuilder(
           new URI(
@@ -79,12 +83,14 @@ final class UncheckedUriBuilder {
           )
       );
     } catch (URISyntaxException e) {
-      throw new UncheckedException(
+      throw new UncheckedIOException(
+        new IOException(
           String.format(
               "This should not have happened: syntax issue baseUrl=%s path=%s", 
               baseUrl.toString(), path
           ),
           e
+        )
       );
     }
   }
@@ -120,14 +126,16 @@ final class UncheckedUriBuilder {
    * Builds the {@link URI}.
    * 
    * @return the {@link URI} built by the internal {@link URIBuilder}
-   * @throws UncheckedException wrapping any internal {@link URISyntaxException}
+   * @throws UncheckedIOException wrapping any internal {@link URISyntaxException}
    * @since 0.1.0
    */
-  public URI build() throws UncheckedException {
+  public URI build() throws UncheckedIOException {
     try {
       return this.builder.build();
     } catch (URISyntaxException e) {
-      throw new UncheckedException("This should not have happened: syntax issue with a URL", e);
+      throw new UncheckedIOException(
+        new IOException("This should not have happened: syntax issue with a URL", e)
+      );
     }
   }
 }

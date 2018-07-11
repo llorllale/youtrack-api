@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Collection;
 import java.util.Optional;
 import javax.xml.xpath.XPathConstants;
@@ -60,11 +61,11 @@ final class XmlOf implements Xml {
    * 
    * @param response the response to encapsulate
    * @throws IOException from {@link InputStreamAsString#apply(java.io.InputStream)}
-   * @throws UncheckedException from {@link StringAsDocument}
+   * @throws UncheckedIOException from {@link StringAsDocument}
    * @see #XmlOf(org.w3c.dom.Node) 
    * @since 1.0.0
    */
-  XmlOf(Response response) throws UncheckedException, IOException {
+  XmlOf(Response response) throws UncheckedIOException, IOException {
     this(
         new StringAsDocument(
             new InputStreamAsString().apply(
@@ -78,26 +79,26 @@ final class XmlOf implements Xml {
    * Encapsulates {@code xml} as a {@link Xml}.
    * 
    * @param xml the xml string
-   * @throws UncheckedException from {@link StringAsDocument}
+   * @throws UncheckedIOException from {@link StringAsDocument}
    * @see #XmlOf(org.w3c.dom.Document) 
    * @since 1.0.0
    */
-  XmlOf(String xml) throws UncheckedException {
+  XmlOf(String xml) throws UncheckedIOException {
     this(new StringAsDocument(xml));
   }
 
   @Override
-  public Optional<String> textOf(String xpath) throws UncheckedException {
+  public Optional<String> textOf(String xpath) throws UncheckedIOException {
     return this.child(xpath).map(x -> x.node().getTextContent());
   }
 
   @Override
-  public Optional<Xml> child(String xpath) throws UncheckedException {
+  public Optional<Xml> child(String xpath) throws UncheckedIOException {
     return this.children(xpath).stream().findFirst();
   }
 
   @Override
-  public Collection<Xml> children(String xpath) throws UncheckedException {
+  public Collection<Xml> children(String xpath) throws UncheckedIOException {
     try {
       return new XmlsOf(
           (NodeList) XPathFactory.newInstance()
@@ -105,7 +106,7 @@ final class XmlOf implements Xml {
               .evaluate(xpath, this.node(), XPathConstants.NODESET)
       );
     } catch(XPathExpressionException e) {
-      throw new UncheckedException(e.getMessage(), e);
+      throw new UncheckedIOException(new IOException(e.getMessage(), e));
     }
   }
 
