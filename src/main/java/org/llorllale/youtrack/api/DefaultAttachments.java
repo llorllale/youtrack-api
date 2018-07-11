@@ -57,7 +57,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
               "/fileUrls/fileUrl",
               new HttpResponseAsResponse(
                 client.get().execute(
-                  new HttpRequestWithSession(
+                  new Authenticated(
                     login.session(),
                     new HttpGet(
                       login.session().baseUrl().toString().concat(
@@ -83,12 +83,12 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
   public Attachments create(String filename, String type, InputStream contents) throws IOException {
     new HttpResponseAsResponse(
       this.client.get().execute(
-        new HttpRequestWithEntity(
+        new Loaded(
           MultipartEntityBuilder.create()
             .setBoundary(UUID.randomUUID().toString())
             .addBinaryBody(filename, contents, ContentType.create(type), filename)
             .build(),
-          new HttpRequestWithSession(
+          new Authenticated(
             this.login.session(),
             new HttpPost(
               this.login.session().baseUrl().toString().concat(

@@ -86,9 +86,9 @@ final class XmlComment implements Comment {
   public Comment update(String txt) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
       this.http.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
-          new HttpRequestWithEntity(
+          new Loaded(
             new StringEntity(
               String.format("{\"text\": \"%s\"}", txt),
               ContentType.APPLICATION_JSON
@@ -112,7 +112,7 @@ final class XmlComment implements Comment {
   public Issue delete() throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
       this.http.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
           new HttpDelete(
             this.login.session().baseUrl().toString()

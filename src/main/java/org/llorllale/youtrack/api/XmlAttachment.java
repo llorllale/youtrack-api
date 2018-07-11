@@ -67,7 +67,7 @@ final class XmlAttachment implements Attachment {
   public InputStream contents() throws IOException {
     return new HttpResponseAsResponse(
       this.client.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
           new HttpGet(
             this.fileUrl.textOf("@url").get()
@@ -81,7 +81,7 @@ final class XmlAttachment implements Attachment {
   public Attachments delete() throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
       this.client.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
           new HttpDelete(
             this.login.session().baseUrl().toString().concat(

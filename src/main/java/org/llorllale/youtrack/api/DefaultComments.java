@@ -64,7 +64,7 @@ final class DefaultComments implements Comments {
           "//comment",
           new HttpResponseAsResponse(
             this.httpClient.get().execute(
-              new HttpRequestWithSession(
+              new Authenticated(
                 this.login.session(), 
                 new HttpGet(
                   this.login.session().baseUrl().toString()
@@ -84,9 +84,9 @@ final class DefaultComments implements Comments {
   public Comments post(String text) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
       this.httpClient.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
-          new HttpRequestWithEntity(
+          new Loaded(
             new StringEntity(
               "comment=".concat(text), 
               ContentType.APPLICATION_FORM_URLENCODED

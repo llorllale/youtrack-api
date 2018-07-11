@@ -61,7 +61,7 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
       "/settings",
       new HttpResponseAsResponse(
         this.httpClient.get().execute(
-          new HttpRequestWithSession(
+          new Authenticated(
             this.login.session(),
             new HttpGet(
               this.login.session().baseUrl().toString()
@@ -85,7 +85,7 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
           "/workItemTypes/workType",
           new HttpResponseAsResponse(
             this.httpClient.get().execute(
-              new HttpRequestWithSession(
+              new Authenticated(
                 this.login.session(),
                 new HttpGet(
                   this.login.session().baseUrl().toString()

@@ -64,7 +64,7 @@ final class DefaultFields implements Fields {
           "/projectCustomFieldRefs/projectCustomField",
           new HttpResponseAsResponse(
             this.httpClient.get().execute(
-              new HttpRequestWithSession(
+              new Authenticated(
                 this.login.session(),
                 new HttpGet(
                   this.login.session().baseUrl().toString()

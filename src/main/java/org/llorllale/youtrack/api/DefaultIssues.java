@@ -61,12 +61,12 @@ final class DefaultIssues implements Issues {
 
   @Override
   public Stream<Issue> stream() throws IOException, UnauthorizedException {
-    final int pageSize = 10;
+    final int size = 10;
     return new StreamOf<>(
-      new Pagination<>(
-        pageSize,
+      new Pages<>(
+        size,
         new UncheckedIoFunction<>(n ->
-          new HttpRequestWithSession(
+          new Authenticated(
             this.login.session(), 
             new HttpGet(
               new UncheckedUriBuilder(
@@ -96,7 +96,7 @@ final class DefaultIssues implements Issues {
       new XmlOf(
         new HttpResponseAsResponse(
           this.httpClient.get().execute(
-            new HttpRequestWithSession(
+            new Authenticated(
               this.login.session(),
               new HttpGet(
                 this.login.session().baseUrl().toString().concat("/issue/").concat(issueId)
@@ -124,7 +124,7 @@ final class DefaultIssues implements Issues {
       new SubstringAfterLast(
         new HttpResponseAsResponse(
           this.httpClient.get().execute(
-            new HttpRequestWithSession(
+            new Authenticated(
               this.login.session(),
               new HttpPut(
                 new UncheckedUriBuilder(

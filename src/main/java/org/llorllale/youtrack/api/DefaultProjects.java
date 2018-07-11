@@ -60,7 +60,7 @@ final class DefaultProjects implements Projects {
           "/projects/project",
           new HttpResponseAsResponse(
             this.httpClient.get().execute(
-              new HttpRequestWithSession(
+              new Authenticated(
                 this.login.session(), 
                 new HttpGet(
                   this.login.session().baseUrl().toString().concat("/project/all")
@@ -81,7 +81,7 @@ final class DefaultProjects implements Projects {
         "/project",
         new HttpResponseAsResponse(
           this.httpClient.get().execute(
-            new HttpRequestWithSession(
+            new Authenticated(
               this.login.session(), 
               new HttpGet(
                 this.login.session().baseUrl().toString()

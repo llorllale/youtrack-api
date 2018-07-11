@@ -66,7 +66,7 @@ final class XmlUsersOfProject implements UsersOfProject {
         "/user",
         new HttpResponseAsResponse(
           this.httpClient.get().execute(
-            new HttpRequestWithSession(
+            new Authenticated(
               this.login.session(),
               new HttpGet(
                 this.login.session().baseUrl().toString().concat("/user/").concat(userLogin)

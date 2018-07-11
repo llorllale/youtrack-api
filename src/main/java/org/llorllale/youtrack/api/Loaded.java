@@ -24,55 +24,27 @@ import org.apache.http.HttpEntity;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.RequestLine;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.params.HttpParams;
 
-import org.llorllale.youtrack.api.session.Session;
-
 /**
- * Thin decorator around Apache http requests that attaches a {@link Session session's} state
- * to itself.
+ * HTTP request with a payload.
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
 @SuppressWarnings("checkstyle:MethodCount")
-final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase {
-  private final HttpRequestBase base;
-  private final boolean expectContinue;
-  private HttpEntity httpEntity;
+final class Loaded extends HttpEntityEnclosingRequestBase {
+  private final HttpEntityEnclosingRequestBase base;
 
   /**
-   * Attaches the {@code session}'s state to {@code request}.
-   * 
-   * @param session the user's {@link Session}
-   * @param request the http request to execute
+   * Ctor.
+   * @param entity the entity to attach
+   * @param base the base request
    * @since 0.4.0
    */
-  HttpRequestWithSession(Session session, HttpEntityEnclosingRequestBase request) {
-    this.base = request;
-    this.expectContinue = request.expectContinue();
-    this.httpEntity = request.getEntity();
-    session.cookies().stream()
-        .map(c -> new BasicHeader(c.name(), c.value()))
-        .forEach(this::addHeader);
-  }
-
-  /**
-   * Attaches the {@code session}'s state to {@code request}.
-   * 
-   * @param session the user's {@link Session}
-   * @param request the http request to execute
-   * @since 0.4.0
-   */
-  HttpRequestWithSession(Session session, HttpRequestBase request) {
-    this.base = request;
-    session.cookies().stream()
-        .map(c -> new BasicHeader(c.name(), c.value()))
-        .forEach(this::addHeader);
-    this.expectContinue = false;
-    this.httpEntity = null;
+  Loaded(HttpEntity entity, HttpEntityEnclosingRequestBase base) {
+    this.base = base;
+    this.setEntity(entity);
   }
 
   @Override
@@ -187,16 +159,16 @@ final class HttpRequestWithSession extends HttpEntityEnclosingRequestBase {
 
   @Override
   public HttpEntity getEntity() {
-    return this.httpEntity;
+    return this.base.getEntity();
   }
 
   @Override
   public boolean expectContinue() {
-    return this.expectContinue;
+    return this.base.expectContinue();
   }
 
   @Override
   public void setEntity(HttpEntity entity) {
-    this.httpEntity = entity;
+    this.base.setEntity(entity);
   }
 }

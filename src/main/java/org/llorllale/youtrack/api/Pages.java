@@ -37,7 +37,7 @@ import org.apache.http.client.methods.HttpUriRequest;
  * @see Page
  * @since 0.7.0
  */
-final class Pagination<T> implements Iterator<T> {
+final class Pages<T> implements Iterator<T> {
   private final Supplier<HttpUriRequest> pageRequest;
   private final ExceptionalFunction<Response, Collection<T>, IOException> mapper;
   private final Supplier<HttpClient> httpClient;
@@ -52,7 +52,7 @@ final class Pagination<T> implements Iterator<T> {
    * @param httpClient the {@link HttpClient} to use to execute the requests
    * @since 0.7.0
    */
-  Pagination(
+  Pages(
       Supplier<HttpUriRequest> pageRequest,
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
       Supplier<HttpClient> httpClient
@@ -75,7 +75,7 @@ final class Pagination<T> implements Iterator<T> {
    * @see PageUri
    * @since 1.0.0
    */
-  Pagination(
+  Pages(
       int pageSize,
       Function<Integer, HttpUriRequest> combiner, 
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,

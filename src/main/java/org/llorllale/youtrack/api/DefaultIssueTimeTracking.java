@@ -68,7 +68,7 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
           "/workItems/workItem",
           new HttpResponseAsResponse(
             this.httpClient.get().execute(
-              new HttpRequestWithSession(
+              new Authenticated(
                 this.login.session(),
                 new HttpGet(
                   this.login.session().baseUrl().toString()
@@ -126,9 +126,9 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
   ) throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
       this.httpClient.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
-          new HttpRequestWithEntity(
+          new Loaded(
             new StringEntity(
               this.toXmlString(date, duration, description, type),
               ContentType.APPLICATION_XML

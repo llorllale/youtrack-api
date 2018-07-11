@@ -70,7 +70,7 @@ final class XmlProjectField implements ProjectField {
       "/projectCustomField/param",
       new HttpResponseAsResponse(
         this.httpClient.get().execute(
-          new HttpRequestWithSession(
+          new Authenticated(
             this.login.session(),
             new HttpGet(
               this.login.session().baseUrl().toString()
@@ -95,7 +95,7 @@ final class XmlProjectField implements ProjectField {
           "/enumeration/value",
           new HttpResponseAsResponse(
             this.httpClient.get().execute(
-              new HttpRequestWithSession(
+              new Authenticated(
                 this.login.session(),
                 new HttpGet(
                   new UncheckedUriBuilder(

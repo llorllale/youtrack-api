@@ -87,9 +87,9 @@ final class DefaultUpdateIssue implements UpdateIssue {
     final String separator = " ";
     new HttpResponseAsResponse(
       this.client.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
-          new HttpRequestWithEntity(
+          new Loaded(
             new UrlEncodedFormEntity(
               Arrays.asList(
                 new BasicNameValuePair(
@@ -130,7 +130,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
       throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
       this.client.get().execute(
-        new HttpRequestWithSession(
+        new Authenticated(
           this.login.session(),
           new HttpPost(
             new UncheckedUriBuilder(
