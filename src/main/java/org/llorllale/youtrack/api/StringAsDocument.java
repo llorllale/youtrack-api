@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Attr;
@@ -62,21 +63,21 @@ final class StringAsDocument implements Document {
   /**
    * Ctor.
    * 
-   * <p>Throws {@link UncheckedException} because {@code xml} is expected to be well-formed and
+   * <p>Throws {@link UncheckedIOException} because {@code xml} is expected to be well-formed and
    * the JDK's DOM infrastructure should be well-configured.
    * 
    * @param xml the xml string
-   * @throws UncheckedException wrapping any {@link ParserConfigurationException}, 
+   * @throws UncheckedIOException wrapping any {@link ParserConfigurationException}, 
    *   {@link SAXException}, {@link IOException} thrown by Java
    * @since 1.0.0
    */
-  StringAsDocument(String xml) throws UncheckedException {
+  StringAsDocument(String xml) throws UncheckedIOException {
     try {
       this.base = DocumentBuilderFactory.newInstance()
           .newDocumentBuilder()
           .parse(new InputSource(new StringReader(xml)));
     } catch(ParserConfigurationException | SAXException | IOException e) {
-      throw new UncheckedException(e.getMessage(), e);
+      throw new UncheckedIOException(new IOException(e.getMessage(), e));
     }
   }
 

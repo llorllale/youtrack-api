@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
@@ -31,7 +32,7 @@ import org.apache.http.client.methods.HttpUriRequest;
  * An {@link Iterator} that holds the contents of a single page of results from the YouTrack server.
  * 
  * <p>Note: the {@link #hasNext()} and {@link #next()} methods wrap checked exceptions inside
- * {@link UncheckedException}.</p>
+ * {@link UncheckedIOException}.</p>
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @param <T> the type of the contents of this page
@@ -47,14 +48,14 @@ final class Page<T> implements Iterator<T> {
    * @param request the {@link HttpUriRequest} for the page
    * @param mapper the mapping function to transform the results from YouTrack into types T
    * @param httpClient the {@link HttpClient} to use
-   * @throws UncheckedException wrapping any IOException thrown when fetching this page's contents
+   * @throws UncheckedIOException wrapping any IOException thrown when fetching this page's contents
    * @since 0.7.0
    */
   Page(
       HttpUriRequest request, 
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
       Supplier<HttpClient> httpClient
-  ) throws UncheckedException {
+  ) throws UncheckedIOException {
     try {
       this.contents = new ArrayDeque<>(
           mapper.apply(
@@ -64,7 +65,7 @@ final class Page<T> implements Iterator<T> {
           )
       );
     } catch (IOException e) {
-      throw new UncheckedException(e);
+      throw new UncheckedIOException(e);
     }
   }
 
