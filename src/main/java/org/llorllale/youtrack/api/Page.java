@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpUriRequest;
@@ -52,13 +53,13 @@ final class Page<T> implements Iterator<T> {
   Page(
       HttpUriRequest request, 
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
-      HttpClient httpClient
+      Supplier<HttpClient> httpClient
   ) throws UncheckedException {
     try {
       this.contents = new ArrayDeque<>(
           mapper.apply(
               new HttpResponseAsResponse(
-                  httpClient.execute(request)
+                  httpClient.get().execute(request)
               )
           )
       );

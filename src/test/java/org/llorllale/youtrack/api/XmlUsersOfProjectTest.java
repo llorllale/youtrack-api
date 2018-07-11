@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import java.util.stream.Collectors;
+import org.apache.http.client.HttpClient;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -62,7 +63,7 @@ public final class XmlUsersOfProjectTest {
         new MockProject(),
         new MockLogin(),
         null,
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<user login=\"root\" \n"
             + "      fullName=\"root\" \n"
@@ -88,6 +89,29 @@ public final class XmlUsersOfProjectTest {
   @Test
   @SuppressWarnings("checkstyle:MethodLength")
   public void assignees() throws Exception {
+    final HttpClient client = new MockHttpClient(
+      new MockOkResponse(
+        "<user login=\"random\" \n"
+        + "      fullName=\"Random User that should not be queried\" \n"
+        + "      groupsUrl=\"http://localhost:8080/charisma/rest/admin/user/root/group/\" \n"
+        + "      rolesUrl=\"http://localhost:8080/charisma/rest/admin/user/root/role/\"\n"
+        + "/>"
+      ),
+      new MockOkResponse(
+        "<user login=\"ajordens\" \n"
+        + "      fullName=\"Abraham Jordens\" \n"
+        + "      groupsUrl=\"http://localhost:8080/charisma/rest/admin/user/root/group/\" \n"
+        + "      rolesUrl=\"http://localhost:8080/charisma/rest/admin/user/root/role/\"\n"
+        + "/>"
+      ),
+      new MockOkResponse(
+        "<user login=\"garisty\" \n"
+        + "      fullName=\"George Aristy\" \n"
+        + "      groupsUrl=\"http://localhost:8080/charisma/rest/admin/user/root/group/\" \n"
+        + "      rolesUrl=\"http://localhost:8080/charisma/rest/admin/user/root/role/\"\n"
+        + "/>"
+      )
+    );
     assertThat(
       new XmlUsersOfProject(
         new MockProject(),
@@ -112,29 +136,7 @@ public final class XmlUsersOfProjectTest {
           + "  </subsystems>\n"
           + "</project>"
         )),
-        new MockHttpClient(
-          new MockOkResponse(
-            "<user login=\"random\" \n"
-            + "      fullName=\"Random User that should not be queried\" \n"
-            + "      groupsUrl=\"http://localhost:8080/charisma/rest/admin/user/root/group/\" \n"
-            + "      rolesUrl=\"http://localhost:8080/charisma/rest/admin/user/root/role/\"\n"
-            + "/>"
-          ),
-          new MockOkResponse(
-            "<user login=\"ajordens\" \n"
-            + "      fullName=\"Abraham Jordens\" \n"
-            + "      groupsUrl=\"http://localhost:8080/charisma/rest/admin/user/root/group/\" \n"
-            + "      rolesUrl=\"http://localhost:8080/charisma/rest/admin/user/root/role/\"\n"
-            + "/>"
-          ),
-          new MockOkResponse(
-            "<user login=\"garisty\" \n"
-            + "      fullName=\"George Aristy\" \n"
-            + "      groupsUrl=\"http://localhost:8080/charisma/rest/admin/user/root/group/\" \n"
-            + "      rolesUrl=\"http://localhost:8080/charisma/rest/admin/user/root/role/\"\n"
-            + "/>"
-          )
-        )
+        () -> client
       ).assignees().map(User::name).collect(Collectors.toList()),
       containsInAnyOrder("Abraham Jordens", "George Aristy")
     );

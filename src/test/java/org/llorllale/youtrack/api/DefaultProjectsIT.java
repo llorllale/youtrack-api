@@ -59,7 +59,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testStream() throws Exception {
     assertTrue(
-      new DefaultProjects(null, login, HttpClients.createDefault()).stream()
+      new DefaultProjects(null, login, HttpClients::createDefault).stream()
         .anyMatch(p -> config.youtrackTestProjectId().equals(p.id()))
     );
   }
@@ -72,7 +72,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testGetExistingProject() throws Exception {
     assertTrue(
-      new DefaultProjects(null, login, HttpClients.createDefault())
+      new DefaultProjects(null, login, HttpClients::createDefault)
         .get(config.youtrackTestProjectId())
         .isPresent()
     );
@@ -86,7 +86,7 @@ public final class DefaultProjectsIT {
   @Test
   public void testGetNonExistingProject() throws Exception {
     assertFalse(
-      new DefaultProjects(null, login, HttpClients.createDefault())
+      new DefaultProjects(null, login, HttpClients::createDefault)
         .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
         .isPresent()
     );

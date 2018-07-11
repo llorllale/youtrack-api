@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.http.client.HttpClient;
 
@@ -42,7 +43,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
   private static final String PATH_TEMPLATE = "/issue/%s";
   private final Issue issue;
   private final Login login;
-  private final HttpClient client;
+  private final Supplier<HttpClient> client;
 
   /**
    * Primary ctor.
@@ -52,7 +53,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
    * @param client the {@link HttpClient} to use
    * @since 1.1.0
    */
-  DefaultUpdateIssue(Issue issue, Login login, HttpClient client) {
+  DefaultUpdateIssue(Issue issue, Login login, Supplier<HttpClient> client) {
     this.issue = issue;
     this.login = login;
     this.client = client;
@@ -85,7 +86,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
   public Issue fields(Map<Field, FieldValue> fields) throws IOException, UnauthorizedException {
     final String separator = " ";
     new HttpResponseAsResponse(
-      this.client.execute(
+      this.client.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpRequestWithEntity(
@@ -128,7 +129,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
   private Issue updateSmmryDesc(String summary, String description) 
       throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      this.client.execute(
+      this.client.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpPost(

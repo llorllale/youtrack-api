@@ -30,6 +30,8 @@ import java.util.concurrent.Future;
 import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.llorllale.youtrack.api.http.Client;
+import org.llorllale.youtrack.api.http.Pooled;
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.PermanentToken;
 
@@ -38,6 +40,7 @@ import org.llorllale.youtrack.api.session.PermanentToken;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.1.0
  * @checkstyle MethodName (200 lines)
+ * @checkstyle MagicNumber (200 lines)
  * @checkstyle AbbreviationAsWordInName (2 lines)
  */
 public final class XmlIssueIT {
@@ -63,8 +66,9 @@ public final class XmlIssueIT {
    */
   @Test
   public void canReadAttachmentsMultipleTimesWithoutHanging() throws IOException {
-    final Issue issue = new DefaultYouTrack(login)
-      .projects()
+    final Issue issue = new DefaultYouTrack(
+      login, new Pooled(10, new Client())
+    ).projects()
       .get(config.youtrackTestProjectId()).get()
       .issues()
       .create(XmlIssueIT.class.getSimpleName(), "canReadAttachmentsMultipleTimesWithoutHanging");
@@ -90,8 +94,9 @@ public final class XmlIssueIT {
   @SuppressWarnings("checkstyle:NPathComplexity")
   @Test(timeout = 5000L)
   public void canReadAttachmentsFromMultipleThreads() throws IOException {
-    final Issue issue = new DefaultYouTrack(login)
-      .projects()
+    final Issue issue = new DefaultYouTrack(
+      login, new Pooled(10, new Client())
+    ).projects()
       .get(config.youtrackTestProjectId()).get()
       .issues()
       .create(XmlIssueIT.class.getSimpleName(), "canReadAttachmentsFromMultipleThreads");

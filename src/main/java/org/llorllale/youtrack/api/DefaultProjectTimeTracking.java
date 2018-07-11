@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 
@@ -34,7 +35,7 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
   private static final String PATH_TEMPLATE = "/admin/project/%s/timetracking";
   private final Project project;
   private final Login login;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   /**
    * Primary ctor.
@@ -43,7 +44,7 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
    * @param httpClient the {@link HttpClient} to use
    * @since 1.0.0
    */
-  DefaultProjectTimeTracking(Project project, Login login, HttpClient httpClient) {
+  DefaultProjectTimeTracking(Project project, Login login, Supplier<HttpClient> httpClient) {
     this.project = project;
     this.login = login;
     this.httpClient = httpClient;
@@ -59,7 +60,7 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
     final Xml settings = new XmlsOf(
       "/settings",
       new HttpResponseAsResponse(
-        this.httpClient.execute(
+        this.httpClient.get().execute(
           new HttpRequestWithSession(
             this.login.session(),
             new HttpGet(
@@ -83,7 +84,7 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
         new XmlsOf(
           "/workItemTypes/workType",
           new HttpResponseAsResponse(
-            this.httpClient.execute(
+            this.httpClient.get().execute(
               new HttpRequestWithSession(
                 this.login.session(),
                 new HttpGet(

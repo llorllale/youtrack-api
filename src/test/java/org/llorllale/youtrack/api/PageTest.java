@@ -42,7 +42,7 @@ public final class PageTest {
     new Page<>(
       null,
       r -> Collections.<String>emptyList(),
-      new MockThrowingHttpClient()
+      () -> new MockThrowingHttpClient()
     );
   }
 
@@ -55,7 +55,7 @@ public final class PageTest {
     new Page<>(
       null,
       r -> Collections.<String>emptyList(),
-      new MockHttpClient(new MockOkResponse())
+      () -> new MockHttpClient(new MockOkResponse())
     ).next();
   }
 

@@ -60,7 +60,7 @@ public final class DefaultFieldsTest {
       new DefaultFields(
         new MockLogin(),
         new MockProject(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<projectCustomFieldRefs>\n"
             // @checkstyle LineLength (2 lines)

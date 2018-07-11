@@ -58,10 +58,10 @@ public final class DefaultIssuesIT {
    */
   @Test
   public void testStream() throws Exception {
-    final Issue issue = new DefaultIssues(project, login, HttpClients.createDefault())
+    final Issue issue = new DefaultIssues(project, login, HttpClients::createDefault)
       .create(DefaultIssuesIT.class.getSimpleName().concat(".testStream"), "description");
     assertTrue(
-      new DefaultIssues(project, login, HttpClients.createDefault())
+      new DefaultIssues(project, login, HttpClients::createDefault)
         .stream()
         .anyMatch(i -> i.id().equals(issue.id()))
     );
@@ -73,13 +73,13 @@ public final class DefaultIssuesIT {
    */
   @Test
   public void createAndGetIssue() throws Exception {
-    final Issue issue = new DefaultIssues(project, login, HttpClients.createDefault())
+    final Issue issue = new DefaultIssues(project, login, HttpClients::createDefault)
       .create(DefaultIssuesIT.class.getSimpleName().concat(".testGet"), "description");
     assertTrue(
       new DefaultIssues(
         project,
         login,
-        HttpClients.createDefault()
+        HttpClients::createDefault
       ).get(issue.id()).isPresent()
     );
   }

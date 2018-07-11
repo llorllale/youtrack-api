@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.http.client.HttpClient;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -377,17 +378,18 @@ public final class DefaultIssuesTest {
    */
   @Test
   public void testStream() throws Exception {
+    final HttpClient client = new MockHttpClient(
+      new MockOkResponse(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><issues></issues>"
+      ),
+      new MockOkResponse(ISSUES_PAGE1),
+      new MockOkResponse(ISSUES_PAGE2)
+    );
     assertThat(
       new DefaultIssues(
         new MockProject(),
         new MockLogin(),
-        new MockHttpClient(
-          new MockOkResponse(
-            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><issues></issues>"
-          ),
-          new MockOkResponse(ISSUES_PAGE1),
-          new MockOkResponse(ISSUES_PAGE2)
-        )
+        () -> client
       ).stream().map(Issue::id).collect(toList()),
       containsInAnyOrder("TST-1", "TST-2", "TST-3", "TST-4")
     );
@@ -403,7 +405,7 @@ public final class DefaultIssuesTest {
       new DefaultIssues(
         new MockProject("ID1", "Name", "Desc"),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(ONE_ISSUE)
         )
       ).get("ID").isPresent()
@@ -420,7 +422,7 @@ public final class DefaultIssuesTest {
       new DefaultIssues(
         new MockProject("ID1", "Name", "Desc"),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockNotFoundResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
             + "<error>Issue not found.</error>"

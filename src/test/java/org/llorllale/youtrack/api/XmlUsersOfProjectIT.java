@@ -57,7 +57,7 @@ public final class XmlUsersOfProjectIT {
   public void testUser() throws Exception {
     assertThat(
       new XmlUsersOfProject(
-        project, login, this.xmlObject("random"), HttpClients.createDefault()
+        project, login, this.xmlObject("random"), HttpClients::createDefault
       ).user(config.youtrackUser())
         .loginName(),
       is(config.youtrackUser())
@@ -72,7 +72,7 @@ public final class XmlUsersOfProjectIT {
   public void testAssignees() throws Exception {
     assertTrue(
       new XmlUsersOfProject(
-        project, login, this.xmlObject(config.youtrackUser()), HttpClients.createDefault()
+        project, login, this.xmlObject(config.youtrackUser()), HttpClients::createDefault
       ).assignees()
         .anyMatch(a -> config.youtrackUser().equals(a.loginName()))
     );

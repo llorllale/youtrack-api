@@ -61,7 +61,7 @@ public final class DefaultCommentsTest {
         new MockIssue(
           new MockProject("", "", "")
         ),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(COMMENTS)
         )
       ).stream().count(),

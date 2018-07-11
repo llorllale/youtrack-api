@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -33,7 +34,7 @@ final class XmlAttachment implements Attachment {
   private final Xml fileUrl;
   private final Issue issue;
   private final Login login;
-  private final HttpClient client;
+  private final Supplier<HttpClient> client;
 
   /**
    * Ctor.
@@ -43,7 +44,7 @@ final class XmlAttachment implements Attachment {
    * @param client the http client to use
    * @since 1.1.0
    */
-  XmlAttachment(Xml fileUrl, Issue issue, Login login, HttpClient client) {
+  XmlAttachment(Xml fileUrl, Issue issue, Login login, Supplier<HttpClient> client) {
     this.fileUrl = fileUrl;
     this.issue = issue;
     this.login = login;
@@ -65,7 +66,7 @@ final class XmlAttachment implements Attachment {
   @Override
   public InputStream contents() throws IOException {
     return new HttpResponseAsResponse(
-      this.client.execute(
+      this.client.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpGet(
@@ -79,7 +80,7 @@ final class XmlAttachment implements Attachment {
   @Override
   public Attachments delete() throws IOException, UnauthorizedException {
     new HttpResponseAsResponse(
-      this.client.execute(
+      this.client.get().execute(
         new HttpRequestWithSession(
           this.login.session(),
           new HttpDelete(

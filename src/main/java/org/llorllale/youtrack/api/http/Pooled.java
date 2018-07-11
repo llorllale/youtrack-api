@@ -14,30 +14,36 @@
  * limitations under the License.
  */
 
-package org.llorllale.youtrack.api;
+package org.llorllale.youtrack.api.http;
 
-import org.apache.http.impl.client.HttpClients;
+import java.util.function.Supplier;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
- * Default, pooled HTTP connection client.
+ * Connection pooling.
+ *
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.1.0
- * @todo #216 Even though DefaultHttpClient is pooling connections, we must take care to release
- *  each connection so that it can be reused. We should ensure that all Http entities are consumed
- *  and that all responses are closed, for example.
  */
-public final class DefaultClient extends HttpClientEnvelope {
+public final class Pooled implements Supplier<HttpClientBuilder> {
+  private final int size;
+  private final Supplier<HttpClientBuilder> decorated;
+
   /**
    * Ctor.
-   * @param size Pool size.
+   * @param size pool size
+   * @param decorated supplier to decorate
    * @since 1.1.0
    */
-  public DefaultClient(int size) {
-    super(
-      HttpClients.custom()
-        .setMaxConnPerRoute(size)
-        .setMaxConnTotal(size)
-        .build()
-    );
+  public Pooled(int size, Supplier<HttpClientBuilder> decorated) {
+    this.size = size;
+    this.decorated = decorated;
+  }
+
+  @Override
+  public HttpClientBuilder get() {
+    return this.decorated.get()
+      .setMaxConnPerRoute(this.size)
+      .setMaxConnTotal(this.size);
   }
 }

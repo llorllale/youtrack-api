@@ -40,7 +40,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 final class Pagination<T> implements Iterator<T> {
   private final Supplier<HttpUriRequest> pageRequest;
   private final ExceptionalFunction<Response, Collection<T>, IOException> mapper;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   private Iterator<T> page;
 
@@ -55,7 +55,7 @@ final class Pagination<T> implements Iterator<T> {
   Pagination(
       Supplier<HttpUriRequest> pageRequest,
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
-      HttpClient httpClient
+      Supplier<HttpClient> httpClient
   ) {
     this.pageRequest = pageRequest;
     this.mapper = mapper;
@@ -79,7 +79,7 @@ final class Pagination<T> implements Iterator<T> {
       int pageSize,
       Function<Integer, HttpUriRequest> combiner, 
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
-      HttpClient httpClient
+      Supplier<HttpClient> httpClient
   ) {
     this(new PageUri(new Counter(0, pageSize), combiner), mapper, httpClient);
   }

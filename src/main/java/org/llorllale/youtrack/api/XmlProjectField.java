@@ -17,6 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
@@ -35,7 +36,7 @@ final class XmlProjectField implements ProjectField {
   private final Xml xml;
   private final Project project;
   private final Login login;
-  private final HttpClient httpClient;
+  private final Supplier<HttpClient> httpClient;
 
   /**
    * Ctor.
@@ -46,7 +47,7 @@ final class XmlProjectField implements ProjectField {
    * @param client the {@link HttpClient} to use
    * @since 1.1.0
    */
-  XmlProjectField(Xml xml, Project project, Login login, HttpClient client) {
+  XmlProjectField(Xml xml, Project project, Login login, Supplier<HttpClient> client) {
     this.xml = xml;
     this.project = project;
     this.login = login;
@@ -68,7 +69,7 @@ final class XmlProjectField implements ProjectField {
     final String bundleName = new XmlsOf(
       "/projectCustomField/param",
       new HttpResponseAsResponse(
-        this.httpClient.execute(
+        this.httpClient.get().execute(
           new HttpRequestWithSession(
             this.login.session(),
             new HttpGet(
@@ -93,7 +94,7 @@ final class XmlProjectField implements ProjectField {
         new XmlsOf(
           "/enumeration/value",
           new HttpResponseAsResponse(
-            this.httpClient.execute(
+            this.httpClient.get().execute(
               new HttpRequestWithSession(
                 this.login.session(),
                 new HttpGet(

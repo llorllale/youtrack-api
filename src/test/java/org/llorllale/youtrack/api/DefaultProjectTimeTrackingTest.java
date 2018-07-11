@@ -61,7 +61,7 @@ public final class DefaultProjectTimeTrackingTest {
       new DefaultProjectTimeTracking(
         new MockProject(),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<settings enabled=\"true\">\n"
@@ -91,7 +91,7 @@ public final class DefaultProjectTimeTrackingTest {
       new DefaultProjectTimeTracking(
         new MockProject(),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<settings enabled=\"false\">\n"
@@ -121,7 +121,7 @@ public final class DefaultProjectTimeTrackingTest {
       new DefaultProjectTimeTracking(
         new MockProject(),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<settings enabled=\"true\">\n"
@@ -148,7 +148,7 @@ public final class DefaultProjectTimeTrackingTest {
       new DefaultProjectTimeTracking(
         new MockProject(),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<settings enabled=\"true\">\n"
@@ -175,7 +175,7 @@ public final class DefaultProjectTimeTrackingTest {
       new DefaultProjectTimeTracking(
         new MockProject(),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
             + "<settings enabled=\"true\">\n"
@@ -199,7 +199,7 @@ public final class DefaultProjectTimeTrackingTest {
       new DefaultProjectTimeTracking(
         new MockProject(),
         new MockLogin(),
-        new MockHttpClient(
+        () -> new MockHttpClient(
           new MockOkResponse(
             "<?xml version=\"1.0\"?>\n"
             + "<workItemTypes>\n"
