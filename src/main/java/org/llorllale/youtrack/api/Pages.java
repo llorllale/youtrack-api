@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * An {@link Iterator} that encapsulates a paginated resource from the YouTrack server.
@@ -40,7 +41,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 final class Pages<T> implements Iterator<T> {
   private final Supplier<HttpUriRequest> pageRequest;
   private final ExceptionalFunction<Response, Collection<T>, IOException> mapper;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   private Iterator<T> page;
 
@@ -55,7 +56,7 @@ final class Pages<T> implements Iterator<T> {
   Pages(
       Supplier<HttpUriRequest> pageRequest,
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
-      Supplier<HttpClient> httpClient
+      Supplier<CloseableHttpClient> httpClient
   ) {
     this.pageRequest = pageRequest;
     this.mapper = mapper;
@@ -79,7 +80,7 @@ final class Pages<T> implements Iterator<T> {
       int pageSize,
       Function<Integer, HttpUriRequest> combiner, 
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
-      Supplier<HttpClient> httpClient
+      Supplier<CloseableHttpClient> httpClient
   ) {
     this(new PageUri(new Counter(0, pageSize), combiner), mapper, httpClient);
   }

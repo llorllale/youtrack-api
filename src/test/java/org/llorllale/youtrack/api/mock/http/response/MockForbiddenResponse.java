@@ -16,13 +16,14 @@
 
 package org.llorllale.youtrack.api.mock.http.response;
 
+import java.io.IOException;
 import java.util.Locale;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
@@ -33,7 +34,7 @@ import org.apache.http.params.HttpParams;
  * @since 0.4.0
  */
 @SuppressWarnings("checkstyle:MethodCount")
-public final class MockForbiddenResponse implements HttpResponse {
+public final class MockForbiddenResponse implements CloseableHttpResponse {
   private final StatusLine statusLine;
 
   /**
@@ -182,6 +183,11 @@ public final class MockForbiddenResponse implements HttpResponse {
 
   @Override
   public void setParams(HttpParams params) {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public void close() throws IOException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

@@ -28,6 +28,7 @@ import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import org.llorllale.youtrack.api.session.Login;
@@ -43,7 +44,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
   private static final String PATH_TEMPLATE = "/issue/%s";
   private final Issue issue;
   private final Login login;
-  private final Supplier<HttpClient> client;
+  private final Supplier<CloseableHttpClient> client;
 
   /**
    * Primary ctor.
@@ -53,7 +54,7 @@ final class DefaultUpdateIssue implements UpdateIssue {
    * @param client the {@link HttpClient} to use
    * @since 1.1.0
    */
-  DefaultUpdateIssue(Issue issue, Login login, Supplier<HttpClient> client) {
+  DefaultUpdateIssue(Issue issue, Login login, Supplier<CloseableHttpClient> client) {
     this.issue = issue;
     this.login = login;
     this.client = client;

@@ -27,6 +27,7 @@ import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * An {@link Iterator} that holds the contents of a single page of results from the YouTrack server.
@@ -54,7 +55,7 @@ final class Page<T> implements Iterator<T> {
   Page(
       HttpUriRequest request, 
       ExceptionalFunction<Response, Collection<T>, IOException> mapper,
-      Supplier<HttpClient> httpClient
+      Supplier<CloseableHttpClient> httpClient
   ) throws UncheckedIOException {
     try {
       this.contents = new ArrayDeque<>(

@@ -18,8 +18,8 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -45,7 +45,7 @@ final class BadRequest implements Response {
   }
 
   @Override
-  public HttpResponse httpResponse() throws IOException, UnauthorizedException {
+  public CloseableHttpResponse httpResponse() throws IOException, UnauthorizedException {
     if (this.response.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_BAD_REQUEST) {
       throw new IOException("400 BadRequest");
     }

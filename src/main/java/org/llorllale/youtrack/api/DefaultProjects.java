@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -36,7 +37,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class DefaultProjects implements Projects {
   private final YouTrack youtrack;
   private final Login login;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   /**
    * Primary ctor.
@@ -45,7 +46,7 @@ final class DefaultProjects implements Projects {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultProjects(YouTrack youtrack, Login login, Supplier<HttpClient> httpClient) {
+  DefaultProjects(YouTrack youtrack, Login login, Supplier<CloseableHttpClient> httpClient) {
     this.youtrack = youtrack;
     this.login = login;
     this.httpClient = httpClient;

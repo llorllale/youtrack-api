@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -36,7 +37,7 @@ final class XmlProjectField implements ProjectField {
   private final Xml xml;
   private final Project project;
   private final Login login;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   /**
    * Ctor.
@@ -47,7 +48,7 @@ final class XmlProjectField implements ProjectField {
    * @param client the {@link HttpClient} to use
    * @since 1.1.0
    */
-  XmlProjectField(Xml xml, Project project, Login login, Supplier<HttpClient> client) {
+  XmlProjectField(Xml xml, Project project, Login login, Supplier<CloseableHttpClient> client) {
     this.xml = xml;
     this.project = project;
     this.login = login;

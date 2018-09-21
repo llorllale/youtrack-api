@@ -23,7 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -378,7 +378,7 @@ public final class DefaultIssuesTest {
    */
   @Test
   public void testStream() throws Exception {
-    final HttpClient client = new MockHttpClient(
+    final CloseableHttpClient client = new MockHttpClient(
       new MockOkResponse(
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><issues></issues>"
       ),

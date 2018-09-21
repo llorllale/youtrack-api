@@ -18,8 +18,8 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -44,7 +44,7 @@ final class InternalServerErrorResponse implements Response {
   }
 
   @Override
-  public HttpResponse httpResponse() throws IOException, UnauthorizedException {
+  public CloseableHttpResponse httpResponse() throws IOException, UnauthorizedException {
     if (this.base.httpResponse().getStatusLine().getStatusCode() 
         == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
       throw new IOException("500 Internal Server error");

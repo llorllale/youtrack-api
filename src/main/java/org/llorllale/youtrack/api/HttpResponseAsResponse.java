@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -41,7 +42,7 @@ final class HttpResponseAsResponse implements Response {
    * @param httpResponse the {@link HttpResponse} to be adapted
    * @since 0.1.0
    */
-  HttpResponseAsResponse(HttpResponse httpResponse) {
+  HttpResponseAsResponse(CloseableHttpResponse httpResponse) {
     this.base = 
         new UnauthorizedResponse(
             new ForbiddenResponse(
@@ -57,7 +58,7 @@ final class HttpResponseAsResponse implements Response {
   }
 
   @Override
-  public HttpResponse httpResponse() throws UnauthorizedException, IOException {
+  public CloseableHttpResponse httpResponse() throws UnauthorizedException, IOException {
     return this.base.httpResponse();
   }
 }

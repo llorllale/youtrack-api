@@ -29,6 +29,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -43,7 +44,7 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
   private static final String PATH_TEMPLATE = "/issue/%s/timetracking/workitem";
   private final Login login;
   private final Issue issue;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   /**
    * Ctor.
@@ -53,7 +54,7 @@ final class DefaultIssueTimeTracking implements IssueTimeTracking {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultIssueTimeTracking(Login login, Issue issue, Supplier<HttpClient> httpClient) {
+  DefaultIssueTimeTracking(Login login, Issue issue, Supplier<CloseableHttpClient> httpClient) {
     this.login = login;
     this.issue = issue;
     this.httpClient = httpClient;

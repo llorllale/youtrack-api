@@ -18,8 +18,8 @@ package org.llorllale.youtrack.api;
 
 import java.io.IOException;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -45,7 +45,7 @@ final class ForbiddenResponse implements Response {
   }
 
   @Override
-  public HttpResponse httpResponse() throws UnauthorizedException, IOException {
+  public CloseableHttpResponse httpResponse() throws UnauthorizedException, IOException {
     if (this.base.httpResponse().getStatusLine().getStatusCode() == HttpStatus.SC_FORBIDDEN) {
       throw new UnauthorizedException("403: Forbidden");
     } else {

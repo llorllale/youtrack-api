@@ -21,11 +21,11 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.UUID;
 import java.util.function.Supplier;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 /**
@@ -38,7 +38,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
 
   private final Issue issue;
   private final Login login;
-  private final Supplier<HttpClient> client;
+  private final Supplier<CloseableHttpClient> client;
 
   /**
    * Ctor.
@@ -47,7 +47,7 @@ final class DefaultAttachments extends StreamEnvelope<Attachment> implements Att
    * @param client the Http client to use
    * @since 1.1.0
    */
-  DefaultAttachments(Issue issue, Login login, Supplier<HttpClient> client) {
+  DefaultAttachments(Issue issue, Login login, Supplier<CloseableHttpClient> client) {
     super(() -> {
       try {
         return new StreamOf<>(

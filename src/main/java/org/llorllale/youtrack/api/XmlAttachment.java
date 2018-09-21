@@ -19,9 +19,9 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Supplier;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -34,7 +34,7 @@ final class XmlAttachment implements Attachment {
   private final Xml fileUrl;
   private final Issue issue;
   private final Login login;
-  private final Supplier<HttpClient> client;
+  private final Supplier<CloseableHttpClient> client;
 
   /**
    * Ctor.
@@ -44,7 +44,7 @@ final class XmlAttachment implements Attachment {
    * @param client the http client to use
    * @since 1.1.0
    */
-  XmlAttachment(Xml fileUrl, Issue issue, Login login, Supplier<HttpClient> client) {
+  XmlAttachment(Xml fileUrl, Issue issue, Login login, Supplier<CloseableHttpClient> client) {
     this.fileUrl = fileUrl;
     this.issue = issue;
     this.login = login;

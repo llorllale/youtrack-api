@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import java.util.stream.Collectors;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Test;
 import org.llorllale.youtrack.api.mock.MockLogin;
 import org.llorllale.youtrack.api.mock.MockProject;
@@ -89,7 +89,7 @@ public final class XmlUsersOfProjectTest {
   @Test
   @SuppressWarnings("checkstyle:MethodLength")
   public void assignees() throws Exception {
-    final HttpClient client = new MockHttpClient(
+    final CloseableHttpClient client = new MockHttpClient(
       new MockOkResponse(
         "<user login=\"random\" \n"
         + "      fullName=\"Random User that should not be queried\" \n"
