@@ -26,8 +26,10 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
@@ -37,9 +39,10 @@ import org.apache.http.protocol.HttpContext;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.4.0
  */
-public final class MockHttpClient implements HttpClient {
-  private final HttpResponse finalResponse;
-  private final Deque<HttpResponse> intermediateResponses;
+@SuppressWarnings("checkstyle:MethodCount")
+public final class MockHttpClient extends CloseableHttpClient {
+  private final CloseableHttpResponse finalResponse;
+  private final Deque<CloseableHttpResponse> intermediateResponses;
 
   /**
    * Primary ctor.
@@ -55,7 +58,10 @@ public final class MockHttpClient implements HttpClient {
    * return before the {@code finalResponse}
    * @since 0.4.0
    */
-  public MockHttpClient(HttpResponse finalResponse, HttpResponse... intermediateResponses) {
+  public MockHttpClient(
+    CloseableHttpResponse finalResponse,
+    CloseableHttpResponse... intermediateResponses
+  ) {
     this.finalResponse = finalResponse;
     this.intermediateResponses = new ArrayDeque<>(Arrays.asList(intermediateResponses));
   }
@@ -81,8 +87,10 @@ public final class MockHttpClient implements HttpClient {
   }
 
   @Override
-  public HttpResponse execute(HttpUriRequest request) throws IOException, ClientProtocolException {
-    final HttpResponse response;
+  public CloseableHttpResponse execute(
+    HttpUriRequest request
+  ) throws IOException, ClientProtocolException {
+    final CloseableHttpResponse response;
     if (!this.intermediateResponses.isEmpty()) {
       response = this.intermediateResponses.pop();
     } else {
@@ -92,21 +100,21 @@ public final class MockHttpClient implements HttpClient {
   }
 
   @Override
-  public HttpResponse execute(
+  public CloseableHttpResponse execute(
     HttpUriRequest request, HttpContext context
   ) throws IOException, ClientProtocolException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public HttpResponse execute(
+  public CloseableHttpResponse execute(
     HttpHost target, HttpRequest request
   ) throws IOException, ClientProtocolException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public HttpResponse execute(
+  public CloseableHttpResponse execute(
     HttpHost target, HttpRequest request, HttpContext context
   ) throws IOException, ClientProtocolException {
     throw new UnsupportedOperationException("Not supported yet.");
@@ -138,6 +146,18 @@ public final class MockHttpClient implements HttpClient {
     HttpHost target, HttpRequest request,
     ResponseHandler<? extends T> responseHandler, HttpContext context
   ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  protected CloseableHttpResponse doExecute(
+    HttpHost target, HttpRequest request, HttpContext context
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public void close() throws IOException {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 }

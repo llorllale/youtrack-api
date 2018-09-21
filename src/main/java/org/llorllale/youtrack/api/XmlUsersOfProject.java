@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -36,7 +37,7 @@ final class XmlUsersOfProject implements UsersOfProject {
   private final Project project;
   private final Login login;
   private final Xml xml;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   /**
    * Primary ctor.
@@ -47,7 +48,10 @@ final class XmlUsersOfProject implements UsersOfProject {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.9.0
    */
-  XmlUsersOfProject(Project project, Login login, Xml xml, Supplier<HttpClient> httpClient) {
+  XmlUsersOfProject(
+    Project project, Login login,
+    Xml xml, Supplier<CloseableHttpClient> httpClient
+  ) {
     this.project = project;
     this.login = login;
     this.xml = xml;

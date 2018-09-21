@@ -25,6 +25,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -40,7 +41,7 @@ final class DefaultComments implements Comments {
 
   private final Login login;
   private final Issue issue;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   /**
    * Ctor.
@@ -49,7 +50,7 @@ final class DefaultComments implements Comments {
    * @param httpClient the {@link HttpClient} to use
    * @since 0.4.0
    */
-  DefaultComments(Login login, Issue issue, Supplier<HttpClient> httpClient) {
+  DefaultComments(Login login, Issue issue, Supplier<CloseableHttpClient> httpClient) {
     this.login = login;
     this.issue = issue;
     this.httpClient = httpClient;

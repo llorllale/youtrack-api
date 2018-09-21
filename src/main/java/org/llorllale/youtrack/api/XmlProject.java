@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import java.util.Optional;
 import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 /**
@@ -31,7 +32,7 @@ final class XmlProject implements Project {
   private final YouTrack youtrack;
   private final Login login;
   private final Xml xml;
-  private final Supplier<HttpClient> client;
+  private final Supplier<CloseableHttpClient> client;
 
   /**
    * Ctor.
@@ -46,7 +47,7 @@ final class XmlProject implements Project {
       YouTrack youtrack, 
       Login login, 
       Xml xml,
-      Supplier<HttpClient> client
+      Supplier<CloseableHttpClient> client
   ) {
     this.youtrack = youtrack;
     this.login = login;

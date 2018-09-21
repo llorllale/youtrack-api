@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -39,5 +40,5 @@ interface Response {
    *     operation
    * @since 0.1.0
    */
-  HttpResponse httpResponse() throws IOException, UnauthorizedException;
+  CloseableHttpResponse httpResponse() throws IOException, UnauthorizedException;
 }

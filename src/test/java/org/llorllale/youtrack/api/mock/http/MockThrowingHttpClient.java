@@ -19,12 +19,13 @@ package org.llorllale.youtrack.api.mock.http;
 import java.io.IOException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
@@ -34,7 +35,8 @@ import org.apache.http.protocol.HttpContext;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.0.0
  */
-public final class MockThrowingHttpClient implements HttpClient {
+@SuppressWarnings("checkstyle:MethodCount")
+public final class MockThrowingHttpClient extends CloseableHttpClient {
   private final IOException exception;
 
   /**
@@ -57,24 +59,26 @@ public final class MockThrowingHttpClient implements HttpClient {
   }
 
   @Override
-  public HttpResponse execute(HttpUriRequest request) throws IOException, ClientProtocolException {
+  public CloseableHttpResponse execute(
+    HttpUriRequest request
+  ) throws IOException, ClientProtocolException {
     throw this.exception;
   }
 
   @Override
-  public HttpResponse execute(HttpUriRequest request, HttpContext context) 
+  public CloseableHttpResponse execute(HttpUriRequest request, HttpContext context) 
       throws IOException, ClientProtocolException {
     throw this.exception;
   }
 
   @Override
-  public HttpResponse execute(HttpHost target, HttpRequest request) 
+  public CloseableHttpResponse execute(HttpHost target, HttpRequest request) 
       throws IOException, ClientProtocolException {
     throw this.exception;
   }
 
   @Override
-  public HttpResponse execute(HttpHost target, HttpRequest request, HttpContext context) 
+  public CloseableHttpResponse execute(HttpHost target, HttpRequest request, HttpContext context) 
       throws IOException, ClientProtocolException {
     throw this.exception;
   }
@@ -111,5 +115,18 @@ public final class MockThrowingHttpClient implements HttpClient {
       HttpContext context
   ) throws IOException, ClientProtocolException {
     throw this.exception;
+  }
+
+  // @checkstyle MethodCount (2 lines)
+  @Override
+  protected CloseableHttpResponse doExecute(
+    HttpHost target, HttpRequest request, HttpContext context
+  ) throws IOException, ClientProtocolException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
+  public void close() throws IOException {
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 }

@@ -19,12 +19,12 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.function.Supplier;
-import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -40,7 +40,7 @@ final class XmlComment implements Comment {
   private final Issue issue;
   private final Login login;
   private final Xml xml;
-  private final Supplier<HttpClient> http;
+  private final Supplier<CloseableHttpClient> http;
 
   /**
    * Extracts {@code id}, {@code creationDate}, and {@code text} from {@code jaxbComment}.
@@ -50,7 +50,7 @@ final class XmlComment implements Comment {
    * @param client the Http client to use
    * @since 1.1.0
    */
-  XmlComment(Issue issue, Login login, Xml xml, Supplier<HttpClient> client) {
+  XmlComment(Issue issue, Login login, Xml xml, Supplier<CloseableHttpClient> client) {
     this.issue = issue;
     this.login = login;
     this.xml = xml;

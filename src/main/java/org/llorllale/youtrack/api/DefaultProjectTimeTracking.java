@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import org.apache.http.client.HttpClient;
 
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -35,7 +36,7 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
   private static final String PATH_TEMPLATE = "/admin/project/%s/timetracking";
   private final Project project;
   private final Login login;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   /**
    * Primary ctor.
@@ -44,7 +45,10 @@ final class DefaultProjectTimeTracking implements ProjectTimeTracking {
    * @param httpClient the {@link HttpClient} to use
    * @since 1.0.0
    */
-  DefaultProjectTimeTracking(Project project, Login login, Supplier<HttpClient> httpClient) {
+  DefaultProjectTimeTracking(
+    Project project, Login login,
+    Supplier<CloseableHttpClient> httpClient
+  ) {
     this.project = project;
     this.login = login;
     this.httpClient = httpClient;

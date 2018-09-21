@@ -18,6 +18,7 @@ package org.llorllale.youtrack.api;
 
 import java.util.function.Supplier;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.llorllale.youtrack.api.http.Client;
 import org.llorllale.youtrack.api.session.Login;
@@ -29,7 +30,7 @@ import org.llorllale.youtrack.api.session.Login;
  */
 public final class DefaultYouTrack implements YouTrack {
   private final Login login;
-  private final Supplier<HttpClient> client;
+  private final Supplier<CloseableHttpClient> client;
 
   /**
    * Ctor.

@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
@@ -34,7 +35,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
 final class DefaultFields implements Fields {
   private final Login login;
   private final Project project;
-  private final Supplier<HttpClient> httpClient;
+  private final Supplier<CloseableHttpClient> httpClient;
 
   /**
    * Ctor.
@@ -42,7 +43,7 @@ final class DefaultFields implements Fields {
    * @param project the parent {@link Project}
    * @param httpClient the {@link HttpClient} to use
    */
-  DefaultFields(Login session, Project project, Supplier<HttpClient> httpClient) {
+  DefaultFields(Login session, Project project, Supplier<CloseableHttpClient> httpClient) {
     this.login = session;
     this.project = project;
     this.httpClient = httpClient;

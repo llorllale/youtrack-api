@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Supplier;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
 import org.llorllale.youtrack.api.session.UnauthorizedException;
@@ -37,7 +37,7 @@ final class XmlIssue implements Issue {
   private final Project project;
   private final Login login;
   private final Xml xml;
-  private final Supplier<HttpClient> client;
+  private final Supplier<CloseableHttpClient> client;
 
   /**
    * Ctor.
@@ -52,7 +52,7 @@ final class XmlIssue implements Issue {
       Project project, 
       Login login, 
       Xml xml,
-      Supplier<HttpClient> client
+      Supplier<CloseableHttpClient> client
   ) {
     this.project = project;
     this.login = login;

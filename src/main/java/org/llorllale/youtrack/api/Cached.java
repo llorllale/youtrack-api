@@ -17,7 +17,7 @@
 package org.llorllale.youtrack.api;
 
 import java.util.function.Supplier;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
@@ -25,9 +25,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.1.0
  */
-final class Cached implements Supplier<HttpClient> {
+final class Cached implements Supplier<CloseableHttpClient> {
   private final Supplier<HttpClientBuilder> source;
-  private volatile HttpClient cached;
+  private volatile CloseableHttpClient cached;
 
   /**
    * Ctor.
@@ -39,7 +39,7 @@ final class Cached implements Supplier<HttpClient> {
   }
 
   @Override
-  public HttpClient get() {
+  public CloseableHttpClient get() {
     if (this.cached == null) {
       synchronized(this.source) {
         if (this.cached == null) {

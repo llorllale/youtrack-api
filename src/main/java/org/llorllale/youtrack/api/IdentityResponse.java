@@ -19,6 +19,7 @@ package org.llorllale.youtrack.api;
 import java.io.IOException;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.llorllale.youtrack.api.session.UnauthorizedException;
 
 /**
@@ -28,7 +29,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @since 0.4.0
  */
 final class IdentityResponse implements Response {
-  private final HttpResponse httpResponse;
+  private final CloseableHttpResponse httpResponse;
 
   /**
    * Ctor.
@@ -36,12 +37,12 @@ final class IdentityResponse implements Response {
    * @param httpResponse the http response
    * @since 0.4.0
    */
-  IdentityResponse(HttpResponse httpResponse) {
+  IdentityResponse(CloseableHttpResponse httpResponse) {
     this.httpResponse = httpResponse;
   }
 
   @Override
-  public HttpResponse httpResponse() throws IOException, UnauthorizedException {
+  public CloseableHttpResponse httpResponse() throws IOException, UnauthorizedException {
     return this.httpResponse;
   }
 }
