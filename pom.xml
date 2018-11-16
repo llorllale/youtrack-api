@@ -132,6 +132,12 @@
       <version>0.10</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.cactoos</groupId>
+      <artifactId>cactoos</artifactId>
+      <version>0.38</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <profiles>

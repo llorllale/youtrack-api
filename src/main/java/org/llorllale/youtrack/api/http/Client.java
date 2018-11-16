@@ -23,12 +23,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
  * Basic client.
  * @author George Aristy (george.aristy@gmail.com)
  * @since 1.1.0
- * @todo #222 Now that all HTTPClients and HTTPResponses are closeable, we need to start making
- *  sure that the underlying connections are being released when we are done with the http
- *  responses. For reference, read:
- *  - https://stackoverflow.com/a/31659073/1623885
- *  - Sections 1.1.5 and 1.1.6 of
- *  https://hc.apache.org/httpcomponents-client-4.5.x/tutorial/html/fundamentals.html
  */
 public final class Client implements Supplier<HttpClientBuilder> {
   @Override
