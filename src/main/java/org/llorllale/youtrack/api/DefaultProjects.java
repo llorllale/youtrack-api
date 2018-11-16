@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.llorllale.youtrack.api.session.Login;
 
@@ -35,6 +36,7 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * @since 0.4.0
  */
 final class DefaultProjects implements Projects {
+  private static final String PROJECT_PATH = "/admin/project/";
   private final YouTrack youtrack;
   private final Login login;
   private final Supplier<CloseableHttpClient> httpClient;
@@ -86,7 +88,7 @@ final class DefaultProjects implements Projects {
               this.login.session(), 
               new HttpGet(
                 this.login.session().baseUrl().toString()
-                  .concat("/admin/project/")
+                  .concat(PROJECT_PATH)
                   .concat(id)
               )
             )
@@ -94,5 +96,32 @@ final class DefaultProjects implements Projects {
         )
       )
     ).stream().findAny();
+  }
+
+  @Override
+  public Project create(
+    String id, String name, User leader
+  ) throws IOException, UnauthorizedException {
+    return this.get(
+      new SubstringAfterLast(
+        new HttpResponseAsResponse(
+          this.httpClient.get().execute(
+            new Authenticated(
+              this.login.session(),
+              new HttpPut(
+                new UncheckedUriBuilder(
+                  this.login.session().baseUrl().toString()
+                    .concat(PROJECT_PATH).concat(id)
+                ).param("projectName", name)
+                  .param("startingNumber", "1")
+                  .param("projectLeadLogin", leader.loginName())
+                  .build()
+              )
+            )
+          )
+        ).httpResponse().getFirstHeader("Location").getValue(),
+        "/"
+      ).get()
+    ).get();
   }
 }

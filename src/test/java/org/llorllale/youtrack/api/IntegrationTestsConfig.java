@@ -91,7 +91,7 @@ public final class IntegrationTestsConfig {
   }
 
   /**
-   * The ID of the pre-created YouTrack project.
+   * The ID of the pre-created YouTrack project with timetracking enabled.
    * @return the pre-configured project's id
    * @since 0.3.0
    */

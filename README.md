@@ -16,7 +16,11 @@ Here's a snippet of its usage:
 final YouTrack youtrack = new DefaultYouTrack(
     new PermanentToken(new URL("http://youtrack"), "your_token")
 );
-youtrack.projects().get("project_id").get()
+final User leader = youtrack.users()        //Users API under construction - see #246
+  .filter(u -> u.loginName().equals("mike"))
+  .findFirst().get();
+youtrack.projects()
+    .create("TP", "Test Project", leader)   //creates project
     .issues()
     .create("summary", "description")       //creates issue
     .comments()

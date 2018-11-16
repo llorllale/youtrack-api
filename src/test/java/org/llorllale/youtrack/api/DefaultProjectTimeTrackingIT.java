@@ -44,7 +44,7 @@ public final class DefaultProjectTimeTrackingIT {
   public static void setup() throws Exception {
     final IntegrationTestsConfig config = new IntegrationTestsConfig();
     login = new PermanentToken(config.youtrackUrl(), config.youtrackUserToken());
-    project = new DefaultYouTrack(login).projects().stream().findAny().get();
+    project = new DefaultYouTrack(login).projects().get(config.youtrackTestProjectId()).get();
   }
 
   /**

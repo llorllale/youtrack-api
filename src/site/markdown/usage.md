@@ -33,10 +33,14 @@ The `YouTrack` interface is the entry point to the rest of the API:
     final YouTrack youtrack = new DefaultYouTrack(login);
 
 #### Projects
-You can fetch projects with the `Projects` interface. If you have a project's ID
-you can simply:
+You can fetch and create projects with the `Projects` interface.
+##### Fetch:
 
     final Optional<Project> project = youtrack.projects().get("project_id");
+
+##### Create:
+    final User leader = ...
+    final Project project = youtrack.projects().create("project_id", "project_name", leader);
 
 You can also access a regular Java 8 stream of all projects accessible by 
 you using `Projects#stream()`:
