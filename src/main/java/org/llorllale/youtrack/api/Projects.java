@@ -51,4 +51,18 @@ public interface Projects {
    * @since 0.6.0
    */
   Optional<Project> get(String id) throws IOException, UnauthorizedException;
+
+  /**
+   * Create a new {@link Project}.
+   * @param id unique identifier of the project to be created. This short name will be used as
+   *    prefix in issue IDs for this project.
+   * @param name unique, full name of the new project.
+   * @param leader user to be assigned as the project's leader.
+   * @return the newly-created project
+   * @throws IOException if the server is unavailable
+   * @throws UnauthorizedException if the user's {@link Login} is not authorized to perform this
+   *     operation
+   * @since 1.1.0
+   */
+  Project create(String id, String name, User leader) throws IOException, UnauthorizedException;
 }

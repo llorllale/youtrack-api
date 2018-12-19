@@ -16,12 +16,16 @@
 
 package org.llorllale.youtrack.api;
 
-// @checkstyle AvoidStaticImport (2 lines)
+// @checkstyle AvoidStaticImport (3 lines)
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
+
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.hamcrest.core.IsEqual;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.llorllale.youtrack.api.session.Login;
@@ -89,6 +93,40 @@ public final class DefaultProjectsIT {
       new DefaultProjects(null, login, HttpClients::createDefault)
         .get(String.valueOf(new Random(System.currentTimeMillis()).nextInt()))
         .isPresent()
+    );
+  }
+
+  /**
+   * {@link DefaultProjects} should create the project with the given parameters, and this
+   * new project should be present in the stream of projects.
+   * @throws Exception unexpected
+   * @since 1.1.0
+   */
+  @Test
+  public void createProject() throws Exception {
+    final String id = "DPIT";
+    final String name = "DefaultProjectsIT";
+    final User leader = new DefaultYouTrack(login)
+      .projects()
+      .get(config.youtrackTestProjectId()).get()
+      .users()
+      .user(config.youtrackUser());
+    final Projects projects = new DefaultProjects(
+      new DefaultYouTrack(login),
+      login,
+      () -> HttpClientBuilder.create().build()
+    );
+    final Project project = projects.create(id, name, leader);
+    assertThat(
+      project.id(),
+      new IsEqual<>(id)
+    );
+    assertThat(
+      project.name(),
+      new IsEqual<>(name)
+    );
+    assertTrue(
+      projects.stream().anyMatch(p -> project.id().equals(p.id()))
     );
   }
 }

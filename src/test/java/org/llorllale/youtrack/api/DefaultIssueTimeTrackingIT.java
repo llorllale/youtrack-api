@@ -213,8 +213,7 @@ public final class DefaultIssueTimeTrackingIT {
   private Issue issue(String description) throws Exception {
     return new DefaultYouTrack(login)
       .projects()
-      .stream()
-      .findFirst()
+      .get(config.youtrackTestProjectId())
       .get()
       .issues()
       .create(DefaultIssueTimeTrackingIT.class.getSimpleName(), description);
