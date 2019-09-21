@@ -1,4 +1,8 @@
-=4var Iterator = function (iterableWrapper, yField) {
+Hsvar identifyingProperties = {
+  'Issue': 'id',
+  'User': 'login'
+};
+var Iterator = function (iterableWrapper, yField) {
   this._iterator = iterableWrapper.iterator();
   Object.defineProperty(this, 'yField', {value: yField});
 };
@@ -32,6 +36,21 @@ var ImmutableIterableWW = function (iterableWrapper, yField, enclosingEntity, li
       return this._wrapped.size();
     }
   });
+
+  this.toString = function () {
+    var c = 0;
+    var iter = this.entries();
+    var next;
+    var strings = [];
+    var size = this.size;
+    while (c++ < 100 && (next = iter.next()) && !next.done) {
+      strings.push(next.value && next.value.toShortString ? next.value.toShortString() : next.value);
+    }
+    if (c === 100) {
+      strings.push('the Set contains more than 100 elements. Iterate (e.g. using .forEach) to print the rest of the Set');
+    }
+    return '[' + strings.join(',\n') + ']';
+  };
 };
 ImmutableIterableWW.prototype.forEach = function (visitor) {
   var iterator = this._wrapped.iterator();
@@ -104,8 +123,11 @@ Object.defineProperty(ImmutableIterableWW.prototype, "removed", {
 Object.defineProperty(ImmutableIterableWW, "$type", {value: "Set"});
 
 function createMutableIterableWW(obj, yField, enclosingEntity, linkName) {
-  var MutableIterableWW = function () {};
-  MutableIterableWW.prototype = new ImmutableIterableWW(obj, yField, enclosingEntity, linkName);
+  var ptt = new ImmutableIterableWW(obj, yField, enclosingEntity, linkName);
+  var MutableIterableWW = function () {
+    this.toString = ptt.toString;
+  };
+  MutableIterableWW.prototype = ptt;
   MutableIterableWW.prototype.add = function (element) {
     return this._wrapped.add(unwrap(element, yField));
   };
@@ -157,6 +179,11 @@ var findField = function (typeName, fieldName, project) {
       return yIssueLink;
     }
   }
+  if (exports[typeName].$$declaredProperties.indexOf(fieldName) > -1) {
+    return {getName: function () {
+      return fieldName;
+    }};
+  }
   throw 'No field with name ' + fieldName + ' found for type ' + typeName;
 };
 
@@ -176,7 +203,7 @@ var wrap = function (obj, yField, enclosingEntity, linkName) {
 
 var isSprintsField = function (yField) {
   // TODO handle it in a more elegant way
-  return yField && yField.getName() === 'sprints';
+  return yField && yField.getName && yField.getName() === 'sprints';
 };
 
 var unwrap = function(obj, yField) {
@@ -250,18 +277,30 @@ var constructor = function (name) {
 
     if (name === 'Issue') {
       var cfs = $$fieldsAndLinksMeta.get(this.project._wrapped);
-      this.fields = {};
+      var flds = this.fields = {};
       Object.defineProperty(this.fields, '_wrapped', {value: this._wrapped});
       Object.defineProperty(this.fields, 'enclosingEntity', {value: this});
+      var toStr = function () {
+        return '{' + Object.keys(flds).map(function (fld) {
+            return '"' + fld + '": ' + flds[fld];
+          }).join(',\n') + '}';
+      };
+      Object.defineProperty(this.fields, 'toString', {value: toStr});
+      Object.defineProperty(this.fields, 'toShortString', {value: toStr, enumerable: false});
       for (var i = 0; i < cfs.length; i ++) {
         var cf = cfs[i];
         handleField(this, cf, cf.getName(), false);
         handleField(this.fields, cf, cf.getName(), true);
       }
       if ($$declareLinks !== null) {
-        this.links = {};
+        var lnks = this.links = {};
         Object.defineProperty(this.links, '_wrapped', {value: this._wrapped});
         Object.defineProperty(this.links, 'enclosingEntity', {value: this});
+        Object.defineProperty(this.links, 'toString', {value: function () {
+          return '{' + Object.keys(lnks).map(function (lnk) {
+            return '"' + lnk + '": ' + lnks[lnk];
+          }).join(',\n') + '}';
+        }});
         var linksMeta = $$fieldsAndLinksMeta.getLinks();
         for (var i = 0; i < linksMeta.length; i ++) {
           handleLink(this.links, linksMeta[i]);
@@ -299,6 +338,39 @@ var constructor = function (name) {
         return e._wrapped.canBeWrittenBy(fieldName(field), unwrap(user));
       }
     };
+    Object.defineProperty(e, 'becomesRemoved', {
+      get: function () {
+        return e._wrapped.isRemoved();
+      },
+      enumerable: true
+    });
+    Object.defineProperty(e, '$$type', {value: name, enumerable: true});
+    Object.defineProperty(e, 'toString', {
+      value: function () {
+        var props = [];
+        for (var prop in e) {
+          var propValue = e[prop];
+          if (typeof propValue === 'function') {
+            props.push('"' + prop + '": function() {}');
+          } else {
+            props.push('"' + prop + '": "' + (propValue && propValue._wrapped && propValue.toShortString ? propValue.toShortString() : propValue) + '"');
+          }
+        }
+        return '{' + props.join(',\n') + '}';
+      }, enumerable: true
+    });
+    Object.defineProperty(e, 'toShortString', {
+      value: function () {
+        var ret = '{"$$type": " ' + name + '"';
+        var identifyingProperty = identifyingProperties[name];
+        if (identifyingProperty) {
+          ret += ', "' + identifyingProperty + '": "' + e[identifyingProperty] + '"';
+        } else if (e.name) {
+          ret += ', "name": "' + e.name + '"';
+        }
+        return ret + '}';
+      }, enumerable: true
+    });
     defineFunctions(e, e, entityFunctions, true);
     var obsoleteEntityFunctions = { // these functions are obsolete since it's possible to call them on iterable wrappers
       getAdded: function (field) {
@@ -313,7 +385,7 @@ var constructor = function (name) {
       defineFunctions(e.fields, e, entityFunctions, true);
     }
   };
-  Object.defineProperty(type, "$type", {value: name});
+  Object.defineProperty(type, '$type', {value: name});
   return type;
 };
 
@@ -402,6 +474,7 @@ var handleClass = function (yClass) {
   }
   var entityType = constructor(yName);
   var superYClass = yClass.getSuperClass();
+  var declaredProperties = [];
   if (superYClass) {
     var superYClassName = superYClass.getName();
     handleClass(superYClass);
@@ -434,10 +507,17 @@ var handleClass = function (yClass) {
         // this means a property should be defined instead of a method
         handleProperty(target, yMember, propertyDescription, yClass);
         skip.push(propertyDescription.setterName);
+        declaredProperties.push(propertyDescription.propertyName);
       } else {
         (isStatic ? handleStaticMethod : handleMethod)(target, yName, memberName)
       }
     }
+  });
+  Object.defineProperty(entityType, "$$declaredProperties", {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: declaredProperties
   });
 };
 yTypes.get().forEach(handleClass);

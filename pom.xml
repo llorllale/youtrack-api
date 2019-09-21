@@ -87,10 +87,10 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <netbeans.hint.license>apache20</netbeans.hint.license>
     <netbeans.hint.projectversion>${project.version}</netbeans.hint.projectversion>
-    <youtrackVersion>2017.3.35488</youtrackVersion>
-    <youtrack.test.docker.name>${project.artifactId}-integration-tests</youtrack.test.docker.name>
+    <youtrackVersion>2018.1.39916</youtrackVersion>
+    <youtrack.test.docker.name>jetbrains/youtrack:${youtrackVersion}</youtrack.test.docker.name>
     <youtrack.test.user>root</youtrack.test.user>
-    <youtrack.test.user.token>perm:cm9vdA==.eW91dHJhY2stYXBpLXRlc3Q=.nOe5IYpv520S120tK18hc2tkm8oCI4</youtrack.test.user.token>
+    <youtrack.test.user.token>perm:cm9vdA==.dGVzdA==.xpLtCBhsf0k2tmOK1GwW4VNijaXvPN</youtrack.test.user.token>
     <youtrack.test.pwd>youtrack</youtrack.test.pwd>
     <youtrack.test.baseUrl>http://localhost:18080</youtrack.test.baseUrl>
     <youtrack.test.url>${youtrack.test.baseUrl}/rest</youtrack.test.url>
@@ -308,8 +308,12 @@
         <filtering>true</filtering>
         <includes>
           <include>integration-tests-config.properties</include>
-          <include>**/Dockerfile</include>
         </includes>
+      </testResource>
+      <testResource>
+        <directory>${basedir}/src/test/resources/docker/youtrack</directory>
+        <filtering>false</filtering>
+        <targetPath>${project.build.directory}/youtrack</targetPath>
       </testResource>
     </testResources>
     <pluginManagement>
@@ -336,24 +340,6 @@
           </configuration>
           <executions>
             <execution>
-              <id>youtrack-build</id>
-              <phase>pre-integration-test</phase>
-              <goals>
-                <goal>build</goal>
-              </goals>
-              <configuration>
-                <images>
-                  <image>
-                    <alias>youtrack-api-integration-test</alias>
-                    <name>${youtrack.test.docker.name}</name>
-                    <build>
-                      <dockerFileDir>${basedir}/src/test/resources/docker</dockerFileDir>
-                    </build>
-                  </image>
-                </images>
-              </configuration>
-            </execution>
-            <execution>
               <id>youtrack-start</id>
               <phase>pre-integration-test</phase>
               <goals>
@@ -366,8 +352,14 @@
                     <name>${youtrack.test.docker.name}</name>
                     <run>
                       <ports>
-                        <port>18080:80</port>
+                        <port>18080:8080</port>
                       </ports>
+                      <volumes>
+                        <bind>
+                          <volume>${project.build.directory}/youtrack/data:/opt/youtrack/data</volume>
+                          <volume>${project.build.directory}/youtrack/conf:/opt/youtrack/conf</volume>
+                        </bind>
+                      </volumes>
                       <wait>
                         <http>
                           <url>${youtrack.test.baseUrl}</url>
@@ -417,12 +409,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>2.17</version>
+          <version>3.1.0</version>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.2</version>
+              <version>8.22</version>
             </dependency>
           </dependencies>
           <executions>
@@ -439,7 +431,9 @@
                 <failsOnError>true</failsOnError>
                 <linkXRef>false</linkXRef>
                 <violationSeverity>info</violationSeverity>
-                <sourceDirectory>${basedir}/src</sourceDirectory>
+                <sourceDirectories>
+                  <sourceDirectory>${basedir}/src</sourceDirectory>
+                </sourceDirectories>
               </configuration>
             </execution>
           </executions>

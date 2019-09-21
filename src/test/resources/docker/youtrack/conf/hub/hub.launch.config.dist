@@ -1,0 +1,47 @@
+## This file contains Hub launch configuration.
+## To edit it please first copy it to the "hub.launch.config" file.
+## To change the setting uncomment it first.
+## To apply the changes you made in this file, please restart Hub using its scripts from the "bin" folder.
+
+## Hub display name
+#display-name=Hub
+
+## Hub description
+#description=Common Authentication Service
+
+## Hub Windows service name
+## If you want to change this setting, please uninstall the current Hub Windows service,
+## then change the service name here and then install it again using "..\bin\hub.bat service install" command.
+#win-service-name=hub
+
+## Hub Mac OS daemon label
+## If you want to change this setting, please unload the current Hub Mac OS daemon,
+## then change the daemon label here and then load it again using "../bin/hub.sh daemon start" command.
+#mac-daemon-label=Hub
+
+## Hub Mac OS daemon user
+## If you want to change this setting, please unload the current Hub Mac OS daemon,
+## then change the daemon user here and then load it again using "../bin/hub.sh daemon start" command.
+#mac-daemon-user=root
+
+## Hub start timeout in seconds
+#start-timeout-seconds=300
+
+## Hub stop timeout in seconds
+#stop-timeout-seconds=300
+
+## Hub Java libraries directory.
+## The path should be either absolute or relative to the Hub home directory.
+#lib-dir=lib
+
+## Hub logs directory.
+## The path should be either absolute or relative to the Hub home directory.
+#logs-dir=logs
+
+## Hub launcher logs directory.
+## The path should be either absolute or relative to the Hub logs directory.
+#launcher.logs-dir=.
+
+## Path to the YourKit installation to use to profile Hub.
+## The path should be either absolute or relative to the Hub home directory.
+#yourkit-home=
