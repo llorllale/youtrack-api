@@ -29,6 +29,9 @@ import org.llorllale.youtrack.api.session.UnauthorizedException;
  * 
  * @author George Aristy (george.aristy@gmail.com)
  * @since 0.1.0
+ * @todo #241 Create a Response decorator that asserts a status code was received. If a different
+ *  code was received then it should throw an error with all details of the response: status code,
+ *  headers, and body (if any).
  */
 interface Response {
   /**

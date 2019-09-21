@@ -1,4 +1,4 @@
-C®/*
+S/*
  Copyright 2017 JetBrains s.r.o.
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,447 +16,457 @@ C®/*
 
 var entities = require('@jetbrains/youtrack-scripting-api/entities');
 var jira = require('./jira');
+var jiraImportContext = require('./importContext');
+var importSettings = require('./importSettings');
+var environment = require('@jetbrains/youtrack-scripting-api/environment');
 var security = require('./security');
-var dateTime = require('@jetbrains/youtrack-scripting-api/date-time');
-var importUtils = require('@jetbrains/youtrack-scripting-api-import/utils');
-var entityConverters = require('./entityConverters');
 var events = require('./events');
-var perTypeConverters = require('./perTypeConverters');
-var importContext = require('./importContext');
 var constants = require('./constants');
+var defaultLinkTypeMapping = constants.defaultLinkTypeMapping;
+var ignorableUpdates = constants.ignorableUpdates;
+var fieldConverters = require('./fieldHandlers');
+var importUtils = require('@jetbrains/youtrack-scripting-api-import/utils');
 
-var jiraClient = importContext.getJiraClient();
+var inaccuracy = 100; // just a constant, let it live here for now
 
-var comments = function (ytFieldName, jiraField, issue, jiraIssue) {
-  var createdComments = [];
-  jiraField.comments.forEach(function (jiraComment) {
-    var ytComment = entityConverters.comment(jiraComment, issue, jiraIssue);
-    createdComments.push(ytComment);
-  });
-  return createdComments;
-};
-
-var worklogs = function (ytFieldName, jiraField, issue, jiraIssue) {
-  var createdWorkItems = [];
-  jiraField.worklogs.forEach(function (jiraWorklog) {
-    var ytWorkItem = entityConverters.worklog(jiraWorklog, issue, jiraIssue);
-    createdWorkItems.push(ytWorkItem);
-  });
-  return createdWorkItems;
-};
-
-var attachments = function (ytFieldName, jiraField, issue, jiraIssue) {
-  var createdAttachments = [];
-  jiraField.forEach(function (jiraAttachment) {
-    var ytAttachment = entityConverters.attachment(jiraAttachment, issue, jiraIssue);
-    ytAttachment && createdAttachments.push(ytAttachment);
-  });
-  return createdAttachments;
-};
-
-var extractAuthorsAndVisibilityGroups = function (jiraEntityName, valueGetter) {
-  // TODO: get rid of valueGetter after synthetic jiraIssue implementation
-  return function (ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField) {
-    if (jiraProjectField.allowedValues && jiraProjectField.allowedValues.length > 0) {
-      valueGetter(jiraProjectField.allowedValues).forEach(function (jiraEntity) {
-        var jiraEntityInfo = jiraEntityName + ' ' + jiraEntity.id;
-        if (importContext.timeInterval.includes(jiraProject.key, jiraEntity.updated ? jiraEntity.updated : jiraEntity.created)) {
-          console.trace('Extracting authors and groups from ' + jiraEntityInfo);
-          // null author will be converted to deleted user
-          entityConverters.user(jiraEntity.author);
-          if (jiraEntity.updateAuthor && (jiraEntity.updated !== jiraEntity.created)) {
-            entityConverters.user(jiraEntity.updateAuthor);
+var convertUser = exports.user = function (jiraUser) {
+  var deletedUser = false;
+  if (jiraUser) {
+    console.debug('Converting jira user: ' + jiraUser.name + '(' + jiraUser.key + ')');
+  } else {
+    console.warn('Received a call to convert empty user');
+    deletedUser = true;
+    jiraUser = {
+      self: 'dumb-mock-dummy',
+      name:'deleted_user',
+      key:'deleted_user',
+      emailAddress: null
+    };
+  }
+  return jiraImportContext.usersCache.get(jiraUser.name, function () {
+    if (!jiraUser.self) {
+      jiraUser = jiraImportContext.jiraClient.getUser(jiraUser.name, function (failure) {
+          if (failure.code === 404) { // jira data can contain refs to a deleted user
+            deletedUser = true;
+          } else {
+            jiraImportContext.networkFailureHandler(failure);
           }
-          jiraEntity.visibility && security.visibilityGroup(jiraEntity.visibility, jiraProject, project);
+        }) || jiraUser;
+    }
+    // TODO need check for jira version to determine which jiraId to use
+    var jiraId = jiraUser.key || jiraUser.name;
+    var ytJiraUserData = entities.JiraUserData.findByJiraId(jiraId);
+    var yTUserLogin = importUtils.dashify(jiraUser.name);
+    var user;
+    if (ytJiraUserData) {
+      console.trace('YT JiraUserData found for jira user ' + jiraId);
+      user = ytJiraUserData.user;
+      user.email = jiraUser.emailAddress;
+      user.fullName = jiraUser.displayName;
+      ytJiraUserData.login = jiraUser.name;
+    } else {
+      console.trace('No YT JiraUserData found for jira user ' + jiraId);
+      var hsv = jiraImportContext.hubSyncVariables;
+
+      // we can't be 100% sure that a user export will be required, but still have to decide whether to wait or not
+      var currentPauseDuration = now() - hsv.lastUserExportEnd;
+      var timeToWait = Math.max(0, hsv.adaptiveIncrease - currentPauseDuration);
+      (timeToWait > 0) && console.debug('Will wait another ' + timeToWait + ' millis before exporting a user. Has already been waiting for ' + currentPauseDuration);
+      importUtils.wait(timeToWait);
+
+      var start = now();
+      user = entities.ImportUtil.findOrCreateUser(yTUserLogin, jiraUser.emailAddress,
+          jiraUser.displayName, deletedUser || !jiraUser.active,
+          deletedUser ? null : entities.JiraUserData.createFactory(jiraUser.name, jiraId));
+
+      if (entities.JiraUserData.findByJiraId(jiraId)) {
+        // a user data has been created during User.findOrCreate. This means export to Hub occurred
+        hsv.preLastUserExportDuration = hsv.lastUserExportEnd - hsv.lastUserExportStart;
+        hsv.lastUserExportStart = start;
+        hsv.lastUserExportEnd = now();
+        if (hsv.lastUserExportEnd - hsv.lastUserExportStart > hsv.preLastUserExportDuration + inaccuracy) {
+          hsv.adaptiveIncrease = hsv.lastUserExportEnd - hsv.lastUserExportStart - hsv.preLastUserExportDuration + 500;
         } else {
-          console.trace('Skipping authors and groups extracting from ' + jiraEntityInfo + ' - out of time interval');
+          hsv.adaptiveIncrease = Math.max(0, hsv.adaptiveIncrease - 500);
         }
-      });
+        if (hsv.adaptiveIncrease > 120000) {
+          importUtils.throw("Forced to wait for Hub to receive users for more than 2 minutes");
+        }
+        console.trace('New adaptive increase: ' + hsv.adaptiveIncrease);
+      }
+
     }
+    return user;
+  });
+};
+
+exports.group = function (jiraGroup) {
+  console.debug('Converting jira group: ' + jiraGroup.name);
+  var group = entities.UserGroup.findOrCreate(importUtils.dashify(importUtils.unforbid(jiraGroup.name)));
+  if (!jiraGroup.users) {
+    if (importSettings.useAdminPermission) {
+      jiraGroup = jiraImportContext.jiraClient.getGroup(jiraGroup.name, jiraImportContext.networkFailureHandler);
+      jiraGroup.users.items.forEach(function (jiraUser) {
+        var user = convertUser(jiraUser);
+        user.addToGroup(group);
+      });
+    } else {
+      console.warn('Members of ' + jiraGroup.name + ' won\'t be retrieved. Missing ADMINISTER permission');
+    }
+  }
+  return group;
+};
+
+exports.issue = function (jiraIssue, extractScheme) {
+  jiraIssue.importEvents = [];
+  var jiraKey = jiraIssue.key;
+  var jiraProjectKey = jiraIssue.fields.project.key;
+  var project = entities.Project.findByImportedId(jiraIssue.fields.project.id);
+  var issue;
+  var isNew;
+  if (extractScheme) {
+    console.info(jiraKey + ': extracting field scheme and field values');
+    issue = {project: project};
+  } else {
+    console.info(jiraKey + ': setting field values and converting changelog');
+    issue = entities.Issue.findByImportedId(jiraIssue.id);
+    isNew = false;
+    if (issue) {
+      if (issue.jiraId && issue.jiraId !== jiraIssue.id) {
+        importUtils.throw('Error processing issue ' + jiraKey +
+            ': The respective issue in YouTrack is bound to Jira issue with id ' + jiraIssue.id);
+      }
+      issue.jiraVisibleId = jiraIssue.key;
+      jiraImportContext.progress.issuesUpdated++;
+    } else {
+      isNew = true;
+      issue = new entities.Issue(project);
+      var jiraNumberInProject = parseInt(jiraKey.substr(jiraKey.lastIndexOf('-') + 1));
+      if (project.currentIssueNumber() < jiraNumberInProject) {
+        console.debug('Setting next issue number: ' + (jiraNumberInProject - 1));
+        project.setNextIssueNumber(jiraNumberInProject - 1);
+        issue.numberInProject = project.nextIssueNumber(); // otherwise number in project still exists
+      }
+      issue.jiraId = jiraIssue.id;
+      issue.jiraVisibleId = jiraIssue.key;
+      var reporter = convertUser(jiraIssue.fields.reporter);
+      var reported = jira.parseTimestamp(jiraIssue.fields.created);
+      events.attachImportEvents(jiraIssue, '$entity_created', issue, reporter, reported, null);
+      jiraImportContext.progress.issuesAdded++;
+    }
+  }
+
+  Object.keys(jiraIssue.fields).forEach(function (jiraFieldId) {
+    var jiraFieldPrototype = jiraImportContext.fieldSchema.prototypes[jiraFieldId];
+    var jiraProject = jiraImportContext.fieldSchema.projects[jiraProjectKey];
+    var jiraProjectField = jiraProject.fields[jiraFieldId];
+    var converter = fieldConverters.findFieldConverter(jiraFieldId, jiraFieldPrototype, jiraProjectField);
+
+    var jiraFieldValue = jiraIssue.fields[jiraFieldId];
+    var jiraFieldInfo = jiraIssue.key + ':field:' + jiraFieldId;
+    if (extractScheme) {
+      var ytFieldName = converter.convertName(jiraFieldPrototype);
+      if (converter.convertSchema !== jiraImportContext.no_op) {
+        console.debug(jiraFieldInfo + ':extraction started');
+        var values = jiraFieldValue ? (Array.isArray(jiraFieldValue) ? jiraFieldValue : [jiraFieldValue]) : [];
+        // Remove jiraIssue parameter when this JSON will be replaced with synthetic object masking all
+        // additional REST request to jira. Now this parameter is using in "watches" and "votes" converters for
+        // requesting these user sets corresponding to jira issue.
+        converter.convertSchema(ytFieldName, project, jiraProject, jiraFieldPrototype, {allowedValues: values}, jiraIssue);
+      } else {
+        console.debug(jiraFieldInfo + ':extraction skipped');
+      }
+    } else {
+      if (converter.convertValue !== jiraImportContext.no_op) {
+        console.debug(jiraFieldInfo + ':conversion started');
+        try {
+          converter.convertValue(converter.convertName(jiraFieldPrototype), jiraFieldValue, issue, jiraIssue);
+        } catch (error) {
+          var errorText = jiraFieldInfo + ':conversion failed. Check that YouTrack has no corresponding field of different type. ';
+          console.error(errorText);
+          error.message = errorText + error.message;
+          throw error;
+        }
+      } else {
+        console.debug(jiraFieldInfo + ':conversion skipped');
+      }
+    }
+  });
+
+  if (!jiraIssue.changelog) { // see JT-37375
+    jiraIssue.changelog = jiraImportContext.jiraClient.getIssueChangelog(jiraIssue.key, jiraImportContext.networkFailureHandler).changelog;
+    if (!jiraIssue.changelog) { // still no changelog for some unknown reason
+      console.warn('No change log is available for issue ' + jiraIssue.key);
+    }
+  }
+
+  jiraIssue.changelog && jiraIssue.changelog.histories.filter(function (change) {
+    return jiraImportContext.timeInterval.includes(jiraProjectKey, change.created);
+  }).forEach(function (change) {
+    var author = convertUser(change.author);
+    var timestamp = jira.parseTimestamp(change.created);
+    change.items.forEach(function (item, index) {
+      var jiraFieldId = events.findFieldId(item.field);
+      if (jiraFieldId) {
+        console.trace(jiraIssue.key + ': Processing changelog item for field ' + jiraFieldId + '<' + item.field + '>. Log record ' + change.id);
+        events.attachImportEvents(jiraIssue, jiraFieldId, issue, author, timestamp, item, change, index);
+      } else {
+        console.trace('Do not add item [' + item.field + '] to event queue - no corresponding field');
+      }
+    });
+  });
+  var evts = events.convertEvents(jiraIssue.importEvents, jiraIssue, issue, fieldConverters.findFieldConverter, extractScheme);
+  var lastEvent = evts.filter(function (e) {
+    return ignorableUpdates.indexOf(e.jiraFieldId) === -1;
+  }).pop();
+  if (lastEvent) {
+    issue.updatedBy = lastEvent.author;
+    issue.updated = lastEvent.timestamp;
+  } else if (isNew) {
+    issue.updatedBy = issue.reporter;
+    issue.updated = issue.created;
+  }
+
+  var resolvedTimestamp = jiraIssue.fields['$resolution_timestamp'];
+  if (resolvedTimestamp) {
+    issue.resolved = resolvedTimestamp;
+  } else if (jiraIssue.fields.resolutiondate) {
+    issue.resolved = jira.parseTimestamp(jiraIssue.fields.resolutiondate);
+  }
+
+  if (jiraIssue.fields.security) {
+    issue.permittedGroup = security.admins(issue.project);
+    environment.status.setOutput('hasSecuredIssues', true);
+  } else {
+    issue.permittedGroup = null;
+  }
+  return issue;
+};
+
+exports.project = function(jiraProjectKey) {
+  var schemaProcessed = environment.status.getOutput('schemaProcessed');
+  if (schemaProcessed && schemaProcessed.indexOf(jiraProjectKey) > -1) {
+    console.info('Updating schema for project ' + jiraProjectKey + ' has already been imported');
+  } else {
+    console.info('Started to import schema for project: ' + jiraProjectKey);
+  }
+
+  var jiraProjectSchema = jiraImportContext.fieldSchema.projects[jiraProjectKey];
+  var jiraProject = jiraProjectSchema;
+  if (!jiraProject.lead) {
+    jiraProject = jiraImportContext.jiraClient.getProject(jiraProjectKey, jiraImportContext.networkFailureHandler);
+  }
+  var lead = convertUser({
+    name: jiraProject.lead.name,
+    key: jiraProject.lead.key
+  });
+  var project = entities.ImportUtil.findOrCreateProject(jiraProject.id,
+      importUtils.unforbid(jiraProject.name), jiraProjectKey,
+      jiraProject.description, lead);
+  if (project.jiraId && project.jiraId != jiraProjectSchema.id) {
+    importUtils.throw('Error processing project ' + jiraProjectKey + ': The respective project already exists in YouTrack.');
+  }
+
+  var jiraProjectFields = jiraProjectSchema.fields;
+  Object.keys(jiraProjectFields).forEach(function (jiraFieldId) {
+    var jiraFieldPrototype = jiraImportContext.fieldSchema.prototypes[jiraFieldId];
+    var jiraProjectField = jiraProjectFields[jiraFieldId];
+    var converter = fieldConverters.findFieldConverter(jiraFieldId, jiraFieldPrototype, jiraProjectField);
+
+    var ytFieldName = converter.convertName(jiraFieldPrototype);
+    if (converter.convertSchema !== jiraImportContext.no_op) {
+      console.trace('Converting schema for jira field: ' + jiraFieldId + ' as a project field');
+      converter.convertSchema(ytFieldName, project, jiraProjectSchema, jiraFieldPrototype, jiraProjectField);
+    } else {
+      console.trace('Skipping schema conversion for jira field: ' + jiraFieldId + ' as a project field');
+    }
+  });
+
+  security.processRoles(jiraProjectSchema, project);
+
+  environment.status.setOutput('schemaProcessed', schemaProcessed ? schemaProcessed + ',' + jiraProjectKey : jiraProjectKey);
+
+  return project;
+};
+
+function createYtLinkType(jiraLinkType) {
+  var findUniqueName = function (name, cache) {
+    // check on link type name uniqueness is case insensitive, so id is lower case name
+    return cache[name.toLowerCase()] ? findUniqueName(importUtils.uglify(name), cache) : name;
   };
-};
-
-var watches = function (jiraIssue, jiraFieldId) {
-  if (jiraIssue.fields[jiraFieldId].watchCount == 0) {
-    return [];
-  }
-  var projectKey = jiraIssue.fields.project.key;
-  if (!importContext.hasPermission('PROJECT_ADMIN', projectKey) &&
-      !importContext.hasPermission('VIEW_VOTERS_AND_WATCHERS', projectKey) &&
-      !importContext.hasPermission('MANAGE_WATCHER_LIST', projectKey)) {
-    return [];
-  }
-  var watchers = [];
-  jiraClient.getWatchers(jiraIssue.key, function (wtchs) {
-    wtchs.forEach(function (watcher) {
-      watchers.push(entityConverters.user(watcher));
-    });
-    return true;
-  }, importContext.networkFailureHandler);
-  return watchers;
-};
-
-var votes = function (jiraIssue, jiraFieldId) {
-  if (jiraIssue.fields[jiraFieldId].votes == 0) {
-    return [];
-  }
-  var projectKey = jiraIssue.fields.project.key;
-  if (!importContext.hasPermission('PROJECT_ADMIN', projectKey) &&
-      !importContext.hasPermission('VIEW_VOTERS_AND_WATCHERS', projectKey)) {
-    return [];
-  }
-  var voters = [];
-  jiraClient.getVotes(jiraIssue.key, function (vtrs) {
-    vtrs.forEach(function (voter) {
-      voters.push(entityConverters.user(voter));
-    });
-    return true;
-  }, importContext.networkFailureHandler);
-  return voters;
-};
-
-var labels = function (modify) {
-  return function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
-    var lead = issue.project.leader;
-    var tags = [];
-    jiraFieldValue.forEach(function (label) {
-      var tag = entities.IssueTag.getTag(lead, modify(label), true);
-      tag.tag(issue);
-      tag.shareGroup = entities.UserGroup.allUsersGroup;
-      tags.push(tag);
-    });
-    return tags;
+  var findInOutName = function (name, cache) {
+    if (entities.IssueLinkPrototype.isPredefinedFieldName(name)) {
+      name = name + ' (Jira)';
+    }
+    return findUniqueName(name, cache);
   };
-};
 
-var renamer = exports.renamer = function (newName) {
-  return function (jiraFieldPrototype) {
-    return newName;
+  var ytLinkType = new entities.IssueLinkPrototype();
+  ytLinkType.jiraId = jiraLinkType.id;
+
+  // find unique type name
+  ytLinkType.name = findUniqueName(importUtils.unforbid(jiraLinkType.$capitalizedName), jiraImportContext.linkTypes.byTypeName);
+  jiraImportContext.linkTypes.byTypeName[ytLinkType.name.toLowerCase()] = ytLinkType;
+
+  // find unique outward link name
+  var adaptedOutwardName = findInOutName(importUtils.unforbid(jiraLinkType.outward.toLowerCase(), ':'), jiraImportContext.linkTypes.byLinkName);
+  ytLinkType.sourceToTarget = adaptedOutwardName;
+  jiraImportContext.linkTypes.byLinkName[adaptedOutwardName] = ytLinkType;
+
+  // find unique inward link name
+  // compare jira link names without case change, since jira allows case-different link names
+  if (jiraLinkType.outward !== jiraLinkType.inward) {
+    ytLinkType.directed = true;
+    var adaptedInwardName = findInOutName(importUtils.unforbid(jiraLinkType.inward.toLowerCase(), ':'), jiraImportContext.linkTypes.byLinkName);
+    ytLinkType.targetToSource = adaptedInwardName;
+    jiraImportContext.linkTypes.byLinkName[adaptedInwardName] = ytLinkType;
+  } else {
+    ytLinkType.targetToSource = adaptedOutwardName;
   }
-};
 
-var dumbConvertName = function (jiraFieldPrototype) {
-  return jiraFieldPrototype.id;
-};
+  ytLinkType.jiraId = jiraLinkType.id;
+  return ytLinkType;
+}
 
-var ignore_this_field = {
-  embedded: true,
-  convertSchema: importContext.no_op,
-  convertValue: importContext.no_op,
-  convertEvent: importContext.no_op,
-  transformEvent: importContext.no_op
-};
+function isSuitableLinkNames(ytLinkType, jiraLinkType) {
+  return ytLinkType.sourceToTarget === jiraLinkType.outward.toLowerCase()
+    && ytLinkType.targetToSource === jiraLinkType.inward.toLowerCase();
+}
 
+exports.linkType = function (jiraLinkType) {
+  // search for cached type
+  var ytLinkType = jiraImportContext.linkTypes.byJiraId[jiraLinkType.id];
 
-//------------------------------
-exports['project'] = ignore_this_field; // it's handled on issue constructor call
-exports['id'] = ignore_this_field; // ids can only be auto incremented
-exports['issuekey'] = ignore_this_field; // keys can only be auto assigned
-exports['lastViewed'] = ignore_this_field; // no such thing in YouTrack
-exports['summary'] = {
-  embedded: true,
-  convertName: dumbConvertName,
-  convertSchema: importContext.no_op,
-  convertEvent: events.property,
-  transformEvent: events.extractFromString()
-};
-exports['description'] = {
-  embedded: true,
-  convertName: dumbConvertName,
-  convertSchema: importContext.no_op,
-  convertEvent: events.property,
-  transformEvent: events.extractFromString()
-};
-exports['created'] = {
-  embedded: true,
-  convertName: dumbConvertName,
-  convertSchema: importContext.no_op,
-  convertEvent: importContext.no_op,
-  transformEvent: importContext.no_op
-};
-exports['updated'] = {
-  embedded: true,
-  convertName: dumbConvertName,
-  convertSchema: importContext.no_op
-};
-exports['resolutiondate'] = ignore_this_field; // retrieve resolution time from resolution events
-exports['reporter'] = {
-  embedded: true,
-  convertName: dumbConvertName,
-  convertSchema: function (ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField) {
-    if (!jiraProjectField.allowedValues || jiraProjectField.allowedValues.length == 0) {
-      jiraProjectField.allowedValues = [null];
+  if (!jiraLinkType.name || jiraLinkType.name.length === 0) {
+    importUtils.throw("Could not process jira link " + jiraLinkType.id + ", link data has no name");
+  }
+  jiraLinkType.$capitalizedName =  jiraLinkType.name.charAt(0).toUpperCase() + jiraLinkType.name.slice(1);
+  jiraLinkType.$lowercaseName =  jiraLinkType.name.toLowerCase();
+
+  // try to associate with default type ignoring difference in link names
+  // capitalized jira link name -> default yt link stub name -> yt link name
+  if (!ytLinkType) {
+    var defaultYtLinkTypeStub = defaultLinkTypeMapping[jiraLinkType.$capitalizedName];
+    if (defaultYtLinkTypeStub) {
+      ytLinkType = jiraImportContext.linkTypes.byTypeName[defaultYtLinkTypeStub.name.toLowerCase()];
     }
-    jiraProjectField.allowedValues.forEach(entityConverters.user);
-  },
-  convertValue: function (ytFieldName, jiraFieldValue, issue) {
-    return issue[ytFieldName] = entityConverters.user(jiraFieldValue);
-  },
-  convertEvent: importContext.no_op // can not change reporter in YouTrack
-};
-exports['creator'] = ignore_this_field; // no such thing in YouTrack
-exports['assignee'] = {
-  convertName: renamer('Assignee'),
-  convertSchema: function (ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField) {
-    var allowedValues = jiraProjectField.allowedValues;
-    jiraProjectField.allowedValues = [];
-    perTypeConverters['user[1]'].convertSchema(ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField);
-    jiraProjectField.allowedValues = allowedValues;
-    var developers = security.developers(project);
-    allowedValues.map(entityConverters.user).forEach(function (user) {
-      user.addToGroup(developers);
-    });
+    if (ytLinkType && !ytLinkType.jiraId) {
+      ytLinkType.jiraId = jiraLinkType.id;
+      jiraImportContext.linkTypes.byJiraId[jiraLinkType.id] = ytLinkType;
+    } else {
+      ytLinkType = null;
+    }
   }
+
+  // associate with existed type if it's suitable otherwise create new one
+  // capitalized || capitalized and uglified jira link name -> yt link name
+  // check on link type name uniqueness is case insensitive, so id is lower case name
+  if (!ytLinkType) {
+    ytLinkType = jiraImportContext.linkTypes.byTypeName[jiraLinkType.name.toLowerCase()];
+    if (!ytLinkType || ytLinkType.jiraId || !isSuitableLinkNames(ytLinkType, jiraLinkType)) {
+      ytLinkType = createYtLinkType(jiraLinkType)
+    }
+  }
+
+  ytLinkType.jiraId = jiraLinkType.id;
+  jiraImportContext.linkTypes.byJiraId[jiraLinkType.id] = ytLinkType;
+
+  var jiraInfo = jiraLinkType.name +
+    '(' + jiraLinkType.outward + '/' + jiraLinkType.inward + ')';
+  var ytInfo = ytLinkType.name +
+    '(' + ytLinkType.sourceToTarget + '/' + ytLinkType.targetToSource + ')';
+  console.info('Associated link type {jiraId: ' + jiraLinkType.id + '}: ' + jiraInfo + ' ~ ' + ytInfo);
+  return ytLinkType;
 };
-exports['comment'] = {
-  embedded: true,
-  convertName: renamer('comments'),
-  convertSchema: extractAuthorsAndVisibilityGroups('comment', function (allowedValues) {
-    return allowedValues[0].comments;
-  }),
-  convertValue: comments,
-  convertEvent: function (event, ytFieldName, issue) {
-    var fromId = event.change.from;
-    var toId = event.change.to;
-    if (fromId && !toId) {
-      var jiraCommentIds = {};
-      event.jiraIssue.fields['comment'].comments.forEach(function (it) {
-        jiraCommentIds[it.id] = true;
-      });
-      var commentToRemove = issue.comments.find(function (it) {
-        return it.jiraId && !jiraCommentIds[it.jiraId];
-      });
-      if (commentToRemove) {
-        console.trace('Processing event about deletion of comment ' + commentToRemove.jiraId + ' from issue ' + event.jiraIssue.key);
-        commentToRemove.delete();
-        event.target = commentToRemove;
-        event.from = commentToRemove.deleted;
-        event.to = true;
-        events.property(event, 'deleted');
-      } else {
-        console.trace('Could not found comment to delete in issue ' + event.jiraIssue.key);
+
+exports.comment = function (jiraComment, issue, jiraIssue) {
+  if (!jiraImportContext.timeInterval.includes(jiraIssue.fields.project.key, jiraComment.updated ? jiraComment.updated : jiraComment.created)) {
+    console.trace('Skipping comment ' + jiraComment.id + ' as not falling into time interval.');
+    return;
+  }
+  var comment = issue.comments.find(function (c) {
+    return c.jiraId === jiraComment.id;
+  });
+  var trimmed = jiraComment.body && jiraComment.body.trim();
+  var text = (trimmed && trimmed.length) ? trimmed : "<empty comment>";
+  if (!comment) {
+    var author = convertUser(jiraComment.author);
+    var created = jira.parseTimestamp(jiraComment.created);
+    comment = new entities.IssueComment(text, author);
+    comment.issue = issue;
+    comment.jiraId = jiraComment.id;
+    comment.created = created;
+    events.attachImportEvents(jiraIssue, '$entity_created', comment, author, created, null);
+  }
+  if (jiraComment.updated !== jiraComment.created) {
+    comment.text = text;
+    comment.updatedBy = convertUser(jiraComment.updateAuthor);
+    comment.updated = jira.parseTimestamp(jiraComment.updated);
+  }
+  comment.permittedGroup = security.visibilityGroup(jiraComment.visibility, jiraIssue.fields.project, issue.project);
+  return comment;
+};
+
+exports.worklog = function (jiraWorkLog, issue, jiraIssue) {
+  if (!jiraImportContext.timeInterval.includes(jiraIssue.fields.project.key, jiraWorkLog.updated ? jiraWorkLog.updated : jiraWorkLog.created)) {
+    console.trace('Skipping work log ' + jiraWorkLog.id + ' as not falling into time interval.');
+    return;
+  }
+  var workItem = issue.workItems.find(function (wi) {
+    return wi.jiraId === jiraWorkLog.id;
+  });
+  if (!workItem) {
+    var author = convertUser(jiraWorkLog.author);
+    var created = jira.parseTimestamp(jiraWorkLog.created);
+    var date = jiraWorkLog.started ? jira.parseTimestamp(jiraWorkLog.started) : created;
+    workItem = new entities.IssueWorkItem(issue, author, date);
+    workItem.jiraId = jiraWorkLog.id;
+    events.attachImportEvents(jiraIssue, '$entity_created', workItem, author, created, null);
+  }
+  workItem.description = jiraWorkLog.comment;
+  workItem.duration = jiraWorkLog.timeSpentSeconds / 60;
+  if (workItem.duration === 0) {
+    workItem.duration = 1;
+  }
+  // no permitted group for a work item
+  return workItem;
+};
+
+exports.attachment = function (jiraAttachment, issue, jiraIssue) {
+  if (!jiraImportContext.timeInterval.includes(jiraIssue.fields.project.key, jiraAttachment.updated ? jiraAttachment.updated : jiraAttachment.created)) {
+    console.trace('Skipping attachment ' + jiraAttachment.id + ' as not falling into time interval.');
+    return;
+  }
+  var attachment = null;
+  jiraImportContext.jiraClient.getAttachmentContent(jiraAttachment, function (stream) {
+    attachment = issue.attachments.find(function (a) {
+      return a.jiraId === jiraAttachment.id;
+    });
+    if (!attachment) {
+      var author = convertUser(jiraAttachment.author);
+      var created = jira.parseTimestamp(jiraAttachment.created);
+      //Used static method instead of constructor to avoid exception that can be thrown during storing attach content
+      try {
+        attachment = new entities.IssueAttachment.importAttachment(stream, jiraAttachment.filename, null, jiraAttachment.mimeType);
+        attachment.jiraId = jiraAttachment.id;
+        attachment.created = created;
+        attachment.author = author;
+        issue.addAttachment(attachment);
+        events.attachImportEvents(jiraIssue, '$entity_created', attachment, author, created, null);
+      } catch (e){
+        console.error(e);
+        return null;
       }
+    } else {
+      attachment.name = jiraAttachment.filename;
+      attachment.mimeType = jiraAttachment.mimeType;
+      attachment.setContent(stream);
     }
-  },
-  transformEvent: importContext.no_op
-};
-exports['worklog'] = {
-  embedded: true,
-  convertName: renamer('workitems'), // TODO: implement issue['workitems'] getter
-  convertSchema: extractAuthorsAndVisibilityGroups('worklog', function (allowedValues) {
-    return allowedValues[0].worklogs;
-  }),
-  convertValue: worklogs,
-  convertEvent: importContext.no_op,
-  transformEvent: importContext.no_op
-};
-exports['attachment'] = {
-  embedded: true,
-  convertName: renamer('attachments'),
-  convertSchema: extractAuthorsAndVisibilityGroups('attachment', function (allowedValues) {
-    return allowedValues;
-  }),
-  convertValue: attachments,
-  convertEvent: function (event, ytFieldName, issue) {
-    var fromId = event.change.from;
-    var toId = event.change.to;
-    if (fromId && !toId) {
-      console.trace('Processing event about deletion of attachment ' + fromId);
-      var attachmentToRemove = issue.attachments.find(function (it) {
-        return it.jiraId === fromId;
-      });
-      if (attachmentToRemove) {
-        issue.removeAttachment(attachmentToRemove);
-        console.trace('Deleted attachment ' + fromId + ' from issue ' + event.jiraIssue.key);
-        event.target = attachmentToRemove;
-        events.removeEntity(event)
-      } else {
-        console.trace('No attachment ' + fromId + ' found in issue ' + event.jiraIssue.key);
-      }
+    if (jiraAttachment.updated && jiraAttachment.updated !== jiraAttachment.created) {
+      attachment.updated = jira.parseTimestamp(jiraAttachment.updated);
     }
-  },
-  transformEvent: importContext.no_op // declare as empty to not invoke convertSchema for events
-};
-exports['watches'] = {
-  embedded: true,
-  convertSchema: function (ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField, jiraIssue) {
-    watches(jiraIssue, 'watches');
-  },
-  convertValue: function (ytFieldName, jiraField, issue, jiraIssue) {
-    watches(jiraIssue, 'watches').forEach(function (user) {
-      user.watchIssue(issue);
-    });
-  }
-};
-exports['votes'] = {
-  embedded: true,
-  convertSchema: function (ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField, jiraIssue) {
-    votes(jiraIssue, 'votes')
-  },
-  convertValue: function (ytFieldName, jiraField, issue, jiraIssue) {
-    votes(jiraIssue, 'votes').forEach(function (user) {
-      issue.voters.add(user);
-      issue.votes = issue.votes + 1;
-    });
-  }
-};
-exports['labels'] = {
-  embedded: true,
-  convertName: renamer('tags'),
-  convertSchema: importContext.no_op, // not a custom field in YouTrack
-  convertValue: labels(function(s) {
-    return importUtils.unforbid(s, '<>&,');
-  }),
-  convertEvent: events.field,
-  transformEvent: events.extractFromString(events.splitToArray(' ', function (s) {
-    return importUtils.unforbid(s, '<>&,');
-  }))
-};
-
-exports['issuetype'] = {
-  convertType: 'enum[1]',
-  convertName: renamer('Type')
-};
-exports['priority'] = {
-  convertType: 'enum[1]'
-};
-exports['fixVersions'] = {
-  convertName: renamer('Fix versions')
-};
-exports['versions'] = {
-  convertName: renamer('Affected versions')
-};
-exports['status'] = {
-  convertName: renamer('State')
-};
-exports['resolution'] = {
-  convertName: renamer('Resolution')
-};
-exports['components'] = {
-  convertName: renamer('Subsystems')
-};
-
-exports['thumbnail'] = ignore_this_field; // YouTrack automatically creates thumbnails for all image attachments
-exports['project'] = ignore_this_field; // TODO events should be handled with jiraVisibleId property
-exports['timespent'] = ignore_this_field; // value equals to timetracking.timeSpentSeconds. Further, YouTrack calculates this value
-exports['aggregatetimespent'] = ignore_this_field; // YouTrack calculates this value
-exports['timeoriginalestimate'] = ignore_this_field; // value equals to timetracking.timeOriginalEstimateSeconds
-exports['aggregatetimeoriginalestimate'] = ignore_this_field; // this includes an estimate over all subtasks
-exports['aggregatetimeestimate'] = ignore_this_field; // this includes an estimate over all subtasks
-exports['aggregateprogress'] = ignore_this_field; // this includes a progress over all subtasks
-exports['timeestimate'] = ignore_this_field; // what's that?
-exports['progress'] = ignore_this_field; // quite the same as time spent, or what?
-exports['workratio'] = ignore_this_field; // (timeSpent / originalEstimate) * 100
-exports['timetracking'] = {
-  embedded: true,
-  convertSchema: function (ytFieldName, project, jiraProject, jiraPrototype, jiraProjectField) {
-    var settings = project.timeTrackingSettings;
-    if (!settings) {
-      settings = new entities.TimeTrackingSettings(project);
-    }
-    settings.enabled = true;
-    if (!settings.estimate) {
-      settings.initDefaults();
-    }
-    return settings;
-  },
-  convertValue: function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
-    var estimateString = jiraFieldValue['originalEstimate'];
-    if (!estimateString) {
-      return null;
-    }
-    var fieldName = issue.project.timeTrackingSettings.estimate.prototype.namePresentation;
-    var period = dateTime.toPeriod(jiraFieldValue['originalEstimateSeconds'] * 1000);
-    issue[fieldName] = period;
-    return period;
-  }
-};
-exports.security = ignore_this_field; // processed inside entityConverters.issue
-
-//---------------------------Issue links----------------------------------
-
-exports['parent'] = {
-  embedded: true,
-  convertSchema: importContext.no_op,
-  convertValue: function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
-    console.log("Process parent ");
-    perTypeConverters.attachImportLink(jiraIssue, jiraFieldValue, 'Subtask', false)
-  },
-  transformEvent: events.extractFromId(),
-  convertEvent: events.link
-};
-
-exports['subtasks'] = {
-  embedded: true,
-  convertSchema: importContext.no_op,
-  convertValue: function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
-    jiraFieldValue.forEach(function (subtask) {
-      var timestamp;
-      var author;
-      perTypeConverters.attachImportLink(jiraIssue, subtask, 'Subtask', true);
-      // create stub event about linking with subtask, because there are no such events in parent changelog
-      var subtaskDetails = jiraClient.getIssueChangelog(subtask.key, importContext.networkFailureHandler);
-      var foundHistory;
-      subtaskDetails.changelog.histories.forEach(function (history) {
-        history.items.forEach(function (item) {
-          if (item.field === 'Parent') {
-            foundHistory = history;
-          }
-        })
-      });
-      if (foundHistory) {
-        author = foundHistory.author;
-        timestamp = foundHistory.created;
-      } else {
-        author = jiraIssue.fields.reporter;
-        timestamp = subtaskDetails.fields.created;
-      }
-      var constructedItem = {
-        field: 'subtasks',
-        to: subtask.id,
-        toString: subtask.key
-      };
-      events.attachImportEvents(jiraIssue, 'subtasks', issue, entityConverters.user(author), jira.parseTimestamp(timestamp), constructedItem);
-    });
-  },
-  transformEvent: events.extractFromId(),
-  convertEvent: events.link
-};
-exports['issuelinks'] = {
-  embedded: true,
-  convertSchema: importContext.no_op,
-  convertValue: function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
-    jiraFieldValue.forEach(function (link) {
-      var jiraIssueTo = link.outwardIssue ? link.outwardIssue : link.inwardIssue;
-      var typeName = importContext.linkTypes.byJiraId[link.type.id].name;
-      var ytLinkTypeStub = constants.defaultLinkTypeMapping[typeName];
-      var jiraOutward = link.outwardIssue ? true : false;
-      if (ytLinkTypeStub) {
-        var ytOutward = ytLinkTypeStub.inversion ? (!jiraOutward) : jiraOutward;
-        perTypeConverters.attachImportLink(jiraIssue, jiraIssueTo, typeName, ytOutward);
-      } else {
-        perTypeConverters.attachImportLink(jiraIssue, jiraIssueTo, typeName, jiraOutward);
-      }
-    });
-  },
-  transformEvent: events.extractFromId(function (issueKey) {
-    var targetIssue = issueKey && jiraClient.getIssue(issueKey, importContext.getSkippingFailureHandler([403, 404]));
-    return targetIssue && targetIssue.id;
-  }),
-  convertEvent: events.link
-};
-
-
-//---------------------------Artificial fields----------------------------------
-exports['$entity_created'] = {
-  embedded: true,
-  convertName: importContext.no_op,
-  convertEvent: events.addEntity
-};
-exports['$resolution_timestamp'] = {
-  embedded: true,
-  convertName: renamer('resolved'),
-  convertSchema: importContext.no_op, // not a custom field in YouTrack
-  convertEvent: events.property,
-  transformEvent: events.extractFromString()
+    // it's not possible to restrict attachment visibility in Jira
+    attachment.size = jiraAttachment.size;
+  }, jiraImportContext.attachmentContentFailureHandler);
+  return attachment;
 };

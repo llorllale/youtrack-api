@@ -1,0 +1,47 @@
+## This file contains YouTrack launch configuration.
+## To edit it please first copy it to the "youtrack.launch.config" file.
+## To change the setting uncomment it first.
+## To apply the changes you made in this file, please restart YouTrack using its scripts from the "bin" folder.
+
+## YouTrack display name
+#display-name=YouTrack
+
+## YouTrack description
+#description=The Agile Issue Tracking and Project Tracking Tool
+
+## YouTrack Windows service name
+## If you want to change this setting, please uninstall the current YouTrack Windows service,
+## then change the service name here and then install it again using "..\bin\youtrack.bat service install" command.
+#win-service-name=youtrack
+
+## YouTrack Mac OS daemon label
+## If you want to change this setting, please unload the current YouTrack Mac OS daemon,
+## then change the daemon label here and then load it again using "../bin/youtrack.sh daemon start" command.
+#mac-daemon-label=YouTrack
+
+## YouTrack Mac OS daemon user
+## If you want to change this setting, please unload the current YouTrack Mac OS daemon,
+## then change the daemon user here and then load it again using "../bin/youtrack.sh daemon start" command.
+#mac-daemon-user=root
+
+## YouTrack start timeout in seconds
+#start-timeout-seconds=300
+
+## YouTrack stop timeout in seconds
+#stop-timeout-seconds=300
+
+## YouTrack Java libraries directory.
+## The path should be either absolute or relative to the YouTrack home directory.
+#lib-dir=lib
+
+## YouTrack logs directory.
+## The path should be either absolute or relative to the YouTrack home directory.
+#logs-dir=logs
+
+## YouTrack launcher logs directory.
+## The path should be either absolute or relative to the YouTrack logs directory.
+#launcher.logs-dir=.
+
+## Path to the YourKit installation to use to profile YouTrack.
+## The path should be either absolute or relative to the YouTrack home directory.
+#yourkit-home=
