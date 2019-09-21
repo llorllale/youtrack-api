@@ -1,0 +1,469 @@
+HÉ/*
+ Copyright 2017 JetBrains s.r.o.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+var jira = require('./jira');
+var importUtils = require('@jetbrains/youtrack-scripting-api-import/utils');
+var entities = require('@jetbrains/youtrack-scripting-api/entities');
+var events = require('./events');
+var constants = require('./constants');
+var entityConverters = require('./entityConverters');
+var importContext = require('./importContext');
+
+var toSimpleType = function (defaultValuesKey) {
+  defaultValuesKey = defaultValuesKey || 'defaultValues';
+  return function(ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField) {
+    var jiraField = '{jira: ' + jiraFieldPrototype.id + '<' + jiraFieldPrototype.$typeName + '>}';
+    var ytField = '{yt: ' + jiraFieldPrototype.$ytPrototype.name + '<' + jiraFieldPrototype.$ytPrototype.typeName + '>}';
+    console.debug('Converting schema for field ' + jiraField + ' -> ' + ytField);
+    var ytProjectCustomField = jiraFieldPrototype.$ytPrototype.findOrCreateProjectCustomField(project);
+    // Project custom field used for import has to have no presets to not fill any default values on issue creation:
+    // 1. can be empty - true
+    // 2. null value text - not empty
+    // 3. default values - empty
+    // We need clear all presets of project custom field to continue
+    if (!ytProjectCustomField.canBeEmpty) {
+      ytProjectCustomField.canBeEmpty = true;
+      console.info('Updated project field' + ytField + ', canBeEmpty: false -> true')
+    }
+    if (!ytProjectCustomField.nullValueText) {
+      var newNullValueText = 'No ' + jiraFieldPrototype.$ytPrototype.name;
+      ytProjectCustomField.nullValueText = newNullValueText;
+      console.info('Updated project field' + ytField + ', nullValueText: null -> ' + newNullValueText)
+    }
+    var defaultValues = ytProjectCustomField[defaultValuesKey];
+    if (defaultValues && !defaultValues.isEmpty()){
+      defaultValues.clear();
+      console.info('Updated project field' + ytField + ', cleared all defaults values');
+    }
+    return ytProjectCustomField
+  };
+};
+var toEnumType = function (createBundleElement, defaultValuesKey) {
+  return function (ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField) {
+    var ytProjectCustomField = toSimpleType(defaultValuesKey)(ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField);
+    var ytFieldInfo = ytFieldName + '<' + jiraFieldPrototype.$ytPrototype.typeName + '>';
+
+    var ytBundle = ytProjectCustomField.bundle;
+    var fieldJustCreated = (ytBundle === null);
+    if (fieldJustCreated) {
+      var bundleName = project.key + ' ' + ytFieldName + ' Bundle';
+      ytBundle = ytProjectCustomField.createBundle(bundleName);
+    }
+
+    var ytBundleInfo = 'bundle {yt: ' + ytFieldInfo + '.' + ytBundle.name + '}';
+    console.info((fieldJustCreated ? 'Created ' : 'Found ') + ytBundleInfo);
+
+    jiraProjectField && jiraProjectField.allowedValues && jiraProjectField.allowedValues.forEach(function (value) {
+      createBundleElement(ytBundleInfo, ytBundle, value, jiraProject);
+    });
+    return ytProjectCustomField;
+  }
+};
+var toGroupType = function() {
+  return function (ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField) {
+    var projectCustomField = toSimpleType()(ytFieldName, project, jiraProject, jiraFieldPrototype, jiraProjectField);
+    jiraProjectField && jiraProjectField.allowedValues && jiraProjectField.allowedValues.forEach(function (jiraGroup) {
+      entityConverters.group(jiraGroup);
+    });
+    return projectCustomField;
+  };
+};
+var createEnumBundleElem = function (ytBundleInfo, ytBundle, jiraFieldValue) {
+  var jiraFieldValueName = jiraFieldValue && extractValueUniversally(jiraFieldValue);
+  if (!jiraFieldValueName) {
+    importUtils.throw('Tried to add undefined enum element or enum element with undefined name to ' + ytBundleInfo);
+  }
+  var ytFieldValueName = importUtils.unforbid(jiraFieldValueName);
+  var elem = ytBundle.findOrCreateElement(ytFieldValueName);
+
+  var elemInfo = 'enum element {jira: '  + jiraFieldValueName + '} ~ {yt: ' + ytFieldValueName + '}';
+  console.info('Added/Found ' + elemInfo + ' to ' + ytBundleInfo);
+  return elem;
+};
+var createUserBundleElem = function (ytBundleInfo, ytBundle, jiraUser) {
+  var jiraUserName = jiraUser && jiraUser.name;
+  // It's not supposed to be null users among the custom field values
+  if (!jiraUserName) {
+    importUtils.throw('Tried to add undefined user or user with undefined name to ' + ytBundleInfo);
+  }
+  console.info('Creating user {jira: ' + jiraUserName + '} to add to ' + ytBundleInfo);
+  var ytUser = entityConverters.user(jiraUser);
+  ytBundle.individuals.add(ytUser);
+
+  var userInfo = 'user {jira: ' + jiraUserName + '} ~ {yt: ' + ytUser.login + '}';
+  console.info('Added ' + userInfo + ' to ' + ytBundleInfo);
+  return ytUser;
+};
+
+var findByName = function (arr, name) {
+  arr = arr || [];
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].name === name) {
+      return arr[i];
+    }
+  }
+  return null;
+};
+
+
+var createOwnedBundleElem = function (ytBundleInfo, ytBundle, jiraComponent) {
+  var componentName = jiraComponent && jiraComponent.name;
+  if (!componentName) {
+    importUtils.throw('Tried to add undefined owned field value or owned field value with undefined name to ' + ytBundleInfo);
+  }
+  var ytComponentName = importUtils.unforbid(componentName);
+  var elem = ytBundle.findOrCreateElement(ytComponentName);
+  jiraComponent = importContext.jiraClient.getComponent(jiraComponent.id, importContext.networkFailureHandler);
+  var componentAssignee = jiraComponent.realAssignee || jiraComponent.assignee;
+  var owner = componentAssignee && entityConverters.user(componentAssignee);
+  elem.owner = owner ? owner : null;
+
+  var versionInfo = 'owned field value {jira: '  + componentName + '} ~ {yt: ' + ytComponentName + '}';
+  console.info('Added/Found ' + versionInfo + ' to ' + ytBundleInfo);
+  return elem;
+};
+
+var createVersionBundleElem = function (ytBundleInfo, ytBundle, jiraVersion, jiraProject) {
+  var versionName = jiraVersion && jiraVersion.name;
+  if (!versionName) {
+    importUtils.throw('Tried to add undefined version or version with undefined name to ' + ytBundleInfo);
+  }
+  if (!jiraVersion.self) {
+    var projectVersions = importContext.jiraClient.getProjectVersions(jiraProject.key, importContext.networkFailureHandler);
+    jiraVersion = findByName(projectVersions, versionName) || jiraVersion;
+  }
+  var ytVersionName = importUtils.unforbid(versionName);
+  var elem = ytBundle.findOrCreateElement(ytVersionName);
+  if (jiraVersion.self) {
+    elem.isReleased = jiraVersion.released;
+    elem.isArchived = jiraVersion.archived;
+    jiraVersion.releaseDate && (elem.releaseDate = jira.parseDate(jiraVersion.releaseDate, importContext.userTimeZone));
+  }
+
+  var versionInfo = 'version {jira: '  + versionName + (jiraVersion.self ? ', actual}' : ', obsolete}') +
+    ' ~ {yt: '+ ytVersionName + '}';
+  console.info('Added/Found ' + versionInfo + ' to ' + ytBundleInfo);
+  return elem;
+};
+
+var createStateBundleElemFromStatus = function (ytBundleInfo, ytBundle, jiraStatus) {
+  var statusName = jiraStatus && jiraStatus.name;
+  if (!statusName) {
+    importUtils.throw('Tried to add undefined status or status with undefined name to ' + ytBundleInfo);
+  }
+  if (!jiraStatus.self) {
+    jiraStatus = findByName(importContext.fieldSchema.statuses, statusName) || jiraStatus;
+  }
+  var ytStateName = importUtils.unforbid(statusName);
+  var elem = ytBundle.findOrCreateElement(ytStateName);
+  if (jiraStatus.self) {
+    elem.description = jiraStatus.description;
+    var statusKey = jiraStatus.statusCategory && jiraStatus.statusCategory.key;
+    if (statusKey) {
+      elem.colorIndex = constants.stateColors[statusKey];
+      elem.isResolved = statusKey === 'done';
+    } else {
+      elem.isResolved = false;
+    }
+  }
+  var stateInfo = 'status-state {jira: ' + statusName + (jiraStatus.self ? ', actual}' : ', obsolete}') +
+    ' ~ {yt: ' + ytStateName + '}';
+  console.info('Added/Found ' + stateInfo + ' to ' + ytBundleInfo);
+  return elem;
+};
+
+var createStateBundleElemFromResolution = function (ytBundleInfo, ytBundle, jiraResolution) {
+  var resolutionName = jiraResolution && jiraResolution.name;
+  if (!resolutionName) {
+    importUtils.throw('Tried to add undefined resolution or resolution with undefined name to ' + ytBundleInfo);
+  }
+  if (!jiraResolution.self) {
+    jiraResolution = findByName(importContext.fieldSchema.resolutions, resolutionName) || jiraResolution;
+  }
+  var ytStateName = importUtils.unforbid(resolutionName);
+  var elem = ytBundle.findOrCreateElement(ytStateName);
+  if (jiraResolution.self) {
+    elem.description = jiraResolution.description;
+  }
+  elem.isResolved = true;
+  var stateInfo = 'resolution-state {jira: ' + resolutionName + (jiraResolution.self ? ', actual}' : ', obsolete}')
+    + ' ~ {yt: '+ ytStateName + '}';
+  console.info('Added/Found ' + stateInfo + ' to ' + ytBundleInfo);
+  return elem;
+};
+
+var extractValueUniversally = function (element) {
+  return element.value ? element.value : (element.name ? element.name : element);
+};
+
+var valueFromName = function (jiraFieldValue) {
+  return jiraFieldValue ? importUtils.unforbid(extractValueUniversally(jiraFieldValue)) : null;
+};
+
+var valueFromUser = function (jiraUser) {
+  return entityConverters.user(jiraUser);
+};
+
+var valueFromGroup = function (jiraGroup) {
+  return entityConverters.group(jiraGroup);
+};
+
+var dumbConvertValue = function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
+  return issue[ytFieldName] = jiraFieldValue;
+};
+var convertSingleValue = function (extract) {
+  return function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
+    return issue[ytFieldName] = jiraFieldValue ? extract(jiraFieldValue, jiraIssue) : null;
+  };
+};
+var convertMultiValue = function (extract) {
+  return function (ytFieldName, jiraFieldValue, issue, jiraIssue) {
+    var issueField = issue[ytFieldName];
+    if (!issueField) {
+      console.warn(jiraIssue.key + ': can not set values to field {yt: ' + ytFieldName + '}, since yt issue does not have it');
+      return null;
+    }
+    issueField.clear();
+
+    if (!jiraFieldValue || jiraFieldValue.length === 0) {
+      return [];
+    }
+
+    jiraFieldValue.forEach(function (singleValue) {
+      // skip empty values
+      if (singleValue) {
+        issueField.add(extract(singleValue));
+      }
+    });
+    return issue[ytFieldName];
+  };
+};
+
+var valueFromShortTime = function (jiraFieldValue) {
+  return jiraFieldValue ? jira.parseShortTime(jiraFieldValue).toString() : jiraFieldValue;
+};
+
+var valueFromLongTime = function (jiraFieldValue) {
+  return jiraFieldValue ? jira.parseTimestamp(jiraFieldValue).toString() : jiraFieldValue;
+};
+
+var valueFromDate = function (jiraFieldValue) {
+  return jiraFieldValue ? jira.parseDate(jiraFieldValue, importContext.userTimeZone).toString() : jiraFieldValue;
+};
+
+var ytUserLoginFromJiraLogin = function (login) {
+  if (!login) {
+    return null;
+  }
+  console.trace('Transforming ' + login + ' to YT user login');
+  var user = entityConverters.user({name: login});
+  return user ? user.login : null;
+};
+
+var ytUserLoginsFromJiraLogins = function (logins) {
+  if (!logins) {
+    return null;
+  }
+  console.trace('Transforming ' + logins.join() + ' to YT user logins');
+  return logins.map(ytUserLoginFromJiraLogin);
+};
+
+var attachImportLink = function (jiraIssue, jiraIssueTo, ytLinkTypeName, outward) {
+    attachImportLinkByIssueId(jiraIssue, jiraIssueTo.id, ytLinkTypeName, outward)
+};
+
+var attachImportLinkByIssueId = function(jiraIssue, jiraIssueToId, ytLinkTypeName, outward) {
+    jiraIssue.importLinks || (jiraIssue.importLinks = {});
+    jiraIssue.importLinks[jiraIssueToId] = {
+        toId: jiraIssueToId,
+        typeName: ytLinkTypeName,
+        outward: outward
+    };
+};
+
+exports.attachImportLink = attachImportLink;
+
+exports['date'] = {
+  convertType: 'date',
+  convertSchema: toSimpleType(),
+  convertValue: convertSingleValue(valueFromDate),
+  convertEvent: events.field,
+  transformEvent: events.extractFromId(valueFromDate)
+};
+exports['datetime'] = {
+  convertType: 'date',
+  convertSchema: toSimpleType(),
+  convertValue: convertSingleValue(valueFromLongTime),
+  convertEvent: events.field,
+  transformEvent: events.extractFromId(valueFromShortTime)
+};
+exports['string'] = {
+  convertType: 'string',
+  convertSchema: toSimpleType(),
+  convertValue: dumbConvertValue,
+  convertEvent: events.field,
+  transformEvent: events.extractFromString()
+};
+exports['text'] = {
+  convertType: 'string',
+  convertSchema: toSimpleType(),
+  convertValue: dumbConvertValue,
+  convertEvent: events.field,
+  transformEvent: events.extractFromString()
+};
+exports['number'] = {
+  convertType: 'float',
+  convertSchema: toSimpleType(),
+  convertValue: dumbConvertValue,
+  convertEvent: events.field,
+  transformEvent: events.extractFromString()
+};
+exports['user[1]'] = {
+  convertType: 'user[1]',
+  convertSchema: toEnumType(createUserBundleElem, 'defaultUsers'),
+  convertValue: convertSingleValue(valueFromUser),
+  convertEvent: function (event, ytFieldName) {
+    event.from = ytUserLoginFromJiraLogin(event.from);
+    event.to = ytUserLoginFromJiraLogin(event.to);
+    events.field(event, ytFieldName);
+  },
+  transformEvent: events.extractFromId()
+};
+exports['user[*]'] = {
+  convertType: 'user[*]',
+  convertSchema: toEnumType(createUserBundleElem, 'defaultUsers'),
+  convertValue: convertMultiValue(valueFromUser),
+  convertEvent: function (event, ytFieldName) {
+    event.from = ytUserLoginsFromJiraLogins(event.from);
+    event.to = ytUserLoginsFromJiraLogins(event.to);
+    events.field(event, ytFieldName);
+  },
+  transformEvent: events.extractFromId(events.stripBrackets(events.splitToArray()))
+};
+exports['group'] = exports['group[1]'] = {
+  convertType: 'group[1]',
+  convertSchema: toGroupType(),
+  convertValue: convertSingleValue(valueFromGroup),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(events.stripBrackets())
+};
+exports['group[*]'] = {
+  convertType: 'group[*]',
+  convertSchema: toGroupType(),
+  convertValue: convertMultiValue(valueFromGroup),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(events.stripBrackets(events.splitToArray()))
+};
+exports['priority[1]'] = {
+  convertType: 'enum[1]',
+  convertSchema: toEnumType(createEnumBundleElem),
+  convertValue: convertSingleValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(importUtils.unforbid)
+};
+exports['issuetype[1]'] = {
+  convertType: 'enum[1]',
+  convertSchema: toEnumType(createEnumBundleElem),
+  convertValue: convertSingleValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(importUtils.unforbid)
+};
+exports['string[1]'] = exports['option[1]'] = {
+  convertType: 'enum[1]',
+  convertSchema: toEnumType(createEnumBundleElem),
+  convertValue: convertSingleValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(importUtils.unforbid)
+};
+exports['string[*]'] = {
+  convertType: 'enum[*]',
+  convertSchema: toEnumType(createEnumBundleElem),
+  convertValue: convertMultiValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(events.splitToArray(',', importUtils.unforbid))
+};
+exports['component[1]'] = {
+  convertType: 'ownedField[1]',
+  convertSchema: toEnumType(createOwnedBundleElem),
+  convertValue: convertSingleValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(importUtils.unforbid)
+};
+exports['component[*]'] = {
+  convertType: 'ownedField[*]',
+  convertSchema: toEnumType(createOwnedBundleElem),
+  convertValue: convertMultiValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(events.splitToArray(',', importUtils.unforbid))
+};
+exports['version[1]'] = {
+  convertType: 'version[1]',
+  convertSchema: toEnumType(createVersionBundleElem),
+  convertValue: convertSingleValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(importUtils.unforbid)
+};
+exports['version[*]'] = {
+  convertType: 'version[*]',
+  convertSchema: toEnumType(createVersionBundleElem),
+  convertValue: convertMultiValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(events.splitToArray(',', importUtils.unforbid))
+};
+exports['label[*]'] = {
+  convertType: 'enum[*]',
+  convertSchema: toEnumType(createEnumBundleElem),
+  convertValue: convertMultiValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(events.splitToArray(' ', importUtils.unforbid))
+};
+exports['status'] = {
+  convertType: 'state[1]',
+  convertSchema: toEnumType(createStateBundleElemFromStatus),
+  convertValue: convertSingleValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(importUtils.unforbid)
+};
+exports['resolution'] = {
+  convertType: 'state[1]',
+  convertSchema: toEnumType(createStateBundleElemFromResolution),
+  convertValue: convertSingleValue(valueFromName),
+  convertEvent: events.field,
+  transformEvent: events.extractFromString(importUtils.unforbid)
+};
+exports['com.pyxis.greenhopper.jira:gh-epic-link'] = {
+  convertSchema: importContext.no_op,
+  embedded: true,
+  convertValue: function(ytFieldName, jiraFieldValue, issue, jiraIssue) {
+      if (jiraFieldValue) {
+          var jiraIssueId = (importContext.jiraClient.getIssue(jiraFieldValue, importContext.getSkippingFailureHandler([403, 404])) || {}).id;
+          if (!jiraIssueId) {
+            return;
+          }
+
+          attachImportLinkByIssueId(jiraIssue, jiraIssueId, 'Subtask', false);
+          var author = entityConverters.user(jiraIssue.fields.reporter);
+          var constructedItem = {
+              field: 'parent',
+              to: jiraIssueId,
+              toString: jiraIssueId
+          };
+          events.attachImportEvents(jiraIssue, 'parent', issue, author, issue.updated, constructedItem);
+      }
+  },
+  transformEvent: events.extractFromId(),
+  convertEvent: events.link
+};

@@ -67,6 +67,9 @@ final class Authenticated extends HttpEntityEnclosingRequestBase {
    */
   Authenticated(Session session, HttpRequestBase request) {
     this.base = request;
+    // @todo #241 figure out whether to support both XML and JSON payloads. Also, set this header
+    //  via a decorator. I think youtrack may transition to json-only in the near future.
+    this.base.addHeader("Accept", "application/xml");
     session.cookies().stream()
         .map(c -> new BasicHeader(c.name(), c.value()))
         .forEach(this::addHeader);
