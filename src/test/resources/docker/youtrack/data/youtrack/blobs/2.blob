@@ -1,4 +1,4 @@
-Sø/*
+*˜/*
  Copyright 2017 JetBrains s.r.o.
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,467 +14,271 @@ Sø/*
  limitations under the License.
  */
 
-var entities = require('@jetbrains/youtrack-scripting-api/entities');
-var jira = require('./jira');
-var jiraImportContext = require('./importContext');
-var importSettings = require('./importSettings');
-var environment = require('@jetbrains/youtrack-scripting-api/environment');
-var security = require('./security');
-var events = require('./events');
+var dateTime = require('@jetbrains/youtrack-scripting-api/date-time');
+var http = require('@jetbrains/youtrack-scripting-api/http');
 var constants = require('./constants');
-var defaultLinkTypeMapping = constants.defaultLinkTypeMapping;
-var ignorableUpdates = constants.ignorableUpdates;
-var fieldConverters = require('./fieldHandlers');
-var importUtils = require('@jetbrains/youtrack-scripting-api-import/utils');
+var cache = require('@jetbrains/youtrack-scripting-api/cache');
 
-var jiraClient = jiraImportContext.getJiraClient();
-var usersCache = require('@jetbrains/youtrack-scripting-api/cache').create(1000, 'Users');
-
-// initialization is done once the script is loaded, this is fine.
-var inaccuracy = 100; // just a constant, let it live here for now
-var preLastUserExportDuration = 10000; // just an initial value, it took like ages
-var lastUserExportStart = now() - 10000; // the same here
-var lastUserExportEnd = now(); // just an initial value
-var adaptiveIncrease = 0;
-
-var convertUser = exports.user = function (jiraUser) {
-  var deletedUser = false;
-  if (jiraUser) {
-    console.debug('Converting jira user: ' + jiraUser.name + '(' + jiraUser.key + ')');
-  } else {
-    console.warn('Received a call to convert empty user');
-    deletedUser = true;
-    jiraUser = {
-      self: 'dumb-mock-dummy',
-      name:'deleted_user',
-      key:'deleted_user',
-      emailAddress: null
-    };
+var getJsonsCache = function() {
+  var value = ctx.get().getObject('jsonsCache');
+  if (!value) {
+    value = cache.create(100, 'JSONs');
+    ctx.get().setObject('jsonsCache', value);
   }
-  return usersCache.get(jiraUser.name, function () {
-    if (!jiraUser.self) {
-      jiraUser = jiraClient.getUser(jiraUser.name, function (failure) {
-          if (failure.code === 404) { // jira data can contain refs to a deleted user
-            deletedUser = true;
-          } else {
-            jiraImportContext.networkFailureHandler(failure);
-          }
-        }) || jiraUser;
-    }
-    // TODO need check for jira version to determine which jiraId to use
-    var jiraId = jiraUser.key || jiraUser.name;
-    var ytJiraUserData = entities.JiraUserData.findByJiraId(jiraId);
-    var yTUserLogin = importUtils.dashify(jiraUser.name);
-    var user;
-    if (ytJiraUserData) {
-      console.trace('YT JiraUserData found for jira user ' + jiraId);
-      user = ytJiraUserData.user;
-      user.email = jiraUser.emailAddress;
-      user.fullName = jiraUser.displayName;
-      ytJiraUserData.login = jiraUser.name;
-    } else {
-      console.trace('No YT JiraUserData found for jira user ' + jiraId);
-
-      // we can't be 100% sure that a user export will be required, but still have to decide whether to wait or not
-      var currentPauseDuration = now() - lastUserExportEnd;
-      var timeToWait = Math.max(0, adaptiveIncrease - currentPauseDuration);
-      (timeToWait > 0) && console.debug('Will wait another ' + timeToWait + ' millis before exporting a user. Has already been waiting for ' + currentPauseDuration);
-      importUtils.wait(timeToWait);
-
-      var start = now();
-      user = entities.ImportUtil.findOrCreateUser(yTUserLogin, jiraUser.emailAddress,
-          jiraUser.displayName, deletedUser || !jiraUser.active,
-          deletedUser ? null : entities.JiraUserData.createFactory(jiraUser.name, jiraId));
-
-      if (entities.JiraUserData.findByJiraId(jiraId)) {
-        // a user data has been created during User.findOrCreate. This means export to Hub occurred
-        preLastUserExportDuration = lastUserExportEnd - lastUserExportStart;
-        lastUserExportStart = start;
-        lastUserExportEnd = now();
-        if (lastUserExportEnd - lastUserExportStart > preLastUserExportDuration + inaccuracy) {
-          adaptiveIncrease = lastUserExportEnd - lastUserExportStart - preLastUserExportDuration + 500;
-        } else {
-          adaptiveIncrease = Math.max(0, adaptiveIncrease - 500);
-        }
-        if (adaptiveIncrease > 120000) {
-          importUtils.throw("Forced to wait for Hub to receive users for more than 2 minutes");
-        }
-        console.trace('New adaptive increase: ' + adaptiveIncrease);
-      }
-
-    }
-    return user;
-  });
+  return value;
 };
 
-exports.group = function (jiraGroup) {
-  console.debug('Converting jira group: ' + jiraGroup.name);
-  var group = entities.UserGroup.findOrCreate(importUtils.dashify(importUtils.unforbid(jiraGroup.name)));
-  if (!jiraGroup.users) {
-    if (importSettings.useAdminPermission) {
-      jiraGroup = jiraClient.getGroup(jiraGroup.name, jiraImportContext.networkFailureHandler);
-      jiraGroup.users.items.forEach(function (jiraUser) {
-        var user = convertUser(jiraUser);
-        user.addToGroup(group);
-      });
-    } else {
-      console.warn('Members of ' + jiraGroup.name + ' won\'t be retrieved. Missing ADMINISTER permission');
+var createFakeSeraphNotOkResponse = function (result) { // required to handle https://jira.atlassian.com/browse/JRA-41559
+  var seraphHeaders = result.headers && result.headers.filter(function (header) {
+      return header.name === 'X-Seraph-LoginReason';
+    }) || [];
+  var seraphNotOkHeaders = seraphHeaders.filter(function (header) {
+    return header.value.indexOf('Failure') > -1;
+  });
+  if (seraphHeaders.length > 0 && seraphNotOkHeaders.length > 0) {
+    return {
+      response: '{"errorMessages": "Response X-Seraph-LoginReason header set to ' + seraphNotOkHeaders[0].value + '. You are probably not authenticated"}',
+      code: result.code
     }
   }
-  return group;
 };
 
-exports.issue = function (jiraIssue, extractScheme) {
-  jiraIssue.importEvents = [];
-  var jiraKey = jiraIssue.key;
-  var jiraProjectKey = jiraIssue.fields.project.key;
-  var project = entities.Project.findByImportedId(jiraIssue.fields.project.id);
-  var issue;
-  var isNew;
-  if (extractScheme) {
-    console.info(jiraKey + ': extracting field scheme and field values');
-    issue = {project: project};
-  } else {
-    console.info(jiraKey + ': setting field values and converting changelog');
-    issue = entities.Issue.findByImportedId(jiraIssue.id);
-    isNew = false;
-    if (issue) {
-      if (issue.jiraId && issue.jiraId !== jiraIssue.id) {
-        importUtils.throw('Error processing issue ' + jiraKey +
-            ': The respective issue in YouTrack is bound to JIRA issue with id ' + jiraIssue.id);
-      }
-      issue.jiraVisibleId = jiraIssue.key;
-      jiraImportContext.progress.issuesUpdated++;
-    } else {
-      isNew = true;
-      issue = new entities.Issue(project);
-      var jiraNumberInProject = parseInt(jiraKey.substr(jiraKey.lastIndexOf('-') + 1));
-      if (project.currentIssueNumber() < jiraNumberInProject) {
-        console.debug('Setting next issue number: ' + (jiraNumberInProject - 1));
-        project.setNextIssueNumber(jiraNumberInProject - 1);
-        issue.numberInProject = project.nextIssueNumber(); // otherwise number in project still exists
-      }
-      issue.jiraId = jiraIssue.id;
-      issue.jiraVisibleId = jiraIssue.key;
-      var reporter = convertUser(jiraIssue.fields.reporter);
-      var reported = jira.parseTimestamp(jiraIssue.fields.created);
-      events.attachImportEvents(jiraIssue, '$entity_created', issue, reporter, reported, null);
-      jiraImportContext.progress.issuesAdded++;
+Jira = function (url, sslKeyName, login, password) {
+  url = url + (url.lastIndexOf('/') === url.length - 1 ? '' : '/');
+  this.connection = new http.Connection(url + 'rest/api/2', sslKeyName).basicAuth(login, password);
+  this.authConnection = new http.Connection(url + 'rest/auth/1', sslKeyName).basicAuth(login, password);
+  this.plainConnection = new http.Connection(url + 'secure', sslKeyName).basicAuth(login, password);
+};
+
+Jira.prototype.getJson = function (uri, failureHandler, ignoreCache) {
+  return getJson(this.connection, uri, failureHandler, ignoreCache);
+};
+
+var getJson = function (connection, uri, failureHandler, ignoreCache) {
+  var doIt = function () {
+    var result = connection.getSync(uri);
+    var fakeResponse;
+    if (!result.isSuccess || (fakeResponse = createFakeSeraphNotOkResponse(result))) {
+      composeFailureHandler(failureHandler)(fakeResponse || result);
+      return;
     }
-  }
+    return JSON.parse(result.response);
+  };
+  return ignoreCache ? doIt() : getJsonsCache().get(uri, doIt);
+};
 
-  Object.keys(jiraIssue.fields).forEach(function (jiraFieldId) {
-    var jiraFieldPrototype = jiraImportContext.fieldSchema.prototypes[jiraFieldId];
-    var jiraProject = jiraImportContext.fieldSchema.projects[jiraProjectKey];
-    var jiraProjectField = jiraProject.fields[jiraFieldId];
-    var converter = fieldConverters.findFieldConverter(jiraFieldId, jiraFieldPrototype, jiraProjectField);
+Jira.prototype.getGlobalPermissions = function (failureHandler) {
+  var ret = this.getJson('/mypermissions', failureHandler);
+  return ret && ret['permissions'];
+};
 
-    var jiraFieldValue = jiraIssue.fields[jiraFieldId];
-    var jiraFieldInfo = jiraIssue.key + ':field:' + jiraFieldId;
-    if (extractScheme) {
-      var ytFieldName = converter.convertName(jiraFieldPrototype);
-      if (converter.convertSchema !== jiraImportContext.no_op) {
-        console.debug(jiraFieldInfo + ':extraction started');
-        var values = jiraFieldValue ? (Array.isArray(jiraFieldValue) ? jiraFieldValue : [jiraFieldValue]) : [];
-        //TODO: Remove jiraIssue parameter when this JSON will be replaced with synthetic object masking all
-        //TODO: additional REST request to jira. Now this parameter is using in "watches" and "votes" converters for
-        //TODO: requesting these user sets corresponding to jira issue.
-        converter.convertSchema(ytFieldName, project, jiraProject, jiraFieldPrototype, {allowedValues: values}, jiraIssue);
-      } else {
-        console.debug(jiraFieldInfo + ':extraction skipped');
-      }
-    } else {
-      if (converter.convertValue !== jiraImportContext.no_op) {
-        console.debug(jiraFieldInfo + ':conversion started');
-        try {
-          converter.convertValue(converter.convertName(jiraFieldPrototype), jiraFieldValue, issue, jiraIssue);
-        } catch (error) {
-          var errorText = jiraFieldInfo + ':conversion failed. Check that YouTrack has no corresponding field of different type. ';
-          console.error(errorText);
-          error.message = errorText + error.message;
-          throw error;
-        }
-      } else {
-        console.debug(jiraFieldInfo + ':conversion skipped');
-      }
-    }
-  });
-
-  if (!jiraIssue.changelog) { // see JT-37375
-    jiraIssue.changelog = jiraClient.getIssueChangelog(jiraIssue.key, jiraImportContext.networkFailureHandler).changelog;
-    if (!jiraIssue.changelog) { // still no changelog for some unknown reason
-      console.warn('No change log is available for issue ' + jiraIssue.key);
-    }
-  }
-
-  jiraIssue.changelog && jiraIssue.changelog.histories.filter(function (change) {
-    return jiraImportContext.timeInterval.includes(jiraProjectKey, change.created);
-  }).forEach(function (change) {
-    var author = convertUser(change.author);
-    var timestamp = jira.parseTimestamp(change.created);
-    change.items.forEach(function (item, index) {
-      var jiraFieldId = events.findFieldId(item.field);
-      if (jiraFieldId) {
-        console.trace(jiraIssue.key + ': Processing changelog item for field ' + jiraFieldId + '<' + item.field + '>. Log record ' + change.id);
-        events.attachImportEvents(jiraIssue, jiraFieldId, issue, author, timestamp, item, change, index);
-      } else {
-        console.trace('Do not add item [' + item.field + '] to event queue - no corresponding field');
-      }
+Jira.prototype.getProjectPermissions = function (projectKey, failureHandler) {
+  var ret = this.getJson('/mypermissions?projectKey=' + projectKey, failureHandler);
+  var original = ret && ret['permissions'];
+  var permisions = {};
+  Object.keys(constants.permissionKeys).forEach(function (permissionKey) {
+    permisions[permissionKey] = constants.permissionKeys[permissionKey].some(function (alias) {
+      return original && original[alias] && original[alias].havePermission;
     });
   });
-  var evts = events.convertEvents(jiraIssue.importEvents, jiraIssue, issue, fieldConverters.findFieldConverter, extractScheme);
-  var lastEvent = evts.filter(function (e) {
-    return ignorableUpdates.indexOf(e.jiraFieldId) === -1;
-  }).pop();
-  if (lastEvent) {
-    issue.updatedBy = lastEvent.author;
-    issue.updated = lastEvent.timestamp;
-  } else if (isNew) {
-    issue.updatedBy = issue.reporter;
-    issue.updated = issue.created;
-  }
+  return permisions;
+};
 
-  var resolvedTimestamp = jiraIssue.fields['$resolution_timestamp'];
-  if (resolvedTimestamp) {
-    issue.resolved = resolvedTimestamp;
-  } else if (jiraIssue.fields.resolutiondate) {
-    issue.resolved = jira.parseTimestamp(jiraIssue.fields.resolutiondate);
-  }
+Jira.prototype.getIssueTypes = function (failureHandler) {
+  return this.getJson('/issuetype', failureHandler);
+};
 
-  if (jiraIssue.fields.security) {
-    issue.permittedGroup = security.admins(issue.project);
-    environment.status.setOutput('hasSecuredIssues', true);
+Jira.prototype.getLinkTypes = function (failureHandler) {
+  return this.getJson('/issueLinkType', failureHandler);
+};
+
+Jira.prototype.getFields = function (successHandler, failureHandler) {
+  successHandler(this.getJson('/field', failureHandler));
+};
+
+Jira.prototype.getWatchers = function (issueKey, successHandler, failureHandler) {
+  successHandler(this.getJson('/issue/' + issueKey + '/watchers', failureHandler)['watchers']);
+};
+
+Jira.prototype.getVotes = function (issueKey, successHandler, failureHandler) {
+  successHandler(this.getJson('/issue/' + issueKey + '/votes', failureHandler)['voters']);
+};
+
+Jira.prototype.getUser = function (username, failureHandler) {
+  return this.getJson('/user?username=' + encodeURIComponent(username), failureHandler, true);
+};
+
+Jira.prototype.getCurrentUser = function (failureHandler) {
+  var sessionJson = getJson(this.authConnection, '/session', failureHandler, true);
+  return this.getJson('/user?username=' + encodeURIComponent(sessionJson.name), failureHandler, true);
+};
+
+Jira.prototype.getProjects = function (successHandler, failureHandler) {
+  successHandler(this.getJson('/project', failureHandler));
+};
+
+Jira.prototype.getGroup = function (groupName, failureHandler) {
+  return this.getJson('/group?groupname=' + encodeURIComponent(groupName) + '&expand=users', failureHandler);
+};
+
+Jira.prototype.getProject = function (projectKey, failureHandler) {
+  return this.getJson('/project/' + projectKey, failureHandler);
+};
+
+Jira.prototype.getProjectVersions = function (projectKey, failureHandler) {
+  return this.getJson('/project/' + projectKey + '/versions', failureHandler);
+};
+
+Jira.prototype.getServerInfo = function (failureHandler) {
+  return this.getJson('/serverInfo', failureHandler);
+};
+
+Jira.prototype.getIssueCreateMeta = function (projectKey, failureHandler) {
+  return this.getJson('/issue/createmeta?projectKeys=' + projectKey + '&expand=projects.issuetypes.fields.allowedValues', failureHandler, true);
+};
+
+Jira.prototype.getAttachmentContent = function (attachment, successHandler, failureHandler) {
+  var result = this.plainConnection.getSync('/attachment/' + attachment.id + '/');
+  if (result.isSuccess) {
+    successHandler(result.responseAsStream);
   } else {
-    issue.permittedGroup = null;
+    failureHandler(result);
   }
-  return issue;
 };
 
-exports.project = function(jiraProjectKey) {
-  var schemaProcessed = environment.status.getOutput('schemaProcessed');
-  if (schemaProcessed && schemaProcessed.indexOf(jiraProjectKey) > -1) {
-    console.info('Updating schema for project ' + jiraProjectKey + ' has already been imported');
-  } else {
-    console.info('Started to import schema for project: ' + jiraProjectKey);
-  }
-
-  var jiraProjectSchema = jiraImportContext.fieldSchema.projects[jiraProjectKey];
-  var jiraProject = jiraProjectSchema;
-  if (!jiraProject.lead) {
-    jiraProject = jiraClient.getProject(jiraProjectKey, jiraImportContext.networkFailureHandler);
-  }
-  var lead = convertUser({
-    name: jiraProject.lead.name,
-    key: jiraProject.lead.key
-  });
-  var project = entities.ImportUtil.findOrCreateProject(jiraProject.id,
-      importUtils.unforbid(jiraProject.name), jiraProjectKey,
-      jiraProject.description, lead);
-  if (project.jiraId && project.jiraId != jiraProjectSchema.id) {
-    importUtils.throw('Error processing project ' + jiraProjectKey + ': The respective project already exists in YouTrack.');
-  } else {
-    project.jiraId = jiraProject.id;
-  }
-
-  var jiraProjectFields = jiraProjectSchema.fields;
-  Object.keys(jiraProjectFields).forEach(function (jiraFieldId) {
-    var jiraFieldPrototype = jiraImportContext.fieldSchema.prototypes[jiraFieldId];
-    var jiraProjectField = jiraProjectFields[jiraFieldId];
-    var converter = fieldConverters.findFieldConverter(jiraFieldId, jiraFieldPrototype, jiraProjectField);
-
-    var ytFieldName = converter.convertName(jiraFieldPrototype);
-    if (converter.convertSchema !== jiraImportContext.no_op) {
-      console.trace('Converting schema for jira field: ' + jiraFieldId + ' as a project field');
-      converter.convertSchema(ytFieldName, project, jiraProjectSchema, jiraFieldPrototype, jiraProjectField);
-    } else {
-      console.trace('Skipping schema conversion for jira field: ' + jiraFieldId + ' as a project field');
-    }
-  });
-
-  security.processRoles(jiraProjectSchema, project);
-
-  environment.status.setOutput('schemaProcessed', schemaProcessed ? schemaProcessed + ',' + jiraProjectKey : jiraProjectKey);
-
-  return project;
+Jira.prototype.getStatuses = function (failureHandler) {
+  return this.getJson('/status', failureHandler);
 };
 
-function createYtLinkType(jiraLinkType) {
-  var findUniqueName = function (name, cache) {
-    // check on link type name uniqueness is case insensitive, so id is lower case name
-    return cache[name.toLowerCase()] ? findUniqueName(importUtils.uglify(name), cache) : name;
-  };
-  var findInOutName = function (name, cache) {
-    if (entities.IssueLinkPrototype.isPredefinedFieldName(name)) {
-      name = name + ' (JIRA)';
-    }
-    return findUniqueName(name, cache);
-  };
-
-  var ytLinkType = new entities.IssueLinkPrototype();
-  ytLinkType.jiraId = jiraLinkType.id;
-
-  // find unique type name
-  ytLinkType.name = findUniqueName(importUtils.unforbid(jiraLinkType.$capitalizedName), jiraImportContext.linkTypes.byTypeName);
-  jiraImportContext.linkTypes.byTypeName[ytLinkType.name.toLowerCase()] = ytLinkType;
-
-  // find unique outward link name
-  var adaptedOutwardName = findInOutName(importUtils.unforbid(jiraLinkType.outward.toLowerCase(), ':'), jiraImportContext.linkTypes.byLinkName);
-  ytLinkType.sourceToTarget = adaptedOutwardName;
-  jiraImportContext.linkTypes.byLinkName[adaptedOutwardName] = ytLinkType;
-
-  // find unique inward link name
-  // compare jira link names without case change, since jira allows case-different link names
-  if (jiraLinkType.outward !== jiraLinkType.inward) {
-    ytLinkType.directed = true;
-    var adaptedInwardName = findInOutName(importUtils.unforbid(jiraLinkType.inward.toLowerCase(), ':'), jiraImportContext.linkTypes.byLinkName);
-    ytLinkType.targetToSource = adaptedInwardName;
-    jiraImportContext.linkTypes.byLinkName[adaptedInwardName] = ytLinkType;
-  } else {
-    ytLinkType.targetToSource = adaptedOutwardName;
-  }
-
-  ytLinkType.jiraId = jiraLinkType.id;
-  return ytLinkType;
-}
-
-function isSuitableLinkNames(ytLinkType, jiraLinkType) {
-  return ytLinkType.sourceToTarget === jiraLinkType.outward.toLowerCase()
-    && ytLinkType.targetToSource === jiraLinkType.inward.toLowerCase();
-}
-
-exports.linkType = function (jiraLinkType) {
-  // search for cached type
-  var ytLinkType = jiraImportContext.linkTypes.byJiraId[jiraLinkType.id];
-
-  if (!jiraLinkType.name || jiraLinkType.name.length === 0) {
-    importUtils.throw("Could not process jira link " + jiraLinkType.id + ", link data has no name");
-  }
-  jiraLinkType.$capitalizedName =  jiraLinkType.name.charAt(0).toUpperCase() + jiraLinkType.name.slice(1);
-  jiraLinkType.$lowercaseName =  jiraLinkType.name.toLowerCase();
-
-  // try to associate with default type ignoring difference in link names
-  // capitalized jira link name -> default yt link stub name -> yt link name
-  if (!ytLinkType) {
-    var defaultYtLinkTypeStub = defaultLinkTypeMapping[jiraLinkType.$capitalizedName];
-    if (defaultYtLinkTypeStub) {
-      ytLinkType = jiraImportContext.linkTypes.byTypeName[defaultYtLinkTypeStub.name.toLowerCase()];
-    }
-    if (ytLinkType && !ytLinkType.jiraId) {
-      ytLinkType.jiraId = jiraLinkType.id;
-      jiraImportContext.linkTypes.byJiraId[jiraLinkType.id] = ytLinkType;
-    } else {
-      ytLinkType = null;
-    }
-  }
-
-  // associate with existed type if it's suitable otherwise create new one
-  // capitalized || capitalized and uglified jira link name -> yt link name
-  // check on link type name uniqueness is case insensitive, so id is lower case name
-  if (!ytLinkType) {
-    ytLinkType = jiraImportContext.linkTypes.byTypeName[jiraLinkType.name.toLowerCase()];
-    if (!ytLinkType || ytLinkType.jiraId || !isSuitableLinkNames(ytLinkType, jiraLinkType)) {
-      ytLinkType = createYtLinkType(jiraLinkType)
-    }
-  }
-
-  ytLinkType.jiraId = jiraLinkType.id;
-  jiraImportContext.linkTypes.byJiraId[jiraLinkType.id] = ytLinkType;
-
-  var jiraInfo = jiraLinkType.name +
-    '(' + jiraLinkType.outward + '/' + jiraLinkType.inward + ')';
-  var ytInfo = ytLinkType.name +
-    '(' + ytLinkType.sourceToTarget + '/' + ytLinkType.targetToSource + ')';
-  console.info('Associated link type {jiraId: ' + jiraLinkType.id + '}: ' + jiraInfo + ' ~ ' + ytInfo);
-  return ytLinkType;
+Jira.prototype.getResolutions = function (failureHandler) {
+  return this.getJson('/resolution', failureHandler);
 };
 
-exports.comment = function (jiraComment, issue, jiraIssue) {
-  if (!jiraImportContext.timeInterval.includes(jiraIssue.fields.project.key, jiraComment.updated ? jiraComment.updated : jiraComment.created)) {
-    console.trace('Skipping comment ' + jiraComment.id + ' as not falling into time interval.');
-    return;
-  }
-  var comment = issue.comments.find(function (c) {
-    return c.jiraId === jiraComment.id;
-  });
-  var text = (jiraComment.body && jiraComment.body.length > 0) ? jiraComment.body : "<empty comment>";
-  if (!comment) {
-    var author = convertUser(jiraComment.author);
-    var created = jira.parseTimestamp(jiraComment.created);
-    comment = new entities.IssueComment(text, author);
-    comment.issue = issue;
-    comment.jiraId = jiraComment.id;
-    comment.created = created;
-    events.attachImportEvents(jiraIssue, '$entity_created', comment, author, created, null);
-  }
-  if (jiraComment.updated !== jiraComment.created) {
-    comment.text = text;
-    comment.updatedBy = convertUser(jiraComment.updateAuthor);
-    comment.updated = jira.parseTimestamp(jiraComment.updated);
-  }
-  comment.permittedGroup = security.visibilityGroup(jiraComment.visibility, jiraIssue.fields.project, issue.project);
-  return comment;
+Jira.prototype.getRole = function (projectKey, roleId, failureHandler) {
+  return this.getJson('/project/' + projectKey + '/role/' + roleId, failureHandler);
 };
 
-exports.worklog = function (jiraWorkLog, issue, jiraIssue) {
-  if (!jiraImportContext.timeInterval.includes(jiraIssue.fields.project.key, jiraWorkLog.updated ? jiraWorkLog.updated : jiraWorkLog.created)) {
-    console.trace('Skipping work log ' + jiraWorkLog.id + ' as not falling into time interval.');
-    return;
-  }
-  var workItem = issue.workItems.find(function (wi) {
-    return wi.jiraId === jiraWorkLog.id;
-  });
-  if (!workItem) {
-    var author = convertUser(jiraWorkLog.author);
-    var created = jira.parseTimestamp(jiraWorkLog.created);
-    workItem = new entities.IssueWorkItem(issue, author);
-    workItem.jiraId = jiraWorkLog.id;
-    workItem.date = jiraWorkLog.started ? jira.parseTimestamp(jiraWorkLog.started) : created;
-    events.attachImportEvents(jiraIssue, '$entity_created', workItem, author, created, null);
-  }
-  workItem.description = jiraWorkLog.comment;
-  workItem.duration = jiraWorkLog.timeSpentSeconds / 60;
-  if (workItem.duration === 0) {
-    workItem.duration = 1;
-  }
-  // no permitted group for a work item
-  return workItem;
+Jira.prototype.getComponent = function (componentId, failureHandler) {
+  return this.getJson('/component/' + componentId, failureHandler);
 };
 
-exports.attachment = function (jiraAttachment, issue, jiraIssue) {
-  if (!jiraImportContext.timeInterval.includes(jiraIssue.fields.project.key, jiraAttachment.updated ? jiraAttachment.updated : jiraAttachment.created)) {
-    console.trace('Skipping attachment ' + jiraAttachment.id + ' as not falling into time interval.');
-    return;
+Jira.prototype.getIssueChangelog = function (issueKey, failureHandler) {
+  // there's not need to get any field info here, but there is no way to turn it off completely
+  return this.getJson('/issue/' + issueKey + '?fields=created&expand=changelog', failureHandler);
+};
+
+Jira.prototype.getIssue = function (issueKey, failureHandler) {
+  return this.getJson('/issue/' + issueKey + '?expand=changelog', failureHandler);
+};
+
+Jira.prototype.getIssues = function (projectKey, from, to, fromId, maxCount, successHandler, failureHandler) {
+  var filters = [];
+  if (projectKey) {
+    filters.push('project = "' + projectKey + '"');
   }
-  var attachment = null;
-  jiraClient.getAttachmentContent(jiraAttachment, function (stream) {
-    attachment = issue.attachments.find(function (a) {
-      return a.jiraId === jiraAttachment.id;
-    });
-    if (!attachment) {
-      var author = convertUser(jiraAttachment.author);
-      var created = jira.parseTimestamp(jiraAttachment.created);
-      //Used static method instead of constructor to avoid exception that can be thrown during storing attach content
+  if (fromId) {
+    filters.push('id > ' + fromId);
+  }
+  if (from) {
+    from = (from.length > 16 ? from.substr(0, 16) : from).replace('T', ' ');
+    filters.push('updated >= "' + from + '"');
+  }
+  if (to) {
+    to = (to.length > 16 ? to.substr(0, 16) : to).replace('T', ' ');
+    filters.push('updated <= "' + to + '"');
+  }
+  var searchUri = '/search?jql=' + encodeURIComponent(filters.join(' and ') + ' order by id') + '&fields=*all&expand=changelog';
+  this.getPaginated(searchUri, 'issues', maxCount, successHandler, failureHandler);
+};
+
+Jira.prototype.getAssignees = function (projectKey, successHandler, failureHandler) {
+  var searchUri = '/user/assignable/search?project=' + projectKey;
+  this.getPaginated(searchUri, null, 50, successHandler, failureHandler);
+};
+
+Jira.prototype.getWorklogs = function (issueKey, failureHandler) {
+  // jira doesn't support paginating here
+  return this.getJson('/issue/' + issueKey + '/worklog', failureHandler);
+};
+
+Jira.prototype.getComments = function (issueKey, failureHandler) {
+  // jira doesn't support paginating here
+  return this.getJson('/issue/' + issueKey + '/comment', failureHandler);
+};
+
+Jira.prototype.getPaginated = function (searchUri, arrayName, pageSize, successHandler, failureHandler) {
+  var startAt = 0;
+  var actualPageSize = 0;
+  do {
+    var uri = searchUri + (searchUri.indexOf('?') > -1 ? '&' : '?') + 'startAt=' + startAt + '&maxResults=' + pageSize;
+    var callResult = this.getJson(uri, failureHandler, true);
+    var result = arrayName ? callResult[arrayName] : callResult;
+    actualPageSize = result ? result.length : 0;
+    startAt += actualPageSize;
+  } while (successHandler(result) && actualPageSize === pageSize);
+};
+
+var composeFailureHandler = function(customFailureHandler) {
+  return function (result) {
+    console.error('Error occured when quering Jira');
+    if (result.response) {
+      var errorJson = null;
       try {
-        attachment = new entities.IssueAttachment.importAttachment(stream, jiraAttachment.filename, null, jiraAttachment.mimeType);
-        attachment.jiraId = jiraAttachment.id;
-        attachment.created = created;
-        attachment.author = author;
-        issue.addAttachment(attachment);
-        events.attachImportEvents(jiraIssue, '$entity_created', attachment, author, created, null);
-      } catch (e){
-        console.error(e);
-        return null;
+        errorJson = JSON.parse(result.response);
+      } catch (e) {
+        // ignore, html can be here, not json
       }
-    } else {
-      attachment.name = jiraAttachment.filename;
-      attachment.mimeType = jiraAttachment.mimeType;
-      attachment.setContent(stream);
+      console.error(result.code + ' ' + (errorJson ? errorJson.errorMessages : ''));
     }
-    if (jiraAttachment.updated && jiraAttachment.updated !== jiraAttachment.created) {
-      attachment.updated = jira.parseTimestamp(jiraAttachment.updated);
+    result.exception && console.error(result.exception);
+    customFailureHandler && customFailureHandler(result);
+  };
+};
+
+var parseTimestamp = function (timestamp) {
+  return dateTime.parse(timestamp, ["yyyy-MM-dd'T'HH:mm:ss.SSSX", "yyyy-MM-dd'T'HH:mm:ssX"]);
+};
+
+// publish
+exports.JiraClient = Jira;
+exports.parseShortTime = function (timestamp) {
+  try {
+    return dateTime.parse(timestamp, ["yyyy-MM-dd'T'HH:mm:ssX", "yyyy-MM-dd'T'HH:mmX"]);
+  } catch(e) {
+    var looksLikeATimestamp = function () {
+      var digitsArray = timestamp.match(/\d/g);
+      var numberOfDigits = digitsArray ? digitsArray.length : 0;
+      return numberOfDigits * 2 > timestamp.length; // more than a half of chars are digits
+    };
+    if (!looksLikeATimestamp()) {
+      // that's lame, but Jira would ofter have some text instead of a date, so in case the string is too long,
+      // this means it's some text that'll be replaced with 01.01.1970 00:00:01
+      return 1000;
     }
-    // it's not possible to restrict attachment visibility in JIRA
-    attachment.size = jiraAttachment.size;
-  }, jiraImportContext.attachmentContentFailureHandler);
-  return attachment;
+    throw e;
+  }
+};
+exports.parseTimestamp = parseTimestamp;
+exports.parseDate = function (timestamp, timeZone) {
+  return dateTime.parse(timestamp, ['yyyy-MM-dd'], timeZone);
+};
+exports.roundTimestampUpToMinutes = function (timestamp) {
+  return timestamp.substring(0, 17) + '00.000' + timestamp.substring(23);
+};
+exports.toSearchTimeString = function(utcTimestampString, timeZoneId) {
+  if (!utcTimestampString) {
+    return utcTimestampString;
+  }
+  if (!timeZoneId) {
+    console.warn('Timezone id is not provided. Using as is.');
+    return utcTimestampString;
+  }
+  try {
+    var timestamp = parseTimestamp(utcTimestampString);
+    return dateTime.format(timestamp, 'yyyy-MM-dd HH:mm', timeZoneId);
+  } catch (e) {
+    console.warn('Could not format to Search time format. Using default.');
+    console.warn(e);
+    return utcTimestampString;
+  }
 };
